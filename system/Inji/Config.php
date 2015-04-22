@@ -78,7 +78,7 @@ class Config {
         if (!file_exists($path)) {
             return array();
         }
-        return $this->_configs['module'][$site_name][$module_name] = include $path;
+        return $this->_configs['module'][$app['name']][$module_name] = include $path;
     }
 
     function save($type, $data, $module = NULL) {

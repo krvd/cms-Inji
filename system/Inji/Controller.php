@@ -21,14 +21,14 @@ class Controller {
     public $params = [];
     public $path = '';
     public $method = 'index';
+    public $module = null;
 
     function run() {
         if (!empty($this->params[0]) && method_exists($this, $this->params[0] . 'Action')) {
             $this->method = $this->params[0];
             $this->params = array_slice($this->params, 1);
             call_user_func_array([$this, $this->method . 'Action'], $this->params);
-        }
-        elseif (method_exists($this, $this->method . 'Action')) {
+        } elseif (method_exists($this, $this->method . 'Action')) {
             call_user_func_array([$this, $this->method . 'Action'], $this->params);
         }
     }

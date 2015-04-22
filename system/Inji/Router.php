@@ -10,11 +10,16 @@
  */
 class Router {
 
-    function __construct() {
+    function init() {
         Inji::app()->listen('UninitializeObjectCalled', 'InjiRouter', ['module' => 'Router', 'method' => 'resolveObjectAlias']);
     }
 
     function resolveObjectAlias($event) {
+
+        if (file_exists(INJI_SYSTEM_DIR . '/modules/' . $event['eventObject'] . '/' . $event['eventObject'] . '.php')) {
+            include INJI_SYSTEM_DIR . '/modules/' . $event['eventObject'] . '/' . $event['eventObject'] . '.php';
+            return new $event['eventObject']();
+        }
         return $event['eventObject'];
     }
 
@@ -41,8 +46,6 @@ class Router {
             'name' => '',
             'type' => 'site',
             'system' => false,
-            'static_path' => '/static',
-            'templates_path' => '/templates',
             'params' => array(),
             'parent' => ''
         ];
@@ -69,15 +72,11 @@ class Router {
         if (!empty($params[0]) && file_exists(INJI_SYSTEM_DIR . '/program/' . $params[0] . '/')) {
             $app['parent'] = $app;
             $app['name'] = $params[0];
-            $params = array_slice($params, 1);
-
+            $app['params'] = array_slice($params, 1);
             $app['system'] = true;
-            $app['static_path'] = "/{$app['name']}/static";
-            $app['templates_path'] = "/{$app['name']}/templates";
             $app['path'] = INJI_SYSTEM_DIR . '/program/' . $app['name'];
             $app['type'] = 'app_' . mb_strtolower($app['name'], 'utf-8');
         }
-        $app['params'] = $params;
 
         return $app;
     }

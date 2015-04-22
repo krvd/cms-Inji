@@ -68,7 +68,7 @@ class Inji {
                 } elseif (is_array($callback) && isset($callback['callback'])) {
                     $eventObject = $callback($event, $callback);
                 } else {
-                    $this->{$callback['module']}->{$callback['method']}($event, $callback);
+                    $eventObject = $this->{$callback['module']}->{$callback['method']}($event, $callback);
                 }
                 $calledBefore[$iteration] = $listenCode;
             }
@@ -101,16 +101,18 @@ class Inji {
         if (isset($this->_objects[$className])) {
             return $this->_objects[$className];
         }
-
-        $object = $this->event('UninitializeObjectCalled', $className);
-        if (is_object($object)) {
-            $this->_objects[$className] = $object;
+        if ($this->loadClass($className)) {
+            $this->_objects[$className] = new $className();
         } else {
-            if ($this->loadClass($className)) {
-                $this->_objects[$className] = new $className();
+            $object = $this->event('UninitializeObjectCalled', $className);
+            if (is_object($object)) {
+                $this->_objects[$className] = $object;
             }
         }
         if (isset($this->_objects[$className])) {
+            if (method_exists($this->_objects[$className], 'init')) {
+                $this->_objects[$className]->init();
+            }
             $this->event('NewObjectInitialize', $className);
             return $this->_objects[$className];
         }
