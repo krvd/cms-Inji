@@ -1,0 +1,10 @@
+/**
+ * Item name
+ *
+ * Info
+ *
+ * @author ${author}
+ * @link ${link}
+ * @copyright ${date?date?string("yyyy")} ${copyright}
+ * @license ${license}
+ */

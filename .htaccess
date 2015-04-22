@@ -1,0 +1,5 @@
+AddDefaultCharset UTF-8
+php_flag magic_quotes_gpc Off
+
+RewriteEngine on
+RewriteRule (.*) index.php [QSA,L]
