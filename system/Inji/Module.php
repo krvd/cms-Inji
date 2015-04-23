@@ -21,22 +21,23 @@ class Module {
     }
 
     function findController() {
-        if (!empty($this->params[0]) && file_exists($this->path . '/Controllers/' . $this->params[0] . 'Controller.php')) {
-            include $this->path . '/Controllers/' . $this->params[0] . 'Controller.php';
+        $controllersPath = $this->path . '/' . Inji::app()->curApp['type'] . 'Controllers';
+        if (!empty($this->params[0]) && file_exists($controllersPath . '/' . $this->params[0] . 'Controller.php')) {
+            include $controllersPath . '/' . $this->params[0] . 'Controller.php';
             $controllerName = $this->params[0] . 'Controller';
             $controller = new $controllerName();
             $controller->params = array_slice($this->params, 1);
             $controller->module = $this;
-            $controller->path = $this->path . '/Controllers/';
+            $controller->path = $controllersPath;
             return $controller;
         }
-        if (file_exists($this->path . '/Controllers/' . $this->moduleName . 'Controller.php')) {
-            include $this->path . '/Controllers/' . $this->moduleName . 'Controller.php';
+        if (file_exists($controllersPath . '/' . $this->moduleName . 'Controller.php')) {
+            include $controllersPath . '/' . $this->moduleName . 'Controller.php';
             $controllerName = $this->moduleName . 'Controller';
             $controller = new $controllerName();
             $controller->params = $this->params;
             $controller->module = $this;
-            $controller->path = $this->path . '/Controllers';
+            $controller->path = $controllersPath;
             return $controller;
         }
     }

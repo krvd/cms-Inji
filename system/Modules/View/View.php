@@ -50,7 +50,7 @@ class View extends Module {
 
         if (file_exists($data['path'])) {
             $source = file_get_contents($data['path']);
-            $this->parse_proc($source);
+            $this->parseSource($source);
         } else {
             $this->content();
         }
@@ -94,54 +94,6 @@ class View extends Module {
         return $data;
     }
 
-    function getParentConfig() {
-        return include Inji::app()->app['parent']['path'] . "/templates/{$this->modConf['site']['current']}/config.php";
-    }
-
-    private function parse_str($source) {
-        if (!$source)
-            return array();
-
-        preg_match_all("|{(.*)}|", $source, $result);
-        return $result[1];
-    }
-
-    function parse_proc($source) {
-        $links = $this->parse_str($source);
-        foreach ($links as $link) {
-            $link1 = $link;
-            $link = explode(':', $link);
-            if (!empty($this->cals_methods[$link[0]])) {
-
-                $pos = strpos($source, $link1) - 1;
-                echo substr($source, 0, $pos);
-                $source = substr($source, ( $pos + strlen($link1) + 2));
-
-                $name = $this->cals_methods[$link[0]]['method_name'];
-                array_shift($link);
-                $this->parsing = true;
-                call_user_func_array(array($this, $name), $link);
-                $this->parsing = false;
-            } elseif ($link[0] == 'name') {
-                $pos = strpos($source, $link1) - 1;
-                echo substr($source, 0, $pos);
-                $source = substr($source, ( $pos + strlen($link1) + 2));
-                echo $this->template['name'];
-            } elseif ($link[0] == 'TEMPLATE_PATH') {
-                $pos = strpos($source, $link1) - 1;
-                echo substr($source, 0, $pos);
-                $source = substr($source, ( $pos + strlen($link1) + 2));
-                echo Inji::app()->app['templates_path'] . '/' . $this->template['name'];
-            } elseif ($link[0] == 'TITLE') {
-                $pos = strpos($source, $link1) - 1;
-                echo substr($source, 0, $pos);
-                $source = substr($source, ( $pos + strlen($link1) + 2));
-                echo $this->title;
-            }
-        }
-        echo $source;
-    }
-
     function content($params = []) {
         $this->current_function = 'CONTENT';
         if (Inji::app()->msg && empty($this->template['noSysMesAutoShow'])) {
@@ -153,31 +105,45 @@ class View extends Module {
         include $_params['contentPath'] . '/' . $_params['content'] . '.php';
     }
 
-    function parentContent() {
-        $this->current_function = 'CONTENT';
-        Inji::app()->msg->show(true);
-        $inji_data = func_get_args();
-        $inji_data = $this->parse_args($inji_data);
-        $inji_path = Inji::app()->controller['dir'] . '/content';
-        if (!empty($inji_data['data']) && is_array($inji_data['data']))
-            extract($inji_data['data']);
-        if (!empty($this->contentData) && is_array($this->contentData))
-            extract($this->contentData);
+    private function parseRaw($source) {
+        if (!$source)
+            return array();
 
-        include $inji_path . "/{$this->tmp_data['content']}.php";
+        preg_match_all("|{(.*)}|", $source, $result);
+        return $result[1];
+    }
+
+    function parseSource($source) {
+        $tags = $this->parseRaw($source);
+        foreach ($tags as $tag) {
+            $rawTag = $tag;
+            $tag = explode(':', $tag);
+            switch ($tag[0]) {
+                case 'CONTENT':
+                    $source = $this->cutTag($source, $rawTag);
+                    $this->content();
+                    break;
+            }
+        }
+        echo $source;
+    }
+
+    function cutTag($source, $rawTag) {
+        $pos = strpos($source, $rawTag) - 1;
+        echo substr($source, 0, $pos);
+        return substr($source, ( $pos + strlen($rawTag) + 2));
     }
 
     function head() {
-        $this->current_function = 'HEAD';
-        $config = $this->modConf[$this->app['type']];
-        $current = $this->tmp_data['name'];
-
-        if (isset($config['favicon']) && file_exists(Inji::app()->app['path'] . "/templates/{$current}/images/{$config['favicon']}"))
-            echo "<link rel='shortcut icon' href='" . Inji::app()->app['templates_path'] . "/{$current}/images/{$config['favicon']}' />";
-        elseif (file_exists(Inji::app()->app['path'] . '/static/images/favicon.ico'))
-            echo '<link rel="shortcut icon" href="/static/images/favicon.ico" />';
 
         echo "<title>{$this->title}</title>\n";
+
+        if (!empty($this->template['favicon']) && file_exists($this->template['path'] . "/{$this->template['favicon']}"))
+            echo "        <link rel='shortcut icon' href='/templates/{$this->template['name']}/{$this->template['favicon']}' />";
+        elseif (file_exists(Inji::app()->curApp['path'] . '/static/images/favicon.ico'))
+            echo "        <link rel='shortcut icon' href='/static/images/favicon.ico' />";
+
+
         if (!empty(Inji::app()->Config->site['site']['keywords'])) {
             echo "\n        <meta name='keywords' content='" . Inji::app()->Config->site['site']['keywords'] . "' />";
         }
@@ -255,91 +221,9 @@ class View extends Module {
         }
     }
 
-    function widget($path) {
-        $this->current_function = 'WIDGET';
-        if (is_array($path))
-            $path = $path[1];
-        $params = func_get_args();
-        array_shift($params);
-        $lineParams = '';
-        if ($this->parsing && $params) {
-            $paramArray = false;
-            foreach ($params as $param) {
-                if (is_array($param) || is_object($param)) {
-                    $paramArray = true;
-                }
-            }
-            if (!$paramArray)
-                $lineParams = ':' . implode(':', $params);
-        }
-        $this->parsing = false;
-
-        echo "<!--start:{WIDGET:{$path}{$lineParams}}-->\n";
-        if (file_exists(Inji::app()->app['path'] . "/templates/{$this->template['name']}/widgets/{$path}.php"))
-            include( Inji::app()->app['path'] . "/templates/{$this->template['name']}/widgets/{$path}.php" );
-        elseif (file_exists(Inji::app()->app['path'] . "/widgets/{$path}.php"))
-            include( Inji::app()->app['path'] . "/widgets/{$path}.php" );
-        elseif (file_exists(Inji::app()->app['path'] . "/widgets/{$path}/{$path}.php"))
-            include( Inji::app()->app['path'] . "/widgets/{$path}/{$path}.php" );
-        echo "<!--end:{WIDGET:{$path}{$lineParams}}-->\n";
-    }
-
-    function moduleWidget($module, $widget) {
-        $this->current_function = 'MODULEWIDGET';
-        $params = func_get_args();
-        if (is_array($module)) {
-            $module = $module[1];
-            $widget = $module[2];
-            array_shift($params);
-        } else {
-            array_slice($params, 2);
-        }
-
-
-        $lineParams = '';
-        if ($this->parsing && $params) {
-            $paramArray = false;
-            foreach ($params as $param) {
-                if (is_array($param) || is_object($param)) {
-                    $paramArray = true;
-                }
-            }
-            if (!$paramArray)
-                $lineParams = ':' . implode(':', $params);
-        }
-        $this->parsing = false;
-        echo "<!--start:{MODULEWIDGET:{$module}:{$widget}{$lineParams}}-->\n";
-        if (file_exists(INJI_SYSTEM_DIR . '/modules/' . $module . '/widgets/' . $widget . '.php'))
-            include( INJI_SYSTEM_DIR . '/modules/' . $module . '/widgets/' . $widget . '.php' );
-        echo "<!--end:{MODULEWIDGET:{$module}:{$widget}{$lineParams}}-->\n";
-    }
-
-    function template() {
-        $this->current_function = 'TEMPLATE';
-
-        $file_path = Inji::app()->app['path'] . "/module/{$controller}/content/template/{$page}.inji";
-
-        if (!isset($this->load_files_temlate[$file_path])) {
-            if (file_exists($file_path) && $file = fopen($file_path, "r")) {
-                $this->load_files_temlate[$file_path] = fread($file, filesize($file_path));
-                fclose($file);
-            } else
-                $this->load_files_temlate[$file_path] = false;
-        }
-
-        $source = $this->load_files_temlate[$file_path];
-
-        if ($source !== false && !empty($source))
-            $this->parse_proc($source);
-    }
-
     function timegen() {
         $this->current_function = 'TIMEGEN';
         echo round(( microtime(true) - INJI_TIME_START), 4);
-    }
-
-    function assetFile($type, $file, $template = true) {
-        $this->dynAssets[$type][] = compact('file', 'template');
     }
 
     function customAsset($type, $href, $lib = false) {
@@ -350,9 +234,9 @@ class View extends Module {
         }
     }
 
-    function set_title($title, $add = true) {
-        if ($add && !empty(Inji::app()->Config->site['site']['name'])) {
-            $this->title = $title . ' - ' . Inji::app()->Config->site['site']['name'];
+    function setTitle($title, $add = true) {
+        if ($add && !empty(Inji::app()->Config->app['site']['name'])) {
+            $this->title = $title . ' - ' . Inji::app()->Config->app['site']['name'];
         } else {
             $this->title = $title;
         }

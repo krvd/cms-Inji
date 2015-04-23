@@ -44,7 +44,7 @@ class Router {
         $app = [
             'path' => '',
             'name' => '',
-            'type' => 'site',
+            'type' => 'app',
             'system' => false,
             'params' => array(),
             'parent' => ''
@@ -75,7 +75,7 @@ class Router {
             $app['params'] = array_slice($params, 1);
             $app['system'] = true;
             $app['path'] = INJI_SYSTEM_DIR . '/program/' . $app['name'];
-            $app['type'] = 'app_' . mb_strtolower($app['name'], 'utf-8');
+            $app['type'] = 'app' . ucfirst(strtolower($app['name']));
         }
 
         return $app;
