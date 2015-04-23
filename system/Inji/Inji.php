@@ -93,6 +93,12 @@ class Inji {
             include INJI_SYSTEM_DIR . '/Inji/' . $className . '.php';
             return true;
         }
+
+        $this->event('ClassNotFound', $className);
+        if (class_exists($class_name)) {
+            return true;
+        }
+
         return false;
     }
 

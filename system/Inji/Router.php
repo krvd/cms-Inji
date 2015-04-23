@@ -11,16 +11,20 @@
 class Router {
 
     function init() {
-        Inji::app()->listen('UninitializeObjectCalled', 'InjiRouter', ['module' => 'Router', 'method' => 'resolveObjectAlias']);
+        Inji::app()->listen('ClassNotFound', 'InjiRouter', ['module' => 'Router', 'method' => 'findClassEventCatcher']);
+    }
+    
+    function findClassEventCatcher($event){
+        $this->findClass($event['eventObject']);
     }
 
-    function resolveObjectAlias($event) {
+    function findClass($className) {
 
-        if (file_exists(INJI_SYSTEM_DIR . '/modules/' . $event['eventObject'] . '/' . $event['eventObject'] . '.php')) {
-            include INJI_SYSTEM_DIR . '/modules/' . $event['eventObject'] . '/' . $event['eventObject'] . '.php';
-            return new $event['eventObject']();
+        if (file_exists(INJI_SYSTEM_DIR . '/modules/' . $className . '/' . $className . '.php')) {
+            include INJI_SYSTEM_DIR . '/modules/' . $className . '/' . $className . '.php';
+            return true;
         }
-        return $event['eventObject'];
+        return false;
     }
 
     function uriParse($uri) {
