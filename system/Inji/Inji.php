@@ -93,12 +93,6 @@ class Inji {
             include INJI_SYSTEM_DIR . '/Inji/' . $className . '.php';
             return true;
         }
-
-        $this->event('ClassNotFound', $className);
-        if (class_exists($class_name)) {
-            return true;
-        }
-
         return false;
     }
 
@@ -111,8 +105,8 @@ class Inji {
             $this->_objects[$className] = new $className();
         } else {
             $object = $this->event('UninitializeObjectCalled', $className);
-            if (is_object($object)) {
-                $this->_objects[$className] = $object;
+            if (class_exists($className)) {
+                $this->_objects[$className] = new $className();
             }
         }
         if (isset($this->_objects[$className])) {

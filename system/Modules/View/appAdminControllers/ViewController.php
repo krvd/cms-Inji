@@ -1,11 +1,11 @@
 <?php
 
-class templatesManagerController extends Controller {
+class ViewController extends Controller {
 
     function indexAction() {
-        $templates = $this->view->modConf['site'];
-        $this->view->set_title('Шаблоны сайта');
-        $this->view->page(compact('templates'));
+        $templates = Inji::app()->view->config;
+        Inji::app()->view->setTitle('Шаблоны сайта');
+        Inji::app()->view->page(['data' => compact('templates')]);
     }
 
     function createAction() {

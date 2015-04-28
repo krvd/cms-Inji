@@ -11,17 +11,33 @@
 class Router {
 
     function init() {
-        Inji::app()->listen('ClassNotFound', 'InjiRouter', ['module' => 'Router', 'method' => 'findClassEventCatcher']);
+        Inji::app()->listen('UninitializeObjectCalled', 'InjiRouter', ['module' => 'Router', 'method' => 'findModuleClassCatcher']);
+        spl_autoload_register([$this, 'findClass']);
     }
-    
-    function findClassEventCatcher($event){
-        $this->findClass($event['eventObject']);
+
+    function findModuleClassCatcher($event) {
+        $this->findModuleClass($event['eventObject']);
     }
 
     function findClass($className) {
+        if (strpos($className, '\\')) {
+            $classPath = explode('\\', $className);
+            $path = Inji::app()->$classPath[0]->path . '/objects/' . $classPath[1] . '.php';
+            if (file_exists($path)) {
+                include $path;
+                return true;
+            }
+        }
+        return false;
+    }
 
-        if (file_exists(INJI_SYSTEM_DIR . '/modules/' . $className . '/' . $className . '.php')) {
-            include INJI_SYSTEM_DIR . '/modules/' . $className . '/' . $className . '.php';
+    function findModuleClass($moduleName) {
+        if (file_exists(Inji::app()->curApp['path'] . '/modules/' . $moduleName . '/' . $moduleName . '.php')) {
+            include Inji::app()->curApp['path'] . '/modules/' . $moduleName . '/' . $moduleName . '.php';
+            return true;
+        }
+        if (file_exists(INJI_SYSTEM_DIR . '/modules/' . $moduleName . '/' . $moduleName . '.php')) {
+            include INJI_SYSTEM_DIR . '/modules/' . $moduleName . '/' . $moduleName . '.php';
             return true;
         }
         return false;
@@ -51,6 +67,8 @@ class Router {
             'type' => 'app',
             'system' => false,
             'params' => array(),
+            'static_path' => "/static",
+            'templates_path' => "/templates",
             'parent' => ''
         ];
         $finalApp = '';
@@ -78,6 +96,8 @@ class Router {
             $app['name'] = $params[0];
             $app['params'] = array_slice($params, 1);
             $app['system'] = true;
+            $app['static_path'] = "/{$app['name']}/static";
+            $app['templates_path'] = "/{$app['name']}/static/templates";
             $app['path'] = INJI_SYSTEM_DIR . '/program/' . $app['name'];
             $app['type'] = 'app' . ucfirst(strtolower($app['name']));
         }
@@ -87,22 +107,24 @@ class Router {
 
     function resolveModule($app) {
         $moduleName = false;
-        if (!empty($app['params'][0]) && file_exists($app['path'] . '/modules/' . $app['params'][0])) {
-
-            $moduleName = $app['params'][0];
-            include $app['path'] . '/modules/' . $moduleName . '/' . $moduleName . '.php';
-            $module = new $moduleName();
+        if (!empty($app['params'][0]) && Inji::app()->{$app['params'][0]}) {
+            $module = Inji::app()->{$app['params'][0]};
             $module->params = array_slice($app['params'], 1);
-            $module->path = $app['path'] . '/modules/' . $moduleName;
             return $module;
         }
-        if (!empty(Inji::app()->config->app['defaultModule']) && !empty($app['path'] . '/modules/' . Inji::app()->config->app['defaultModule'])) {
-            include $app['path'] . '/modules/' . Inji::app()->config->app['defaultModule'] . '/' . Inji::app()->config->app['defaultModule'] . '.php';
-            $moduleName = Inji::app()->config->app['defaultModule'];
-            $module = new $moduleName();
+        if (!empty(Inji::app()->config->app['defaultModule']) && Inji::app()->{Inji::app()->config->app['defaultModule']}) {
+            $module = Inji::app()->{Inji::app()->config->app['defaultModule']};
             $module->params = $app['params'];
-            $module->path = $app['path'] . '/modules/' . $moduleName;
             return $module;
+        }
+    }
+
+    function getLoadedClassPath($className) {
+        $paths = get_included_files();
+        foreach ($paths as $path) {
+            if (preg_match('![/\\\]' . $className . '\.php$!', $path)) {
+                return preg_replace('![/\\\]' . $className . '\.php$!', '', $path);
+            }
         }
     }
 

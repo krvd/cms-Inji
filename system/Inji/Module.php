@@ -18,6 +18,7 @@ class Module {
     function __construct() {
         $this->moduleName = get_called_class();
         $this->config = Inji::app()->config->module($this->moduleName);
+        $this->path = Inji::app()->router->getLoadedClassPath($this->moduleName);
     }
 
     function findController() {
@@ -40,6 +41,11 @@ class Module {
             $controller->path = $controllersPath;
             return $controller;
         }
+    }
+
+    function widget($widgetName, $_params = []) {
+        extract($_params);
+        include $this->path . '/widgets/' . $widgetName . '.php';
     }
 
 }

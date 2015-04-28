@@ -1,17 +1,14 @@
 <?php
 
 /**
- * Dashboard controller
+ * Item name
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
-class DashboardController extends Controller {
 
-    function indexAction() {
-        Inji::app()->view->page();
-    }
-
+class Object {
+    //put your code here
 }

@@ -19,7 +19,7 @@ class View extends Module {
             $this->template['name'] = $this->config['current'];
         }
 
-        $this->templatesPath = Inji::app()->curApp['path'] . "/templates/";
+        $this->templatesPath = Inji::app()->curApp['path'] . "/templates";
 
         $template = $this->getConfig($this->template['name']);
         if ($template) {
@@ -32,12 +32,11 @@ class View extends Module {
                 'path' => $this->templatesPath . '/default'
             ];
         }
+        
         $this->tmp_data = array(
             'path' => $this->templatesPath . "/{$this->template['name']}/{$this->template['file']}",
             'name' => $this->template['name'],
             'module' => Inji::app()->curModule,
-            'contentPath' => Inji::app()->curController->path . '/content',
-            'content' => Inji::app()->curController->method
         );
     }
 
@@ -46,8 +45,9 @@ class View extends Module {
     }
 
     function page($params = []) {
+        $this->tmp_data['contentPath'] = Inji::app()->curController->path . '/content';
+        $this->tmp_data['content'] = Inji::app()->curController->method;
         $data = $this->paramsParse($params);
-
         if (file_exists($data['path'])) {
             $source = file_get_contents($data['path']);
             $this->parseSource($source);
@@ -123,6 +123,10 @@ class View extends Module {
                     $source = $this->cutTag($source, $rawTag);
                     $this->content();
                     break;
+                case 'HEAD':
+                    $source = $this->cutTag($source, $rawTag);
+                    $this->head();
+                    break;
             }
         }
         echo $source;
@@ -144,14 +148,14 @@ class View extends Module {
             echo "        <link rel='shortcut icon' href='/static/images/favicon.ico' />";
 
 
-        if (!empty(Inji::app()->Config->site['site']['keywords'])) {
+        if (!empty(Inji::app()->Config->app['site']['keywords'])) {
             echo "\n        <meta name='keywords' content='" . Inji::app()->Config->site['site']['keywords'] . "' />";
         }
-        if (!empty(Inji::app()->Config->site['site']['description'])) {
+        if (!empty(Inji::app()->Config->app['site']['description'])) {
             echo "\n        <meta name='description' content='" . Inji::app()->Config->site['site']['description'] . "' />";
         }
-        if (!empty(Inji::app()->Config->site['site']['metatags'])) {
-            foreach (Inji::app()->Config->site['site']['metatags'] as $meta)
+        if (!empty(Inji::app()->Config->app['site']['metatags'])) {
+            foreach (Inji::app()->Config->app['site']['metatags'] as $meta)
                 echo "\n        <meta name='{$meta['name']}' content='{$meta['content']}' />";
         }
 
@@ -171,7 +175,7 @@ class View extends Module {
                 if (strpos($css, '://') !== false)
                     $href = $css;
                 else
-                    $href = Inji::app()->app['templates_path'] . "/{$current}/css/{$css}";
+                    $href = Inji::app()->curApp['templates_path'] . "/{$this->template['name']}/css/{$css}";
                 echo "\n        <link href='{$href}' rel='stylesheet' type='text/css' />";
             }
         }
