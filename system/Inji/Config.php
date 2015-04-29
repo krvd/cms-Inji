@@ -68,7 +68,7 @@ class Config {
             return $this->_configs['module'][$app['name']][$module_name];
         }
 
-        $path = $app['path'] . "/config/module_config/{$module_name}.php";
+        $path = $app['path'] . "/config/modules/{$module_name}.php";
 
         if (!file_exists($path)) {
             $path = INJI_SYSTEM_DIR . "/modules/{$module_name}/default_config.php";
@@ -99,7 +99,7 @@ class Config {
                 $this->_configs['site'][$site_name] = $data;
                 break;
             case 'module' :
-                $path = INJI_PROGRAM_DIR . "/{$site_name}/config/module_config/{$module}.php";
+                $path = INJI_PROGRAM_DIR . "/{$site_name}/config/modules/{$module}.php";
                 $this->_configs['module'][$site_name][$module] = $data;
                 break;
             default:
