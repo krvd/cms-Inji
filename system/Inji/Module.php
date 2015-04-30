@@ -43,9 +43,4 @@ class Module {
         }
     }
 
-    function widget($widgetName, $_params = []) {
-        extract($_params);
-        include $this->path . '/widgets/' . $widgetName . '.php';
-    }
-
 }

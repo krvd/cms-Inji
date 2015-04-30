@@ -16,13 +16,18 @@ class Router {
     }
 
     function findModuleClassCatcher($event) {
-        $this->findModuleClass($event['eventObject']);
+        return $this->findModuleClass($event['eventObject']);
     }
 
     function findClass($className) {
         if (strpos($className, '\\')) {
             $classPath = explode('\\', $className);
             $path = Inji::app()->$classPath[0]->path . '/objects/' . $classPath[1] . '.php';
+            if (file_exists($path)) {
+                include $path;
+                return true;
+            }
+            $path = Inji::app()->$classPath[0]->path . '/models/' . $classPath[1] . '.php';
             if (file_exists($path)) {
                 include $path;
                 return true;
@@ -39,6 +44,21 @@ class Router {
         if (file_exists(INJI_SYSTEM_DIR . '/modules/' . $moduleName . '/' . $moduleName . '.php')) {
             include INJI_SYSTEM_DIR . '/modules/' . $moduleName . '/' . $moduleName . '.php';
             return true;
+        }
+        
+        if (!empty(Inji::app()->config->app['moduleRouter'])) {
+            foreach (Inji::app()->config->app['moduleRouter'] as $route => $module) {
+                if (preg_match("!{$route}!i", $moduleName)) {
+                    return $module;
+                }
+            }
+        }
+        if (!empty(Inji::app()->config->system['moduleRouter'])) {
+            foreach (Inji::app()->config->system['moduleRouter'] as $route => $module) {
+                if (preg_match("!{$route}!i", $moduleName)) {
+                    return $module;
+                }
+            }
         }
         return false;
     }
@@ -59,16 +79,15 @@ class Router {
 
     function resolveApp($domain, $uri) {
         $params = $this->uriParse($uri);
-
         $routes = Inji::app()->Config->custom(INJI_PROGRAM_DIR . '/domainsRoute.php');
         $app = [
             'path' => '',
             'name' => '',
             'type' => 'app',
             'system' => false,
-            'params' => array(),
+            'params' => $params,
             'static_path' => "/static",
-            'templates_path' => "/templates",
+            'templates_path' => "/static/templates",
             'parent' => ''
         ];
         $finalApp = '';
@@ -78,7 +97,7 @@ class Router {
         foreach ($routes as $route => $appName) {
             if ($route == 'default_app')
                 continue;
-            if (preg_match("!{$route}!", $domain)) {
+            if (preg_match("!{$route}!i", $domain)) {
                 $finalApp = $appName;
                 break;
             }
@@ -90,11 +109,11 @@ class Router {
 
         $app['path'] = INJI_PROGRAM_DIR . '/' . $app['name'];
 
-
         if (!empty($params[0]) && file_exists(INJI_SYSTEM_DIR . '/program/' . $params[0] . '/')) {
             $app['parent'] = $app;
             $app['name'] = $params[0];
             $app['params'] = array_slice($params, 1);
+
             $app['system'] = true;
             $app['static_path'] = "/{$app['name']}/static";
             $app['templates_path'] = "/{$app['name']}/static/templates";

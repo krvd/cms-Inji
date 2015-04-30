@@ -71,7 +71,7 @@ class Config {
         $path = $app['path'] . "/config/modules/{$module_name}.php";
 
         if (!file_exists($path)) {
-            $path = INJI_SYSTEM_DIR . "/modules/{$module_name}/default_config.php";
+            $path = INJI_SYSTEM_DIR . "/modules/{$module_name}/defaultConfig.php";
         }
 
 
@@ -108,7 +108,7 @@ class Config {
                 break;
         }
         $text = $this->save_parse($data);
-        Inji::app()->_FS->create_dir(substr($path, 0, strripos($path, '/')));
+        Inji::app()->Files->create_dir(substr($path, 0, strripos($path, '/')));
         file_put_contents($path, $text);
     }
 

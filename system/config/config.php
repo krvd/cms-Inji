@@ -1,6 +1,8 @@
 <?php
 
 return [
-    'autoloadModules' => [
+    'autoloadModules' => [],
+    'moduleRouter' => [
+        'static' => 'StaticLoader'
     ]
 ];

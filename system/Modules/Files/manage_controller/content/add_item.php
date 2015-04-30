@@ -1,0 +1,40 @@
+<form action = "" method = "POST">
+    <!--BEGIN INPUT TEXT FIELDS-->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="box dark">
+                <header>
+                    <div class="icons">
+                        <i class="icon-cogs"></i>
+                    </div>
+                    <h5>Добавление элемента меню</h5>
+                    <!-- .toolbar -->
+                    <div class="toolbar">
+                        <ul class="nav">
+                            <li>
+                                <a class="minimize-box" data-toggle="collapse" href="#div-1">
+                                    <i class="icon-chevron-up"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div><!-- /.toolbar -->
+                </header>
+                <div id="div-1" class="accordion-body collapse in body form-horizontal">
+                    <div class="form-group">
+                        <label for="text1" class="control-label col-lg-2">Название</label>
+                        <div class="col-lg-10">
+                            <input type="text" id="text1" placeholder="" class="form-control" name = 'mi_name' >
+                        </div>
+                    </div><!-- /.form-group -->
+                    <div class="form-group">
+                        <label for="text1" class="control-label col-lg-2">Ссылка</label>
+                        <div class="col-lg-10">
+                            <input type="text" id="text1" placeholder="" class="form-control" name = 'mi_href' >
+                        </div>
+                    </div><!-- /.form-group -->
+                    <input type = 'submit' class = 'btn btn-primary' value = 'Добавить' />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

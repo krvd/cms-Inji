@@ -10,12 +10,6 @@
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
-
-/**
- * Description of Controller
- *
- * @author inji
- */
 class Controller {
 
     public $params = [];
@@ -30,7 +24,13 @@ class Controller {
             call_user_func_array([$this, $this->method . 'Action'], $this->params);
         } elseif (method_exists($this, $this->method . 'Action')) {
             call_user_func_array([$this, $this->method . 'Action'], $this->params);
+        } else {
+            INJI_SYSTEM_ERROR('method not found', true);
         }
+    }
+
+    function __get($name) {
+        return Inji::app()->__get($name);
     }
 
 }

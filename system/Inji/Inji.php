@@ -14,6 +14,8 @@ class Inji {
     private $_objects = [];
     private $_listeners = [];
     public $curApp = [];
+    public $curModule = [];
+    public $curController = [];
     public $params = [];
 
     /**
@@ -104,8 +106,10 @@ class Inji {
         if ($this->loadClass($className)) {
             $this->_objects[$className] = new $className();
         } else {
-            $object = $this->event('UninitializeObjectCalled', $className);
-            if (class_exists($className)) {
+            $resolveModule = $this->event('UninitializeObjectCalled', $className);
+            if (!is_bool($resolveModule) && $resolveModule != $className) {
+                return $this->_objects[$className] = $this->__get($resolveModule);
+            } elseif (class_exists($className)) {
                 $this->_objects[$className] = new $className();
             }
         }

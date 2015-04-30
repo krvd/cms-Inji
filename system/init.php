@@ -16,8 +16,15 @@ spl_autoload_register([$inji, 'loadClass']);
 define('INJI_DOMAIN_NAME', $_SERVER['SERVER_NAME']);
 $inji->curApp = Inji::app()->router->resolveApp(INJI_DOMAIN_NAME, $_SERVER['REQUEST_URI']);
 $inji->curModule = Inji::app()->router->resolveModule($inji->curApp);
-if(!$inji->curModule){
+if (!$inji->curModule) {
     INJI_SYSTEM_ERROR('Module not found', true);
 }
 $inji->curController = $inji->curModule->findController();
+
+if (!empty($inji->config->app['autoloadModules'])) {
+    foreach ($inji->config->app['autoloadModules'] as $module) {
+        $inji->$module;
+    }
+}
+
 $inji->curController->run();
