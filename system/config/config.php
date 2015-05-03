@@ -3,6 +3,7 @@
 return [
     'autoloadModules' => [],
     'moduleRouter' => [
-        'static' => 'StaticLoader'
+        'static' => 'StaticLoader',
+        'msg' => 'SystemMessages',
     ]
 ];

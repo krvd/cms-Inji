@@ -30,6 +30,7 @@ class Module {
             $controller->params = array_slice($this->params, 1);
             $controller->module = $this;
             $controller->path = $controllersPath;
+            $controller->name = $this->params[0];
             return $controller;
         }
         if (file_exists($controllersPath . '/' . $this->moduleName . 'Controller.php')) {
@@ -39,6 +40,7 @@ class Module {
             $controller->params = $this->params;
             $controller->module = $this;
             $controller->path = $controllersPath;
+            $controller->name = $this->moduleName;
             return $controller;
         }
     }

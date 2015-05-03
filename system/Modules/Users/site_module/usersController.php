@@ -12,7 +12,7 @@ class usersController extends Controller
     {
         $this->view->set_title('Структура');
         if (!empty($_POST['user_invite'])) {
-            $user = User::get($_POST['user_invite'], 'user_mail');
+            $user =Users\User::get($_POST['user_invite'], 'user_mail');
             if ($user) {
                 $this->url->redirect('/users/struct', 'Пользователь с e-mail:' . $_POST['user_invite'] . ' уже зарегистрирован', 'danger');
             }
@@ -48,7 +48,7 @@ class usersController extends Controller
             $allUserIds = array_merge($allUserIds, array_keys($levels[$i]));
         }
         if ($action == 'getInfo' && $id) {
-            $user = User::get((int) $id);
+            $user =Users\User::get((int) $id);
             if (!$user || !in_array($user->user_id, $allUserIds)) {
                 exit();
             }
@@ -102,7 +102,7 @@ class usersController extends Controller
         if (!$invite) {
             $this->url->redirect('/', 'Данный код недействителен', 'danger');
         }
-        $user = User::get($invite->ui_mail, 'user_mail');
+        $user =Users\User::get($invite->ui_mail, 'user_mail');
         if ($user) {
             $this->url->redirect('/', 'Вы уже зарегистрированы', 'danger');
         }

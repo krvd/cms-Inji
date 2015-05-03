@@ -1,8 +1,13 @@
 <?php
 
 return [
-    'name'=>'Админ панель',
+    'name' => 'Админ панель',
     'modules' => [
     ],
-    'defaultModule' => 'Dashboard'
+    'defaultModule' => 'Dashboard',
+    'autoloadModules' => [
+        'Libs',
+        'Users',
+        'Ui',
+    ]
 ];

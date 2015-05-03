@@ -22,12 +22,12 @@ class Router {
     function findClass($className) {
         if (strpos($className, '\\')) {
             $classPath = explode('\\', $className);
-            $path = Inji::app()->$classPath[0]->path . '/objects/' . $classPath[1] . '.php';
+            $path = Inji::app()->getObject($classPath[0])->path . '/objects/' . $classPath[1] . '.php';
             if (file_exists($path)) {
                 include $path;
                 return true;
             }
-            $path = Inji::app()->$classPath[0]->path . '/models/' . $classPath[1] . '.php';
+            $path = Inji::app()->getObject($classPath[0])->path . '/models/' . $classPath[1] . '.php';
             if (file_exists($path)) {
                 include $path;
                 return true;

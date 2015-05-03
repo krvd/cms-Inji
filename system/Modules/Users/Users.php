@@ -1,10 +1,8 @@
 <?php
 
-class Users extends Module
-{
+class Users extends Module {
 
-    function init()
-    {
+    function init() {
         $this->cur = new Users\User(array('user_group_id' => 1, 'user_role_id' => 1));
         if (isset($_GET['partner'])) {
             setcookie("partnerId", $_GET['partner'], time() + 360000, "/");
@@ -20,7 +18,7 @@ class Users extends Module
             }
             $this->url->redirect('http://' . substr(INJI_DOMAIN_NAME, strpos(INJI_DOMAIN_NAME, '.') + 1));
         }
-        if (Inji::app()->db) {
+        if (Inji::app()->db->connect) {
             if (isset($_GET['logout']) && ($_COOKIE['user_login'] || $_COOKIE['user_mail'] ) && $_COOKIE['user_pass']) {
                 setcookie("user_login", '', 0, "/");
                 setcookie("user_mail", '', 0, "/");
@@ -59,8 +57,7 @@ class Users extends Module
         }
     }
 
-    function passre($user_mail)
-    {
+    function passre($user_mail) {
         $user = $this->get($user_mail, 'mail');
         if (!$user) {
             $this->msg->add('Пользователь ' . $user_mail . ' не найден, проверьте првильность ввода e-mail или зарегистрируйтесь', 'danger');
@@ -79,8 +76,7 @@ class Users extends Module
         $this->url->redirect('/', 'На указанный почтовый ящик была выслана инструкция по восстановлению пароля', 'success');
     }
 
-    function passrecont($hash)
-    {
+    function passrecont($hash) {
         $this->db->where('up_hash', $hash);
         $this->db->where('up_status', 1);
         $up = $this->db->select('user_passre')->fetch_assoc();
@@ -97,8 +93,7 @@ class Users extends Module
         }
     }
 
-    function autorization($login, $pass, $ltype = 'login')
-    {
+    function autorization($login, $pass, $ltype = 'login') {
         $user = $this->get($login, $ltype);
         if ($user && $user->user_pass === $pass) {
             $this->cur = $user;
@@ -124,12 +119,11 @@ class Users extends Module
             return false;
     }
 
-    function getDiffLevel($fromId, $toId)
-    {
+    function getDiffLevel($fromId, $toId) {
         $i = 1;
         if ($fromId == $toId)
             return 0;
-        while ($from = User::get($fromId)) {
+        while ($from =Users\User::get($fromId)) {
             if ($from->user_parent_id == $toId)
                 return $i;
             $fromId = $from->user_parent_id;
@@ -139,17 +133,16 @@ class Users extends Module
         }
     }
 
-    function get($idn = false, $ltype = 'id')
-    {
+    function get($idn = false, $ltype = 'id') {
         if (!$idn)
             return false;
 
         if (is_numeric($idn) && !$ltype != 'login')
-            $user = User::get($idn, 'user_id');
+            $user =Users\User::get($idn, 'user_id');
         elseif ($ltype == 'login')
-            $user = User::get($idn, 'user_login');
+            $user =Users\User::get($idn, 'user_login');
         else
-            $user = User::get($idn, 'user_mail');
+            $user =Users\User::get($idn, 'user_mail');
 
         if (!$user)
             return array();
@@ -157,8 +150,7 @@ class Users extends Module
         return $user;
     }
 
-    function get_list($page = 1, $limit = 20, $activ = true, $count = false, $ids = '')
-    {
+    function get_list($page = 1, $limit = 20, $activ = true, $count = false, $ids = '') {
         $page = intval($page);
         $limit = intval($limit);
 
@@ -204,8 +196,7 @@ class Users extends Module
         return $users;
     }
 
-    function registration($data)
-    {
+    function registration($data) {
         extract($data);
         if (empty($user_name)) {
             $this->msg->add('Вы не ввели ФИО', 'danger');
@@ -222,13 +213,13 @@ class Users extends Module
         }
 
         if (!empty($this->users->modConf['sponsors']) && !empty($user_parent_id)) {
-            $user = User::get((int) $user_parent_id);
+            $user =Users\User::get((int) $user_parent_id);
             if (!$user) {
                 $this->msg->add('Спонсор с данныйм id не найден', 'danger');
                 return false;
             }
         } elseif (!empty($_COOKIE['partnerId'])) {
-            $user = User::get((int) $_COOKIE['partnerId']);
+            $user =Users\User::get((int) $_COOKIE['partnerId']);
             if (!$user) {
                 $user_parent_id = 1;
             } else {
@@ -318,25 +309,21 @@ class Users extends Module
         return $user_id;
     }
 
-    function update($user_id = 0, $data = array())
-    {
+    function update($user_id = 0, $data = array()) {
         Inji::app()->db->where('user_id', $user_id);
         Inji::app()->db->update('users', $data);
     }
 
-    function new_user($data)
-    {
+    function new_user($data) {
         return $this->db->insert('users', $data);
     }
 
-    function delete_user($user_id)
-    {
+    function delete_user($user_id) {
         $this->db->where('user_id', $user_id);
         return $this->db->delete('users');
     }
 
-    function genpass()
-    {
+    function genpass() {
         // Символы, которые будут использоваться в пароле.
 
         $chars = "qazxswedcvfrtgbnhyujmkiolp1234567890QAZXSWEDCVFRTGBNHYUJMKIOLP";
@@ -361,8 +348,7 @@ class Users extends Module
         return $password;
     }
 
-    function hashpass($pass)
-    {
+    function hashpass($pass) {
         return hash('sha256', 'asd908436#*U&89' . hash('sha256', $pass . 'asdo409dv,bmdf') . ')#(OKOMVIROI#)#_(');
     }
 

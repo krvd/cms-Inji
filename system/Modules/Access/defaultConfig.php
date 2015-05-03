@@ -1,22 +1,24 @@
 <?php
 
 return [
-    'site' => [
+    'app' => [
         'dostup_tree' => [
         ],
         'denied_redirect' => '/users/login',
         'login_redirect' => '/'
     ],
-    'app_admin' => [
+    'appAdmin' => [
         'dostup_tree' => [
-            'usersManager' => [
-                '_access' => [
-                    '0' => '3'
-                ],
-                'login' => [
+            'Users' => [
+                'Users' => [
                     '_access' => [
+                        '0' => '3'
+                    ],
+                    'login' => [
+                        '_access' => [
+                        ]
                     ]
-                ]
+                ],
             ],
             'Install' => [
                 '_access' => [

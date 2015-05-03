@@ -98,17 +98,21 @@ class Inji {
         return false;
     }
 
-    function __get($className) {
+    function getObject($className) {
         $className = ucfirst($className);
         if (isset($this->_objects[$className])) {
             return $this->_objects[$className];
         }
+        return $this->loadObject($className);
+    }
+
+    function loadObject($className) {
         if ($this->loadClass($className)) {
             $this->_objects[$className] = new $className();
         } else {
             $resolveModule = $this->event('UninitializeObjectCalled', $className);
             if (!is_bool($resolveModule) && $resolveModule != $className) {
-                return $this->_objects[$className] = $this->__get($resolveModule);
+                return $this->_objects[$resolveModule] = $this->_objects[$className] = $this->getObject($resolveModule);
             } elseif (class_exists($className)) {
                 $this->_objects[$className] = new $className();
             }
@@ -121,6 +125,10 @@ class Inji {
             return $this->_objects[$className];
         }
         return null;
+    }
+
+    function __get($className) {
+        return $this->getObject($className);
     }
 
 }

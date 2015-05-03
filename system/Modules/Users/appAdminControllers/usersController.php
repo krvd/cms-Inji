@@ -1,20 +1,17 @@
 <?php
 
-class usersManagerController extends Controller
-{
+class UsersController extends Controller {
 
-    function indexAction()
-    {
+    function indexAction() {
         $this->view->set_title('Пользователи');
-        $dataTable = new DataTable('User', $_GET, ['actions' => [ 'edit','del',['text' => 'Войти как','href' => Inji::app()->url->module() . '/loginAs/']]]);
+        $dataTable = new DataTable('User', $_GET, ['actions' => [ 'edit', 'del', ['text' => 'Войти как', 'href' => Inji::app()->url->module() . '/loginAs/']]]);
         $this->view->page(compact('dataTable'));
     }
 
-    function createAction()
-    {
+    function createAction() {
         $this->view->set_title('Создание пользователя');
         $roles = $this->roles->get_all();
-        $user = new User();
+        $user = newUsers\User();
         if (!empty($_POST)) {
             $error = false;
 
@@ -55,11 +52,10 @@ class usersManagerController extends Controller
         $this->view->page(compact('roles', 'user'));
     }
 
-    function editAction($user_id)
-    {
+    function editAction($user_id) {
         $this->view->set_title('Редактирование пользователя');
         $roles = $this->roles->get_all();
-        $user = User::get($user_id);
+        $user =Users\User::get($user_id);
 
         if (!empty($_POST)) {
             if (!empty($_POST['user_pass'][0]) && $_POST['user_pass'][0] == $_POST['user_pass'][1])
@@ -76,12 +72,11 @@ class usersManagerController extends Controller
             $this->msg->add('Пользователь изменен.', 'success');
             $this->url->redirect('/admin/Users/');
         }
-        $user = User::get($user_id);
+        $user =Users\User::get($user_id);
         $this->view->page(compact('user', 'roles'));
     }
 
-    function delAction($user_id)
-    {
+    function delAction($user_id) {
         if ($this->users->delete_user($user_id))
             $this->msg->add('Пользователь удален.', 'success');
         else
@@ -90,8 +85,7 @@ class usersManagerController extends Controller
         $this->url->redirect($this->url->up_to(2));
     }
 
-    function logout()
-    {
+    function logout() {
         setcookie("user_login", '', 0, "/");
         setcookie("user_mail", '', 0, "/");
         setcookie("user_pass", '', 0, "/");
@@ -99,8 +93,7 @@ class usersManagerController extends Controller
         $this->url->redirect($accesses['denied_redirect'], 'Вы вышли из профиля');
     }
 
-    function loginAction()
-    {
+    function loginAction() {
         if (!Inji::app()->Users->cur->user_id) {
             $this->view->page('login_form', 'login');
         } else {
@@ -108,11 +101,10 @@ class usersManagerController extends Controller
         }
     }
 
-    function loginAsAction($userId)
-    {
-        $user = User::get($userId);
+    function loginAsAction($userId) {
+        $user =Users\User::get($userId);
         $this->users->autorization($user->user_mail, $user->user_pass, 'mail');
-        $this->url->redirect('/','Теперь вы на сайте под пользователем '.$user->user_mail);
+        $this->url->redirect('/', 'Теперь вы на сайте под пользователем ' . $user->user_mail);
     }
 
 }
