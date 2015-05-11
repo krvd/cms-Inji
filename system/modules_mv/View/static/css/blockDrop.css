@@ -1,0 +1,47 @@
+/**
+ * Item name
+ *
+ * Info
+ *
+ * @author Alexey Krupskiy <admin@inji.ru>
+ * @link http://inji.ru/
+ * @copyright 2015 Alexey Krupskiy
+ * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
+ */
+.blockPreset .block {
+    padding:20px;
+    border:10px solid #ccc;
+    margin:5px;
+    background: #fff;
+}
+.blockMap  {
+    min-height:100px;
+}
+.blockMap .block {
+    padding:20px;
+    border:10px solid #ccc;
+    margin:5px;
+    background: #fff;
+}
+.placeholder {
+    padding:20px;
+    border:10px solid #ccc;
+    margin:5px;
+    height:100px;
+    width:100%;
+}
+.colsSelect {
+    margin:10px;
+}
+.colsSelect > div {
+    border:1px dotted #ccc;
+    padding:15px;
+}
+.ui-state-hover {
+    background: #ddd;
+    min-height: 150px;
+}
+.ui-state-highlight {
+    background: #ddd;
+    height:40px;
+}
