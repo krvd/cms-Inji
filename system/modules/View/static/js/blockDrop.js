@@ -43,7 +43,6 @@ BlockDrop.prototype.bindUi = function () {
         stack: ".blockPreset .block,.blockMap .block",
         opacity: 0.7,
         connectToSortable: '.blockMap .blockCol, .blockPreset',
-
     });
     this.binded = true;
 }
@@ -95,8 +94,8 @@ BlockDrop.prototype.acceptAddRow = function (btn) {
 
 BlockDrop.prototype.submitMap = function (btn) {
     var form = $(btn).closest('form');
-    var map = form.find('.rows');
-    var reClasses = ['ui-draggable', 'ui-draggable-handle', 'ui-sortable-handle', 'ui-droppable', 'ui-sortable'];
+    var map = form.find('.rows').removeClass('ui-state-hover');
+    var reClasses = ['ui-draggable', 'ui-draggable-handle', 'ui-sortable-handle', 'ui-droppable', 'ui-sortable', 'ui-state-hover'];
     for (key in reClasses) {
         map.find('.' + reClasses[key]).removeClass(reClasses[key]);
     }
@@ -104,11 +103,15 @@ BlockDrop.prototype.submitMap = function (btn) {
     $.each(map.find('.block'), function () {
         $(this).html($(this).data('code'));
         $(this).removeAttr('data-code');
+        $(this).removeAttr('style');
     })
     form.find('[name="map"]').val(map.html());
     //console.log(map.html())
     //return false;
-    form.submit();
+    setTimeout(function () {
+        form.submit();
+    }, 500);
+
 }
 BlockDrop.prototype.initActual = function (selector) {
     $.each($(selector).find('.block'), function () {
