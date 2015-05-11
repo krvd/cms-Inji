@@ -2,7 +2,7 @@
     <ul class="sidebar-nav">
         <li class="sidebar-brand">
             <a href="/">
-                CMS Inji
+                Вернуться на сайт
             </a>
         </li>
         <li>
