@@ -12,6 +12,7 @@
     padding:20px;
     border:10px solid #ccc;
     margin:5px;
+    background: #fff;
 }
 .blockMap  {
     min-height:100px;
@@ -20,12 +21,13 @@
     padding:20px;
     border:10px solid #ccc;
     margin:5px;
+    background: #fff;
 }
 .placeholder {
     padding:20px;
     border:10px solid #ccc;
     margin:5px;
-    height:10px;
+    height:100px;
     width:100%;
 }
 .colsSelect {
@@ -34,4 +36,12 @@
 .colsSelect > div {
     border:1px dotted #ccc;
     padding:15px;
+}
+.ui-state-hover {
+    background: #ddd;
+    min-height: 150px;
+}
+.ui-state-highlight {
+    background: #ddd;
+    height:40px;
 }

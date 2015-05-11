@@ -78,7 +78,7 @@ class View extends Module {
         if (!empty($params['content'])) {
 
             $paths = [
-                'template' => $this->template['path'] . "/modules/{$data['module']->moduleName}",
+                'template' => $this->templatesPath . '/' . $this->template['name'] . "/modules/{$data['module']->moduleName}",
                 'controlelrContent' => Inji::app()->curController->path . '/content'
             ];
 
@@ -86,6 +86,7 @@ class View extends Module {
                 if (file_exists($path . '/' . $params['content'] . '.php')) {
                     $data['contentPath'] = $path;
                     $data['content'] = $params['content'];
+                    break;
                 }
             }
         }
@@ -268,6 +269,8 @@ class View extends Module {
             if (Inji::app()->$widgetName[0] && file_exists(Inji::app()->$widgetName[0]->path . '/widgets/' . $widgetName[1] . '.php')) {
                 include Inji::app()->$widgetName[0]->path . '/widgets/' . $widgetName[1] . '.php';
             }
+        } elseif (file_exists($this->templatesPath . '/' . $this->template['name'] . '/widgets/' . $widgetName . '.php')) {
+            include $this->templatesPath . '/' . $this->template['name'] . '/widgets/' . $widgetName . '.php';
         } elseif (file_exists(Inji::app()->curApp['path'] . '/widgets/' . $widgetName . '.php')) {
             include Inji::app()->curApp['path'] . '/widgets/' . $widgetName . '.php';
         }

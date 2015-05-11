@@ -8,6 +8,13 @@ class ViewController extends Controller {
         Inji::app()->view->page(['data' => compact('templates')]);
     }
 
+    function setDefaultAction($name) {
+        $templates = $this->view->config;
+        $templates['app']['current'] = $name;
+        $this->Config->save('module', $templates, 'View');
+        $this->url->redirect('/admin/View');
+    }
+
     function createTemplateAction() {
         $this->view->setTitle('Создание шаблона');
         Inji::app()->view->customAsset('css', '/static/moduleAsset/View/css/blockDrop.css');
@@ -28,13 +35,13 @@ class ViewController extends Controller {
     </body>
 </html>';
             $templates = Inji::app()->view->config;
-            $templates['app']['test'][$_POST['name']] = $_POST['name'];
+            $templates['app']['installed'][$_POST['name']] = $_POST['name'];
             $this->Config->save('module', $templates, 'View');
             $path = Inji::app()->curApp['parent']['path'] . '/templates/' . $_POST['name'] . '/index.html';
             $pathMap = Inji::app()->curApp['parent']['path'] . '/templates/' . $_POST['name'] . '/map.html';
             $this->files->create_dir(Inji::app()->curApp['parent']['path'] . '/templates/' . $_POST['name']);
             file_put_contents($path, $text);
-            file_put_contents($pathMap, $_POST['map']);
+            file_put_contents($pathMap, trim($_POST['map']));
             $template = [
                 'template_name' => $_POST['name'],
                 'name' => $_POST['name'],
@@ -54,10 +61,10 @@ class ViewController extends Controller {
         $pathMap = Inji::app()->curApp['parent']['path'] . '/templates/' . $templateName . '/map.html';
         if (!empty($_POST)) {
             $templates = Inji::app()->view->config;
-            $templates['app']['test'][$templateName] = $_POST['name'];
+            $templates['app']['installed'][$templateName] = $_POST['name'];
             $this->Config->save('module', $templates, 'View');
-            
-            file_put_contents($pathMap, $_POST['map']);
+
+            file_put_contents($pathMap, trim($_POST['map']));
 
             $template['template_name'] = $templateName;
             $template['name'] = $templateName;
@@ -86,13 +93,6 @@ class ViewController extends Controller {
             $this->url->redirect('/admin/View');
         }
         $this->view->page(compact('template'));
-    }
-
-    function setDefaultAction($name) {
-        $templates = $this->view->config;
-        $templates['app']['current'] = $name;
-        $this->Config->save('module', $templates, 'View');
-        $this->url->redirect('/admin/View');
     }
 
     function edit_fileAction($template, $type, $file_key = null) {

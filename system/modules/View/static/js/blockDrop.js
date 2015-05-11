@@ -1,32 +1,52 @@
 $(function () {
-    $(".blockPreset .block,.blockMap .block").draggable({
-        appendTo: "body",
-        revert: true,
-    });
+    $('.blockMap .container').removeClass('container').addClass('containerClass');
+    blockDrop.bindUi();
+});
+
+function BlockDrop() {
+    this.rows = 0;
+    this.binded = false;
+}
+
+
+BlockDrop.prototype.bindUi = function () {
+    if (this.binded) {
+        $(".blockPreset .block,.blockMap .block").draggable("destroy");
+        $(".blockPreset .block,.blockMap .block").droppable("destroy");
+        $(".blockPreset .block,.blockMap .block").sortable("destroy");
+    }
+
     $(".blockMap .blockCol, .blockPreset").droppable({
         activeClass: "ui-state-default",
         hoverClass: "ui-state-hover",
         accept: ":not(.ui-sortable-helper)",
         drop: function (event, ui) {
             $(this).find(".placeholder").remove();
-            $("<div class ='block' data-code='" + ui.draggable.data('code') + "'></div>").text(ui.draggable.text()).appendTo(this);
+            $("<div class ='block'  data-code='" + ui.draggable.data('code') + "'></div>").text(ui.draggable.text()).appendTo(this).draggable({
+                appendTo: "body",
+                revert: true,
+            });
             if (ui.draggable.closest('.rows').length > 0) {
                 ui.draggable.remove();
             }
         }
     }).sortable({
         items: "div:not(.placeholder)",
+        placeholder: "ui-state-highlight",
         sort: function () {
             $(this).removeClass("ui-state-default");
         }
     });
-});
+    $(".blockPreset .block,.blockMap .block").draggable({
+        appendTo: "body",
+        revert: true,
+        stack: ".blockPreset .block,.blockMap .block",
+        opacity: 0.7,
+        connectToSortable: '.blockMap .blockCol, .blockPreset',
 
-function BlockDrop() {
-    this.rows = 0;
+    });
+    this.binded = true;
 }
-
-
 BlockDrop.prototype.addRow = function (selector) {
     var html = '<div class = "rowsSelector">';
     html += '<div class = "form-group">';
@@ -70,35 +90,24 @@ BlockDrop.prototype.acceptAddRow = function (btn) {
         $(this).html('');
     })
     $('.blockMap .rows').append(row);
-    $(".blockMap .blockCol").droppable({
-        activeClass: "ui-state-default",
-        hoverClass: "ui-state-hover",
-        accept: ":not(.ui-sortable-helper)",
-        drop: function (event, ui) {
-            $(this).find(".placeholder").remove();
-            $("<div class ='block'  data-code='" + ui.draggable.data('code') + "'></div>").text(ui.draggable.text()).appendTo(this).draggable({
-                appendTo: "body",
-                revert: true,
-            });
-            ui.draggable.remove();
-        }
-    }).sortable({
-        items: "div:not(.placeholder)",
-        sort: function () {
-            $(this).removeClass("ui-state-default");
-        }
-    });
+    blockDrop.bindUi();
 }
 
 BlockDrop.prototype.submitMap = function (btn) {
     var form = $(btn).closest('form');
     var map = form.find('.rows');
+    var reClasses = ['ui-draggable', 'ui-draggable-handle', 'ui-sortable-handle', 'ui-droppable', 'ui-sortable'];
+    for (key in reClasses) {
+        map.find('.' + reClasses[key]).removeClass(reClasses[key]);
+    }
+    map.find('.containerClass').removeClass('containerClass').addClass('container');
     $.each(map.find('.block'), function () {
         $(this).html($(this).data('code'));
         $(this).removeAttr('data-code');
     })
     form.find('[name="map"]').val(map.html());
     //console.log(map.html())
+    //return false;
     form.submit();
 }
 BlockDrop.prototype.initActual = function (selector) {

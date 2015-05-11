@@ -20,8 +20,8 @@ class Form extends \Object {
     public $inputs = [];
     public $map = [];
 
-    function begin($header = '') {
-        $params = compact('header');
+    function begin($header = '',$options=[]) {
+        $params = compact('header','options');
         $params['form'] = $this;
         \Inji::app()->view->widget('Ui\Form/begin', $params);
     }
