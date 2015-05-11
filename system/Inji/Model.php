@@ -1,8 +1,9 @@
 <?php
 
-class Model
-{
+class Model {
 
+    static $storageType = 'db';
+    static $objectName = '';
     public $modelLogKey = 0;
     public $params = [];
     public $loadedRelations = [];
@@ -10,13 +11,11 @@ class Model
     static $forms = [];
     private $cols = [];
 
-    function __construct($params = array())
-    {
+    function __construct($params = array()) {
         $this->setParams($params);
     }
 
-    function cols()
-    {
+    function cols() {
         if (!$this->cols) {
             $class = get_called_class();
             $this->cols = Inji::app()->db->getTableCols($class::table());
@@ -24,35 +23,31 @@ class Model
         return $this->cols;
     }
 
-    static function table()
-    {
+    static function table() {
         return null;
     }
 
-    static function index()
-    {
+    static function index() {
         return null;
     }
 
-    static function colPrefix()
-    {
+    static function colPrefix() {
         return null;
     }
 
-    static function relations()
-    {
+    static function relations() {
         return null;
     }
 
-    static function nameCol()
-    {
+    static function nameCol() {
         return null;
     }
 
-    static function get($param = null, $col = null)
-    {
+    static function get($param = null, $col = null) {
         $class = get_called_class();
-
+        if ($class::$storageType == 'moduleConfig') {
+            return $class::getFromModuleStorage($param, $col);
+        }
         if (is_array($param)) {
             Inji::app()->db->where($param);
         } else {
@@ -80,8 +75,13 @@ class Model
         return new $class($row);
     }
 
-    static function get_list($options = array())
-    {
+    /**
+     * Old method
+     * 
+     * @param type $options
+     * @return \class
+     */
+    static function get_list($options = []) {
         $class = get_called_class();
         $return = array();
         if (!empty($options['where']))
@@ -123,9 +123,98 @@ class Model
         return $rows;
     }
 
-    static function getCount($options = array())
-    {
+    /**
+     * New method
+     * 
+     * @param type $options
+     * @return type
+     */
+    static function getList($options = []) {
         $class = get_called_class();
+        if ($class::$storageType == 'moduleConfig') {
+            return $class::getListFromModuleStorage($options);
+        }
+
+        return $class::get_list($options);
+    }
+
+    static function getFromModuleStorage($param = null, $col = null) {
+        $class = get_called_class();
+        if ($col === null) {
+
+            $col = $class::index();
+        }
+        if ($param !== null) {
+            Inji::app()->db->where($col, $param);
+        } else {
+            return false;
+        }
+        $classPath = explode('\\', $class);
+        if (!empty(Inji::app()->$classPath[0]->config['storage'][Inji::app()->curApp['type']][$classPath[1]])) {
+            $items = Inji::app()->$classPath[0]->config['storage'][Inji::app()->curApp['type']][$classPath[1]];
+            foreach ($items as $key => $item) {
+                if ($item[$col] == $param) {
+                    return new $class($item);
+                }
+            }
+        }
+        return [];
+    }
+
+    static function getListFromModuleStorage($options = []) {
+        $class = get_called_class();
+        $classPath = explode('\\', $class);
+        if (!empty(Inji::app()->$classPath[0]->config['storage'][Inji::app()->curApp['type']][$classPath[1]])) {
+            $items = Inji::app()->$classPath[0]->config['storage'][Inji::app()->curApp['type']][$classPath[1]];
+            foreach ($items as $key => $item) {
+                if (!empty($options['where']) && !Model::checkWhere($item, $options['where'])) {
+                    unset($items[$key]);
+                    continue;
+                }
+                $items[$key] = new $class($item);
+            }
+            return $items;
+        }
+        return [];
+    }
+
+    static function getCountFromModuleStorage($options = []) {
+        $class = get_called_class();
+        $classPath = explode('\\', $class);
+        $count = 0;
+        if (!empty(Inji::app()->$classPath[0]->config['storage'][Inji::app()->curApp['type']][$classPath[1]])) {
+            $items = Inji::app()->$classPath[0]->config['storage'][Inji::app()->curApp['type']][$classPath[1]];
+            if (empty($options['where'])) {
+                return count($items);
+            }
+            foreach ($items as $key => $item) {
+                if (!empty($options['where'])) {
+                    if (Model::checkWhere($item, $options['where'])) {
+                        $count++;
+                    }
+                } else {
+                    $count++;
+                }
+            }
+        }
+        return $count;
+    }
+
+    static function checkWhere($item = [], $where = '', $value = '', $operation = '=', $concatenation = 'AND') {
+        if (is_array($where)) {
+            return forward_static_call_array(['Model', 'checkWhere'], array_merge([$item], $where));
+        }
+        if ($item[$where] == $value) {
+            return true;
+        }
+        return false;
+    }
+
+    static function getCount($options = array()) {
+        $class = get_called_class();
+        if ($class::$storageType == 'moduleConfig') {
+            return $class::getCountFromModuleStorage($options);
+        }
         $return = array();
         if (!empty($options['where']))
             Inji::app()->db->where($options['where']);
@@ -138,8 +227,7 @@ class Model
         return $count['count'];
     }
 
-    static function update($params, $where = [])
-    {
+    static function update($params, $where = []) {
         $class = get_called_class();
         $cols = Inji::app()->db->getTableCols($class::table());
 
@@ -155,18 +243,48 @@ class Model
         }
         Inji::app()->db->update($class::table(), $values);
     }
-    
-    function pk(){
+
+    function pk() {
         return $this->{$this->index()};
     }
 
-    function beforeSave()
-    {
+    function beforeSave() {
         
     }
 
-    function save()
-    {
+    function saveModuleStorage() {
+        $class = get_called_class();
+        $col = $class::index();
+        $id = $this->pk();
+
+        $classPath = explode('\\', $class);
+        $config = Inji::app()->$classPath[0]->config;
+
+        if (empty($config['storage'][Inji::app()->curApp['type']][$classPath[1]])) {
+            $config['storage'][Inji::app()->curApp['type']][$classPath[1]] = [];
+        }
+        if ($id) {
+            foreach ($items as $key => $item) {
+                if ($item[$col] == $id) {
+                    $config['storage'][Inji::app()->curApp['type']][$classPath[1]][$key] = $this->params;
+                    return true;
+                }
+            }
+        } else {
+            $id = !empty($config['storage'][Inji::app()->curApp['type']]['scheme'][$classPath[1]]['ai']) ? $config['storage'][Inji::app()->curApp['type']]['scheme'][$classPath[1]]['ai'] : 1;
+            $this->$col = $id;
+            $config['storage'][Inji::app()->curApp['type']]['scheme'][$classPath[1]]['ai'] = $id + 1;
+            $config['storage'][Inji::app()->curApp['type']][$classPath[1]][] = $this->params;
+        }
+        \Inji::app()->config->save('module', $config, $classPath[0]);
+        return true;
+    }
+
+    function save() {
+        $class = get_called_class();
+        if ($class::$storageType == 'moduleConfig') {
+            return $class::saveModuleStorage();
+        }
         $this->beforeSave();
 
         $values = array();
@@ -196,18 +314,15 @@ class Model
         return $this->{$this->index()};
     }
 
-    function afterSave()
-    {
+    function afterSave() {
         
     }
 
-    function beforeDelete()
-    {
+    function beforeDelete() {
         
     }
 
-    function delete()
-    {
+    function delete() {
         $this->beforeDelete();
         if (!empty($this->params[$this->index()])) {
             Inji::app()->db->where($this->index(), $this->params[$this->index()]);
@@ -220,13 +335,11 @@ class Model
         return false;
     }
 
-    function afterDelete()
-    {
+    function afterDelete() {
         
     }
 
-    static function findRelation($col)
-    {
+    static function findRelation($col) {
         $class = get_called_class();
         foreach ($class::relations() as $relName => $rel) {
             if ($rel['col'] == $col)
@@ -235,14 +348,11 @@ class Model
         return NULL;
     }
 
-    function setParams($params)
-    {
+    function setParams($params) {
         $this->params = array_merge($this->params, $params);
     }
 
-    function loadRelation($name, $params = [])
-    {
-
+    function loadRelation($name, $params = []) {
         $relations = $this->relations();
         if (isset($relations[$name])) {
             $relation = $relations[$name];
@@ -272,7 +382,7 @@ class Model
                     if (!$this->{$this->index()}) {
                         return [];
                     }
-                    $getType = 'get_list';
+                    $getType = 'getList';
                     $options = [
                         'where' => [$relation['col'], $this->{$this->index()}],
                         'join' => (isset($relation['params']['join'])) ? $relation['params']['join'] : null,
@@ -301,8 +411,7 @@ class Model
         return NULL;
     }
 
-    function addRelation($relName, $objectId)
-    {
+    function addRelation($relName, $objectId) {
         $relations = $this->relations();
         if (isset($relations[$relName])) {
             $relation = $relations[$relName];
@@ -321,21 +430,18 @@ class Model
         return false;
     }
 
-    function checkFormAccess($formName)
-    {
+    function checkFormAccess($formName) {
         if ($formName == 'manage' && !Inji::app()->users->cur->isAdmin()) {
             return false;
         }
         return true;
     }
 
-    function __call($name, $params)
-    {
+    function __call($name, $params) {
         return call_user_func_array([$this, 'loadRelation'], array_merge([$name], $params));
     }
 
-    function __get($name)
-    {
+    function __get($name) {
         if (isset($this->params[$name])) {
             return $this->params[$name];
         }
@@ -345,9 +451,15 @@ class Model
         return $this->loadRelation($name);
     }
 
-    function __set($name, $value)
-    {
+    function __set($name, $value) {
         $this->params[$name] = $value;
+    }
+
+    public function __toString() {
+        if (!empty($this->params['name'])) {
+            return $this->params['name'];
+        }
+        return $this->pk();
     }
 
 }
