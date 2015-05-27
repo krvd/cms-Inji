@@ -17,13 +17,20 @@ class Table extends \Object {
     public $rows = [];
     public $buttons = [];
     public $name = '&nbsp;';
+    public $id = '';
+    public $class = 'table';
+    public $attributes = [];
 
     function setCols($cols) {
         $this->cols = $cols;
     }
 
     function draw() {
-        \Inji::app()->view->widget('Ui\Table/body', ['table' => $this]);
+        \App::$cur->view->widget('Ui\Table/body', ['table' => $this]);
+    }
+
+    static function drawRow($row) {
+        \App::$cur->view->widget('Ui\Table/row', ['row' => $row]);
     }
 
     function addRow($row) {

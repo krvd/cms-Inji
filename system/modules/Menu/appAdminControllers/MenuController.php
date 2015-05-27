@@ -5,7 +5,7 @@ class MenuController extends Controller {
     function indexAction($appType = false) {
         $this->view->setTitle('Меню сайта');
         if (!$appType) {
-            $appType = Inji::app()->curApp['type'];
+            $appType = App::$cur->type;
         }
         //$menus = $this->menu->config[$appType]['menus'];
         $this->view->page();

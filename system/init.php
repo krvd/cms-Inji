@@ -8,24 +8,82 @@
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
-//load core
-include INJI_SYSTEM_DIR . '/Inji/Inji.php';
-$inji = new Inji();
-$inji->setApp($inji);
-spl_autoload_register([$inji, 'loadClass']);
-define('INJI_DOMAIN_NAME', $_SERVER['SERVER_NAME']);
+define('INJI_DOMAIN_NAME', filter_input(INPUT_SERVER, 'SERVER_NAME'));
 
-$inji->curApp = Inji::app()->router->resolveApp(INJI_DOMAIN_NAME, $_SERVER['REQUEST_URI']);
-$inji->curModule = Inji::app()->router->resolveModule($inji->curApp);
-if (!$inji->curModule) {
+spl_autoload_register(function($class_name) {
+    if (file_exists(INJI_SYSTEM_DIR . '/Inji/' . $class_name . '.php')) {
+        include_once INJI_SYSTEM_DIR . '/Inji/' . $class_name . '.php';
+    }
+});
+
+//load core
+Inji::$inst = new Inji();
+Inji::$config = Config::system();
+
+$apps = Config::custom(INJI_PROGRAM_DIR . '/apps.php');
+$finalApp = NULL;
+foreach ($apps as $app) {
+    if ($app['default'] && !$finalApp) {
+        $finalApp = $app;
+    }
+    if (preg_match("!{$app['route']}!i", INJI_DOMAIN_NAME)) {
+        $finalApp = $app;
+        break;
+    }
+}
+if (!$finalApp) {
+    $finalApp = [
+        'name' => INJI_DOMAIN_NAME,
+        'dir' => INJI_DOMAIN_NAME,
+        'installed' => false,
+        'default' => true,
+        'route' => INJI_DOMAIN_NAME,
+    ];
+}
+App::$cur = new App($finalApp);
+
+$params = Tools::uriParse(filter_input(INPUT_SERVER, 'REQUEST_URI'));
+
+App::$cur->type = 'app';
+App::$cur->path = INJI_PROGRAM_DIR . '/' . App::$cur->dir;
+App::$cur->params = $params;
+App::$cur->config = Config::app(App::$cur);
+
+if (!empty($params[0]) && file_exists(INJI_SYSTEM_DIR . '/program/' . $params[0] . '/')) {
+    App::$parent = App::$cur;
+    App::$parent->params = [];
+
+    App::$cur = new App();
+    App::$cur->name = $params[0];
+    App::$cur->system = true;
+    App::$cur->staticPath = "/" . App::$cur->name . "/static";
+    App::$cur->templatesPath = "/" . App::$cur->name . "/static/templates";
+    App::$cur->path = INJI_SYSTEM_DIR . '/program/' . App::$cur->name;
+    App::$cur->type = 'app' . ucfirst(strtolower(App::$cur->name));
+    App::$cur->installed = true;
+    App::$cur->params = array_slice($params, 1);
+    App::$cur->config = Config::app(App::$cur);
+}
+
+if (!App::$cur->installed) {
+    App::$cur->url->redirect('/install');
+}
+
+spl_autoload_register('Router::findClass');
+
+Module::$cur = Module::resolveModule(App::$cur);
+
+if (Module::$cur === null) {
     INJI_SYSTEM_ERROR('Module not found', true);
 }
 
-$inji->curController = $inji->curModule->findController();
-
-if (!empty($inji->config->app['autoloadModules'])) {
-    foreach ($inji->config->app['autoloadModules'] as $module) {		
-        $inji->$module;
+Controller::$cur = Module::$cur->findController();
+if (Controller::$cur === null) {
+    INJI_SYSTEM_ERROR('Controller not found', true);
+}
+if (!empty(App::$cur->config['autoloadModules'])) {
+    foreach (App::$cur->config['autoloadModules'] as $module) {
+        App::$cur->$module;
     }
 }
-$inji->curController->run();
+Controller::$cur->run();

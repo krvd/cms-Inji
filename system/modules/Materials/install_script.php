@@ -1,7 +1,7 @@
 <?php
 
 return function ($step = NULL, $params = array()) {
-    Inji::app()->db->create_table('materials_catalogs', array(
+    App::$cur->db->create_table('materials_catalogs', array(
         'mc_id' => 'pk',
         'mc_parent_id' => 'int(11) NOT NULL',
         'mc_name' => 'varchar(255) NOT NULL',
@@ -12,7 +12,7 @@ return function ($step = NULL, $params = array()) {
         'mc_image' => 'int(11) NOT NULL',
         'mc_date' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
     ));
-    Inji::app()->db->create_table('materials', array(
+    App::$cur->db->create_table('materials', array(
         'material_id' => 'pk',
         'material_mc_id' => 'INT(11) NOT NULL',
         'material_name' => 'varchar(255) NOT NULL',
@@ -30,7 +30,7 @@ return function ($step = NULL, $params = array()) {
         'material_tree_path' => 'text NOT NULL',
         'material_date_create' => 'timestamp DEFAULT CURRENT_TIMESTAMP',
     ));
-    Inji::app()->db->insert('materials', array(
+    App::$cur->db->insert('materials', array(
         'material_mc_id' => '0',
         'material_name' => 'Главная',
         'material_chpu' => 'index',

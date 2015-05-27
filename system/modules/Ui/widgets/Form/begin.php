@@ -1,4 +1,4 @@
-<form action ="<?= $form->action; ?>" method ="<?= $form->method; ?>"             
+<form action ="<?= $form->action; ?>" method ="<?= $form->method; ?>"  enctype="multipart/form-data"
 <?php
 foreach ($options as $attribute => $value) {
     echo " {$attribute} = '{$value}' ";

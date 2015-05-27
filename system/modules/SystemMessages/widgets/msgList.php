@@ -1,5 +1,5 @@
 <?php
-$msgs = Inji::app()->SystemMessages->get();
+$msgs = App::$cur->SystemMessages->get();
 foreach ($msgs as $msg) {
     ?>
     <div class="alert alert-<?= $msg['status']; ?> alert-dismissable">

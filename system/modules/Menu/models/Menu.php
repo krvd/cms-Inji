@@ -24,22 +24,29 @@ class Menu extends \Model {
     static $storageType = 'moduleConfig';
     static $dataManagers = [
         'manager' => [
+            'options' => [
+                'access' => [
+                    'groups' => [
+                        3
+                    ]
+                ]
+            ],
             'cols' => [
-                'name' => 'text',
-                'code' => 'text',
-                'items' => ['relation' => 'items']
+                'name' => ['type' => 'text'],
+                'code' => ['type' => 'text'],
+                'items' => ['type' => 'select', 'relation' => 'items']
             ]
         ]
     ];
     static $forms = [
         'manager' => [
             'inputs' => [
-                'name' => 'text',
-                'code' => 'text',
-                'items' => ['relation' => 'items']
+                'name' => ['type' => 'text'],
+                'code' => ['type' => 'text'],
+                'items' => ['type' => 'list', 'relation' => 'items']
             ],
-            'map'=>[
-                ['name','code']
+            'map' => [
+                ['name', 'code']
             ]
         ]
     ];

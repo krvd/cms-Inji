@@ -18,8 +18,11 @@ class StaticLoader extends Module {
 
     function parsePath($params) {
         foreach ($params as $key => $param) {
+            $param = trim($param);
             if ($param == '..') {
                 unset($params[$key]);
+            } else {
+                $params[$key] = $param;
             }
         }
         return implode('/', $params);
@@ -53,8 +56,8 @@ class StaticLoader extends Module {
         if (!empty($_GET['resize'])) {
 
             $allow_resize = false;
-            if (Inji::app()->db) {
-                $type = Inji::app()->Files->get_type_by_ext($fileinfo['extension']);
+            if (App::$cur->db) {
+                $type = App::$cur->Files->get_type_by_ext($fileinfo['extension']);
                 $allow_resize = $type['file_type_allow_resize'];
             }
             if (empty($type) && in_array(strtolower($fileinfo['extension']), array('png', 'jpg', 'jpeg', 'gif')))
@@ -76,10 +79,10 @@ class StaticLoader extends Module {
                     exit();
                 } else {
 
-                    if (Inji::app()->app['system'])
-                        $dir = Inji::app()->app['parent']['path'];
+                    if (App::$cur->app['system'])
+                        $dir = App::$cur->app['parent']['path'];
                     else
-                        $dir = Inji::app()->app['path'];
+                        $dir = App::$cur->app['path'];
 
                     if (!empty($_GET['resize_crop'])) {
                         if (in_array($_GET['resize_crop'], array('q', 'c')))
@@ -96,9 +99,9 @@ class StaticLoader extends Module {
                     $path = $dir . '/static/cache/' . $dirnoslash . $fileinfo['filename'] . '.' . $sizes[0] . 'x' . $sizes[1] . $crop . '.' . $fileinfo['extension'];
                     //exit($path);
                     if (!file_exists($path)) {
-                        Inji::app()->_FS->create_dir($dir . '/static/cache/');
+                        App::$cur->_FS->create_dir($dir . '/static/cache/');
                         copy($file, $path);
-                        Inji::app()->_IMAGE->resize($path, $sizes[0], $sizes[1], $crop);
+                        App::$cur->_IMAGE->resize($path, $sizes[0], $sizes[1], $crop);
                     }
 
                     $file = $path;
@@ -146,16 +149,6 @@ class StaticLoader extends Module {
 
         readfile($file);
         exit();
-    }
-
-    function findController() {
-        $controllersPath = $this->path . '/Controllers';
-        include $controllersPath . '/StaticController.php';
-        $controller = new StaticController();
-        $controller->params = $this->params;
-        $controller->module = $this;
-        $controller->path = $controllersPath;
-        return $controller;
     }
 
 }

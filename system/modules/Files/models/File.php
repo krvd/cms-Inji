@@ -28,10 +28,10 @@ class File extends Model
 
     function getRealPath()
     {
-        if (!empty(Inji::app()->app['parent'])) {
-            $sitePath = Inji::app()->app['parent']['path'];
+        if (!empty(App::$cur->app['parent'])) {
+            $sitePath = App::$cur->app['parent']['path'];
         } else {
-            $sitePath = Inji::app()->app['path'];
+            $sitePath = App::$cur->app['path'];
         }
         return "{$sitePath}/{$this->file_path}";
     }

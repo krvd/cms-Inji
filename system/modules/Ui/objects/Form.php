@@ -23,7 +23,7 @@ class Form extends \Object {
     function begin($header = '',$options=[]) {
         $params = compact('header','options');
         $params['form'] = $this;
-        \Inji::app()->view->widget('Ui\Form/begin', $params);
+        \App::$cur->view->widget('Ui\Form/begin', $params);
     }
 
     function input($type, $name, $label = '', $options = []) {
@@ -31,19 +31,24 @@ class Form extends \Object {
             case 'textarea':
                 $params = compact('name', 'label', 'options');
                 $params['form'] = $this;
-                \Inji::app()->view->widget('Ui\Form/textarea', $params);
+                \App::$cur->view->widget('Ui\Form/textarea', $params);
+                break;
+            case 'select':
+                $params = compact('name', 'label', 'options');
+                $params['form'] = $this;
+                \App::$cur->view->widget('Ui\Form/select', $params);                
                 break;
             default :
                 $params = compact('type', 'name', 'label', 'options');
                 $params['form'] = $this;
-                \Inji::app()->view->widget('Ui\Form/input', $params);
+                \App::$cur->view->widget('Ui\Form/input', $params);
         }
     }
 
     function end($btnText = 'Отправить', $attributs = []) {
         $params = compact('btnText', 'attributs');
         $params['form'] = $this;
-        \Inji::app()->view->widget('Ui\Form/end', $params);
+        \App::$cur->view->widget('Ui\Form/end', $params);
     }
 
 }

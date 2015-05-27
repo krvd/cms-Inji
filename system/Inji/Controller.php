@@ -10,6 +10,7 @@
  */
 class Controller {
 
+    static $cur = null;
     public $params = [];
     public $path = '';
     public $method = 'index';
@@ -28,7 +29,7 @@ class Controller {
             INJI_SYSTEM_ERROR('method not found', true);
         }
         if (!$this->checkAccess()) {
-            Inji::app()->url->redirect($this->access->getDeniedRedirect(), 'У вас нет прав доступа');
+            App::$cur->url->redirect($this->access->getDeniedRedirect(), 'У вас нет прав доступа');
         }
         call_user_func_array([$this, $this->method . 'Action'], $this->params);
     }
@@ -37,7 +38,7 @@ class Controller {
      * Reference to short access core modules
      */
     function __get($name) {
-        return Inji::app()->__get($name);
+        return App::$cur->__get($name);
     }
 
     /**
@@ -46,7 +47,7 @@ class Controller {
      * @return boolean
      */
     function checkAccess() {
-        $accesses = $this->access->config[Inji::app()->curApp['type']];
+        $accesses = !empty($this->access->config[App::$cur->type])?$this->access->config[App::$cur->type]:[];
         $access = array();
 
         if (isset($accesses['dostup_tree'][$this->module->moduleName][$this->name][$this->method]['_access'])) {
@@ -58,9 +59,8 @@ class Controller {
         elseif (isset($accesses['dostup_tree']['_access']))
             $access = $accesses['dostup_tree']['_access'];
 
-        if (Inji::app()->Users->cur->user_group_id && !empty($access) && !in_array(Inji::app()->Users->cur->user_group_id, $access))
+        if (App::$cur->Users->curUser->user_group_id && !empty($access) && !in_array(App::$cur->Users->curUser->user_group_id, $access))
             return false;
-
 
         return true;
     }

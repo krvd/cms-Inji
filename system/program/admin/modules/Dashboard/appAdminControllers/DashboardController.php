@@ -11,7 +11,7 @@
 class DashboardController extends Controller {
 
     function indexAction() {
-        Inji::app()->view->page();
+        App::$cur->view->page();
     }
 
 }

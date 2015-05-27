@@ -2,21 +2,21 @@
 
 class Config {
 
-    private $_configs = array();
+    private static $_configs = array();
 
     /**
      * Load system config
      * 
-     * @return type
+     * @return array
      */
-    function system() {
-        if (isset($this->_configs['system']))
-            return $this->_configs['system'];
+    public static function system() {
+        if (isset(self::$_configs['system']))
+            return self::$_configs['system'];
 
         if (!file_exists(INJI_SYSTEM_DIR . '/config/config.php'))
-            return array();
+            return [];
 
-        return $this->_configs['system'] = include INJI_SYSTEM_DIR . '/config/config.php';
+        return self::$_configs['system'] = include INJI_SYSTEM_DIR . '/config/config.php';
     }
 
     /**
@@ -25,14 +25,14 @@ class Config {
      * @param string $path
      * @return array
      */
-    function custom($path) {
-        if (isset($this->_configs['custom'][$path]))
-            return $this->_configs['custom'][$path];
+    public static function custom($path) {
+        if (isset(self::$_configs['custom'][$path]))
+            return self::$_configs['custom'][$path];
 
         if (!file_exists($path))
-            return array();
+            return [];
 
-        return $this->_configs['custom'][$path] = include $path;
+        return self::$_configs['custom'][$path] = include $path;
     }
 
     /**
@@ -41,34 +41,70 @@ class Config {
      * @param type $site_name
      * @return type
      */
-    function app($parent = false) {
-        if ($parent) {
-            $app = Inji::app()->curApp['parent'];
-        } else {
-            $app = Inji::app()->curApp;
-        }
-        if (isset($this->_configs['app'][$app['name']]))
-            return $this->_configs['app'][$app['name']];
+    public static function app($app) {
+        if (isset(self::$_configs['app'][$app->name]))
+            return self::$_configs['app'][$app->name];
 
-        $path = $app['path'] . "/config/config.php";
+        $path = $app->path . "/config/config.php";
         if (!file_exists($path))
             return array();
 
-        return $this->_configs['app'][$app['name']] = include $path;
+        return self::$_configs['app'][$app->name] = include $path;
     }
 
-    function module($module_name) {
-        if (Inji::app()->curApp['system']) {
-            $app = Inji::app()->curApp['parent'];
+    /**
+     * Load share config
+     * 
+     * @param type $site_name
+     * @return type
+     */
+    public static function share($module = '') {
+        if ($module) {
+            if (isset($_configs['shareModules'][$module]))
+                return self::$_configs['shareModules'][$module];
+
+            $path = INJI_PROGRAM_DIR . "/config/modules/{$module}.php";
         } else {
-            $app = Inji::app()->curApp;
+            if (isset($_configs['share']))
+                return self::$_configs['share'];
+
+            $path = INJI_PROGRAM_DIR . "/config/config.php";
+        }
+        if (!file_exists($path)) {
+            
+            if (file_exists(INJI_SYSTEM_DIR . "/modules/{$module}/defaultConfig.php")) {
+                
+                $path = INJI_SYSTEM_DIR . "/modules/{$module}/defaultConfig.php";
+            }
+            else {
+                return array();
+            }
+        }
+        
+        if ($module) {
+            return self::$_configs['shareModules'][$module] = include $path;
+        } else {
+            return self::$_configs['share'] = include $path;
+        }
+    }
+
+    public static function module($module_name, $system = false, $app = null) {
+        if (!$app) {
+            $app = App::$cur;
+        }
+        if ($system) {
+            $appName = 'system';
+            $appPath = INJI_SYSTEM_DIR;
+        } else {
+            $appName = $app->name;
+            $appPath = $app->path;
         }
 
-        if (isset($this->_configs['module'][$app['name']][$module_name])) {
-            return $this->_configs['module'][$app['name']][$module_name];
+        if (isset(self::$_configs['module'][$appName][$module_name])) {
+            return self::$_configs['module'][$appName][$module_name];
         }
 
-        $path = $app['path'] . "/config/modules/{$module_name}.php";
+        $path = $appPath . "/config/modules/{$module_name}.php";
 
         if (!file_exists($path)) {
             $path = INJI_SYSTEM_DIR . "/modules/{$module_name}/defaultConfig.php";
@@ -78,41 +114,50 @@ class Config {
         if (!file_exists($path)) {
             return array();
         }
-        return $this->_configs['module'][$app['name']][$module_name] = include $path;
+        return self::$_configs['module'][$appName][$module_name] = include $path;
     }
 
-    function save($type, $data, $module = NULL) {
-        if (!Inji::app()->curApp['system']) {
-            $site_name = Inji::app()->curApp['name'];
-        } elseif (Inji::app()->curApp['system']) {
-            $site_name = Inji::app()->curApp['parent']['name'];
+    public static function save($type, $data, $module = NULL, $app = null) {
+        if (!$app) {
+            $app = App::$cur;
         }
 
-        $app_name = Inji::app()->curApp['name'];
+        $site_name = $app->name;
+        $app_name = $app->name;
         switch ($type) {
             case 'system':
                 $path = INJI_SYSTEM_DIR . '/config/config.php';
-                $this->_configs['system'] = $data;
+                self::$_configs['system'] = $data;
                 break;
-            case 'site':
-                $path = INJI_PROGRAM_DIR . "/{$site_name}/config/config.php";
-                $this->_configs['site'][$site_name] = $data;
+            case 'app':
+                $path = $app->path . "/config/config.php";
+                self::$_configs['site'][$site_name] = $data;
                 break;
             case 'module' :
-                $path = INJI_PROGRAM_DIR . "/{$site_name}/config/modules/{$module}.php";
-                $this->_configs['module'][$site_name][$module] = $data;
+                $path = $app->path . "/config/modules/{$module}.php";
+                self::$_configs['module'][$site_name][$module] = $data;
+                break;
+            case 'share':
+                if ($module) {
+                    $path = INJI_PROGRAM_DIR . "/config/modules/{$module}.php";
+                    self::$_configs['shareModules'][$module] = $data;
+                } else {
+                    $path = INJI_PROGRAM_DIR . "/config/config.php";
+                    self::$_configs['share'] = $data;
+                }
+
                 break;
             default:
                 $path = $type;
-                $this->_configs['custom'][$path] = $data;
+                self::$_configs['custom'][$path] = $data;
                 break;
         }
-        $text = $this->save_parse($data);
-        Inji::app()->Files->create_dir(substr($path, 0, strripos($path, '/')));
+        $text = self::save_parse($data);
+        App::$cur->Files->create_dir(substr($path, 0, strripos($path, '/')));
         file_put_contents($path, $text);
     }
 
-    private function save_parse($data, $level = 0) {
+    private static function save_parse($data, $level = 0) {
         $return = '';
         if ($level == 0)
             $return = "<?php\nreturn [";
@@ -122,7 +167,7 @@ class Config {
                 $return .= "'{$item}',";
             else {
                 $return .= "[";
-                $return .= rtrim($this->save_parse($item, $level + 1), ',');
+                $return .= rtrim(self::save_parse($item, $level + 1), ',');
                 $return .= "\n" . str_repeat(' ', ( $level * 4 + 4)) . "],";
             }
         }
@@ -130,11 +175,6 @@ class Config {
             $return = rtrim($return, ',') . "\n];";
 
         return $return;
-    }
-
-    function &__get($name) {
-        $config = $this->$name();
-        return $config;
     }
 
 }

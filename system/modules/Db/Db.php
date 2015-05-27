@@ -9,22 +9,18 @@ class Db extends Module
     function init($param = 'local')
     {
         if (!is_array($param)) {
-            if (!isset($this->config['databases'][$param]))
+            if (!($dbOption = Db\Options::get($param,'connect_alias',['array'=>true])))
                 return false;
 
-            $db = $this->config['databases'][$param];
+            $db = $dbOption;
         } else {
             $db = $param;
         }
-        $path = INJI_SYSTEM_DIR . '/drivers/' . $db['connect_driver'] . '/' . $db['connect_driver'] . 'Driver.php';
-        if(!file_exists($path)){
-            INJI_SYSTEM_ERROR('driver not found', true);
-        }
-        include_once $path;
-        $className =  $db['connect_driver'] . 'Driver';
+        $className = 'Db\\'.$db['driver'];
         $this->connection = new $className();
-        $this->connection->init($db['connect_options']);
+        $this->connection->init($db);
         $this->connect = $this->connection->connect;
+        
     }
 
     function __call($name, $params)

@@ -1,12 +1,8 @@
 <?php
 
-/**
- * Description of Material
- *
- * @author Alexey Krupskiy <admin@inji.ru>
- */
-class Material extends Model
-{
+namespace Materials;
+
+class Material extends \Model {
 
     static $labels = [
         'material_name' => 'Заголовок',
@@ -17,26 +13,28 @@ class Material extends Model
         'material_template' => 'Шаблон сайта',
         'material_viewer' => 'Тип страницы'
     ];
-    static $dataTable = [
-        'cols' => [
-            'material_name' => [],
-            'material_chpu' => [],
-            'material_mc_id' => ['relation' => 'catalog', 'showCol' => 'mc_name'],
-        ],
-        'categorys' => [
-            'model' => 'MaterialCatalog',
+    static $dataManagers = [
+        'manager' => [
+            'cols' => [
+                'material_name' => [],
+                'material_chpu' => [],
+                'material_mc_id' => ['relation' => 'catalog', 'showCol' => 'mc_name'],
+            ],
+            'categorys' => [
+                'model' => 'MaterialCatalog',
+            ]
         ]
     ];
     static $forms = [
-        'manage' => [
-            'options' => [
-                'material_name' => 'text',
-                'material_chpu' => 'text',
-                'material_viewer' => [ 'type' => 'methodSource', 'method' => 'viewsList', 'module' => 'Materials'],
-                'material_template' => [ 'type' => 'methodSource', 'method' => 'templatesList', 'module' => 'Materials'],
-                'material_preview' => 'html',
-                'material_text' => 'html',
-                'material_mc_id' => ['relation' => 'catalog', 'showCol' => 'mc_name'],
+        'manager' => [
+            'inputs' => [
+                'material_name' => ['type' => 'text'],
+                'material_chpu' => ['type' => 'text'],
+                'material_viewer' => ['type' => 'select', 'source' => 'method', 'method' => 'viewsList', 'module' => 'Materials'],
+                'material_template' => ['type' => 'select', 'source' => 'method', 'method' => 'templatesList', 'module' => 'Materials'],
+                'material_preview' => ['type' => 'html'],
+                'material_text' => ['type' => 'html'],
+                'material_mc_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'catalog', 'showCol' => 'mc_name'],
             ],
             'map' => [
                 ['material_name', 'material_mc_id'],
@@ -48,33 +46,28 @@ class Material extends Model
         ]
     ];
 
-    static function relations()
-    {
+    static function relations() {
         return [
             'catalog' => [
-                'model' => 'MaterialCatalog',
+                'model' => 'Materials\MaterialCatalog',
                 'col' => 'material_mc_id'
             ]
         ];
     }
 
-    static function colPrefix()
-    {
+    static function colPrefix() {
         return 'material_';
     }
 
-    static function table()
-    {
+    static function table() {
         return 'materials';
     }
 
-    static function index()
-    {
+    static function index() {
         return 'material_id';
     }
 
-    function beforeSave()
-    {
+    function beforeSave() {
         if ($this->catalog) {
             $this->material_tree_path = $this->catalog->mc_tree_path . $this->catalog->mc_id . '/';
         } else {

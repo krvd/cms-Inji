@@ -2,8 +2,10 @@
 
 class Users extends Module {
 
+    public $curUser = null;
+
     function init() {
-        $this->cur = new Users\User(array('user_group_id' => 1, 'user_role_id' => 1));
+        $this->curUser = new Users\User(array('user_group_id' => 1, 'user_role_id' => 1));
         if (isset($_GET['partner'])) {
             setcookie("partnerId", $_GET['partner'], time() + 360000, "/");
             $_COOKIE['partnerId'] = $_GET['partner'];
@@ -18,14 +20,14 @@ class Users extends Module {
             }
             $this->url->redirect('http://' . substr(INJI_DOMAIN_NAME, strpos(INJI_DOMAIN_NAME, '.') + 1));
         }
-        if (Inji::app()->db->connect) {
+        if (App::$cur->db->connect) {
             if (isset($_GET['logout']) && ($_COOKIE['user_login'] || $_COOKIE['user_mail'] ) && $_COOKIE['user_pass']) {
                 setcookie("user_login", '', 0, "/");
                 setcookie("user_mail", '', 0, "/");
                 setcookie("user_pass", '', 0, "/");
-                $accesses = Inji::app()->Config->module('Access');
-                if (!empty($this->Access->modConf[Inji::app()->app['type']]['denied_redirect'])) {
-                    $url = $this->Access->modConf[Inji::app()->app['type']]['denied_redirect'];
+                $accesses = Config::module('Access');
+                if (!empty($this->Access->modConf[App::$cur->app['type']]['denied_redirect'])) {
+                    $url = $this->Access->modConf[App::$cur->app['type']]['denied_redirect'];
                 } else {
                     $url = '/';
                 }
@@ -96,7 +98,7 @@ class Users extends Module {
     function autorization($login, $pass, $ltype = 'login') {
         $user = $this->get($login, $ltype);
         if ($user && $user->user_pass === $pass) {
-            $this->cur = $user;
+            $this->curUser = $user;
             if (!headers_sent()) {
                 setcookie("user_login", $user->user_login, time() + 360000, "/");
                 setcookie("user_mail", $user->user_mail, time() + 360000, "/");
@@ -104,15 +106,15 @@ class Users extends Module {
             }
             $user->user_last_activ = 'CURRENT_TIMESTAMP';
             $user->save();
-            if (!empty($_POST['autorization']) && !empty($this->Access->modConf[Inji::app()->app['type']]['login_redirect'])) {
-                $this->url->redirect($this->Access->modConf[Inji::app()->app['type']]['login_redirect']);
+            if (!empty($_POST['autorization']) && !empty(App::$cur->Access->config[App::$cur->app->type]['login_redirect'])) {
+                App::$cur->url->redirect(App::$cur->Access->config[App::$cur->app->type]['login_redirect']);
             }
             return true;
         } elseif (!empty($_POST['autorization'])) {
             if ($user) {
-                Inji::app()->msg->add('Вы ошиблись при наборе пароля или логина, попробуйте ещё раз или воспользуйтесь <a href = "?passre=1&user_mail=' . $user->user_mail . '">Восстановлением пароля</a>', 'danger');
+                App::$cur->msg->add('Вы ошиблись при наборе пароля или логина, попробуйте ещё раз или воспользуйтесь <a href = "?passre=1&user_mail=' . $user->user_mail . '">Восстановлением пароля</a>', 'danger');
             } else {
-                Inji::app()->msg->add('Данный почтовый ящик не зарегистрирован в системе', 'danger');
+                App::$cur->msg->add('Данный почтовый ящик не зарегистрирован в системе', 'danger');
             }
             return false;
         } else
@@ -123,7 +125,7 @@ class Users extends Module {
         $i = 1;
         if ($fromId == $toId)
             return 0;
-        while ($from =Users\User::get($fromId)) {
+        while ($from = Users\User::get($fromId)) {
             if ($from->user_parent_id == $toId)
                 return $i;
             $fromId = $from->user_parent_id;
@@ -138,11 +140,11 @@ class Users extends Module {
             return false;
 
         if (is_numeric($idn) && !$ltype != 'login')
-            $user =Users\User::get($idn, 'user_id');
+            $user = Users\User::get($idn, 'user_id');
         elseif ($ltype == 'login')
-            $user =Users\User::get($idn, 'user_login');
+            $user = Users\User::get($idn, 'user_login');
         else
-            $user =Users\User::get($idn, 'user_mail');
+            $user = Users\User::get($idn, 'user_mail');
 
         if (!$user)
             return array();
@@ -213,13 +215,13 @@ class Users extends Module {
         }
 
         if (!empty($this->users->modConf['sponsors']) && !empty($user_parent_id)) {
-            $user =Users\User::get((int) $user_parent_id);
+            $user = Users\User::get((int) $user_parent_id);
             if (!$user) {
                 $this->msg->add('Спонсор с данныйм id не найден', 'danger');
                 return false;
             }
         } elseif (!empty($_COOKIE['partnerId'])) {
-            $user =Users\User::get((int) $_COOKIE['partnerId']);
+            $user = Users\User::get((int) $_COOKIE['partnerId']);
             if (!$user) {
                 $user_parent_id = 1;
             } else {
@@ -310,8 +312,8 @@ class Users extends Module {
     }
 
     function update($user_id = 0, $data = array()) {
-        Inji::app()->db->where('user_id', $user_id);
-        Inji::app()->db->update('users', $data);
+        App::$cur->db->where('user_id', $user_id);
+        App::$cur->db->update('users', $data);
     }
 
     function new_user($data) {

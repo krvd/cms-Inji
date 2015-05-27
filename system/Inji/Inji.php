@@ -10,31 +10,9 @@
  */
 class Inji {
 
-    private static $_app = NULL;
-    private $_objects = [];
-    private $_listeners = [];
-    public $curApp = [];
-    public $curModule = [];
-    public $curController = [];
-    public $params = [];
-
-    /**
-     * Set app instance to static param
-     * 
-     * @param object $app
-     */
-    static function setApp($app) {
-        self::$_app = $app;
-    }
-
-    /**
-     * Get app instance
-     * 
-     * @return object
-     */
-    static function app() {
-        return self::$_app;
-    }
+    static $inst = NULL;
+    private static $_listeners = [];
+    public static $config = [];
 
     /**
      * Add event listener
@@ -88,47 +66,6 @@ class Inji {
         if (!empty($this->_listeners[$eventName][$listenCode])) {
             unset($this->_listeners[$eventName][$listenCode]);
         }
-    }
-
-    function loadClass($className) {
-        if (file_exists(INJI_SYSTEM_DIR . '/Inji/' . $className . '.php')) {
-            include INJI_SYSTEM_DIR . '/Inji/' . $className . '.php';
-            return true;
-        }
-        return false;
-    }
-
-    function getObject($className) {
-        $className = ucfirst($className);
-        if (isset($this->_objects[$className])) {
-            return $this->_objects[$className];
-        }
-        return $this->loadObject($className);
-    }
-
-    function loadObject($className) {
-        if ($this->loadClass($className)) {
-            $this->_objects[$className] = new $className();
-        } else {
-            $resolveModule = $this->event('UninitializeObjectCalled', $className);
-            if (!is_bool($resolveModule) && $resolveModule != $className) {
-                return $this->_objects[$resolveModule] = $this->_objects[$className] = $this->getObject($resolveModule);
-            } elseif (class_exists($className)) {
-                $this->_objects[$className] = new $className();
-            }
-        }
-        if (isset($this->_objects[$className])) {
-            if (method_exists($this->_objects[$className], 'init')) {
-                $this->_objects[$className]->init();
-            }
-            $this->event('NewObjectInitialize', $className);
-            return $this->_objects[$className];
-        }
-        return null;
-    }
-
-    function __get($className) {
-        return $this->getObject($className);
     }
 
 }

@@ -11,7 +11,7 @@
 class Ui extends Module {
 
     function init() {
-        Inji::app()->view->customAsset('js', '/static/moduleAsset/Ui/js/Ui.js');
+        App::$cur->view->customAsset('js', ['file' => '/static/moduleAsset/Ui/js/Ui.js', 'name' => 'Ui']);
     }
 
 }

@@ -1,12 +1,14 @@
 <?php
 
-class Materials extends Module
-{
+class Materials extends Module {
 
-    function viewsList()
-    {
+    function viewsList() {
         $return = [];
-        $conf = $this->view->getParentConfig();
+        if (!empty(App::$cur['parrent'])) {
+            $conf = App::$cur->view->getParentConfig();
+        } else {
+            $conf = App::$cur->view->getConfig();
+        }
         if (!empty($conf['files']['modules']['Materials'])) {
 
             foreach ($conf['files']['modules']['Materials'] as $file) {
@@ -18,10 +20,13 @@ class Materials extends Module
         return $return;
     }
 
-    function templatesList()
-    {
+    function templatesList() {
         $return = ['current' => 'Текущая тема'];
-        $conf = $this->view->getParentConfig();
+        if (!empty(App::$cur['parrent'])) {
+            $conf = App::$cur->view->getParentConfig();
+        } else {
+            $conf = App::$cur->view->getConfig();
+        }
         if (!empty($conf['files']['aditionTemplateFiels'])) {
             foreach ($conf['files']['aditionTemplateFiels'] as $file) {
                 $return[$file['file']] = '- ' . $file['name'];

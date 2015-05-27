@@ -1,11 +1,25 @@
+/**
+ * Main Ui object
+ * 
+ * @returns {Ui}
+ */
 function Ui() {
-    this.modal = null;
-    this.dataManager = null;
+
 }
-Modal = function () {
+Ui.prototype.init = function () {
+    this.modals = new Modals();
+    this.forms = new Forms();
+    this.dataManagers = new DataManagers();
+}
+/**
+ * Modals objects
+ * 
+ * @returns {Modals}
+ */
+Modals = function () {
     this.modals = 0;
 }
-Modal.prototype.show = function (title, body, code, size) {
+Modals.prototype.show = function (title, body, code, size) {
     if (code == null) {
         code = 'modal' + (++this.modals);
     }
@@ -41,49 +55,116 @@ Modal.prototype.show = function (title, body, code, size) {
     modal.modal('show');
     return modal;
 }
-function DataManager() {
-    this.dataManagers = 0;
+/**
+ * DataManager objects
+ * 
+ * @returns {DataManagers}
+ */
+function DataManagers() {
+    this.instances = {};
+    inji.onLoad(function () {
+        $.each($('.dataManager'), function () {
+            inji.Ui.dataManagers.instances[$(this).attr('id')] = new DataManager($(this));
+        });
+    });
 }
-DataManager.prototype.show = function (item, params) {
+DataManagers.prototype.get = function (element) {
+    if ($(element).hasClass('dataManager')) {
+        if (typeof (this.instances[$(element).attr('id')]) != 'undefined') {
+            return this.instances[$(element).attr('id')];
+        }
+        else {
+            return this.instances[$(element).attr('id')] = new DataManager($(element));
+        }
+    }
+    else {
+        if ($(element).closest('.dataManager').length == 1 && typeof (this.instances[$(element).closest('.dataManager').attr('id')]) != 'undefined') {
+            return this.instances[$(element).closest('.dataManager').attr('id')];
+        }
+        else if ($(element).closest('.dataManager').length == 1) {
+            return this.instances[$(element).closest('.dataManager').attr('id')] = new DataManager($(element).closest('.dataManager'));
+        }
+    }
+    return null
+}
+DataManagers.prototype.popUp = function (item, params) {
     var code = item;
     if (typeof (params.relation) != 'undefined') {
         code += params.relation;
     }
     code = code.replace(':', '_').replace('\\', '_');
-    var modal = ui.modal.show('', '<div class = "text-center"><img src = "/static/moduleAsset/Ui/images/ajax-loader.gif" /></div>', code, 'modal-lg');
-    $.ajax(
-            {
-                url: '/admin/ui/dataManager/',
-                dataType: 'json',
-                data: {item: item, params: params},
-                success: function (data) {
-                    modal.find('.modal-body').html(data.content)
-                }
-            }
-    );
+    var modal = inji.Ui.modals.show('', '<div class = "text-center"><img src = "/static/moduleAsset/Ui/images/ajax-loader.gif" /></div>', code, 'modal-lg');
+    inji.Server.request({
+        url: 'ui/dataManager/',
+        dataType: 'json',
+        data: {item: item, params: params},
+        success: function (data) {
+            modal.find('.modal-body').html(data.content);
+            $.each(modal.find('.modal-body .dataManager'), function () {
+                inji.Ui.dataManagers.instances[$(this).attr('id')] = new DataManager($(this));
+            });
+        }
+    });
 }
-function Form() {
+DataManagers.prototype.reloadAll = function () {
+    for (var key in this.instances) {
+        this.instances[key].reload();
+    }
+}
+function DataManager(element) {
+    this.element = element;
+    this.params = element.data('params');
+    this.modelName = element.data('modelname');
+    this.managerName = element.data('managername');
+    this.load();
+}
+DataManager.prototype.delRow = function (key) {
+    inji.Server.request({
+        url: 'ui/dataManager/delRow',
+        data: {params: this.params, modelName: this.modelName, key: key},
+        success: function () {
+            inji.Ui.dataManagers.reloadAll();
+        }
+    });
+}
+DataManager.prototype.reload = function () {
+    this.load();
+}
+DataManager.prototype.load = function () {
+    var dataManager = this;
+    dataManager.element.find('tbody').html('<tr><td colspan="' + dataManager.element.find('thead tr th').length + '"><div class = "text-center"><img src = "/static/moduleAsset/Ui/images/ajax-loader.gif" /></div></td></tr>');
+    inji.Server.request({
+        url: 'ui/dataManager/loadRows',
+        data: {params: this.params, modelName: this.modelName, managerName: this.managerName},
+        success: function (data) {
+            dataManager.element.find('tbody').html(data.content);
+        }
+    });
+}
+/**
+ * Forms object
+ * 
+ * @returns {Forms}
+ */
+function Forms() {
     this.dataManagers = 0;
 }
-Form.prototype.popUp = function (item, params) {
+Forms.prototype.popUp = function (item, params) {
     var code = item;
     if (typeof (params.relation) != 'undefined') {
         code += params.relation;
     }
     code = code.replace(':', '_').replace('\\', '_');
-    var modal = ui.modal.show('', '<div class = "text-center"><img src = "/static/moduleAsset/Ui/images/ajax-loader.gif" /></div>', code, 'modal-lg');
-    $.ajax(
-            {
-                url: '/admin/ui/formPopUp/',
-                dataType: 'json',
-                data: {item: item, params: params},
-                success: function (data) {
-                    modal.find('.modal-body').html(data.content)
-                }
-            }
-    );
+    var modal = inji.Ui.modals.show('', '<div class = "text-center"><img src = "/static/moduleAsset/Ui/images/ajax-loader.gif" /></div>', code, 'modal-lg');
+    inji.Server.request({
+        url: 'ui/formPopUp/',
+        data: {item: item, params: params},
+        success: function (data) {
+            modal.find('.modal-body').html(data.content);
+        }
+    });
 }
-Form.prototype.submitAjax = function (form) {
+Forms.prototype.submitAjax = function (form) {
     var form = $(form);
     var container = form.parent();
     var btn = form.find('button');
@@ -92,28 +173,20 @@ Form.prototype.submitAjax = function (form) {
     btn.data('loading-text', "Подождите");
 
     var formData = new FormData(form[0]);
-
-    $.ajax({
+    inji.Server.request({
         url: form.attr('action'),
         type: 'POST',
-        dataType: 'json',
         data: formData,
-        async: false,
+        processData: false,
         success: function (data) {
             container.html(data.content);
-            var btn = container.find('button');
+            var btn = container.find('form button');
             var text = btn.text();
             btn.text('Изменения сохранены!');
+            inji.Ui.dataManagers.reloadAll();
             setTimeout(function () {
                 btn.text(text)
             }, 3000);
-        },
-        cache: false,
-        processData: false
+        }
     });
-
 }
-var ui = new Ui();
-ui.modal = new Modal();
-ui.form = new Form();
-ui.dataManager = new DataManager();

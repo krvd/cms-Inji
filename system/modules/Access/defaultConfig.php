@@ -24,6 +24,10 @@ return [
                 '_access' => [
                 ]
             ],
+            'StaticLoader' => [
+                '_access' => [
+                ]
+            ],
             '_access' => [
                 '0' => '3'
             ]

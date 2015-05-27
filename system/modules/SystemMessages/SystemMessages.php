@@ -8,7 +8,7 @@ class SystemMessages extends Module {
     }
 
     function show() {
-        Inji::app()->view->widget('SystemMessages\msgList');
+        App::$cur->view->widget('SystemMessages\msgList');
     }
 
     function get($clean = true) {

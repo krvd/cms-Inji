@@ -4,7 +4,7 @@ class UsersController extends Controller {
 
     function indexAction() {
         $this->view->set_title('Пользователи');
-        $dataTable = new DataTable('User', $_GET, ['actions' => [ 'edit', 'del', ['text' => 'Войти как', 'href' => Inji::app()->url->module() . '/loginAs/']]]);
+        $dataTable = new DataTable('User', $_GET, ['actions' => [ 'edit', 'del', ['text' => 'Войти как', 'href' => App::$cur->url->module() . '/loginAs/']]]);
         $this->view->page(compact('dataTable'));
     }
 
@@ -94,7 +94,7 @@ class UsersController extends Controller {
     }
 
     function loginAction() {
-        if (!Inji::app()->Users->cur->user_id) {
+        if (!App::$cur->Users->curUser->user_id) {
             $this->view->page('login_form', 'login');
         } else {
             $this->view->page('login_form', 'profile');

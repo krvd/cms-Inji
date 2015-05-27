@@ -1,7 +1,7 @@
 <?php
 return function($step = NULL, $params = array()) {
 
-    Inji::app()->db->create_table('files',
+    App::$cur->db->create_table('files',
         array(
         'file_id' => 'pk',
         'file_code' => 'varchar(255) NOT NULL',
@@ -14,7 +14,7 @@ return function($step = NULL, $params = array()) {
         'file_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
         )
     );
-    Inji::app()->db->create_table('file_types',
+    App::$cur->db->create_table('file_types',
         array(
         'file_type_id' => 'pk',
         'file_type_dir' => 'text NOT NULL',
@@ -24,25 +24,25 @@ return function($step = NULL, $params = array()) {
         'file_type_user_id_create' => 'int(11) NOT NULL',
         )
     );
-    Inji::app()->db->insert('file_types',
+    App::$cur->db->insert('file_types',
         array(
         'file_type_dir' => '/static/mediafiles/images/',
         'file_type_ext' => 'png',
         'file_type_allow_resize' => '1'
     ));
-    Inji::app()->db->insert('file_types',
+    App::$cur->db->insert('file_types',
         array(
         'file_type_dir' => '/static/mediafiles/images/',
         'file_type_ext' => 'jpeg',
         'file_type_allow_resize' => '1'
     ));
-    Inji::app()->db->insert('file_types',
+    App::$cur->db->insert('file_types',
         array(
         'file_type_dir' => '/static/mediafiles/images/',
         'file_type_ext' => 'jpg',
         'file_type_allow_resize' => '1'
     ));
-    Inji::app()->db->insert('file_types',
+    App::$cur->db->insert('file_types',
         array(
         'file_type_dir' => '/static/mediafiles/images/',
         'file_type_ext' => 'gif',

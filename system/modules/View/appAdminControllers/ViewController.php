@@ -3,9 +3,9 @@
 class ViewController extends Controller {
 
     function indexAction() {
-        $templates = Inji::app()->view->config;
-        Inji::app()->view->setTitle('Шаблоны сайта');
-        Inji::app()->view->page(['data' => compact('templates')]);
+        $templates = App::$cur->view->config;
+        App::$cur->view->setTitle('Шаблоны сайта');
+        App::$cur->view->page(['data' => compact('templates')]);
     }
 
     function setDefaultAction($name) {
@@ -17,8 +17,8 @@ class ViewController extends Controller {
 
     function createTemplateAction() {
         $this->view->setTitle('Создание шаблона');
-        Inji::app()->view->customAsset('css', '/static/moduleAsset/View/css/blockDrop.css');
-        Inji::app()->view->customAsset('js', '/static/moduleAsset/View/js/blockDrop.js');
+        App::$cur->view->customAsset('css', '/static/moduleAsset/View/css/blockDrop.css');
+        App::$cur->view->customAsset('js', '/static/moduleAsset/View/js/blockDrop.js');
         if (!empty($_POST)) {
             $text = '<!DOCTYPE html>
 <html lang="en">
@@ -34,12 +34,12 @@ class ViewController extends Controller {
     {PAGE:map}
     </body>
 </html>';
-            $templates = Inji::app()->view->config;
+            $templates = App::$cur->view->config;
             $templates['app']['installed'][$_POST['name']] = $_POST['name'];
             $this->Config->save('module', $templates, 'View');
-            $path = Inji::app()->curApp['parent']['path'] . '/templates/' . $_POST['name'] . '/index.html';
-            $pathMap = Inji::app()->curApp['parent']['path'] . '/templates/' . $_POST['name'] . '/map.html';
-            $this->files->create_dir(Inji::app()->curApp['parent']['path'] . '/templates/' . $_POST['name']);
+            $path = App::$cur->apps->parent['path'] . '/templates/' . $_POST['name'] . '/index.html';
+            $pathMap = App::$cur->apps->parent['path'] . '/templates/' . $_POST['name'] . '/map.html';
+            $this->files->create_dir(App::$cur->apps->parent['path'] . '/templates/' . $_POST['name']);
             file_put_contents($path, $text);
             file_put_contents($pathMap, trim($_POST['map']));
             $template = [
@@ -47,7 +47,7 @@ class ViewController extends Controller {
                 'name' => $_POST['name'],
                 'file' => 'index.html',
             ];
-            $this->Config->save(Inji::app()->curApp['parent']['path'] . '/templates/' . $_POST['name'] . '/config.php', $template);
+            $this->Config->save(App::$cur->apps->parent['path'] . '/templates/' . $_POST['name'] . '/config.php', $template);
             $this->url->redirect('/admin/View');
         }
         $this->view->page();
@@ -55,12 +55,12 @@ class ViewController extends Controller {
 
     function editTemplateAction($templateName) {
         $this->view->setTitle('Редактирование шаблона');
-        Inji::app()->view->customAsset('css', '/static/moduleAsset/View/css/blockDrop.css');
-        Inji::app()->view->customAsset('js', '/static/moduleAsset/View/js/blockDrop.js');
-        $template = $this->Config->custom(Inji::app()->curApp['parent']['path'] . '/templates/' . $templateName . '/config.php');
-        $pathMap = Inji::app()->curApp['parent']['path'] . '/templates/' . $templateName . '/map.html';
+        App::$cur->view->customAsset('css', '/static/moduleAsset/View/css/blockDrop.css');
+        App::$cur->view->customAsset('js', '/static/moduleAsset/View/js/blockDrop.js');
+        $template = $this->Config->custom(App::$cur->apps->parent['path'] . '/templates/' . $templateName . '/config.php');
+        $pathMap = App::$cur->apps->parent['path'] . '/templates/' . $templateName . '/map.html';
         if (!empty($_POST)) {
-            $templates = Inji::app()->view->config;
+            $templates = App::$cur->view->config;
             $templates['app']['installed'][$templateName] = $_POST['name'];
             $this->Config->save('module', $templates, 'View');
 
@@ -68,7 +68,7 @@ class ViewController extends Controller {
 
             $template['template_name'] = $templateName;
             $template['name'] = $templateName;
-            $this->Config->save(Inji::app()->curApp['parent']['path'] . '/templates/' . $_POST['name'] . '/config.php', $template);
+            $this->Config->save(App::$cur->apps->parent['path'] . '/templates/' . $_POST['name'] . '/config.php', $template);
             $this->url->redirect('/admin/View');
         }
         $template['map'] = file_get_contents($pathMap);
@@ -99,16 +99,16 @@ class ViewController extends Controller {
         $templates = $this->Config->module('View', 'site');
         if (!empty($_POST['text'])) {
             if ($type != 'html') {
-                file_put_contents(Inji::app()->app['parent']['path'] . "/templates/{$template}/{$type}/{$templates['install_templates'][$template][$type][$file_key]}", $_POST['text']);
+                file_put_contents(App::$cur->app['parent']['path'] . "/templates/{$template}/{$type}/{$templates['install_templates'][$template][$type][$file_key]}", $_POST['text']);
             } else {
-                file_put_contents(Inji::app()->app['parent']['path'] . "/templates/{$template}/index.html", $_POST['text']);
+                file_put_contents(App::$cur->app['parent']['path'] . "/templates/{$template}/index.html", $_POST['text']);
             }
             $this->url->redirect($this->url->up_to(4) . 'edit/' . $template, 'Файл успешно отредактирован', 'success');
         }
         if ($type != 'html') {
-            $text = file_get_contents(Inji::app()->app['parent']['path'] . "/templates/{$template}/{$type}/{$templates['install_templates'][$template][$type][$file_key]}");
+            $text = file_get_contents(App::$cur->app['parent']['path'] . "/templates/{$template}/{$type}/{$templates['install_templates'][$template][$type][$file_key]}");
         } else {
-            $text = file_get_contents(Inji::app()->app['parent']['path'] . "/templates/{$template}/index.html");
+            $text = file_get_contents(App::$cur->app['parent']['path'] . "/templates/{$template}/index.html");
         }
         $type = $type;
         $this->view->page(compact('text', 'type'));

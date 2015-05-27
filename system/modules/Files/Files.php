@@ -11,10 +11,10 @@ class Files extends Module {
      * --	[allow_types]: досупные для заливки типы файлов. Например image (тип форматов из таблицы типов файлов file_type_ext)
      */
     function upload($file, $options = array()) {
-        if (Inji::app()->app['system'])
-            $site_path = Inji::app()->app['parent']['path'];
+        if (App::$cur->app['system'])
+            $site_path = App::$cur->app['parent']['path'];
         else
-            $site_path = Inji::app()->app['path'];
+            $site_path = App::$cur->app['path'];
         if (!is_uploaded_file($file['tmp_name']))
             return false;
 
@@ -81,14 +81,14 @@ class Files extends Module {
           'extension' => string 'gif' (length=3)
           'filename' => string 'avtokran(1)' (length=11)
          */
-        if (Inji::app()->app['system'])
-            $site_path = Inji::app()->app['parent']['path'];
+        if (App::$cur->app['system'])
+            $site_path = App::$cur->app['parent']['path'];
         else
-            $site_path = Inji::app()->app['path'];
+            $site_path = App::$cur->app['path'];
         $this->_FS->create_dir($site_path . '/static/tmp/');
         $file = file_get_contents($url);
         file_put_contents($site_path . '/static/tmp/' . $fileinfo['basename'], $file);
-        /* if (!copy($url, Inji::app()->app['path'] . '/static/tmp/' . $fileinfo['basename']))
+        /* if (!copy($url, App::$cur->app['path'] . '/static/tmp/' . $fileinfo['basename']))
           return false; */
 
         if (empty($fileinfo['extension']))

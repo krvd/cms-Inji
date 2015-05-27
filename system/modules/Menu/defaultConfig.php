@@ -2,6 +2,7 @@
 
 return [
     'storage' => [
+        'appTypeSplit'=>true,
         'appAdmin' => [
             'scheme'=>[
                 'Menu'=>[

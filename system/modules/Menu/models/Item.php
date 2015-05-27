@@ -26,27 +26,28 @@ class Item extends \Model {
     static $dataManagers = [
         'manager' => [
             'cols' => [
-                'type' => [ 'type' => 'select', 'source' => 'array', 'sourceArray' => ['href' => 'Ссылка', 'module' => 'Модуль']],
-                'name' => 'text',
-                'href' => 'text',
-                'Menu_id' => ['relation' => 'menu', 'showCol' => 'name'],
+                'type' => ['type' => 'select', 'source' => 'array', 'sourceArray' => ['href' => 'Ссылка', 'module' => 'Модуль']],
+                'name' => ['type' => 'text'],
+                'href' => ['type' => 'text'],
+                'Menu_id' => ['type' => 'select', 'relation' => 'menu', 'showCol' => 'name'],
             ]
         ]
     ];
     static $forms = [
         'manager' => [
             'inputs' => [
-                'name' => 'text',
-                'href' => 'text',
-                'type' => [ 'type' => 'select', 'source' => 'array', 'sourceArray' => ['href' => 'Ссылка', 'module' => 'Модуль']],
-                'Menu_id' => ['relation' => 'menu', 'showCol' => 'name'],
+                'name' => ['type' => 'text'],
+                'href' => ['type' => 'text'],
+                'type' => ['type' => 'select', 'source' => 'array', 'sourceArray' => ['href' => 'Ссылка', 'module' => 'Модуль']],
+                'Menu_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'menu', 'showCol' => 'name'],
             ],
-            'map'=>[
-                ['type','Menu_id'],
-                ['name','href']
+            'map' => [
+                ['type', 'Menu_id'],
+                ['name', 'href']
             ]
         ]
     ];
+
     static function relations() {
         return [
             'menu' => [

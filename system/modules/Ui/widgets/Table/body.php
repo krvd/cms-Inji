@@ -16,12 +16,21 @@
         ?>
     </div>
 </h1>
-<table class ='table'>
-    <?php
-    $this->widget('Ui\Table/head', compact('table'));
-    foreach ($table->rows as $row) {
-        $this->widget('Ui\Table/row', compact('row'));
-    }
-    $this->widget('Ui\Table/foot', compact('table'));
-    ?>
+<table 
+<?php
+echo $table->id ? " id = '{$table->id}' " : "";
+echo $table->class ? " class = '{$table->class}' " : "";
+foreach ($table->attributes as $attribute => $value) {
+    echo " {$attribute} = '{$value}' ";
+}
+?>>
+        <?php
+        $this->widget('Ui\Table/head', compact('table'));
+        echo '<tbody>';
+        foreach ($table->rows as $row) {
+            $this->widget('Ui\Table/row', compact('row'));
+        }
+        echo '</tbody>';
+        $this->widget('Ui\Table/foot', compact('table'));
+        ?>
 </table>

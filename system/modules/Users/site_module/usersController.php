@@ -160,7 +160,7 @@ class usersController extends Controller
     function registrationAction()
     {
         $this->view->set_title('Регистрация');
-        if (Inji::app()->Users->cur->user_id) {
+        if (App::$cur->Users->curUser->user_id) {
             $this->url->redirect('/', 'Вы уже зарегистрированы');
         }
         if (!empty($_POST)) {

@@ -1,4 +1,4 @@
 <?php
+
 $dataManager = new Ui\DataManager('Menu\Menu');
-$dataManager->draw();
-?>
+$dataManager->draw('manager', ['appType' => 'appAdmin']);

@@ -12,13 +12,14 @@ class View extends Module {
     private $tmp_data = array();
 
     function init() {
-        if (!empty(Inji::app()->Config->app['site']['name'])) {
-            $this->title = Inji::app()->Config->site['site']['name'];
+        if (!empty(App::$cur->config['site']['name'])) {
+            $this->title = App::$cur->config['site']['name'];
         }
-        if (!empty($this->config[Inji::app()->curApp['type']]['current'])) {
-            $this->template['name'] = $this->config[Inji::app()->curApp['type']]['current'];
+        if (!empty($this->config[App::$cur->type]['current'])) {
+            $this->template['name'] = $this->config[App::$cur->type]['current'];
         }
-        $this->templatesPath = Inji::app()->curApp['path'] . "/templates";
+        $this->templatesPath = App::$cur->path . "/templates";
+
         $template = $this->getConfig($this->template['name']);
         if ($template) {
             $this->template = $template;
@@ -30,23 +31,37 @@ class View extends Module {
                 'path' => $this->templatesPath . '/default'
             ];
         }
+
         $this->tmp_data = array(
             'path' => $this->templatesPath . "/{$this->template['name']}/{$this->template['file']}",
             'name' => $this->template['name'],
-            'module' => Inji::app()->curModule,
+            'module' => Module::$cur,
         );
     }
 
-    function getConfig($templateName) {
-        return Inji::app()->config->custom($this->templatesPath . "/{$templateName}/config.php");
+    function getConfig($templateName = '') {
+        if (!$templateName) {
+            $templateName = $this->template['name'];
+        }
+        return Config::custom($this->templatesPath . "/{$templateName}/config.php");
+    }
+
+    function getParentConfig($templateName = '') {
+        if (!$templateName) {
+            $templateName = !empty($this->config[App::$cur->apps->parent['type']]['current']) ? $this->config[App::$cur->apps->parent['type']]['current'] : 'default';
+        }
+        return App::$cur->config->custom(App::$cur->apps->parent['path'] . "/templates/{$templateName}/config.php");
     }
 
     function page($params = []) {
-        $this->tmp_data['contentPath'] = Inji::app()->curController->path . '/content';
-        $this->tmp_data['content'] = Inji::app()->curController->method;
+        $this->tmp_data['contentPath'] = Controller::$cur->path . '/content';
+        $this->tmp_data['content'] = Controller::$cur->method;
         $data = $this->paramsParse($params);
         if (file_exists($data['path'])) {
             $source = file_get_contents($data['path']);
+            if (strpos($source, 'BODYEND') === false) {
+                $source = str_replace('</body>', '{BODYEND}</body>', $source);
+            }
             $this->parseSource($source);
         } else {
             $this->content();
@@ -55,7 +70,7 @@ class View extends Module {
 
     function paramsParse($params) {
         if (!$this->tmp_data['module']) {
-            $this->tmp_data['module'] = Inji::app()->curModule;
+            $this->tmp_data['module'] = App::$cur->curModule;
         }
         $data = $this->tmp_data;
         // set template
@@ -72,14 +87,14 @@ class View extends Module {
         }
         //set module
         if (!empty($params['module'])) {
-            $data['module'] = Inji::app()->$params['module'];
+            $data['module'] = App::$cur->$params['module'];
         }
         //set content
         if (!empty($params['content'])) {
 
             $paths = [
                 'template' => $this->templatesPath . '/' . $this->template['name'] . "/modules/{$data['module']->moduleName}",
-                'controlelrContent' => Inji::app()->curController->path . '/content'
+                'controlelrContent' => Controller::$cur->path . '/content'
             ];
 
             foreach ($paths as $type => $path) {
@@ -99,8 +114,8 @@ class View extends Module {
 
     function content($params = []) {
         $this->current_function = 'CONTENT';
-        if (Inji::app()->msg && empty($this->template['noSysMesAutoShow'])) {
-            Inji::app()->msg->show(true);
+        if (App::$cur->msg && empty($this->template['noSysMesAutoShow'])) {
+            App::$cur->msg->show(true);
         }
 
         $_params = $this->paramsParse($params);
@@ -141,6 +156,10 @@ class View extends Module {
                     $source = $this->cutTag($source, $rawTag);
                     $this->page(['template' => $tag[1]]);
                     break;
+                case 'BODYEND':
+                    $source = $this->cutTag($source, $rawTag);
+                    $this->bodyEnd();
+                    break;
             }
         }
         echo $source;
@@ -152,35 +171,109 @@ class View extends Module {
         return substr($source, ( $pos + strlen($rawTag) + 2));
     }
 
+    function bodyEnd() {
+        $options = [
+            'scripts' => [],
+            'styles' => [],
+        ];
+        $scripts = [];
+        if (!empty($this->libAssets['js'])) {
+            foreach ($this->libAssets['js'] as $js) {
+                $href = $this->getHref('js', $js);
+                if (!$href)
+                    continue;
+
+                $scripts[] = $href;
+            }
+        }
+        if (!empty(Inji::$config['assets']['js'])) {
+            foreach (Inji::$config['assets']['js'] as $js) {
+                if (is_array($js)) {
+                    $asset = $js;
+                } else {
+                    $asset = [];
+                }
+                $asset['file'] = $this->getHref('js', $js);
+                if (!$asset['file'])
+                    continue;
+                $scripts[] = $asset;
+            }
+        }
+        if (!empty($this->dynAssets['js'])) {
+            foreach ($this->dynAssets['js'] as $js) {
+                if (is_array($js)) {
+                    $asset = $js;
+                } else {
+                    $asset = [];
+                }
+                $asset['file'] = $this->getHref('js', $js);
+                if (!$asset['file'])
+                    continue;
+                $scripts[] = $asset;
+            }
+        }
+        if (!empty($this->template['js'])) {
+            foreach ($this->template['js'] as $js) {
+                if (strpos($js, '//') !== false)
+                    $href = $js;
+                else
+                    $href = App::$cur->templatesPath . "/{$this->template['name']}/js/{$js}";
+                $scripts[] = $href;
+            }
+        }
+        $options['scripts'] = $scripts;
+        $options['appRoot'] = App::$cur->type=='app'?'/': '/'.App::$cur->name.'/';
+        $this->widget('View\bodyEnd', compact('options'));
+    }
+
+    function getHref($type, $params) {
+        if (is_string($params)) {
+            return (App::$cur->type != 'app' ? '/' . App::$cur->name : '' ) . $params . "?" . rand(0, 100);
+        } elseif (empty($params['template']) && !empty($params['file'])) {
+            return (App::$cur->type != 'app' ? '/' . App::$cur->name : '' ) . $params['file'] . "?" . rand(0, 100);
+        } elseif (!empty($params['template']) && !empty($params['file'])) {
+            return App::$cur->templatesPath . "/{$this->template['name']}/{$type}/{$js['file']}?" . rand(0, 100);
+        }
+        return '';
+    }
+
+    function checkNeedLibs() {
+        if (!empty($this->template['libs'])) {
+            foreach ($this->template['libs'] as $libName) {
+                App::$cur->libs->loadLib($libName);
+            }
+        }
+    }
+
     function head() {
 
         echo "<title>{$this->title}</title>\n";
 
         if (!empty($this->template['favicon']) && file_exists($this->template['path'] . "/{$this->template['favicon']}"))
             echo "        <link rel='shortcut icon' href='/templates/{$this->template['name']}/{$this->template['favicon']}' />";
-        elseif (file_exists(Inji::app()->curApp['path'] . '/static/images/favicon.ico'))
+        elseif (file_exists(App::$cur->path . '/static/images/favicon.ico'))
             echo "        <link rel='shortcut icon' href='/static/images/favicon.ico' />";
 
 
-        if (!empty(Inji::app()->Config->app['site']['keywords'])) {
-            echo "\n        <meta name='keywords' content='" . Inji::app()->Config->site['site']['keywords'] . "' />";
+        if (!empty(App::$cur->Config->app['site']['keywords'])) {
+            echo "\n        <meta name='keywords' content='" . App::$cur->Config->site['site']['keywords'] . "' />";
         }
-        if (!empty(Inji::app()->Config->app['site']['description'])) {
-            echo "\n        <meta name='description' content='" . Inji::app()->Config->site['site']['description'] . "' />";
+        if (!empty(App::$cur->Config->app['site']['description'])) {
+            echo "\n        <meta name='description' content='" . App::$cur->Config->site['site']['description'] . "' />";
         }
-        if (!empty(Inji::app()->Config->app['site']['metatags'])) {
-            foreach (Inji::app()->Config->app['site']['metatags'] as $meta)
+        if (!empty(App::$cur->Config->app['site']['metatags'])) {
+            foreach (App::$cur->Config->app['site']['metatags'] as $meta)
                 echo "\n        <meta name='{$meta['name']}' content='{$meta['content']}' />";
         }
 
-
+        $this->checkNeedLibs();
 
         if (!empty($this->libAssets['css'])) {
             foreach ($this->libAssets['css'] as $css) {
                 if (strpos($css, '//') !== false)
                     $href = $css;
                 else
-                    $href = $css;
+                    $href = (App::$cur->type != 'app' ? '/' . App::$cur->name : '' ) . $css;
                 echo "\n        <link href='{$href}' rel='stylesheet' type='text/css' />";
             }
         }
@@ -189,7 +282,7 @@ class View extends Module {
                 if (strpos($css, '://') !== false)
                     $href = $css;
                 else
-                    $href = Inji::app()->curApp['templates_path'] . "/{$this->template['name']}/css/{$css}";
+                    $href = App::$cur->templatesPath . "/{$this->template['name']}/css/{$css}";
                 echo "\n        <link href='{$href}' rel='stylesheet' type='text/css' />";
             }
         }
@@ -198,45 +291,12 @@ class View extends Module {
                 if (strpos($css, '//') !== false)
                     $href = $css;
                 else
-                    $href = $css;
+                    $href = (App::$cur->type != 'app' ? '/' . App::$cur->name : '' ) . $css;
                 echo "\n        <link href='{$href}' rel='stylesheet' type='text/css' />";
             }
         }
-        if (!empty($this->libAssets['js'])) {
-            foreach ($this->libAssets['js'] as $js) {
-                if (is_string($js)) {
-                    $href = $js;
-                } elseif (strpos($js['file'], '//') !== false)
-                    $href = $js['file'];
-                elseif ($js['template'])
-                    $href = Inji::app()->curApp['templates_path'] . "/{$this->template['name']}/js/{$js['file']}";
-                else
-                    $href = $js['file'];
-                echo "\n        <script src='{$href}'></script>";
-            }
-        }
-        if (!empty($this->template['js'])) {
-            foreach ($this->template['js'] as $js) {
-                if (strpos($js, '://') !== false)
-                    $href = $js;
-                else
-                    $href = Inji::app()->curApp['templates_path'] . "/{$this->template['name']}/js/{$js}";
-                echo "\n        <script src='{$href}'></script>";
-            }
-        }
-        if (!empty($this->dynAssets['js'])) {
-            foreach ($this->dynAssets['js'] as $js) {
-                if (is_string($js)) {
-                    $href = $js;
-                } elseif (strpos($js['file'], '//') !== false)
-                    $href = $js['file'];
-                elseif ($js['template'])
-                    $href = Inji::app()->curApp['templates_path'] . "/{$this->template['name']}/js/{$js['file']}";
-                else
-                    $href = $js['file'];
-                echo "\n        <script src='{$href}'></script>";
-            }
-        }
+
+        echo "\n        <script src='" . (App::$cur->type != 'app' ? '/' . App::$cur->name : '' ) . "/static/system/js/Inji.js'></script>";
     }
 
     function timegen() {
@@ -244,17 +304,17 @@ class View extends Module {
         echo round(( microtime(true) - INJI_TIME_START), 4);
     }
 
-    function customAsset($type, $href, $lib = false) {
+    function customAsset($type, $asset, $lib = false) {
         if (!$lib) {
-            $this->dynAssets[$type][] = $href;
+            $this->dynAssets[$type][] = $asset;
         } else {
-            $this->libAssets[$type][] = $href;
+            $this->libAssets[$type][] = $asset;
         }
     }
 
     function setTitle($title, $add = true) {
-        if ($add && !empty(Inji::app()->Config->app['site']['name'])) {
-            $this->title = $title . ' - ' . Inji::app()->Config->app['site']['name'];
+        if ($add && !empty(App::$cur->Config->app['site']['name'])) {
+            $this->title = $title . ' - ' . App::$cur->Config->app['site']['name'];
         } else {
             $this->title = $title;
         }
@@ -266,13 +326,13 @@ class View extends Module {
         }
         if (strpos($widgetName, '\\')) {
             $widgetName = explode('\\', $widgetName);
-            if (Inji::app()->$widgetName[0] && file_exists(Inji::app()->$widgetName[0]->path . '/widgets/' . $widgetName[1] . '.php')) {
-                include Inji::app()->$widgetName[0]->path . '/widgets/' . $widgetName[1] . '.php';
+            if (App::$cur->$widgetName[0] && file_exists(App::$cur->$widgetName[0]->path . '/widgets/' . $widgetName[1] . '.php')) {
+                include App::$cur->$widgetName[0]->path . '/widgets/' . $widgetName[1] . '.php';
             }
         } elseif (file_exists($this->templatesPath . '/' . $this->template['name'] . '/widgets/' . $widgetName . '.php')) {
             include $this->templatesPath . '/' . $this->template['name'] . '/widgets/' . $widgetName . '.php';
-        } elseif (file_exists(Inji::app()->curApp['path'] . '/widgets/' . $widgetName . '.php')) {
-            include Inji::app()->curApp['path'] . '/widgets/' . $widgetName . '.php';
+        } elseif (file_exists(App::$cur->path . '/widgets/' . $widgetName . '.php')) {
+            include App::$cur->path . '/widgets/' . $widgetName . '.php';
         }
     }
 
