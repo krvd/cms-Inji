@@ -5,6 +5,8 @@ class Db extends Module
 
     public $connection = null;
     public $connect = false;
+    public $dbConfig = [];
+    public $curQuery = null;
 
     function init($param = 'local')
     {
@@ -20,13 +22,29 @@ class Db extends Module
         $this->connection = new $className();
         $this->connection->init($db);
         $this->connect = $this->connection->connect;
-        
+        $this->dbConfig = $db;
     }
 
     function __call($name, $params)
     {
-        if (is_object($this->connection))
-            return call_user_func_array(array($this->connection, $name), $params);
+        if(!is_object($this->connection)){
+            return false;
+        }
+        $className = 'Db\\'.$this->dbConfig['driver'];
+        $QueryClassName = 'Db\\'.$this->dbConfig['driver'].'\\Query';
+        $ResultClassName = 'Db\\'.$this->dbConfig['driver'].'\\Result';
+        if(method_exists($className, $name)){
+            
+                return call_user_func_array(array($this->connection, $name), $params);
+            
+        }
+        if(method_exists($QueryClassName, $name)){
+            if(!is_object($this->curQuery)){
+                $this->curQuery = new Db\Mysql\Query($this->connection);
+            }
+            return call_user_func_array(array($this->curQuery, $name), $params);
+        }
+            
         return false;
     }
 

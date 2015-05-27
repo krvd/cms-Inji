@@ -38,7 +38,7 @@ class Options extends \Model {
         'connect_alias' => ['type' => 'text', 'default' => 'local'],
         'driver' =>['type' => 'select', 'source' => 'array', 'sourceArray' =>['Mysql' => 'Mysql']],
         'host' => ['type' => 'text', 'default' => 'localhost'],
-        'user' => ['type' => 'text', 'default' => 'user'],
+        'user' => ['type' => 'text', 'default' => 'root'],
         'pass' => ['type' => 'text'],
         'db_name' => ['type' => 'text', 'default' => 'test'],
         'encoding' => ['type' => 'text', 'default' => 'utf8'],

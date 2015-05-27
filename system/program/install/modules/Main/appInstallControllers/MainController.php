@@ -11,6 +11,7 @@
 class MainController extends Controller {
 
     function indexAction() {
+        $this->db->select('files');
         $config = Config::share();
         if (!empty($config['installed'])) {
             $this->url->redirect('/', 'Приложение уже установлено');

@@ -17,15 +17,9 @@ class Mysql extends \Object {
     public $encoding = 'utf-8';        // установленная кодировка
     public $db_name = 'test';         // выбраная в данный момент база
     public $table_prefix = 'inji_';   // префикс названий таблиц
-    public $where = '';             // актуальная строка условия
-    public $cols = '*';             // актуальная строка столбцов
-    public $order = NULL;           // актуальная строка выборки
     public $select_result = NULL;   // результат последнего запроса select
     public $result_array = array(); // массив из запроса select
-    public $mysqli = NULL;
-    public $join = '';
-    public $group = NULL;
-    public $limit = '';
+    public $pdo = NULL;
     public $last_query = '';
     public $last_error = '';
     public $noConnectAbort = false;
@@ -43,68 +37,29 @@ class Mysql extends \Object {
             $this->table_prefix = $table_prefix;
         if (isset($noConnectAbort))
             $this->noConnectAbort = $noConnectAbort;
-        $this->mysqli = @new \mysqli($host, $user, $pass, $db_name, $port);
 
-        if ($this->mysqli->connect_error) {
+        $dsn = "mysql:host=$host;port=$port;dbname=$db_name;charset=$encoding";
+        $opt = array(
+            \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+            \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC
+        );
+        $this->pdo = new \PDO($dsn, $user, $pass, $opt);
+        $error = $this->pdo->errorInfo();
+
+        if ($error[0]) {
             if ($this->noConnectAbort) {
                 return false;
             } else {
-                INJI_SYSTEM_ERROR($this->mysqli->connect_error, true);
+
+                INJI_SYSTEM_ERROR($error[2], true);
             }
         } else {
-            $this->mysqli->set_charset($this->encoding);
-            if (defined('TIMEZONE')) {
-                $this->setTimezone(TIMEZONE);
-            }
             $this->connect = true;
             return true;
         }
     }
 
-    /**
-     * выбор базы данных
-     */
-    public function select_db($name) {
-        $this->db_name = $this->mysqli->real_escape_string($name);
-        return $this->mysqli->select_db($this->db_name);
-    }
-
-    /**
-     * задание кодировки
-     */
-    public function set_names($enc) {
-        $this->encoding = $this->mysqli->real_escape_string($enc);
-        return $this->mysqli->set_charset($this->encoding);
-    }
-
-    /**
-     * Установка временной зоны
-     */
-    public function setTimezone($timezone) {
-        return $this->mysqli->query("SET timezone = '{$timezone}'");
-    }
-
-    /**
-     * запрос на выборку
-     */
-    public function select($table, $noclean = false, $noprefix = false) {
-        $table = $this->mysqli->real_escape_string($table);
-        $query = "SELECT {$this->cols} FROM `{$this->db_name}`.`";
-        if (!$noprefix)
-            $query .= $this->table_prefix;
-        $query .= "{$table}` {$this->join} {$this->where} {$this->group} {$this->order} {$this->limit}";
-        $this->select_result = $this->query($query);
-
-        if (!$noclean) {
-            $this->where = '';
-            $this->cols = '*';
-            $this->order = '';
-            $this->join = '';
-            $this->group = '';
-            $this->limit = '';
-        }
-        return $this->select_result;
-    }
+    
 
     /**
      * преобразование результата в массив
@@ -136,8 +91,8 @@ class Mysql extends \Object {
      */
     function where($where = '', $value = '', $operation = false, $concatenation = 'AND') {
         if (!is_array($where) && !is_array($value) && !is_array($operation) && !is_array($concatenation)) {
-            $where = $this->mysqli->real_escape_string($where);
-            $value = $this->mysqli->real_escape_string($value);
+            $where = $this->pdo->real_escape_string($where);
+            $value = $this->pdo->real_escape_string($value);
 
             if (!$operation)
                 $operation = '=';
@@ -212,7 +167,7 @@ class Mysql extends \Object {
         if (is_array($cols)) {
             $colsa = array();
             foreach ($cols as $item) {
-                $item = $this->mysqli->real_escape_string($item);
+                $item = $this->pdo->real_escape_string($item);
 
                 if (!preg_match('!`!', $item) && !preg_match('!\(!', $item) && !substr_count($item, '*'))
                     $item = "`{$item}`";
@@ -221,7 +176,7 @@ class Mysql extends \Object {
             $this->cols = implode(',', $colsa);
         }
         else {
-            $cols = $this->mysqli->real_escape_string($cols);
+            $cols = $this->pdo->real_escape_string($cols);
 
             if (!preg_match('!`!', $cols) && !preg_match('!\(!', $cols) && !substr_count($cols, '*'))
                 $cols = "`{$cols}`";
@@ -237,9 +192,9 @@ class Mysql extends \Object {
         if (is_array($table)) {
             return call_user_func_array([$this, 'join'], $table);
         }
-        $table = $this->mysqli->real_escape_string($table);
+        $table = $this->pdo->real_escape_string($table);
 
-        $type = $this->mysqli->real_escape_string($type);
+        $type = $this->pdo->real_escape_string($type);
         $this->join .= " {$type} JOIN `{$this->table_prefix}{$table}` ";
         //var_dump($alias)
         if ($alias)
@@ -261,11 +216,11 @@ class Mysql extends \Object {
 
     public function order($order, $type = false) {
         if (!is_array($order)) {
-            $order = $this->mysqli->real_escape_string($order);
+            $order = $this->pdo->real_escape_string($order);
             if (!preg_match('!\(!', $order))
                 $order = "`{$order}`";
 
-            $type = $this->mysqli->real_escape_string($type);
+            $type = $this->pdo->real_escape_string($type);
 
             if (!$type)
                 $type = 'ASC';
@@ -289,13 +244,13 @@ class Mysql extends \Object {
      * Выполнение запроса
      */
     function query($query) {
-        $key = App::$cur->Log->start('query: ' . $query);
-        $result = $this->mysqli->query($query);
-        App::$cur->Log->end($key);
+        $key = \App::$cur->Log->start('query: ' . $query);
+        $result = $this->pdo->query($query);
+        \App::$cur->Log->end($key);
         $this->last_query = $query;
-        $this->last_error = $this->mysqli->error;
-        if ($this->last_error) {
-            App::$cur->Log->event('error last query: ' . $this->last_error, 'danger');
+        $this->last_error = $result->errorInfo();
+        if ($this->last_error[0]) {
+            \App::$cur->Log->event('error last query: ' . $this->last_error[2], 'danger');
         }
 
         return $result;
@@ -309,35 +264,35 @@ class Mysql extends \Object {
     }
 
     function insert($table, $data) {
-        $table = $this->mysqli->real_escape_string($table);
+        $table = $this->pdo->real_escape_string($table);
 
         foreach ($data as $key => $item)
-            $col_keys[] = $this->mysqli->real_escape_string($key);
+            $col_keys[] = $this->pdo->real_escape_string($key);
 
         foreach ($data as $key => $item)
-            $datas[$key] = $this->mysqli->real_escape_string($item);
+            $datas[$key] = $this->pdo->real_escape_string($item);
 
         $cols = implode('`,`', $col_keys);
         $vals = implode("','", $datas);
         $this->query("INSERT INTO `{$this->table_prefix}{$table}` (`{$cols}`) VALUES ('{$vals}')");
-        return $this->mysqli->insert_id;
+        return $this->pdo->lastInsertId();
     }
 
     function delete($table, $noclean = 0) {
-        $table = $this->mysqli->real_escape_string($table);
+        $table = $this->pdo->real_escape_string($table);
         $this->query("DELETE FROM `{$this->table_prefix}{$table}` {$this->where}");
         if ($noclean == 0)
             $this->where = '';
 
-        return $this->mysqli->affected_rows;
+        return $this->pdo->affected_rows;
     }
 
     function update($table, $data, $noclean = 0) {
-        $table = $this->mysqli->real_escape_string($table);
+        $table = $this->pdo->real_escape_string($table);
 
         foreach ($data as $key => $item) {
-            $key = $this->mysqli->real_escape_string($key);
-            $item = $this->mysqli->real_escape_string($item);
+            $key = $this->pdo->real_escape_string($key);
+            $item = $this->pdo->real_escape_string($item);
             if (!in_array($item, array('CURRENT_TIMESTAMP')))
                 $updates[] = "`{$key}` = '{$item}'";
             else
@@ -350,7 +305,7 @@ class Mysql extends \Object {
         if ($noclean == 0)
             $this->where = '';
 
-        return $this->mysqli->affected_rows;
+        return $this->pdo->affected_rows;
     }
 
     function getTableCols($table_name) {

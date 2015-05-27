@@ -1,10 +1,12 @@
 <h1>Выбор модулей</h1>
 <form>
     <?php
+    $config = Config::app(App::$parent ? App::$parent : App::$cur);
+    $modules = !empty($config['modules']) ? array_flip($config['modules']) : [];
     $systemModules = array_slice(scandir(INJI_SYSTEM_DIR . '/modules'), 2);
     foreach ($systemModules as $module) {
         $info = Module::getInfo($module);
-        if(!$info)
+        if(!$info || isset($modules[$module]))
             continue;
         ?>
         <div class ="form-group">

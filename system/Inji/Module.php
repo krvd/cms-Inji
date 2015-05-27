@@ -51,14 +51,14 @@ class Module {
 
     function findController() {
         $controllersPath = $this->path . '/' . $this->app->type . 'Controllers';
-        if (!empty($this->params[0]) && file_exists($controllersPath . '/' . $this->params[0] . 'Controller.php')) {
-            include $controllersPath . '/' . $this->params[0] . 'Controller.php';
-            $controllerName = $this->params[0] . 'Controller';
+        if (!empty($this->params[0]) && file_exists($controllersPath . '/' . ucfirst($this->params[0]) . 'Controller.php')) {
+            include $controllersPath . '/' . ucfirst($this->params[0]) . 'Controller.php';
+            $controllerName = ucfirst($this->params[0]) . 'Controller';
             $controller = new $controllerName();
             $controller->params = array_slice($this->params, 1);
             $controller->module = $this;
             $controller->path = $controllersPath;
-            $controller->name = $this->params[0];
+            $controller->name = ucfirst($this->params[0]);
             return $controller;
         }
         if (file_exists($controllersPath . '/' . $this->moduleName . 'Controller.php')) {
@@ -72,14 +72,14 @@ class Module {
             return $controller;
         }
         $controllersPath = $this->path . '/Controllers';
-        if (!empty($this->params[0]) && file_exists($controllersPath . '/' . $this->params[0] . 'Controller.php')) {
-            include $controllersPath . '/' . $this->params[0] . 'Controller.php';
+        if (!empty($this->params[0]) && file_exists($controllersPath . '/' . ucfirst($this->params[0]) . 'Controller.php')) {
+            include $controllersPath . '/' . ucfirst($this->params[0]) . 'Controller.php';
             $controllerName = $this->params[0] . 'Controller';
             $controller = new $controllerName();
             $controller->params = array_slice($this->params, 1);
             $controller->module = $this;
             $controller->path = $controllersPath;
-            $controller->name = $this->params[0];
+            $controller->name = ucfirst($this->params[0]);
             return $controller;
         };
         if (file_exists($controllersPath . '/' . $this->moduleName . 'Controller.php')) {
