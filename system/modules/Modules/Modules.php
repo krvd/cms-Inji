@@ -28,12 +28,11 @@ class Modules extends Module {
         if (!empty($info['autoload'])) {
             $config['autoloadModules'][] = $module;
         }
-        Config::save('app', $config, null, App::$parent ? App::$parent : App::$cur);
-
         if (file_exists($path . $module . '/install_script.php')) {
             $installFunction = include $path . $module . '/install_script.php';
             $installFunction(1, $params);
         }
+        Config::save('app', $config, null, App::$parent ? App::$parent : App::$cur);
     }
 
 }
