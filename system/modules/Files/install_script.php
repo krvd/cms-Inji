@@ -1,7 +1,7 @@
 <?php
 return function($step = NULL, $params = array()) {
 
-    App::$cur->db->create_table('files',
+    App::$cur->db->createTable('files',
         array(
         'file_id' => 'pk',
         'file_code' => 'varchar(255) NOT NULL',
@@ -14,7 +14,7 @@ return function($step = NULL, $params = array()) {
         'file_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
         )
     );
-    App::$cur->db->create_table('file_types',
+    App::$cur->db->createTable('file_types',
         array(
         'file_type_id' => 'pk',
         'file_type_dir' => 'text NOT NULL',

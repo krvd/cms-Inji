@@ -1,7 +1,7 @@
 <?php
 return function ($step = NULL, $params = array()) {
 
-    App::$cur->db->create_table('menu_groups',
+    App::$cur->db->createTable('menu_groups',
         array(
         'mg_id' => 'pk',
         'mg_name' => 'varchar(255) NOT NULL',
@@ -10,7 +10,7 @@ return function ($step = NULL, $params = array()) {
         'mg_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
         )
     );
-    App::$cur->db->create_table('menu_items',
+    App::$cur->db->createTable('menu_items',
         array(
         'mi_id' => 'pk',
         'mi_name' => 'varchar(255) NOT NULL',

@@ -1,7 +1,7 @@
 <?php
 
 return function ($step = NULL, $params = array()) {
-    App::$cur->db->create_table('users', array(
+    App::$cur->db->createTable('users', array(
         'user_id' => 'pk',
         'user_login' => 'varchar(255) NOT NULL',
         'user_name' => 'varchar(255) NOT NULL',
@@ -40,7 +40,7 @@ return function ($step = NULL, $params = array()) {
             'user_role_id' => '3',
         ));
     }
-    App::$cur->db->create_table('user_passre', array(
+    App::$cur->db->createTable('user_passre', array(
         'up_id' => 'pk',
         'up_hash' => 'text NOT NULL',
         'up_user_id' => 'int(11) NOT NULL',
@@ -48,7 +48,7 @@ return function ($step = NULL, $params = array()) {
         'up_date' => 'timestamp DEFAULT CURRENT_TIMESTAMP',
             )
     );
-    App::$cur->db->create_table('user_invites', array(
+    App::$cur->db->createTable('user_invites', array(
         'ui_id' => 'pk',
         'ui_mail' => 'VARCHAR(255) NOT NULL',
         'ui_status' => 'TINYINT(1) NOT NULL',

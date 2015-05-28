@@ -1,14 +1,14 @@
 <?php
 
 return function ($step = NULL, $params = array()) {
-    App::$cur->db->create_table('libs_asseter_front_libs', array(
+    App::$cur->db->createTable('libs_asseter_front_libs', array(
         'lafl_id' => 'pk',
         'lafl_name' => 'varchar(255) NOT NULL',
         'lafl_version' => 'varchar(255) NOT NULL',
         'lafl_required' => 'text NOT NULL',
         'lafl_enabled' => 'BOOL NOT NULL',
     ));
-    App::$cur->db->create_table('libs_asseter_front_lib_files', array(
+    App::$cur->db->createTable('libs_asseter_front_lib_files', array(
         'laflf_id' => 'pk',
         'laflf_lafl_id' => 'int(11) NOT NULL',
         'laflf_file' => 'varchar(255) NOT NULL',

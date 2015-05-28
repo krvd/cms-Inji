@@ -1,7 +1,7 @@
 <?php
 return function ($step = NULL, $params = array()) {
 
-    App::$cur->db->create_table('groups', array(
+    App::$cur->db->createTable('groups', array(
         'group_id' => 'pk',
         'group_name' => 'varchar(255) NOT NULL',
         )
