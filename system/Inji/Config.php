@@ -131,7 +131,7 @@ class Config {
                 break;
             case 'app':
                 $path = $app->path . "/config/config.php";
-                self::$_configs['site'][$site_name] = $data;
+                self::$_configs['app'][$site_name] = $data;
                 break;
             case 'module' :
                 $path = $app->path . "/config/modules/{$module}.php";
@@ -145,7 +145,6 @@ class Config {
                     $path = INJI_PROGRAM_DIR . "/config/config.php";
                     self::$_configs['share'] = $data;
                 }
-
                 break;
             default:
                 $path = $type;
