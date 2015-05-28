@@ -66,11 +66,11 @@ class App {
      */
     function findModuleClass($moduleName) {
         if (file_exists($this->path . '/modules/' . $moduleName . '/' . $moduleName . '.php')) {
-            include $this->path . '/modules/' . $moduleName . '/' . $moduleName . '.php';
+            include_once  $this->path . '/modules/' . $moduleName . '/' . $moduleName . '.php';
             return $moduleName;
         }
         if (file_exists(INJI_SYSTEM_DIR . '/modules/' . $moduleName . '/' . $moduleName . '.php')) {
-            include INJI_SYSTEM_DIR . '/modules/' . $moduleName . '/' . $moduleName . '.php';
+            include_once INJI_SYSTEM_DIR . '/modules/' . $moduleName . '/' . $moduleName . '.php';
             return $moduleName;
         }
         if (!empty($this->config['moduleRouter'])) {

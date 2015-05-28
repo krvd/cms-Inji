@@ -21,19 +21,19 @@ class Router {
             ];
             foreach ($paths as $path) {
                 if (file_exists($path)) {
-                    include $path;
+                    include_once $path;
                     return true;
                 }
             }
         } else {
             $path = INJI_SYSTEM_DIR . '/objects/' . $className . '.php';
             if (file_exists($path)) {
-                include $path;
+                include_once $path;
                 return true;
             }
             $path = INJI_SYSTEM_DIR . '/models/' . $className . '.php';
             if (file_exists($path)) {
-                include $path;
+                include_once $path;
                 return true;
             }
         }
