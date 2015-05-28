@@ -1,60 +1,76 @@
 <?php
 
-class Db extends Module
-{
+class Db extends Module {
 
     public $connection = null;
     public $connect = false;
     public $dbConfig = [];
     public $curQuery = null;
+    public $className = '';
+    public $QueryClassName = '';
+    public $ResultClassName = '';
 
-    function init($param = 'local')
-    {
+    function init($param = 'local') {
         if (!is_array($param)) {
-            if (!($dbOption = Db\Options::get($param,'connect_alias',['array'=>true])))
+            if (!($dbOption = Db\Options::get($param, 'connect_alias', ['array' => true])))
                 return false;
 
             $db = $dbOption;
         } else {
             $db = $param;
         }
-        $className = 'Db\\'.$db['driver'];
+        $className = 'Db\\' . $db['driver'];
         $this->connection = new $className();
         $this->connection->init($db);
+        $this->connection->dbInstance = $this;
         $this->connect = $this->connection->connect;
         $this->dbConfig = $db;
+
+        $this->className = 'Db\\' . $this->dbConfig['driver'];
+        $this->QueryClassName = 'Db\\' . $this->dbConfig['driver'] . '\\Query';
+        $this->ResultClassName = 'Db\\' . $this->dbConfig['driver'] . '\\Result';
     }
 
-    function __call($name, $params)
-    {
-        if(!is_object($this->connection)){
+    function __call($name, $params) {
+        if (!is_object($this->connection)) {
             return false;
         }
-        $className = 'Db\\'.$this->dbConfig['driver'];
-        $QueryClassName = 'Db\\'.$this->dbConfig['driver'].'\\Query';
-        $ResultClassName = 'Db\\'.$this->dbConfig['driver'].'\\Result';
-        if(method_exists($className, $name)){
-            
-                return call_user_func_array(array($this->connection, $name), $params);
-            
+        if (method_exists($this->className, $name)) {
+            return call_user_func_array(array($this->connection, $name), $params);
         }
-        if(method_exists($QueryClassName, $name)){
-            if(!is_object($this->curQuery)){
-                $this->curQuery = new Db\Mysql\Query($this->connection);
+        if (method_exists($this->QueryClassName, $name)) {
+            if (!is_object($this->curQuery)) {
+                $this->curQuery = new $this->QueryClassName($this->connection);
             }
             return call_user_func_array(array($this->curQuery, $name), $params);
         }
-            
+
         return false;
     }
 
-    function __get($name)
-    {
-        return $this->connection->$name;
+    function __get($name) {
+        if (isset($this->connection->$name)) {
+            return $this->connection->$name;
+        }
+        if (!is_object($this->curQuery)) {
+            $this->curQuery = new $this->QueryClassName($this->connection);
+        }
+        if (isset($this->curQuery->$name)) {
+            return $this->curQuery->$name;
+        }
     }
-    function __set($name, $value)
-    {
-        return $this->connection->$name = $value;
+
+    function __set($name, $value) {
+        if (isset($this->connection->$name)) {
+            return $this->connection->$name = $value;
+        }
+        if (!is_object($this->curQuery)) {
+            $this->curQuery = new $this->QueryClassName($this->connection);
+        }
+        if (isset($this->curQuery->$name)) {
+            return $this->curQuery->$name = $value;
+        }
+        
     }
 
 }
