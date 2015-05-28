@@ -11,7 +11,7 @@
 class MainController extends Controller {
 
     function indexAction() {
-        $this->db->select('files');
+        //$this->db->select('files');
         $config = Config::share();
         if (!empty($config['installed'])) {
             $this->url->redirect('/', 'Приложение уже установлено');
@@ -55,12 +55,27 @@ class MainController extends Controller {
     }
 
     function modulesAction() {
-        if(!empty($_GET['modules'])){
-            foreach ($_GET['modules'] as $module){
+        $config = Config::share();
+        if (!empty($config['installed'])) {
+            $this->url->redirect('/', 'Приложение уже установлено');
+        }
+        if (!empty($_GET['modules'])) {
+            foreach ($_GET['modules'] as $module) {
                 $this->modules->install($module);
             }
+            $this->url->redirect('/install/main/modules', 'Моудли ' . implode(',', $_GET['modules']) . ' установлены');
         }
         $this->view->page();
+    }
+
+    function finishAction() {
+        $config = Config::share();
+        if (!empty($config['installed'])) {
+            $this->url->redirect('/', 'Приложение уже установлено');
+        }
+        $config['installed'] = true;
+        Config::save('share', $config);
+        $this->url->redirect('/admin/users/login', 'Система установлена');
     }
 
 }

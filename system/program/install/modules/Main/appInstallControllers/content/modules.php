@@ -19,5 +19,6 @@
         <?php
     }
     ?>
+    <a class="pull-right btn btn-primary" href="/install/main/finish">Готово</a>
     <button class="btn btn-primary">Установить</button>
 </form>
