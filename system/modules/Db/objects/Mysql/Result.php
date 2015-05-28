@@ -9,6 +9,37 @@
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
 
-class Result {
-    //put your code here
+namespace Db\Mysql;
+
+class Result extends \Object {
+
+    public $pdoResult = null;
+
+    public function getArray($keyCol = '') {
+        if (!$keyCol) {
+            return $this->pdoResult->fetchAll(PDO::FETCH_ASSOC);
+        } else {
+            $array = [];
+            while ($row = $this->pdoResult->fetch(PDO::FETCH_ASSOC)) {
+                $array[$row[$keyCol]] = $row;
+            }
+            return $array;
+        }
+    }
+
+    public function getObjects($class, $keyCol = '') {
+
+        $array = [];
+        while ($object = $this->pdoResult->fetchObject($class)) {
+            if ($keyCol) {
+                $array[$object->$keyCol] = $object;
+            }
+            else {
+                $array[] = $object;
+            }
+        }
+
+        return $array;
+    }
+
 }
