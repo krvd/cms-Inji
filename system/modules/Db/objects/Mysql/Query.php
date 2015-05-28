@@ -99,12 +99,11 @@ class Query extends \Object {
     }
 
     public function order($order, $type = 'ASC') {
-        
-        
+
+
         if (!is_array($order)) {
             $this->order[] = "`{$order}` {$type}";
-        }
-        else {
+        } else {
             foreach ($order as $item)
                 if (!is_array($item)) {
                     call_user_func_array(array($this, 'order'), $order);
@@ -198,7 +197,7 @@ class Query extends \Object {
                     elseif (substr($this->whereString, -1, 1) != '(')
                         $this->whereString = 'WHERE ';
 
-                    $this->whereString($item);
+                    $this->buildWhere($item);
                 }
                 if (!isset($where[$i + 1]) && isset($where[$i - 1]))
                     $this->whereString .= ') ';
@@ -213,7 +212,7 @@ class Query extends \Object {
 
         switch ($this->operation) {
             case 'SELECT':
-                $query .= ' ' . is_array($this->cols) ? implode(',', $this->cols) : $this->cols;
+                $query .= ' ' . (is_array($this->cols) ? implode(',', $this->cols) : $this->cols);
             case 'DELETE':
                 $query .= ' FROM';
                 break;
@@ -285,6 +284,7 @@ class Query extends \Object {
         $prepare = $this->curInstance->pdo->prepare($query['query']);
         $result = new Result();
         $result->pdoResult = $prepare->execute($query['params']);
+        $this->curInstance->dbInstance->curQuery = null;
 
         return $result;
     }

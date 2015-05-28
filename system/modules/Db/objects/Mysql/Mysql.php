@@ -17,12 +17,11 @@ class Mysql extends \Object {
     public $encoding = 'utf-8';        // установленная кодировка
     public $db_name = 'test';         // выбраная в данный момент база
     public $table_prefix = 'inji_';   // префикс названий таблиц
-    public $select_result = NULL;   // результат последнего запроса select
-    public $result_array = array(); // массив из запроса select
     public $pdo = NULL;
     public $last_query = '';
     public $last_error = '';
     public $noConnectAbort = false;
+    public $dbInstance = null;
 
     /**
      * Подключение к MySQL
