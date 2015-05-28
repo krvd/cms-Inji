@@ -17,10 +17,10 @@ class Result extends \Object {
 
     public function getArray($keyCol = '') {
         if (!$keyCol) {
-            return $this->pdoResult->fetchAll(PDO::FETCH_ASSOC);
+            return $this->pdoResult->fetchAll(\PDO::FETCH_ASSOC);
         } else {
             $array = [];
-            while ($row = $this->pdoResult->fetch(PDO::FETCH_ASSOC)) {
+            while ($row = $this->pdoResult->fetch(\PDO::FETCH_ASSOC)) {
                 $array[$row[$keyCol]] = $row;
             }
             return $array;
@@ -33,13 +33,20 @@ class Result extends \Object {
         while ($object = $this->pdoResult->fetchObject($class)) {
             if ($keyCol) {
                 $array[$object->$keyCol] = $object;
-            }
-            else {
+            } else {
                 $array[] = $object;
             }
         }
 
         return $array;
+    }
+
+    function fetch($className = '') {
+        if ($className) {
+            return $this->pdoResult->fetchObject($className);
+        } else {
+            return $this->pdoResult->fetch(\PDO::FETCH_ASSOC);
+        }
     }
 
 }

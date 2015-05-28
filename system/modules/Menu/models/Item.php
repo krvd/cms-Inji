@@ -22,7 +22,7 @@ class Item extends \Model {
         'href' => 'Ссылка',
         'Menu_id' => 'Меню'
     ];
-    static $storageType = 'moduleConfig';
+    static $storage = ['type' => 'moduleConfig'];
     static $dataManagers = [
         'manager' => [
             'cols' => [

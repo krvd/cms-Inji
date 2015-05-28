@@ -282,8 +282,9 @@ class Query extends \Object {
             $query = ['query' => $query, 'params' => $this->params];
         }
         $prepare = $this->curInstance->pdo->prepare($query['query']);
+        $prepare->execute($query['params']);
         $result = new Result();
-        $result->pdoResult = $prepare->execute($query['params']);
+        $result->pdoResult = $prepare;
         $this->curInstance->dbInstance->curQuery = null;
 
         return $result;

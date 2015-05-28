@@ -55,7 +55,7 @@ class UsersController extends Controller {
     function editAction($user_id) {
         $this->view->set_title('Редактирование пользователя');
         $roles = $this->roles->get_all();
-        $user =Users\User::get($user_id);
+        $user = Users\User::get($user_id);
 
         if (!empty($_POST)) {
             if (!empty($_POST['user_pass'][0]) && $_POST['user_pass'][0] == $_POST['user_pass'][1])
@@ -72,7 +72,7 @@ class UsersController extends Controller {
             $this->msg->add('Пользователь изменен.', 'success');
             $this->url->redirect('/admin/Users/');
         }
-        $user =Users\User::get($user_id);
+        $user = Users\User::get($user_id);
         $this->view->page(compact('user', 'roles'));
     }
 
@@ -95,14 +95,14 @@ class UsersController extends Controller {
 
     function loginAction() {
         if (!App::$cur->Users->curUser->user_id) {
-            $this->view->page('login_form', 'login');
+            $this->view->page(['template' => 'login', 'content' => 'login']);
         } else {
-            $this->view->page('login_form', 'profile');
+            $this->view->page(['content' => 'profile']);
         }
     }
 
     function loginAsAction($userId) {
-        $user =Users\User::get($userId);
+        $user = Users\User::get($userId);
         $this->users->autorization($user->user_mail, $user->user_pass, 'mail');
         $this->url->redirect('/', 'Теперь вы на сайте под пользователем ' . $user->user_mail);
     }

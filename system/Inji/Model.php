@@ -68,12 +68,7 @@ class Model {
         if (!$result) {
             return false;
         }
-        $row = $result->fetch_assoc();
-        if (!$row) {
-            return false;
-        }
-        $class = get_called_class();
-        return new $class($row);
+        return $result->fetch(get_called_class());
     }
 
     /**

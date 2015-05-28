@@ -145,7 +145,6 @@ class Users extends Module {
             $user = Users\User::get($idn, 'user_login');
         else
             $user = Users\User::get($idn, 'user_mail');
-
         if (!$user)
             return array();
 

@@ -61,12 +61,15 @@ class Mysql extends \Object {
     function getTableCols($table_name) {
         $query = new Mysql\Query();
         $old_db = $this->db_name;
+        $old_prefix = $this->table_prefix;
         $this->db_name = 'information_schema';
+        $this->table_prefix = '';
 
         $query->where('TABLE_SCHEMA', $old_db);
         $query->where('TABLE_NAME', $this->table_prefix . $table_name);
         $result = $query->select('COLUMNS');
         $this->db_name = $old_db;
+        $this->table_prefix = $old_prefix;
         return $result->getArray('COLUMN_NAME');
         
     }

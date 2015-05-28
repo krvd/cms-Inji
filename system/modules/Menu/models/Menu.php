@@ -21,7 +21,7 @@ class Menu extends \Model {
         'code' => 'Алиас',
         'items' => 'Пункты меню'
     ];
-    static $storageType = 'moduleConfig';
+    static $storage = ['type' => 'moduleConfig'];
     static $dataManagers = [
         'manager' => [
             'options' => [
