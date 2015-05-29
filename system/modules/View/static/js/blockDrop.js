@@ -1,7 +1,4 @@
-$(function () {
-    $('.blockMap .container').removeClass('container').addClass('containerClass');
-    blockDrop.bindUi();
-});
+
 
 function BlockDrop() {
     this.rows = 0;
@@ -11,8 +8,11 @@ function BlockDrop() {
 
 BlockDrop.prototype.bindUi = function () {
     if (this.binded) {
+        $(".blockPreset .block,.blockMap .block").draggable();
         $(".blockPreset .block,.blockMap .block").draggable("destroy");
+        $(".blockPreset .block,.blockMap .block").droppable();
         $(".blockPreset .block,.blockMap .block").droppable("destroy");
+        $(".blockPreset .block,.blockMap .block").sortable();
         $(".blockPreset .block,.blockMap .block").sortable("destroy");
     }
 
@@ -63,7 +63,7 @@ BlockDrop.prototype.addRow = function (selector) {
     html += '</div>';
     html += '<div class = "form-group"><button class = "btn btn-success" onclick = "blockDrop.acceptAddRow(this);" data-dismiss="modal">Добавить строку</button></div>';
     html += '</div>';
-    var modal = ui.modal.show('Выбор разметки', html);
+    var modal = inji.Ui.modals.show('Выбор разметки', html);
 }
 BlockDrop.prototype.changeCols = function (btn, count) {
     var rowselector = $(btn).closest('.rowsSelector');
@@ -121,3 +121,8 @@ BlockDrop.prototype.initActual = function (selector) {
     });
 }
 var blockDrop = new BlockDrop();
+
+inji.onLoad(function () {
+    $('.blockMap .container').removeClass('container').addClass('containerClass');
+    blockDrop.bindUi();
+});

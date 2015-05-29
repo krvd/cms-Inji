@@ -64,13 +64,37 @@ if (!empty($params[0]) && file_exists(INJI_SYSTEM_DIR . '/program/' . $params[0]
     App::$cur->params = array_slice($params, 1);
     App::$cur->config = Config::app(App::$cur);
 }
-
-if (!App::$cur->installed) {
+$shareConfig = Config::share();
+if (App::$cur->name != 'install' && empty($shareConfig['installed'])) {
     App::$cur->url->redirect('/install');
 }
 
 spl_autoload_register('Router::findClass');
-
+/*
+if (!file_exists(__DIR__ . '/../vendor/autoload.php')) {
+    Tools::createDir(__DIR__ . '/../vendor/composer');
+    if (!file_exists(__DIR__ . '/../vendor/composer/bin/composer')) {
+        if (!file_exists(__DIR__ . '/../vendor/composer.phar')) {
+            file_put_contents(__DIR__ . '/../vendor/composerInstall.php', file_get_contents('https://getcomposer.org/installer'));
+            $argv = ['install', '--install-dir', __DIR__ . '/../vendor/'];
+            header("Location: " . filter_input(INPUT_SERVER, 'REQUEST_URI'));
+            include_once __DIR__ . '/../vendor/composerInstall.php';
+        }
+        $composer = new Phar(__DIR__ . '/../vendor/composer.phar');
+        $composer->extractTo(__DIR__ . '/../vendor/composer/');
+    }
+    //$argv = ['install'];
+    include_once __DIR__ . '/../vendor/composer/bin/composer';
+    //require __DIR__ . '/../vendor/composer/src/bootstrap.php';
+    //$io = new Composer\IO\NullIO();
+    //$composer = Composer\Factory::create($io);
+    //$installComand = new Composer\Command\InstallCommand();
+    //$installComand->execute();
+    
+    //var_dump($composer);
+}
+require __DIR__ . '/../vendor/autoload.php';
+*/
 Module::$cur = Module::resolveModule(App::$cur);
 
 if (Module::$cur === null) {

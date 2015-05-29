@@ -1,2 +1,4 @@
 /nbproject/private/
+!/program/.gitkeep
 /program/*
+/vendor/

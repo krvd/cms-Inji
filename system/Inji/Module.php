@@ -18,7 +18,8 @@ class Module {
     public $path = '';
     public $app = null;
 
-    function __construct() {
+    function __construct($app) {
+        $this->app = $app;
         $this->moduleName = get_class($this);
         $this->path = Router::getLoadedClassPath($this->moduleName);
         $this->info = $this->getInfo();
@@ -30,20 +31,17 @@ class Module {
         if (!empty($app->params[0]) && $app->{$app->params[0]}) {
             $module = $app->{$app->params[0]};
             $module->params = array_slice($app->params, 1);
-            $module->app = $app;
             return $module;
         }
         if (!empty($app->config['defaultModule']) && $app->{$app->config['defaultModule']}) {
             $module = $app->{$app->config['defaultModule']};
             $module->params = $app->params;
-            $module->app = $app;
             return $module;
         }
         
         if ($app->Main) {
             $module = $app->main;
             $module->params = $app->params;
-            $module->app = $app;
             return $module;
         }
         return null;

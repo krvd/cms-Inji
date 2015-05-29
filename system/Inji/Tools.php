@@ -34,4 +34,19 @@ class Tools extends Model {
         return $params;
     }
 
+    static function createDir($path) {
+        if (file_exists($path))
+            return true;
+
+        $path = explode('/', $path);
+        $cur = '';
+        foreach ($path as $item) {
+            $cur .= $item . '/';
+            if (!file_exists($cur)) {
+                mkdir($cur);
+            }
+        }
+        return true;
+    }
+
 }

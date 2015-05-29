@@ -5,8 +5,8 @@ class Libs extends Module {
     function loadLib($libName) {
         if (file_exists($this->path . '/static/libs/' . $libName . '/libConfig.php')) {
             $lib = include $this->path . '/static/libs/' . $libName . '/libConfig.php';
-            if(!empty($lib['requiredLibs'])){
-                foreach ($lib['requiredLibs'] as $rLib){
+            if (!empty($lib['requiredLibs'])) {
+                foreach ($lib['requiredLibs'] as $rLib) {
                     $this->loadLib($rLib);
                 }
             }
@@ -21,7 +21,6 @@ class Libs extends Module {
                 }
             }
         }
-        return [];
     }
 
 }

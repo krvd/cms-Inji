@@ -6,57 +6,41 @@ class Users extends Module {
 
     function init() {
         $this->curUser = new Users\User(array('user_group_id' => 1, 'user_role_id' => 1));
-        if (isset($_GET['partner'])) {
-            setcookie("partnerId", $_GET['partner'], time() + 360000, "/");
-            $_COOKIE['partnerId'] = $_GET['partner'];
+        if (!App::$cur->db->connect) {
+            return;
         }
-        $cardCode = (int) substr(INJI_DOMAIN_NAME, 0, strpos(INJI_DOMAIN_NAME, '.'));
-        if ($cardCode) {
-            $this->db->where('cmuc_code', $cardCode);
-            $this->db->where('cmuc_status', 1);
-            $card = $this->db->select('catalog_marketing_user_cards')->fetch_assoc();
-            if ($card) {
-                setcookie("card", $cardCode, time() + 360000, "/", substr(INJI_DOMAIN_NAME, strpos(INJI_DOMAIN_NAME, '.') + 1));
-            }
-            $this->url->redirect('http://' . substr(INJI_DOMAIN_NAME, strpos(INJI_DOMAIN_NAME, '.') + 1));
-        }
-        if (App::$cur->db->connect) {
-            if (isset($_GET['logout']) && ($_COOKIE['user_login'] || $_COOKIE['user_mail'] ) && $_COOKIE['user_pass']) {
-                setcookie("user_login", '', 0, "/");
-                setcookie("user_mail", '', 0, "/");
-                setcookie("user_pass", '', 0, "/");
-                $accesses = Config::module('Access');
-                if (!empty($this->Access->modConf[App::$cur->app['type']]['denied_redirect'])) {
-                    $url = $this->Access->modConf[App::$cur->app['type']]['denied_redirect'];
-                } else {
-                    $url = '/';
-                }
-                $this->url->redirect($url, 'Вы вышли из своего профиля', 'success');
-            } elseif (!empty($_POST['autorization']) && (!empty($_POST['user_login']) || !empty($_POST['user_mail']) ) && !empty($_POST['user_pass'])) {
-                if (!empty($_POST['user_login']))
-                    if (strpos($_POST['user_login'], '@'))
-                        $this->autorization($_POST['user_login'], $this->hashpass($_POST['user_pass']), 'mail');
-                    else
-                        $this->autorization($_POST['user_login'], $this->hashpass($_POST['user_pass']));
-                elseif (strpos($_POST['user_mail'], '@'))
-                    $this->autorization($_POST['user_mail'], $this->hashpass($_POST['user_pass']), 'mail');
-                else
-                    $this->autorization($_POST['user_mail'], $this->hashpass($_POST['user_pass']));
-            }
-            elseif (!empty($_POST['registration']) && (!empty($_POST['user_name']) && !empty($_POST['user_mail']) )) {
-                $this->registration(trim(htmlspecialchars(strip_tags($_POST['user_name']))), $_POST['user_mail'], (!empty($_POST['user_login'])) ? trim(htmlspecialchars(strip_tags($_POST['user_login']))) : null);
-            } elseif (!empty($_GET['passre']) && !empty($_GET['user_mail'])) {
-                $this->passre($_GET['user_mail']);
-            } elseif (!empty($_GET['passrecont']) && !empty($_GET['hash'])) {
-                $this->passrecont($_GET['hash']);
-            } elseif ((!empty($_COOKIE['user_login']) || !empty($_COOKIE['user_mail']) ) && !empty($_COOKIE['user_pass'])) {
 
-                if (!empty($_COOKIE['user_login']))
-                    $this->autorization($_COOKIE['user_login'], $_COOKIE['user_pass']);
-                else
-                    $this->autorization($_COOKIE['user_mail'], $_COOKIE['user_pass'], 'mail');
-            }
+        if (isset($_GET['logout'])) {
+            return $this->logOut();
         }
+        if (!empty($_POST['autorization']) && $login = filter_input(INPUT_POST, 'user_login') && $pass = filter_input(INPUT_POST, 'user_pass')) {
+            return $this->autorization($login, $pass, strpos($login, '@') ? 'mail' : 'login');
+        }
+        if (!empty($_POST['registration']) && $name filter_input(INPUT_POST, 'user_name')$_POST['user_name']) && $mail = filter_input(INPUT_POST, 'user_mail') )) {
+            $this->registration(trim(htmlspecialchars(strip_tags($_POST['user_name']))), $_POST['user_mail'], (!empty($_POST['user_login'])) ? trim(htmlspecialchars(strip_tags($_POST['user_login']))) : null);
+        } 
+        if (!empty($_GET['passre']) && !empty($_GET['user_mail'])) {
+            $this->passre($_GET['user_mail']);
+        } elseif (!empty($_GET['passrecont']) && !empty($_GET['hash'])) {
+            $this->passrecont($_GET['hash']);
+        } elseif ((!empty($_COOKIE['user_login']) || !empty($_COOKIE['user_mail']) ) && !empty($_COOKIE['user_pass'])) {
+
+            if (!empty($_COOKIE['user_login']))
+                $this->autorization($_COOKIE['user_login'], $_COOKIE['user_pass']);
+            else
+                $this->autorization($_COOKIE['user_mail'], $_COOKIE['user_pass'], 'mail');
+        }
+    }
+
+    function logOut() {
+        setcookie("user_session_hash", '', 0, "/");
+        $accesses = Config::module('Access');
+        if (!empty($this->Access->modConf[App::$cur->app['type']]['denied_redirect'])) {
+            $url = $this->Access->modConf[App::$cur->app['type']]['denied_redirect'];
+        } else {
+            $url = '/';
+        }
+        $this->url->redirect($url, 'Вы вышли из своего профиля', 'success');
     }
 
     function passre($user_mail) {
@@ -72,7 +56,7 @@ class Users extends Module {
             $this->db->where('up_id', $up['up_id']);
             $this->db->update('user_passre', array('up_status' => 2));
         }
-        $hash = $this->hashpass(time() . $user->user_id);
+        $hash = $user->user_id . '_' . Tools::randomString(255);
         $this->db->insert('user_passre', array('up_user_id' => $user->user_id, 'up_status' => 1, 'up_hash' => $hash));
         $this->_MAIL->send('noreply@' . INJI_DOMAIN_NAME, $user_mail, 'Восстановление пароля на сайте ' . INJI_DOMAIN_NAME, 'Было запрошено восстановление пароля на сайте ' . INJI_DOMAIN_NAME . '<br />для продолжения восстановления пароля перейдите по ссылке: <a href = "http://' . INJI_DOMAIN_NAME . '/?passrecont=1&hash=' . $hash . '">' . INJI_DOMAIN_NAME . '/?passrecont=1&hash=' . $hash . '</a>');
         $this->url->redirect('/', 'На указанный почтовый ящик была выслана инструкция по восстановлению пароля', 'success');
@@ -97,7 +81,7 @@ class Users extends Module {
 
     function autorization($login, $pass, $ltype = 'login') {
         $user = $this->get($login, $ltype);
-        if ($user && $user->user_pass === $pass) {
+        if ($user && $this->verifypass($pass, $user->user_pass)) {
             $this->curUser = $user;
             if (!headers_sent()) {
                 setcookie("user_login", $user->user_login, time() + 360000, "/");
@@ -298,7 +282,7 @@ class Users extends Module {
         if (!empty($_COOKIE['card'])) {
             setcookie("card", '', 0, "/", '.' . INJI_DOMAIN_NAME);
         }
-        $this->autorization($user_mail, $this->hashpass($pass), 'mail');
+        $this->autorization($user_mail, $pass, 'mail');
 
         $from = 'noreply@' . INJI_DOMAIN_NAME;
         $to = $user_mail;
@@ -350,7 +334,11 @@ class Users extends Module {
     }
 
     function hashpass($pass) {
-        return hash('sha256', 'asd908436#*U&89' . hash('sha256', $pass . 'asdo409dv,bmdf') . ')#(OKOMVIROI#)#_(');
+        return password_hash($pass, PASSWORD_DEFAULT);
+    }
+
+    function verifypass($pass, $hash) {
+        return password_verify($pass, $hash);
     }
 
 }

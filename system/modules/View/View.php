@@ -54,8 +54,12 @@ class View extends Module {
     }
 
     function page($params = []) {
-        $this->tmp_data['contentPath'] = Controller::$cur->path . '/content';
-        $this->tmp_data['content'] = Controller::$cur->method;
+        if (empty($this->tmp_data['contentPath'])) {
+            $this->tmp_data['contentPath'] = Controller::$cur->path . '/content';
+        }
+        if (empty($this->tmp_data['content'])) {
+            $this->tmp_data['content'] = Controller::$cur->method;
+        }
         $data = $this->paramsParse($params);
         if (file_exists($data['path'])) {
             $source = file_get_contents($data['path']);
@@ -70,7 +74,7 @@ class View extends Module {
 
     function paramsParse($params) {
         if (!$this->tmp_data['module']) {
-            $this->tmp_data['module'] = App::$cur->curModule;
+            $this->tmp_data['module'] = Module::$cur;
         }
         $data = $this->tmp_data;
         // set template
@@ -113,7 +117,7 @@ class View extends Module {
     }
 
     function content($params = []) {
-        $this->current_function = 'CONTENT';
+
         if (App::$cur->msg && empty($this->template['noSysMesAutoShow'])) {
             App::$cur->msg->show(true);
         }
@@ -222,7 +226,7 @@ class View extends Module {
             }
         }
         $options['scripts'] = $scripts;
-        $options['appRoot'] = App::$cur->type=='app'?'/': '/'.App::$cur->name.'/';
+        $options['appRoot'] = App::$cur->type == 'app' ? '/' : '/' . App::$cur->name . '/';
         $this->widget('View\bodyEnd', compact('options'));
     }
 
@@ -241,6 +245,13 @@ class View extends Module {
         if (!empty($this->template['libs'])) {
             foreach ($this->template['libs'] as $libName) {
                 App::$cur->libs->loadLib($libName);
+            }
+        }
+        foreach ($this->dynAssets['js'] as $asset) {
+            if (is_array($asset) && !empty($asset['libs'])) {
+                foreach ($asset['libs'] as $libName) {
+                    App::$cur->libs->loadLib($libName);
+                }
             }
         }
     }

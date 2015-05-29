@@ -36,9 +36,9 @@ class DataManagerController extends Controller {
         }
         $dataManager = new Ui\DataManager($modelName);
         $dataManager->draw('manager', $params, $model);
-        $return->content = ob_get_contents();
+        $result->content = ob_get_contents();
         ob_end_clean();
-        $return->send();
+        $result->send();
     }
 
     function loadRowsAction() {

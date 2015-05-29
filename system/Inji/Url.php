@@ -1,11 +1,12 @@
 <?php
 
-class Url extends Module {
+class Url {
 
-    function redirect($href = '/', $text = false, $status = 'info') {
+    static function redirect($href = '/', $text = false, $status = 'info') {
 
-        if ($text !== false)
+        if ($text !== false) {
             App::$cur->msg->add($text, $status);
+        }
 
         header("Location: {$href}");
         exit("Перенаправление на: <a href = '{$href}'>{$href}</a>");

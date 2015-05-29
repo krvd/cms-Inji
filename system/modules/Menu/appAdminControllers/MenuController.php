@@ -8,7 +8,7 @@ class MenuController extends Controller {
             $appType = App::$cur->type;
         }
         //$menus = $this->menu->config[$appType]['menus'];
-        $this->view->page();
+        $this->view->page(['data' => compact('appType')]);
     }
 
     function createAction() {

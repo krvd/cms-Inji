@@ -101,7 +101,7 @@ class App {
         if (!is_bool($moduleClassName) && $moduleClassName != $className) {
             return $this->_objects[$moduleClassName] = $this->_objects[$className] = $this->getObject($moduleClassName);
         } elseif (class_exists($className)) {
-            $this->_objects[$className] = new $className();
+            $this->_objects[$className] = new $className($this);
         }
 
 

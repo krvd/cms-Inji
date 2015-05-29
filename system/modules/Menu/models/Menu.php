@@ -22,6 +22,11 @@ class Menu extends \Model {
         'items' => 'Пункты меню'
     ];
     static $storage = ['type' => 'moduleConfig'];
+    static $cols = [
+        'name' => ['type' => 'text'],
+        'code' => ['type' => 'text'],
+        'items' => ['type' => 'select', 'relation' => 'items']
+    ];
     static $dataManagers = [
         'manager' => [
             'options' => [
@@ -32,19 +37,12 @@ class Menu extends \Model {
                 ]
             ],
             'cols' => [
-                'name' => ['type' => 'text'],
-                'code' => ['type' => 'text'],
-                'items' => ['type' => 'select', 'relation' => 'items']
+                'name', 'code', 'items'
             ]
         ]
     ];
     static $forms = [
         'manager' => [
-            'inputs' => [
-                'name' => ['type' => 'text'],
-                'code' => ['type' => 'text'],
-                'items' => ['type' => 'list', 'relation' => 'items']
-            ],
             'map' => [
                 ['name', 'code']
             ]

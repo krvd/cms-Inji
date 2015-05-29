@@ -157,7 +157,6 @@ class Model {
         } else {
             $storage = !empty($moduleConfig['storage']) ? $moduleConfig['storage'] : [];
         }
-
         if (!empty($storage[$classPath[1]])) {
             $items = $storage[$classPath[1]];
             $class = get_called_class();

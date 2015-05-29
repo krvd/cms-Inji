@@ -3,22 +3,22 @@
 class ViewController extends Controller {
 
     function indexAction() {
-        $templates = App::$cur->view->config;
+        $templates = App::$parent->view->config;
         App::$cur->view->setTitle('Шаблоны сайта');
         App::$cur->view->page(['data' => compact('templates')]);
     }
 
     function setDefaultAction($name) {
-        $templates = $this->view->config;
+        $templates = App::$parent->view->config;
         $templates['app']['current'] = $name;
-        $this->Config->save('module', $templates, 'View');
+        Config::save('module', $templates, 'View', App::$parent);
         $this->url->redirect('/admin/View');
     }
 
     function createTemplateAction() {
         $this->view->setTitle('Создание шаблона');
         App::$cur->view->customAsset('css', '/static/moduleAsset/View/css/blockDrop.css');
-        App::$cur->view->customAsset('js', '/static/moduleAsset/View/js/blockDrop.js');
+        App::$cur->view->customAsset('js', ['file' => '/static/moduleAsset/View/js/blockDrop.js', 'libs' => ['jquery-ui']]);
         if (!empty($_POST)) {
             $text = '<!DOCTYPE html>
 <html lang="en">
@@ -34,12 +34,12 @@ class ViewController extends Controller {
     {PAGE:map}
     </body>
 </html>';
-            $templates = App::$cur->view->config;
+            $templates = App::$parent->view->config;
             $templates['app']['installed'][$_POST['name']] = $_POST['name'];
-            $this->Config->save('module', $templates, 'View');
-            $path = App::$cur->apps->parent['path'] . '/templates/' . $_POST['name'] . '/index.html';
-            $pathMap = App::$cur->apps->parent['path'] . '/templates/' . $_POST['name'] . '/map.html';
-            $this->files->create_dir(App::$cur->apps->parent['path'] . '/templates/' . $_POST['name']);
+            Config::save('module', $templates, 'View', App::$parent);
+            $path = App::$parent->path . '/templates/' . $_POST['name'] . '/index.html';
+            $pathMap = App::$parent->path . '/templates/' . $_POST['name'] . '/map.html';
+            $this->files->create_dir(App::$parent->path . '/templates/' . $_POST['name']);
             file_put_contents($path, $text);
             file_put_contents($pathMap, trim($_POST['map']));
             $template = [
@@ -47,7 +47,7 @@ class ViewController extends Controller {
                 'name' => $_POST['name'],
                 'file' => 'index.html',
             ];
-            $this->Config->save(App::$cur->apps->parent['path'] . '/templates/' . $_POST['name'] . '/config.php', $template);
+            Config::save(App::$parent->path . '/templates/' . $_POST['name'] . '/config.php', $template);
             $this->url->redirect('/admin/View');
         }
         $this->view->page();
@@ -57,61 +57,22 @@ class ViewController extends Controller {
         $this->view->setTitle('Редактирование шаблона');
         App::$cur->view->customAsset('css', '/static/moduleAsset/View/css/blockDrop.css');
         App::$cur->view->customAsset('js', '/static/moduleAsset/View/js/blockDrop.js');
-        $template = $this->Config->custom(App::$cur->apps->parent['path'] . '/templates/' . $templateName . '/config.php');
-        $pathMap = App::$cur->apps->parent['path'] . '/templates/' . $templateName . '/map.html';
+        $template = Config::custom(App::$parent->path . '/templates/' . $templateName . '/config.php');
+        $pathMap = App::$parent->path . '/templates/' . $templateName . '/map.html';
         if (!empty($_POST)) {
-            $templates = App::$cur->view->config;
+            $templates = App::$parent->view->config;
             $templates['app']['installed'][$templateName] = $_POST['name'];
-            $this->Config->save('module', $templates, 'View');
+            Config::save('module', $templates, 'View',App::$parent);
 
             file_put_contents($pathMap, trim($_POST['map']));
 
             $template['template_name'] = $templateName;
             $template['name'] = $templateName;
-            $this->Config->save(App::$cur->apps->parent['path'] . '/templates/' . $_POST['name'] . '/config.php', $template);
+            Config::save(App::$parent->path . '/templates/' . $_POST['name'] . '/config.php', $template);
             $this->url->redirect('/admin/View');
         }
         $template['map'] = file_get_contents($pathMap);
         $this->view->page(['data' => compact('template')]);
-    }
-
-    function editAction($template) {
-        $templates = $this->view->modConf;
-        if (!empty($_POST)) {
-            foreach ($_POST['css'] as $key => $item)
-                if (empty($item))
-                    unset($_POST['css'][$key]);
-            $templates['site']['install_templates'][$template]['css'] = $_POST['css'];
-            foreach ($_POST['js'] as $key => $item)
-                if (empty($item))
-                    unset($_POST['js'][$key]);
-            $templates['site']['install_templates'][$template]['js'] = $_POST['js'];
-            $templates['site']['install_templates'][$template]['favicon'] = $_POST['favicon'];
-            $templates['site']['install_templates'][$template]['template_name'] = $_POST['template_name'];
-            $templates['site']['current'] = $template;
-            $this->Config->save('module', $templates, 'View');
-            $this->url->redirect('/admin/View');
-        }
-        $this->view->page(compact('template'));
-    }
-
-    function edit_fileAction($template, $type, $file_key = null) {
-        $templates = $this->Config->module('View', 'site');
-        if (!empty($_POST['text'])) {
-            if ($type != 'html') {
-                file_put_contents(App::$cur->app['parent']['path'] . "/templates/{$template}/{$type}/{$templates['install_templates'][$template][$type][$file_key]}", $_POST['text']);
-            } else {
-                file_put_contents(App::$cur->app['parent']['path'] . "/templates/{$template}/index.html", $_POST['text']);
-            }
-            $this->url->redirect($this->url->up_to(4) . 'edit/' . $template, 'Файл успешно отредактирован', 'success');
-        }
-        if ($type != 'html') {
-            $text = file_get_contents(App::$cur->app['parent']['path'] . "/templates/{$template}/{$type}/{$templates['install_templates'][$template][$type][$file_key]}");
-        } else {
-            $text = file_get_contents(App::$cur->app['parent']['path'] . "/templates/{$template}/index.html");
-        }
-        $type = $type;
-        $this->view->page(compact('text', 'type'));
     }
 
 }

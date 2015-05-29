@@ -23,24 +23,25 @@ class Item extends \Model {
         'Menu_id' => 'Меню'
     ];
     static $storage = ['type' => 'moduleConfig'];
+    static $cols = [
+                'type' => ['type' => 'select', 'source' => 'array', 'sourceArray' => ['href' => 'Ссылка']],
+                'name' => ['type' => 'text'],
+                'href' => ['type' => 'text'],
+                'Menu_id' => ['type' => 'select', 'source'=>'relation', 'relation' => 'menu', 'showCol' => 'name'],
+                    
+    ];
     static $dataManagers = [
         'manager' => [
             'cols' => [
-                'type' => ['type' => 'select', 'source' => 'array', 'sourceArray' => ['href' => 'Ссылка', 'module' => 'Модуль']],
-                'name' => ['type' => 'text'],
-                'href' => ['type' => 'text'],
-                'Menu_id' => ['type' => 'select', 'relation' => 'menu', 'showCol' => 'name'],
+                'type',
+                'name',
+                'href',
+                'Menu_id'
             ]
         ]
     ];
     static $forms = [
         'manager' => [
-            'inputs' => [
-                'name' => ['type' => 'text'],
-                'href' => ['type' => 'text'],
-                'type' => ['type' => 'select', 'source' => 'array', 'sourceArray' => ['href' => 'Ссылка', 'module' => 'Модуль']],
-                'Menu_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'menu', 'showCol' => 'name'],
-            ],
             'map' => [
                 ['type', 'Menu_id'],
                 ['name', 'href']

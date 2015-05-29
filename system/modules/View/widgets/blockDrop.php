@@ -16,6 +16,6 @@
         <div class ='rows'>
             <?= !empty($map) ? $map : ''; ?>
         </div>
-        <?= !empty($map) ? "<script>blockDrop.initActual('.blockMap .rows')</script>" : ''; ?>
+        <?= !empty($map) ? "<script>inji.onLoad(function(){blockDrop.initActual('.blockMap .rows')});</script>" : ''; ?>
     </div>
 </div>
