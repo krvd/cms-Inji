@@ -16,7 +16,7 @@ class Users extends Module {
         if (!empty($_POST['autorization']) && $login = filter_input(INPUT_POST, 'user_login') && $pass = filter_input(INPUT_POST, 'user_pass')) {
             return $this->autorization($login, $pass, strpos($login, '@') ? 'mail' : 'login');
         }
-        if (!empty($_POST['registration']) && $name filter_input(INPUT_POST, 'user_name')$_POST['user_name']) && $mail = filter_input(INPUT_POST, 'user_mail') )) {
+        if (!empty($_POST['registration']) && $name = filter_input(INPUT_POST, 'user_name') && $mail = filter_input(INPUT_POST, 'user_mail') ) {
             $this->registration(trim(htmlspecialchars(strip_tags($_POST['user_name']))), $_POST['user_mail'], (!empty($_POST['user_login'])) ? trim(htmlspecialchars(strip_tags($_POST['user_login']))) : null);
         } 
         if (!empty($_GET['passre']) && !empty($_GET['user_mail'])) {
