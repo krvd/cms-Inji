@@ -1,7 +1,7 @@
 <?php
 return function ($step = NULL, $params = array()) {
 
-    App::$cur->db->createTable('roles',
+    App::$cur->db->createTable('roles_role',
         array(
         'role_id' => 'pk',
         'role_name' => 'varchar(255) NOT NULL',

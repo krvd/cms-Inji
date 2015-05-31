@@ -2,7 +2,7 @@
 
 namespace Materials;
 
-class Material extends \Model {
+class Catalog extends \Model {
 
     static $labels = [
         'material_name' => 'Заголовок',
@@ -53,18 +53,6 @@ class Material extends \Model {
                 'col' => 'material_mc_id'
             ]
         ];
-    }
-
-    static function colPrefix() {
-        return 'material_';
-    }
-
-    static function table() {
-        return 'materials';
-    }
-
-    static function index() {
-        return 'material_id';
     }
 
     function beforeSave() {

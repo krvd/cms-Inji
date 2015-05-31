@@ -2,17 +2,17 @@
 
 return function ($step = NULL, $params = array()) {
     App::$cur->db->createTable('materials_catalogs', array(
-        'mc_id' => 'pk',
-        'mc_parent_id' => 'int(11) NOT NULL',
-        'mc_name' => 'varchar(255) NOT NULL',
-        'mc_chpu' => 'varchar(255) NOT NULL',
-        'mc_description' => 'text NOT NULL',
-        'mc_tree_path' => 'text NOT NULL',
-        'mc_user_id' => 'int(11) NOT NULL',
-        'mc_image' => 'int(11) NOT NULL',
-        'mc_date' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
+        'catalog_id' => 'pk',
+        'catalog_parent_id' => 'int(11) NOT NULL',
+        'catalog_name' => 'varchar(255) NOT NULL',
+        'catalog_chpu' => 'varchar(255) NOT NULL',
+        'catalog_description' => 'text NOT NULL',
+        'catalog_tree_path' => 'text NOT NULL',
+        'catalog_user_id' => 'int(11) NOT NULL',
+        'catalog_image' => 'int(11) NOT NULL',
+        'catalog_date' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
     ));
-    App::$cur->db->createTable('materials', array(
+    App::$cur->db->createTable('materials_material', array(
         'material_id' => 'pk',
         'material_mc_id' => 'INT(11) NOT NULL',
         'material_name' => 'varchar(255) NOT NULL',
@@ -30,7 +30,7 @@ return function ($step = NULL, $params = array()) {
         'material_tree_path' => 'text NOT NULL',
         'material_date_create' => 'timestamp DEFAULT CURRENT_TIMESTAMP',
     ));
-    App::$cur->db->insert('materials', array(
+    App::$cur->db->insert('materials_material', array(
         'material_mc_id' => '0',
         'material_name' => 'Главная',
         'material_chpu' => 'index',
