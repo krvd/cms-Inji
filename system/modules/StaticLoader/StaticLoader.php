@@ -57,11 +57,12 @@ class StaticLoader extends Module {
 
             $allow_resize = false;
             if (App::$cur->db) {
-                $type = App::$cur->Files->get_type_by_ext($fileinfo['extension']);
+                $type = Files\Type::get($fileinfo['extension'], 'ext');
                 $allow_resize = $type['file_type_allow_resize'];
             }
-            if (empty($type) && in_array(strtolower($fileinfo['extension']), array('png', 'jpg', 'jpeg', 'gif')))
+            if (empty($type) && in_array(strtolower($fileinfo['extension']), array('png', 'jpg', 'jpeg', 'gif'))) {
                 $allow_resize = true;
+            }
             if ($allow_resize) {
 
                 $sizes = explode('x', $_GET['resize']);
@@ -78,11 +79,7 @@ class StaticLoader extends Module {
                     header('HTTP/1.1 404 Not Found');
                     exit();
                 } else {
-
-                    if (App::$cur->app['system'])
-                        $dir = App::$cur->app['parent']['path'];
-                    else
-                        $dir = App::$cur->app['path'];
+                    $dir = App::$primary->path;
 
                     if (!empty($_GET['resize_crop'])) {
                         if (in_array($_GET['resize_crop'], array('q', 'c')))
@@ -99,9 +96,9 @@ class StaticLoader extends Module {
                     $path = $dir . '/static/cache/' . $dirnoslash . $fileinfo['filename'] . '.' . $sizes[0] . 'x' . $sizes[1] . $crop . '.' . $fileinfo['extension'];
                     //exit($path);
                     if (!file_exists($path)) {
-                        App::$cur->_FS->create_dir($dir . '/static/cache/');
+                        Tools::createDir($dir . '/static/cache/');
                         copy($file, $path);
-                        App::$cur->_IMAGE->resize($path, $sizes[0], $sizes[1], $crop);
+                        Tools::resizeImage($path, $sizes[0], $sizes[1], $crop);
                     }
 
                     $file = $path;

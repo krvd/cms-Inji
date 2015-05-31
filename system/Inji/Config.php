@@ -152,7 +152,7 @@ class Config {
                 break;
         }
         $text = self::save_parse($data);
-        App::$cur->Files->create_dir(substr($path, 0, strripos($path, '/')));
+        Tools::createDir(substr($path, 0, strripos($path, '/')));
         file_put_contents($path, $text);
     }
 

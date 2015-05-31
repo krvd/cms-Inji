@@ -55,7 +55,7 @@ class Query extends \Object {
         $this->table = $table;
         $this->cols = $data;
         $result = $this->query();
-        return $result->rowCount();
+        return $result->pdoResult->rowCount();
     }
 
     function delete($table, $noclean = 0) {
@@ -63,7 +63,7 @@ class Query extends \Object {
         $this->table = $table;
         $this->cols = $data;
         $result = $this->query();
-        return $result->rowCount();
+        return $result->pdoResult->rowCount();
     }
 
     function createTable($table_name, $cols, $indexes = []) {

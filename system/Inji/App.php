@@ -14,7 +14,7 @@ class App {
      * static instances
      */
     static public $cur = null;
-    static public $parent = null;
+    static public $primary = null;
     private $_objects = [];
 
     /**

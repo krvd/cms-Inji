@@ -13,34 +13,48 @@ class Users extends Module {
         if (isset($_GET['logout'])) {
             return $this->logOut();
         }
-        if (!empty($_POST['autorization']) && $login = filter_input(INPUT_POST, 'user_login') && $pass = filter_input(INPUT_POST, 'user_pass')) {
-            return $this->autorization($login, $pass, strpos($login, '@') ? 'mail' : 'login');
+        if (isset($_POST['autorization']) && filter_input(INPUT_POST, 'user_login') && filter_input(INPUT_POST, 'user_pass')) {
+            return $this->autorization(filter_input(INPUT_POST, 'user_login'), filter_input(INPUT_POST, 'user_pass'), strpos(filter_input(INPUT_POST, 'user_login'), '@') ? 'mail' : 'login');
         }
-        if (!empty($_POST['registration']) && $name = filter_input(INPUT_POST, 'user_name') && $mail = filter_input(INPUT_POST, 'user_mail') ) {
-            $this->registration(trim(htmlspecialchars(strip_tags($_POST['user_name']))), $_POST['user_mail'], (!empty($_POST['user_login'])) ? trim(htmlspecialchars(strip_tags($_POST['user_login']))) : null);
-        } 
-        if (!empty($_GET['passre']) && !empty($_GET['user_mail'])) {
-            $this->passre($_GET['user_mail']);
-        } elseif (!empty($_GET['passrecont']) && !empty($_GET['hash'])) {
-            $this->passrecont($_GET['hash']);
-        } elseif ((!empty($_COOKIE['user_login']) || !empty($_COOKIE['user_mail']) ) && !empty($_COOKIE['user_pass'])) {
-
-            if (!empty($_COOKIE['user_login']))
-                $this->autorization($_COOKIE['user_login'], $_COOKIE['user_pass']);
-            else
-                $this->autorization($_COOKIE['user_mail'], $_COOKIE['user_pass'], 'mail');
+        if (isset($_GET['passre']) && filter_input(INPUT_GET, 'user_mail')) {
+            return $this->passre(filter_input(INPUT_GET, 'user_mail'));
+        }
+        if (!empty($_GET['passrecont']) && filter_input(INPUT_GET, 'hash')) {
+            $this->passrecont(filter_input(INPUT_GET, 'hash'));
+        }
+        if (filter_input(INPUT_COOKIE, 'user_session_hash') && filter_input(INPUT_COOKIE, 'user_id')) {
+            return $this->cuntinueSession(filter_input(INPUT_COOKIE, 'user_session_hash'), filter_input(INPUT_COOKIE, 'user_id'));
         }
     }
 
     function logOut() {
         setcookie("user_session_hash", '', 0, "/");
+        setcookie("user_id", '', 0, "/");
         $accesses = Config::module('Access');
         if (!empty($this->Access->modConf[App::$cur->app['type']]['denied_redirect'])) {
             $url = $this->Access->modConf[App::$cur->app['type']]['denied_redirect'];
         } else {
             $url = '/';
         }
-        $this->url->redirect($url, 'Вы вышли из своего профиля', 'success');
+        Url::redirect($url, 'Вы вышли из своего профиля', 'success');
+    }
+
+    function cuntinueSession($hash, $userId) {
+        $session = Users\Session::get([
+                    ['us_user_id', $userId],
+                    ['us_agent', filter_input(INPUT_SERVER, 'HTTP_USER_AGENT')],
+                    ['us_ip', filter_input(INPUT_SERVER, 'REMOTE_ADDR')],
+                    ['us_hash', $hash]
+        ]);
+        if ($session) {
+            $this->curUser = Users\User::get($session->us_user_id);
+            $this->curUser->user_last_activ = 'CURRENT_TIMESTAMP';
+            $this->curUser->save();
+        } else {
+            setcookie("user_session_hash", '', 0, "/");
+            setcookie("user_id", '', 0, "/");
+            App::$cur->msg->add('Ваша сессия устарела или более недействительна, вам необходимо пройти <a href = "/users/login">авторазиацию</a> заного', 'info');
+        }
     }
 
     function passre($user_mail) {
@@ -82,41 +96,44 @@ class Users extends Module {
     function autorization($login, $pass, $ltype = 'login') {
         $user = $this->get($login, $ltype);
         if ($user && $this->verifypass($pass, $user->user_pass)) {
-            $this->curUser = $user;
-            if (!headers_sent()) {
-                setcookie("user_login", $user->user_login, time() + 360000, "/");
-                setcookie("user_mail", $user->user_mail, time() + 360000, "/");
-                setcookie("user_pass", $user->user_pass, time() + 360000, "/");
+            $hash = Tools::randomString(255);
+            $session = Users\Session::get([
+                        ['us_user_id', $user->user_id],
+                        ['us_agent', filter_input(INPUT_SERVER, 'HTTP_USER_AGENT')],
+                        ['us_ip', filter_input(INPUT_SERVER, 'REMOTE_ADDR')]
+            ]);
+            if (!$session) {
+                $session = new Users\Session([
+                    'us_user_id' => $user->user_id,
+                    'us_agent' => filter_input(INPUT_SERVER, 'HTTP_USER_AGENT'),
+                    'us_ip' => filter_input(INPUT_SERVER, 'REMOTE_ADDR')
+                ]);
             }
-            $user->user_last_activ = 'CURRENT_TIMESTAMP';
-            $user->save();
-            if (!empty($_POST['autorization']) && !empty(App::$cur->Access->config[App::$cur->app->type]['login_redirect'])) {
-                App::$cur->url->redirect(App::$cur->Access->config[App::$cur->app->type]['login_redirect']);
+            $session->us_hash = $hash;
+            $session->save();
+            if (!headers_sent()) {
+                setcookie("user_session_hash", $session->us_hash, time() + 360000, "/");
+                setcookie("user_id", $session->us_user_id, time() + 360000, "/");
+            }
+
+            $this->curUser = $user;
+            $this->curUser->user_last_activ = 'CURRENT_TIMESTAMP';
+            $this->curUser->save();
+
+            if (isset($_POST['autorization']) && !empty(App::$cur->Access->config[App::$cur->app->type]['login_redirect'])) {
+                Url::redirect(App::$cur->Access->config[App::$cur->app->type]['login_redirect']);
             }
             return true;
-        } elseif (!empty($_POST['autorization'])) {
+        }
+        if (isset($_POST['autorization'])) {
             if ($user) {
                 App::$cur->msg->add('Вы ошиблись при наборе пароля или логина, попробуйте ещё раз или воспользуйтесь <a href = "?passre=1&user_mail=' . $user->user_mail . '">Восстановлением пароля</a>', 'danger');
             } else {
                 App::$cur->msg->add('Данный почтовый ящик не зарегистрирован в системе', 'danger');
             }
-            return false;
-        } else
-            return false;
-    }
-
-    function getDiffLevel($fromId, $toId) {
-        $i = 1;
-        if ($fromId == $toId)
-            return 0;
-        while ($from = Users\User::get($fromId)) {
-            if ($from->user_parent_id == $toId)
-                return $i;
-            $fromId = $from->user_parent_id;
-            $i++;
-            if (!$from->user_parent_id)
-                return 0;
         }
+
+        return false;
     }
 
     function get($idn = false, $ltype = 'id') {

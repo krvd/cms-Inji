@@ -15,10 +15,12 @@ Inji.prototype.onLoad = function (callback) {
     this.onLoadCallbacks.push(callback);
 }
 Inji.prototype.startCallbacks = function () {
+    console.log('start onLoadeds');
     for (var key in this.onLoadCallbacks) {
         this.onLoadCallbacks[key]();
     }
     document.getElementById('loading-indicator').style.display = 'none';
+    console.log('inji start complete');
 }
 Inji.prototype.start = function (options) {
     console.log('Inji start');
@@ -41,6 +43,7 @@ Inji.prototype.loadScripts = function (scripts, key) {
             inji.loadScripts(scripts, key + 1);
         }
         else {
+            console.log('All scripts loaded');
             inji.startCallbacks();
         }
     });

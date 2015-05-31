@@ -37,7 +37,7 @@ class Files extends Module {
         if (!empty($options['file_code']) && file_exists($path))
             unlink($path);
 
-        $this->_FS->create_dir($site_path . $type['file_type_dir'] . date('Y-m-d') . '/');
+        Tools::createDir($site_path . $type['file_type_dir'] . date('Y-m-d') . '/');
 
         if (!move_uploaded_file($file['tmp_name'], $site_path . $path))
             return false;
@@ -85,7 +85,7 @@ class Files extends Module {
             $site_path = App::$cur->app['parent']['path'];
         else
             $site_path = App::$cur->app['path'];
-        $this->_FS->create_dir($site_path . '/static/tmp/');
+        Tools::createDir($site_path . '/static/tmp/');
         $file = file_get_contents($url);
         file_put_contents($site_path . '/static/tmp/' . $fileinfo['basename'], $file);
         /* if (!copy($url, App::$cur->app['path'] . '/static/tmp/' . $fileinfo['basename']))
@@ -109,7 +109,7 @@ class Files extends Module {
         if (!empty($options['file_code']) && file_exists($path))
             unlink($path);
 
-        $this->_FS->create_dir($site_path . $type['file_type_dir'] . date('Y-m-d') . '/');
+        Tools::createDir($site_path . $type['file_type_dir'] . date('Y-m-d') . '/');
 
         if (!copy($site_path . '/static/tmp/' . $fileinfo['basename'], $site_path . $path))
             return false;
@@ -135,21 +135,6 @@ class Files extends Module {
             $file_id = $this->add($ins);
         }
         return $file_id;
-    }
-
-    function create_dir($path) {
-        if (file_exists($path))
-            return true;
-
-        $path = explode('/', $path);
-        $cur = '';
-        foreach ($path as $item) {
-            $cur .= $item . '/';
-            if (!file_exists($cur)) {
-                mkdir($cur);
-            }
-        }
-        return true;
     }
 
 }

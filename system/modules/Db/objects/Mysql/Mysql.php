@@ -66,7 +66,7 @@ class Mysql extends \Object {
         $this->table_prefix = '';
 
         $query->where('TABLE_SCHEMA', $old_db);
-        $query->where('TABLE_NAME', $this->table_prefix . $table_name);
+        $query->where('TABLE_NAME', $old_prefix . $table_name);
         $result = $query->select('COLUMNS');
         $this->db_name = $old_db;
         $this->table_prefix = $old_prefix;

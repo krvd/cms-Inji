@@ -9,22 +9,24 @@ class Model {
     public $loadedRelations = [];
     static $labels = [];
     static $forms = [];
-    private $cols = [];
+    static protected $cols = [];
 
     function __construct($params = array()) {
         $this->setParams($params);
     }
 
-    function cols() {
-        if (!$this->cols) {
-
-            $this->cols = App::$cur->db->getTableCols(static::table());
+    static function cols() {
+        if (empty(static::$cols[static::table()])) {
+            static::$cols[static::table()] = App::$cur->db->getTableCols(static::table());
         }
-        return $this->cols;
+        else {
+            static::$cols[static::table()] = [];
+        }
+        return static::$cols[static::table()];
     }
 
     static function table() {
-        return null;
+        return strtolower(str_replace('\\', '_', get_called_class()));
     }
 
     static function index() {
@@ -33,7 +35,8 @@ class Model {
     }
 
     static function colPrefix() {
-        return '';
+        $classPath = explode('\\', get_called_class());
+        return strtolower($classPath[1]) . '_';
     }
 
     static function relations() {
@@ -56,6 +59,10 @@ class Model {
                 $col = static::index();
             }
             if ($param !== null) {
+                $cols = static::cols();
+                if (!isset($cols[$col]) && isset($cols[static::colPrefix() . $col])) {
+                    $col = static::colPrefix() . $col;
+                }
                 App::$cur->db->where($col, $param);
             } else {
                 return false;
@@ -348,7 +355,6 @@ class Model {
 
         $values = array();
 
-
         foreach ($this->cols() as $col => $param) {
             if (isset($this->_params[$col]))
                 $values[$col] = $this->_params[$col];
@@ -361,6 +367,7 @@ class Model {
                 App::$cur->db->where($this->index(), $this->_params[$this->index()]);
                 App::$cur->db->update($this->table(), $values);
             } else {
+
                 $this->_params[$this->index()] = App::$cur->db->insert($this->table(), $values);
             }
         } else {
@@ -368,7 +375,7 @@ class Model {
         }
         App::$cur->db->where($this->index(), $this->_params[$this->index()]);
         $result = App::$cur->db->select($this->table());
-        $this->_params = $result->fetch_assoc();
+        $this->_params = $result->fetch();
         $this->afterSave();
         return $this->{$this->index()};
     }
@@ -554,6 +561,9 @@ class Model {
     function __get($name) {
         if (isset($this->_params[$name])) {
             return $this->_params[$name];
+        }
+        if (isset($this->_params[static::colPrefix() . $name])) {
+            return $this->_params[static::colPrefix() . $name];
         }
         if (isset($this->loadedRelations[$name][json_encode([])])) {
             return $this->loadedRelations[$name][json_encode([])];

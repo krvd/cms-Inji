@@ -17,7 +17,7 @@ class Modules extends Module {
         $path = INJI_SYSTEM_DIR . '/modules/';
         $location = 'modules';
 
-        $config = Config::app(App::$parent ? App::$parent : App::$cur);
+        $config = Config::app(App::$primary ? App::$primary : App::$cur);
         $modules = !empty($config[$location]) ? array_flip($config[$location]) : [];
         if (isset($modules[$module])) {
             return true;
@@ -32,7 +32,7 @@ class Modules extends Module {
             $installFunction = include $path . $module . '/install_script.php';
             $installFunction(1, $params);
         }
-        Config::save('app', $config, null, App::$parent ? App::$parent : App::$cur);
+        Config::save('app', $config, null, App::$primary ? App::$primary : App::$cur);
     }
 
 }
