@@ -13,7 +13,7 @@ return function($step = NULL, $params = array()) {
         'file_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
         )
     );
-    App::$cur->db->createTable('files_types',
+    App::$cur->db->createTable('files_type',
         array(
         'type_id' => 'pk',
         'type_dir' => 'text NOT NULL',
@@ -22,25 +22,25 @@ return function($step = NULL, $params = array()) {
         'type_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
         )
     );
-    App::$cur->db->insert('files_types',
+    App::$cur->db->insert('files_type',
         array(
         'type_dir' => '/static/mediafiles/images/',
         'type_ext' => 'png',
         'type_allow_resize' => '1'
     ));
-    App::$cur->db->insert('files_types',
+    App::$cur->db->insert('files_type',
         array(
         'type_dir' => '/static/mediafiles/images/',
         'type_ext' => 'jpeg',
         'type_allow_resize' => '1'
     ));
-    App::$cur->db->insert('files_types',
+    App::$cur->db->insert('files_type',
         array(
         'type_dir' => '/static/mediafiles/images/',
         'type_ext' => 'jpg',
         'type_allow_resize' => '1'
     ));
-    App::$cur->db->insert('files_types',
+    App::$cur->db->insert('files_type',
         array(
         'type_dir' => '/static/mediafiles/images/',
         'type_ext' => 'gif',
