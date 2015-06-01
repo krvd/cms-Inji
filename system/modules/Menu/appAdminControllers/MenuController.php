@@ -15,7 +15,7 @@ class MenuController extends Controller {
         $this->view->set_title('Создание меню');
         if (!empty($_POST['mg_name']) && !empty($_POST['mg_code'])) {
             $this->menu->create_menu(array('mg_name' => $_POST['mg_name'], 'mg_code' => $_POST['mg_code'], 'mg_user_id' => $this->Users->cur->user_id));
-            $this->url->redirect('/admin/Menu');
+            Tools::redirect('/admin/Menu');
         }
         $this->view->page();
     }
@@ -34,7 +34,7 @@ class MenuController extends Controller {
             if (!empty($_POST['mi_advance']))
                 $_POST['mi_advance'] = json_encode($_POST['mi_advance']);
             $this->menu->create_item($_POST);
-            $this->url->redirect('/admin/Menu/items/' . $mg_id);
+            Tools::redirect('/admin/Menu/items/' . $mg_id);
         }
         $this->view->page();
     }
@@ -47,7 +47,7 @@ class MenuController extends Controller {
             $this->menu->update_item($mi_id, $_POST);
 
             $item = $this->menu->get_item($mi_id);
-            $this->url->redirect('/admin/Menu/items/' . $item['mi_mg_id']);
+            Tools::redirect('/admin/Menu/items/' . $item['mi_mg_id']);
         }
         $item = $this->menu->get_item($mi_id);
         if (!empty($item['mi_advance']))
@@ -59,7 +59,7 @@ class MenuController extends Controller {
     function delAction($mi_id) {
         $this->db->where('mi_id', $mi_id);
         $this->db->delete('menu_items');
-        $this->url->redirect($this->url->module());
+        Tools::redirect($this->url->module());
     }
 
     function sort_itemsAction() {

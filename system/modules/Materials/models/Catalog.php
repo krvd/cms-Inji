@@ -2,7 +2,7 @@
 
 namespace Materials;
 
-class MaterialCatalog extends \Model
+class Catalog extends \Model
 {
 
     static $labels = [

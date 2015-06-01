@@ -12,7 +12,7 @@ class ViewController extends Controller {
         $templates = App::$primary->view->config;
         $templates['app']['current'] = $name;
         Config::save('module', $templates, 'View', App::$primary);
-        $this->url->redirect('/admin/View');
+        Tools::redirect('/admin/View');
     }
 
     function createTemplateAction() {
@@ -48,7 +48,7 @@ class ViewController extends Controller {
                 'file' => 'index.html',
             ];
             Config::save(App::$primary->path . '/templates/' . $_POST['name'] . '/config.php', $template);
-            $this->url->redirect('/admin/View');
+            Tools::redirect('/admin/View');
         }
         $this->view->page();
     }
@@ -69,7 +69,7 @@ class ViewController extends Controller {
             $template['template_name'] = $templateName;
             $template['name'] = $templateName;
             Config::save(App::$primary->path . '/templates/' . $_POST['name'] . '/config.php', $template);
-            $this->url->redirect('/admin/View');
+            Tools::redirect('/admin/View');
         }
         $template['map'] = file_get_contents($pathMap);
         $this->view->page(['data' => compact('template')]);

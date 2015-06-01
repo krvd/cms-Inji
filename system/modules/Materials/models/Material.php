@@ -2,7 +2,7 @@
 
 namespace Materials;
 
-class Catalog extends \Model {
+class Material extends \Model {
 
     static $labels = [
         'material_name' => 'Заголовок',

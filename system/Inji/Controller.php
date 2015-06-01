@@ -29,7 +29,7 @@ class Controller {
             INJI_SYSTEM_ERROR('method not found', true);
         }
         if (!$this->checkAccess()) {
-            App::$cur->url->redirect($this->access->getDeniedRedirect(), 'У вас нет прав доступа');
+            Tools::redirect($this->access->getDeniedRedirect(), 'У вас нет прав доступа');
         }
         call_user_func_array([$this, $this->method . 'Action'], $this->params);
     }

@@ -46,7 +46,7 @@ class UsersController extends Controller {
             if (!$error) {
                 $user->save();
                 $this->msg->add('Пользователь создан.', 'success');
-                $this->url->redirect('/admin/Users');
+                Tools::redirect('/admin/Users');
             }
         }
         $this->view->page(compact('roles', 'user'));
@@ -70,7 +70,7 @@ class UsersController extends Controller {
             $user->user_mail = $_POST['user_mail'];
             $user->save();
             $this->msg->add('Пользователь изменен.', 'success');
-            $this->url->redirect('/admin/Users/');
+            Tools::redirect('/admin/Users/');
         }
         $user = Users\User::get($user_id);
         $this->view->page(compact('user', 'roles'));
@@ -82,7 +82,7 @@ class UsersController extends Controller {
         else
             $this->msg->add('Пользователь не удален.', 'danger');
 
-        $this->url->redirect($this->url->up_to(2));
+        Tools::redirect($this->url->up_to(2));
     }
 
     function logout() {
@@ -90,7 +90,7 @@ class UsersController extends Controller {
         setcookie("user_mail", '', 0, "/");
         setcookie("user_pass", '', 0, "/");
         $accesses = $this->Config->module('Access');
-        $this->url->redirect($accesses['denied_redirect'], 'Вы вышли из профиля');
+        Tools::redirect($accesses['denied_redirect'], 'Вы вышли из профиля');
     }
 
     function loginAction() {
@@ -104,7 +104,7 @@ class UsersController extends Controller {
     function loginAsAction($userId) {
         $user = Users\User::get($userId);
         $this->users->autorization($user->user_mail, $user->user_pass, 'mail');
-        $this->url->redirect('/', 'Теперь вы на сайте под пользователем ' . $user->user_mail);
+        Tools::redirect('/', 'Теперь вы на сайте под пользователем ' . $user->user_mail);
     }
 
 }

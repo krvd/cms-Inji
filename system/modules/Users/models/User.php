@@ -34,14 +34,6 @@ class User extends \Model {
         ]
     ];
 
-    static function table() {
-        return 'users';
-    }
-
-    static function index() {
-        return 'user_id';
-    }
-
     static function relations() {
         return [
             'group' => [

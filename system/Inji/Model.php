@@ -9,20 +9,56 @@ class Model {
     public $loadedRelations = [];
     static $labels = [];
     static $forms = [];
-    static protected $cols = [];
+    static $cols = [];
 
     function __construct($params = array()) {
         $this->setParams($params);
     }
 
+    static function fixPrefix(&$array, $searchtype = 'key') {
+        $cols = static::cols();
+        if (!$array) {
+            return;
+        }
+        if (!is_array($array)) {
+            if (!isset($cols[$array]) && isset($cols[static::colPrefix() . $array])) {
+                $array = static::colPrefix() . $array;
+            }
+            return;
+        }
+        switch ($searchtype) {
+            case 'key':
+                foreach ($array as $key => $item) {
+                    if (!isset($cols[$key]) && isset($cols[static::colPrefix() . $key])) {
+                        $array[static::colPrefix() . $key] = $item;
+                        unset($array[$key]);
+                        $key = static::colPrefix() . $key;
+                    }
+                    if (is_array($array[$key])) {
+                        static::fixPrefix($array[$key], 'key');
+                    }
+                }
+                break;
+            case 'first':
+
+                if (isset($array[0]) && is_string($array[0])) {
+                    if (!isset($cols[$array[0]]) && isset($cols[static::colPrefix() . $array[0]])) {
+                        $array[0] = static::colPrefix() . $array[0];
+                    }
+                } elseif (isset($array[0]) && is_array($array[0])) {
+                    foreach ($array as &$item) {
+                        static::fixPrefix($item, 'first');
+                    }
+                }
+                break;
+        }
+    }
+
     static function cols() {
-        if (empty(static::$cols[static::table()])) {
-            static::$cols[static::table()] = App::$cur->db->getTableCols(static::table());
+        if (empty(Model::$cols[static::table()])) {
+            Model::$cols[static::table()] = App::$cur->db->getTableCols(static::table());
         }
-        else {
-            static::$cols[static::table()] = [];
-        }
-        return static::$cols[static::table()];
+        return Model::$cols[static::table()];
     }
 
     static function table() {
@@ -44,13 +80,21 @@ class Model {
     }
 
     static function nameCol() {
-        return null;
+        return 'name';
     }
 
     static function get($param = null, $col = null, $options = []) {
         if (static::$storage['type'] == 'moduleConfig') {
             return static::getFromModuleStorage($param, $col, $options);
         }
+        if ($col) {
+            static::fixPrefix($col);
+        }
+
+        if (is_array($param)) {
+            static::fixPrefix($param, 'first');
+        }
+
         if (is_array($param)) {
             App::$cur->db->where($param);
         } else {
@@ -136,6 +180,9 @@ class Model {
     static function getList($options = []) {
         if (static::$storage['type'] != 'db') {
             return static::getListFromModuleStorage($options);
+        }
+        if (!empty($options['where'])) {
+            static::fixPrefix($options['where'], 'first');
         }
         return static::get_list($options);
     }
@@ -257,6 +304,9 @@ class Model {
         if (static::$storage['type'] == 'moduleConfig') {
             return static::getCountFromModuleStorage($options);
         }
+        if (!empty($options['where'])) {
+            static::fixPrefix($options['where'], 'first');
+        }
         $return = array();
         if (!empty($options['where']))
             App::$cur->db->where($options['where']);
@@ -271,7 +321,7 @@ class Model {
 
     static function update($params, $where = []) {
 
-        $cols = App::$cur->db->getTableCols(static::table());
+        $cols = $this->cols();
 
         $values = array();
         foreach ($cols as $col => $param) {
@@ -464,6 +514,7 @@ class Model {
     }
 
     function setParams($params) {
+        static::fixPrefix($params);
         $this->_params = array_merge($this->_params, $params);
     }
 
@@ -559,11 +610,10 @@ class Model {
     }
 
     function __get($name) {
-        if (isset($this->_params[$name])) {
-            return $this->_params[$name];
-        }
-        if (isset($this->_params[static::colPrefix() . $name])) {
-            return $this->_params[static::colPrefix() . $name];
+        $fixedName = $name;
+        static::fixPrefix($fixedName);
+        if (isset($this->_params[$fixedName])) {
+            return $this->_params[$fixedName];
         }
         if (isset($this->loadedRelations[$name][json_encode([])])) {
             return $this->loadedRelations[$name][json_encode([])];
@@ -572,6 +622,7 @@ class Model {
     }
 
     function __set($name, $value) {
+        static::fixPrefix($name);
         $this->_params[$name] = $value;
     }
 

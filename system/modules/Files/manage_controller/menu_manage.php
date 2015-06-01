@@ -10,7 +10,7 @@ class menu_manage extends Inji {
     function create() {
         if (!empty($_POST['mg_name']) && !empty($_POST['mg_code'])) {
             $this->menu->create_menu(array('mg_name' => $_POST['mg_name'], 'mg_code' => $_POST['mg_code'], 'mg_user_id' => $this->users->cur->user_id));
-            $this->url->redirect($this->url->up_to(1));
+            Tools::redirect($this->url->up_to(1));
         }
         $this->view->page();
     }
@@ -24,7 +24,7 @@ class menu_manage extends Inji {
     function add_item($mg_id) {
         if (!empty($_POST['mi_name']) && !empty($_POST['mi_href'])) {
             $this->menu->create_item(array('mi_name' => $_POST['mi_name'], 'mi_href' => $_POST['mi_href'], 'mi_mg_id' => $mg_id));
-            $this->url->redirect($this->url->up_to(2).'items/'.$mg_id);
+            Tools::redirect($this->url->up_to(2).'items/'.$mg_id);
         }
         $this->view->page();
     }
@@ -45,7 +45,7 @@ class menu_manage extends Inji {
             $templates['install_templates'][$template]['template_name'] = $_POST['template_name'];
             $templates['current'] = $template;
             $this->Config->save('module', $templates, 'View', 'site');
-            $this->url->redirect($this->url->up_to(2));
+            Tools::redirect($this->url->up_to(2));
         }
         $this->view->page();
     }

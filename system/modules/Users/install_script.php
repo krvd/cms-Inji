@@ -1,7 +1,8 @@
 <?php
 
 return function ($step = NULL, $params = array()) {
-    App::$cur->db->createTable('users', array(
+    //users 
+    App::$cur->db->createTable('users_user', array(
         'user_id' => 'pk',
         'user_login' => 'varchar(255) NOT NULL',
         'user_name' => 'varchar(255) NOT NULL',
@@ -19,10 +20,11 @@ return function ($step = NULL, $params = array()) {
         'user_about' => 'text NOT NULL',
         'user_birthday' => 'DATE NOT NULL',
         'user_admin_text' => 'text NOT NULL',
-        'user_last_activ' => 'timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
+        'user_reg_date' => 'timestamp DEFAULT CURRENT_TIMESTAMP',
+        'user_last_activ' => 'timestamp',
     ));
     if (!empty($params['user'])) {
-        App::$cur->db->insert('users', array(
+        App::$cur->db->insert('users_user', array(
             'user_login' => $params['user']['user_login'],
             'user_name' => 'Администратор',
             'user_mail' => $params['user']['user_mail'],
@@ -31,7 +33,7 @@ return function ($step = NULL, $params = array()) {
             'user_role_id' => '3',
         ));
     } else {
-        App::$cur->db->insert('users', array(
+        App::$cur->db->insert('users_user', array(
             'user_login' => 'admin',
             'user_name' => 'Администратор',
             'user_mail' => 'admin@' . INJI_DOMAIN_NAME,
@@ -40,21 +42,53 @@ return function ($step = NULL, $params = array()) {
             'user_role_id' => '3',
         ));
     }
-    App::$cur->db->createTable('user_passre', array(
-        'up_id' => 'pk',
-        'up_hash' => 'text NOT NULL',
-        'up_user_id' => 'int(11) NOT NULL',
-        'up_status' => 'int(11) NOT NULL',
-        'up_date' => 'timestamp DEFAULT CURRENT_TIMESTAMP',
-            )
-    );
-    App::$cur->db->createTable('user_invites', array(
-        'ui_id' => 'pk',
-        'ui_mail' => 'VARCHAR(255) NOT NULL',
-        'ui_status' => 'TINYINT(1) NOT NULL',
-        'ui_code' => 'VARCHAR(255) NOT NULL',
-        'ui_user_id' => 'int(11) NOT NULL',
-        'ui_date' => 'timestamp DEFAULT CURRENT_TIMESTAMP',
-            )
-    );
+    //users session
+    App::$cur->db->createTable('users_session', array(
+        'session_id' => 'pk',
+        'session_hash' => 'varchar(255) NOT NULL',
+        'session_ip' => 'varchar(255) NOT NULL',
+        'session_agent' => 'varchar(255) NOT NULL',
+        'session_user_id' => 'int(11) NOT NULL',
+        'session_date' => 'timestamp DEFAULT CURRENT_TIMESTAMP',
+    ));
+    //users passre
+    App::$cur->db->createTable('users_passre', array(
+        'passre_id' => 'pk',
+        'passre_hash' => 'text NOT NULL',
+        'passre_user_id' => 'int(11) NOT NULL',
+        'passre_status' => 'int(11) NOT NULL',
+        'passre_date' => 'timestamp DEFAULT CURRENT_TIMESTAMP',
+    ));
+    //users group
+    App::$cur->db->createTable('users_group', array(
+        'group_id' => 'pk',
+        'group_name' => 'varchar(255) NOT NULL',
+    ));
+    App::$cur->db->insert('users_group', array(
+        'group_name' => 'Гости'
+    ));
+    App::$cur->db->insert('users_group', array(
+        'group_name' => 'Зарегистрированые'
+    ));
+    App::$cur->db->insert('users_group', array(
+        'group_name' => 'Администрация'
+    ));
+    //users roles
+    App::$cur->db->createTable('users_role', array(
+        'role_id' => 'pk',
+        'role_name' => 'varchar(255) NOT NULL',
+        'role_group_id' => 'int(11) NOT NULL',
+    ));
+    App::$cur->db->insert('users_role', array(
+        'role_name' => 'Гость',
+        'role_group_id' => 1
+    ));
+    App::$cur->db->insert('users_role', array(
+        'role_name' => 'Пользователь',
+        'role_group_id' => 2
+    ));
+    App::$cur->db->insert('users_role', array(
+        'role_name' => 'Администратор',
+        'role_group_id' => 3
+    ));
 };

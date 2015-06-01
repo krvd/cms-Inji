@@ -130,4 +130,21 @@ class Tools extends Model {
         return $img_type;
     }
 
+    function sendMail($from, $to, $subject, $text, $charset = 'utf-8', $ctype = 'text/html') {
+        $headers = "From: {$from}\r\n";
+        $headers .= "Content-type: {$ctype}; charset={$charset}\r\n";
+        $headers .= "Mime-Version: 1.0\r\n";
+        return mail($to, $subject, $text, $headers);
+    }
+
+    static function redirect($href = '/', $text = false, $status = 'info') {
+
+        if ($text !== false) {
+            App::$cur->msg->add($text, $status);
+        }
+
+        header("Location: {$href}");
+        exit("Перенаправление на: <a href = '{$href}'>{$href}</a>");
+    }
+
 }

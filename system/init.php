@@ -67,7 +67,7 @@ if (!empty($params[0]) && file_exists(INJI_SYSTEM_DIR . '/program/' . $params[0]
 }
 $shareConfig = Config::share();
 if (App::$cur->name != 'install' && empty($shareConfig['installed'])) {
-    App::$cur->url->redirect('/install');
+    Tools::redirect('/install');
 }
 
 spl_autoload_register('Router::findClass');

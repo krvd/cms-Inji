@@ -3,6 +3,8 @@
 /**
  * Item name
  *
+ * Info
+ *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/
  * @copyright 2015 Alexey Krupskiy
@@ -10,5 +12,6 @@
  */
 
 namespace Users;
-class Session extends \Model{
+class Passre {
+    //put your code here
 }
