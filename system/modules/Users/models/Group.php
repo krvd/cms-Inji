@@ -1,5 +1,5 @@
 <?php
 namespace Users;
-class Group extends Model
+class Group extends \Model
 {
 }

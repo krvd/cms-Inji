@@ -119,13 +119,16 @@ function DataManager(element) {
     this.load();
 }
 DataManager.prototype.delRow = function (key) {
-    inji.Server.request({
-        url: 'ui/dataManager/delRow',
-        data: {params: this.params, modelName: this.modelName, key: key},
-        success: function () {
-            inji.Ui.dataManagers.reloadAll();
-        }
-    });
+    if (confirm('Вы уверены, что хотите удалить элемент?'))
+    {
+        inji.Server.request({
+            url: 'ui/dataManager/delRow',
+            data: {params: this.params, modelName: this.modelName, key: key},
+            success: function () {
+                inji.Ui.dataManagers.reloadAll();
+            }
+        });
+    }
 }
 DataManager.prototype.reload = function () {
     this.load();

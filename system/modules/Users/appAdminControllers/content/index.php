@@ -1,4 +1,4 @@
 <?php
 
-$dataTable->view(['editUrl' => '/admin/Users/edit/']);
-?>
+$dataManager = new Ui\DataManager('Users\User');
+$dataManager->draw();

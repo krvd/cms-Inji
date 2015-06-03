@@ -64,7 +64,7 @@ class ActiveForm extends \Object {
                     }
                 }
 
-                \App::$cur->SystemMessages->add($this->model->pk() ? 'Новый элемент был успешно добавлен' : 'Изменнеия были успешно сохранены', 'success');
+                \App::$cur->SystemMessages->add($this->model->pk() ? 'Изменнеия были успешно сохранены' : 'Новый элемент был успешно добавлен', 'success');
                 $this->model->save(!empty($params['dataManagerParams']) ? $params['dataManagerParams'] : []);
                 if ($ajax) {
                     \App::$cur->SystemMessages->show();

@@ -1,6 +1,6 @@
 <?php
 namespace Users;
-class Role extends Model
+class Role extends \Model
 {
 
 }

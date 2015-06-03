@@ -12,7 +12,7 @@ return function ($step = NULL, $params = array()) {
         'user_ok_href' => 'varchar(255) NOT NULL',
         'user_pass' => 'text NOT NULL',
         'user_parent_id' => 'INT NOT NULL',
-        'user_photo' => 'INT NOT NULL',
+        'user_photo_file_id' => 'INT NOT NULL',
         'user_group_id' => 'INT NOT NULL',
         'user_role_id' => 'INT NOT NULL',
         'user_activ' => 'text NOT NULL',

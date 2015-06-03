@@ -1,5 +1,7 @@
 <?php
+
 namespace Users;
+
 class User extends \Model {
 
     static $labels = [
@@ -9,27 +11,38 @@ class User extends \Model {
         'user_city' => 'Город',
         'user_group_id' => 'Группа пользователя',
         'user_role_id' => 'Роль пользователя',
-        'user_parent_id' => 'Спонсор'
+        'user_parent_id' => 'Спонсор',
+        'user_photo_file_id' => 'Фото'
     ];
-    static $dataTable = [
-        'cols' => [
-            'user_name' => [],
-            'user_mail' => [],
-            'user_phone' => [],
-            'user_city' => [],
-            'user_group_id' => ['relation' => 'group', 'showCol' => 'group_name'],
-            'user_role_id' => ['relation' => 'role', 'showCol' => 'role_name'],
-        ],
-        'searchableCols' => ['user_name', 'user_mail', 'user_city', 'user_phone']
+    static $cols = [
+        'user_name' => ['type' => 'text'],
+        'user_mail' => ['type' => 'email'],
+        'user_phone' => ['type' => 'text'],
+        'user_city' => ['type' => 'text'],
+        'user_group_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'group', 'showCol' => 'group_name'],
+        'user_role_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'role', 'showCol' => 'role_name'],
+        'user_photo_file_id' => ['type'=>'image', 'relation' => 'photo', 'showCol' => 'file_path'],
+    ];
+    static $dataManagers = [
+        'manager' => [
+            'cols' => [
+                'user_name',
+                'user_mail',
+                'user_phone',
+                'user_city',
+                'user_group_id',
+                'user_role_id',
+            ],
+            'searchableCols' => ['user_name', 'user_mail', 'user_city', 'user_phone']
+        ]
     ];
     static $forms = [
-        'manage' => [
-            'options' => [
-                'user_name' => 'text',
-                'user_parent_id' => ['relation' => 'parent', 'showCol' => 'user_name'],
-            ],
-            'map'=>[
-                ['user_name','user_parent_id']
+        'manager' => [
+            'map' => [
+                ['user_name', 'user_mail',],
+                ['user_photo_file_id'],
+                ['user_phone', 'user_city'],
+                ['user_group_id', 'user_role_id']
             ]
         ]
     ];
@@ -37,22 +50,22 @@ class User extends \Model {
     static function relations() {
         return [
             'group' => [
-                'model' => 'Group',
+                'model' => 'Users\Group',
                 'col' => 'user_group_id'
             ],
             'role' => [
-                'model' => 'Role',
+                'model' => 'Users\Role',
                 'col' => 'user_role_id'
             ],
-            'parent' => [
-                'model' => 'User',
-                'col' => 'user_parent_id'
+            'photo' => [
+                'model' => 'Files\File',
+                'col' => 'user_photo_file_id'
             ]
         ];
     }
 
     function isAdmin() {
-        if ($this->user_group_id == 3 || $this->user_group_id == 4) {
+        if ($this->group_id == 3) {
             return true;
         }
         return false;

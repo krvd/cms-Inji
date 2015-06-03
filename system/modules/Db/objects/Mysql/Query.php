@@ -58,10 +58,9 @@ class Query extends \Object {
         return $result->pdoResult->rowCount();
     }
 
-    function delete($table, $noclean = 0) {
+    function delete($table) {
         $this->operation = 'DELETE';
         $this->table = $table;
-        $this->cols = $data;
         $result = $this->query();
         return $result->pdoResult->rowCount();
     }
