@@ -9,17 +9,17 @@ class MaterialsController extends Controller {
 
         $material_chpu = trim(implode('/', $args));
         if ($material_chpu) {
-            $material = Materials\Material::get($material_chpu, 'material_chpu');
+            $material = Materials\Material::get($material_chpu, 'chpu');
             if (!$material) {
-                $category = Materials\MaterialCatalog::get($material_chpu, 'mc_chpu');
+                $category = Materials\Catalog::get($material_chpu, 'chpu');
                 if ($category) {
                     $this->categoryAction($material_chpu);
                 } else {
-                    $material = Materials\Material::get(1, 'material_default');
+                    $material = Materials\Material::get(1, 'default');
                 }
             }
         } else {
-            $material = Materials\Material::get(1, 'material_default');
+            $material = Materials\Material::get(1, 'default');
         }
 
         if (!$material && !$category) {

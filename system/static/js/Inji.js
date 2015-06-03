@@ -10,9 +10,15 @@
 function Inji() {
     this.options = {};
     this.onLoadCallbacks = [];
+    this.loaded = false;
 }
 Inji.prototype.onLoad = function (callback) {
-    this.onLoadCallbacks.push(callback);
+    if (this.loaded) {
+        callback();
+    }
+    else {
+        this.onLoadCallbacks.push(callback);
+    }
 }
 Inji.prototype.startCallbacks = function () {
     console.log('start onLoadeds');
@@ -20,6 +26,7 @@ Inji.prototype.startCallbacks = function () {
         this.onLoadCallbacks[key]();
     }
     document.getElementById('loading-indicator').style.display = 'none';
+    inji.loaded = true;
     console.log('inji start complete');
 }
 Inji.prototype.start = function (options) {

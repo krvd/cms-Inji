@@ -4,7 +4,7 @@ class Materials extends Module {
 
     function viewsList() {
         $return = [];
-        if (!empty(App::$cur['parrent'])) {
+        if (!empty(App::$cur->system)) {
             $conf = App::$cur->view->getParentConfig();
         } else {
             $conf = App::$cur->view->getConfig();
@@ -22,11 +22,9 @@ class Materials extends Module {
 
     function templatesList() {
         $return = ['current' => 'Текущая тема'];
-        if (!empty(App::$cur['parrent'])) {
-            $conf = App::$cur->view->getParentConfig();
-        } else {
-            $conf = App::$cur->view->getConfig();
-        }
+
+        $conf = App::$primary->view->getParentConfig();
+
         if (!empty($conf['files']['aditionTemplateFiels'])) {
             foreach ($conf['files']['aditionTemplateFiels'] as $file) {
                 $return[$file['file']] = '- ' . $file['name'];

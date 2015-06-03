@@ -156,19 +156,10 @@ class Model {
             $key = static::index();
         }
         $result = App::$cur->db->select(static::table());
-        $rows = App::$cur->db->result_array($result, $key);
-        $class = get_called_class();
         if (empty($options['array'])) {
-            foreach ($rows as $row) {
-                if ($key) {
-                    $return[$row[$key]] = new $class($row);
-                } else {
-                    $return[] = new $class($row);
-                }
-            }
-            return $return;
+            return $result->getObjects(get_called_class(), $key);
         }
-        return $rows;
+        return $result->getArray($key);
     }
 
     /**

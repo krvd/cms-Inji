@@ -51,21 +51,6 @@ class Catalog extends \Model
         ];
     }
 
-    static function colPrefix()
-    {
-        return 'mc_';
-    }
-
-    static function table()
-    {
-        return 'materials_catalogs';
-    }
-
-    static function index()
-    {
-        return 'mc_id';
-    }
-
     function beforeSave()
     {
         $oldPath = $this->mc_tree_path;

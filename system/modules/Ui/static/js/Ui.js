@@ -93,7 +93,7 @@ DataManagers.prototype.popUp = function (item, params) {
         code += params.relation;
     }
     code = code.replace(':', '_').replace('\\', '_');
-    var modal = inji.Ui.modals.show('', '<div class = "text-center"><img src = "'+inji.options.appRoot+'static/moduleAsset/Ui/images/ajax-loader.gif" /></div>', code, 'modal-lg');
+    var modal = inji.Ui.modals.show('', '<div class = "text-center"><img src = "' + inji.options.appRoot + 'static/moduleAsset/Ui/images/ajax-loader.gif" /></div>', code, 'modal-lg');
     inji.Server.request({
         url: 'ui/dataManager/',
         dataType: 'json',
@@ -132,7 +132,7 @@ DataManager.prototype.reload = function () {
 }
 DataManager.prototype.load = function () {
     var dataManager = this;
-    dataManager.element.find('tbody').html('<tr><td colspan="' + dataManager.element.find('thead tr th').length + '"><div class = "text-center"><img src = "'+inji.options.appRoot+'static/moduleAsset/Ui/images/ajax-loader.gif" /></div></td></tr>');
+    dataManager.element.find('tbody').html('<tr><td colspan="' + dataManager.element.find('thead tr th').length + '"><div class = "text-center"><img src = "' + inji.options.appRoot + 'static/moduleAsset/Ui/images/ajax-loader.gif" /></div></td></tr>');
     inji.Server.request({
         url: 'ui/dataManager/loadRows',
         data: {params: this.params, modelName: this.modelName, managerName: this.managerName},
@@ -155,16 +155,31 @@ Forms.prototype.popUp = function (item, params) {
         code += params.relation;
     }
     code = code.replace(':', '_').replace('\\', '_');
-    var modal = inji.Ui.modals.show('', '<div class = "text-center"><img src = "'+inji.options.appRoot+'static/moduleAsset/Ui/images/ajax-loader.gif" /></div>', code, 'modal-lg');
+    var modal = inji.Ui.modals.show('', '<div class = "text-center"><img src = "' + inji.options.appRoot + 'static/moduleAsset/Ui/images/ajax-loader.gif" /></div>', code, 'modal-lg');
     inji.Server.request({
         url: 'ui/formPopUp/',
         data: {item: item, params: params},
         success: function (data) {
             modal.find('.modal-body').html(data.content);
+            CKEDITOR.replaceAll(function (textarea, config) {
+                console.log(textarea);
+                if ($(textarea).hasClass('htmleditor') && $(textarea).css('display') != 'none') {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            });
         }
     });
 }
 Forms.prototype.submitAjax = function (form) {
+    if (typeof CKEDITOR.instances != 'undefined') {
+        for (instance in CKEDITOR.instances) {
+            CKEDITOR.instances[instance].updateElement();
+        }
+    }
     var form = $(form);
     var container = form.parent();
     var btn = form.find('button');

@@ -48,9 +48,9 @@ class View extends Module {
 
     function getParentConfig($templateName = '') {
         if (!$templateName) {
-            $templateName = !empty($this->config[App::$cur->apps->parent['type']]['current']) ? $this->config[App::$cur->apps->parent['type']]['current'] : 'default';
+            $templateName = !empty($this->config[App::$primary->type]['current']) ? $this->config[App::$primary->type]['current'] : 'default';
         }
-        return App::$cur->config->custom(App::$cur->apps->parent['path'] . "/templates/{$templateName}/config.php");
+        return Config::custom(App::$primary->path . "/templates/{$templateName}/config.php");
     }
 
     function page($params = []) {
@@ -346,6 +346,7 @@ class View extends Module {
             include App::$cur->path . '/widgets/' . $widgetName . '.php';
         }
     }
+    
 
 }
 

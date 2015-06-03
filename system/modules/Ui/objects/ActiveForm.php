@@ -57,7 +57,9 @@ class ActiveForm extends \Object {
                             $relations = $modelName::relations();
                             break;
                         default:
-                            $this->model->$col = $request[$col];
+                            if (!empty($request[$col])) {
+                                $this->model->$col = $request[$col];
+                            }
                             break;
                     }
                 }

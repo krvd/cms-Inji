@@ -20,8 +20,8 @@ class Form extends \Object {
     public $inputs = [];
     public $map = [];
 
-    function begin($header = '',$options=[]) {
-        $params = compact('header','options');
+    function begin($header = '', $options = []) {
+        $params = compact('header', 'options');
         $params['form'] = $this;
         \App::$cur->view->widget('Ui\Form/begin', $params);
     }
@@ -33,10 +33,21 @@ class Form extends \Object {
                 $params['form'] = $this;
                 \App::$cur->view->widget('Ui\Form/textarea', $params);
                 break;
+            case 'html':
+                $params = compact('name', 'label', 'options');
+                $params['form'] = $this;
+                if(empty($params['options']['class'])){
+                    $params['options']['class'] = 'htmleditor';
+                }
+                else {
+                    $params['options']['class'] .= ' htmleditor';
+                }
+                \App::$cur->view->widget('Ui\Form/textarea', $params);
+                break;
             case 'select':
                 $params = compact('name', 'label', 'options');
                 $params['form'] = $this;
-                \App::$cur->view->widget('Ui\Form/select', $params);                
+                \App::$cur->view->widget('Ui\Form/select', $params);
                 break;
             default :
                 $params = compact('type', 'name', 'label', 'options');

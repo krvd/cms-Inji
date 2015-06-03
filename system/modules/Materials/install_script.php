@@ -1,7 +1,7 @@
 <?php
 
 return function ($step = NULL, $params = array()) {
-    App::$cur->db->createTable('materials_catalogs', array(
+    App::$cur->db->createTable('materials_catalog', array(
         'catalog_id' => 'pk',
         'catalog_parent_id' => 'int(11) NOT NULL',
         'catalog_name' => 'varchar(255) NOT NULL',
@@ -14,7 +14,7 @@ return function ($step = NULL, $params = array()) {
     ));
     App::$cur->db->createTable('materials_material', array(
         'material_id' => 'pk',
-        'material_mc_id' => 'INT(11) NOT NULL',
+        'material_catalog_id' => 'INT(11) NOT NULL',
         'material_name' => 'varchar(255) NOT NULL',
         'material_chpu' => 'varchar(255) NOT NULL',
         'material_text' => 'LONGTEXT NOT NULL',
