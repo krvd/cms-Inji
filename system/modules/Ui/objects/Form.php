@@ -36,13 +36,17 @@ class Form extends \Object {
             case 'html':
                 $params = compact('name', 'label', 'options');
                 $params['form'] = $this;
-                if(empty($params['options']['class'])){
+                if (empty($params['options']['class'])) {
                     $params['options']['class'] = 'htmleditor';
-                }
-                else {
+                } else {
                     $params['options']['class'] .= ' htmleditor';
                 }
                 \App::$cur->view->widget('Ui\Form/textarea', $params);
+                break;
+            case 'image':
+                $params = compact('name', 'label', 'options');
+                $params['form'] = $this;
+                \App::$cur->view->widget('Ui\Form/image', $params);
                 break;
             case 'select':
                 $params = compact('name', 'label', 'options');

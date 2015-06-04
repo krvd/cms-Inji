@@ -14,7 +14,7 @@ class MenuController extends Controller {
     function createAction() {
         $this->view->set_title('Создание меню');
         if (!empty($_POST['mg_name']) && !empty($_POST['mg_code'])) {
-            $this->menu->create_menu(array('mg_name' => $_POST['mg_name'], 'mg_code' => $_POST['mg_code'], 'mg_user_id' => $this->Users->cur->user_id));
+            $this->menu->create_menu(array('mg_name' => $_POST['mg_name'], 'mg_code' => $_POST['mg_code'], 'mg_user_id' => Users\User::$cur->user_id));
             Tools::redirect('/admin/Menu');
         }
         $this->view->page();

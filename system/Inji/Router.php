@@ -13,15 +13,24 @@ class Router {
     static function findClass($className) {
         if (strpos($className, '\\')) {
             $classPath = explode('\\', $className);
-            $classPathW = array_slice($classPath, 1);
+            $moduleName = $classPath[0];
+            $classPath = array_slice($classPath, 1);
+
             $paths = [
-                'object' => App::$cur->getObject($classPath[0])->path . '/objects/' . implode('/', $classPathW) . '.php',
-                'object2' => App::$cur->getObject($classPath[0])->path . '/objects/' . $classPath[1] . '/' . $classPath[1] . '.php',
-                'model' => $path = App::$cur->getObject($classPath[0])->path . '/models/' . $classPath[1] . '.php'
+                'appObject' => App::$cur->path . '/modules/' . $moduleName . '/objects/' . implode('/', $classPath) . '.php',
+                'appObjectDir' => App::$cur->path . '/modules/' . $moduleName . '/objects/' . $classPath[0] . '/' . $classPath[0] . '.php',
+                'appModel' => App::$cur->path . '/models/' . $classPath[0] . '.php',
+                'object' => INJI_SYSTEM_DIR . '/modules/' . $moduleName . '/objects/' . implode('/', $classPath) . '.php',
+                'objectDir' => INJI_SYSTEM_DIR . '/modules/' . $moduleName . '/objects/' . $classPath[0] . '/' . $classPath[0] . '.php',
+                'model' => INJI_SYSTEM_DIR . '/modules/' . $moduleName . '/models/' . $classPath[0] . '.php',
             ];
+
             foreach ($paths as $path) {
                 if (file_exists($path)) {
                     include_once $path;
+                    if (!App::$cur->isLoaded($moduleName)) {
+                        App::$cur->loadObject($moduleName);
+                    }
                     return true;
                 }
             }

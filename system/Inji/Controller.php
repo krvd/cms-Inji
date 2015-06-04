@@ -59,7 +59,7 @@ class Controller {
         elseif (isset($accesses['dostup_tree']['_access']))
             $access = $accesses['dostup_tree']['_access'];
 
-        if (App::$cur->Users->curUser->user_group_id && !empty($access) && !in_array(App::$cur->Users->curUser->user_group_id, $access))
+        if (Users\User::$cur->user_group_id && !empty($access) && !in_array(Users\User::$cur->user_group_id, $access))
             return false;
 
         return true;

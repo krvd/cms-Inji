@@ -9,7 +9,7 @@ class menu_manage extends Inji {
 
     function create() {
         if (!empty($_POST['mg_name']) && !empty($_POST['mg_code'])) {
-            $this->menu->create_menu(array('mg_name' => $_POST['mg_name'], 'mg_code' => $_POST['mg_code'], 'mg_user_id' => $this->users->cur->user_id));
+            $this->menu->create_menu(array('mg_name' => $_POST['mg_name'], 'mg_code' => $_POST['mg_code'], 'mg_user_id' => Users\User::$cur->user_id));
             Tools::redirect($this->url->up_to(1));
         }
         $this->view->page();

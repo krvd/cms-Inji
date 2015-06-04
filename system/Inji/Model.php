@@ -590,7 +590,7 @@ class Model {
     }
 
     function checkFormAccess($formName) {
-        if ($formName == 'manage' && !App::$cur->Users->curUser->isAdmin()) {
+        if ($formName == 'manage' && !Users\User::$cur->isAdmin()) {
             return false;
         }
         return true;

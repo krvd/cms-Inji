@@ -1,11 +1,8 @@
 <?php
 
 class Users extends Module {
-
-    public $curUser = null;
-
     function init() {
-        $this->curUser = new Users\User(array('group_id' => 1, 'role_id' => 1));
+        \Users\User::$cur = new Users\User(array('group_id' => 1, 'role_id' => 1));
         
         if (!App::$cur->db->connect) {
             return;
@@ -32,8 +29,8 @@ class Users extends Module {
         setcookie("user_session_hash", '', 0, "/");
         setcookie("user_id", '', 0, "/");
         $accesses = Config::module('Access');
-        if (!empty($this->Access->modConf[App::$cur->app['type']]['denied_redirect'])) {
-            $url = $this->Access->modConf[App::$cur->app['type']]['denied_redirect'];
+        if (!empty($this->Access->modConf[App::$cur->app->type]['denied_redirect'])) {
+            $url = $this->Access->modConf[App::$cur->app->type]['denied_redirect'];
         } else {
             $url = '/';
         }
@@ -48,9 +45,9 @@ class Users extends Module {
                     ['hash', $hash]
         ]);
         if ($session) {
-            $this->curUser = Users\User::get($session->user_id);
-            $this->curUser->last_activ = 'CURRENT_TIMESTAMP';
-            $this->curUser->save();
+            Users\User::$cur = Users\User::get($session->user_id);
+            Users\User::$cur->last_activ = 'CURRENT_TIMESTAMP';
+            Users\User::$cur->save();
         } else {
             setcookie("user_session_hash", '', 0, "/");
             setcookie("user_id", '', 0, "/");
@@ -112,9 +109,9 @@ class Users extends Module {
                 setcookie("user_id", $session->user_id, time() + 360000, "/");
             }
 
-            $this->curUser = $user;
-            $this->curUser->last_activ = 'CURRENT_TIMESTAMP';
-            $this->curUser->save();
+            Users\User::$cur = $user;
+            Users\User::$cur->last_activ = 'CURRENT_TIMESTAMP';
+            Users\User::$cur->save();
 
             if (isset($_POST['autorization']) && !empty(App::$cur->Access->config[App::$cur->app->type]['login_redirect'])) {
                 Tools::redirect(App::$cur->Access->config[App::$cur->app->type]['login_redirect']);

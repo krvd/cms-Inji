@@ -168,7 +168,7 @@ class DataManager extends \Object {
         }
         $manager = $modelName::$dataManagers[$dataManagerName];
         
-        if (!empty($manager['options']['access']['groups']) && !in_array(\App::$cur->Users->curUser->user_group_id, $manager['options']['access']['groups'])) {
+        if (!empty($manager['options']['access']['groups']) && !in_array(\Users\User::$cur->user_group_id, $manager['options']['access']['groups'])) {
             return false;
         }
         return true;

@@ -4,6 +4,7 @@ namespace Users;
 
 class User extends \Model {
 
+    static $cur;
     static $labels = [
         'user_name' => 'ФИО',
         'user_mail' => 'E-Mail',
@@ -21,7 +22,7 @@ class User extends \Model {
         'user_city' => ['type' => 'text'],
         'user_group_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'group', 'showCol' => 'group_name'],
         'user_role_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'role', 'showCol' => 'role_name'],
-        'user_photo_file_id' => ['type'=>'image', 'relation' => 'photo', 'showCol' => 'file_path'],
+        'user_photo_file_id' => ['type' => 'image', 'relation' => 'photo', 'showCol' => 'file_path'],
     ];
     static $dataManagers = [
         'manager' => [
@@ -34,7 +35,7 @@ class User extends \Model {
                 'user_role_id',
             ],
             'searchableCols' => ['user_name', 'user_mail', 'user_city', 'user_phone']
-        ]
+        ],
     ];
     static $forms = [
         'manager' => [
@@ -43,6 +44,12 @@ class User extends \Model {
                 ['user_photo_file_id'],
                 ['user_phone', 'user_city'],
                 ['user_group_id', 'user_role_id']
+            ]
+        ],
+        'profile' => [
+            'map' => [
+                ['user_name', 'user_photo_file_id'],
+                ['user_phone', 'user_city'],
             ]
         ]
     ];

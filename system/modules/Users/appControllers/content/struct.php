@@ -1,6 +1,6 @@
 <?php $this->widget('cabinet_tabs', 'tree'); ?>
 <?php
-$this->db->where('cmuc_user_id', $this->users->cur->user_id);
+$this->db->where('cmuc_user_id', Users\User::$cur->user_id);
 $this->db->where('cmuc_status', 1);
 $card = $this->db->select('catalog_marketing_user_cards')->fetch_assoc();
 if ($card) {
@@ -27,9 +27,9 @@ if ($card) {
 </form>
 
 <?php
-if ($this->users->cur->parent) {
-    if ($this->users->cur->parent->user_photo) {
-        $file = $this->files->get($this->users->cur->parent->user_photo);
+if (Users\User::$cur->parent) {
+    if (Users\User::$cur->parent->user_photo) {
+        $file = $this->files->get(Users\User::$cur->parent->user_photo);
         $photo = $file['file_path'];
     } else {
         $photo = '/static/images/no-image.png';
@@ -41,10 +41,10 @@ if ($this->users->cur->parent) {
             <img src ='<?= $photo; ?>?resize=200x200&resize_crop=q' class = 'img-responsive'/>
         </div>
         <div class ='col-xs-8'>
-            <h3><?= $this->users->cur->parent->user_name; ?></h3>
-            <p>E-mail: <?= $this->users->cur->parent->user_mail; ?></p>
-            <p>Город: <?= $this->users->cur->parent->user_city; ?></p>
-            <p>Телефон: <?= $this->users->cur->parent->user_phone; ?></p>
+            <h3><?= Users\User::$cur->parent->user_name; ?></h3>
+            <p>E-mail: <?= Users\User::$cur->parent->user_mail; ?></p>
+            <p>Город: <?= Users\User::$cur->parent->user_city; ?></p>
+            <p>Телефон: <?= Users\User::$cur->parent->user_phone; ?></p>
         </div>
     </div>
     <?php
@@ -71,10 +71,10 @@ if ($this->users->cur->parent) {
                 <img src ='<?= $photo; ?>?resize=200x200&resize_crop=q' class = 'img-responsive'/>
             </div>
             <div class ='col-xs-8'>
-                <h3><?= $this->users->cur->parent->user_name; ?></h3>
-                <p>E-mail: <span class = 'mail'><?= $this->users->cur->parent->user_mail; ?></span></p>
-                <p>Город: <span class = 'city'><?= $this->users->cur->parent->user_city; ?></span></p>
-                <p>Телефон: <span class = 'tel'><?= $this->users->cur->parent->user_phone; ?></span></p>
+                <h3><?= Users\User::$cur->parent->user_name; ?></h3>
+                <p>E-mail: <span class = 'mail'><?= Users\User::$cur->parent->user_mail; ?></span></p>
+                <p>Город: <span class = 'city'><?= Users\User::$cur->parent->user_city; ?></span></p>
+                <p>Телефон: <span class = 'tel'><?= Users\User::$cur->parent->user_phone; ?></span></p>
                 <h4>Использовано</h4>
                 Выгодные рубли: <b class = 'used'></b>
                 <h4>Доступно</h4>

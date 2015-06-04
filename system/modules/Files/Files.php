@@ -11,10 +11,9 @@ class Files extends Module {
      * --	[allow_types]: досупные для заливки типы файлов. Например image (тип форматов из таблицы типов файлов file_type_ext)
      */
     function upload($file, $options = array()) {
-        if (App::$cur->app['system'])
-            $site_path = App::$cur->app['parent']['path'];
-        else
-            $site_path = App::$cur->app['path'];
+
+        $site_path = App::$primary->path;
+
         if (!is_uploaded_file($file['tmp_name']))
             return false;
 
@@ -22,47 +21,32 @@ class Files extends Module {
         if (empty($fileinfo['extension']))
             return false;
 
-        $type = $this->get_type_by_ext($fileinfo['extension']);
+        $type = Files\Type::get($fileinfo['extension'], 'ext');
         if (!$type)
             return false;
 
-        $cur_file = array();
+        $fileObject = new Files\File();
         if (!empty($options['file_code'])) {
-            $name = $options['file_code'];
-            $cur_file = $this->get_by_code($options['file_code']);
-        } else
-            $name = microtime(true);
-
-        $path = $type['file_type_dir'] . date('Y-m-d') . '/' . $name . '.' . $fileinfo['extension'];
-        if (!empty($options['file_code']) && file_exists($path))
-            unlink($path);
-
-        Tools::createDir($site_path . $type['file_type_dir'] . date('Y-m-d') . '/');
-
-        if (!move_uploaded_file($file['tmp_name'], $site_path . $path))
-            return false;
-
-        if ($cur_file) {
-            $file_id = $cur_file['file_id'];
-            $this->update($file_id, array(
-                'file_path' => $path,
-                'file_type' => $type['file_type_id'],
-                'file_name' => $fileinfo['filename'],
-                'file_original_name' => $file['name'],
-                'file_date_create' => 'CURRENT_TIMESTAMP'
-            ));
+            $fileObject = Files\File::get($options['file_code'], 'file_code');
         } else {
-            $ins = array();
-            $ins['file_path'] = $path;
-            $ins['file_type'] = $type['file_type_id'];
-            if (!empty($options['file_code']))
-                $ins['file_code'] = $options['file_code'];
-            $ins['file_name'] = $fileinfo['filename'];
-            $ins['file_original_name'] = $file['name'];
-            //$ins['file_date_create'] = 'CURRENT_TIMESTAMP';
-            $file_id = $this->add($ins);
+            $fileObject->name = microtime(true);
         }
-        return $file_id;
+
+        $fileObject->path = $type->type_dir . date('Y-m-d') . '/' . $fileObject->name . '.' . $fileinfo['extension'];
+        if ($fileObject->id && file_exists($site_path .$fileObject->path))
+            unlink($site_path .$fileObject->path);
+
+        Tools::createDir($site_path . $type->type_dir . date('Y-m-d') . '/');
+
+        if (!move_uploaded_file($file['tmp_name'], $site_path . $fileObject->path))
+            return false;
+        
+        $fileObject->type_id = $type->pk();
+        $fileObject->original_name = $file['name'];
+        $fileObject->date_create = 'CURRENT_TIMESTAMP';
+        $fileObject->save();
+
+        return $fileObject->id;
     }
 
     /**

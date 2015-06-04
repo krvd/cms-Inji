@@ -53,6 +53,20 @@ class ActiveForm extends \Object {
             if ($this->model) {
                 foreach ($this->form['inputs'] as $col => $param) {
                     switch ($param['type']) {
+                        case 'image':
+                            if (!empty($_FILES["ActiveForm_{$formName}"]['tmp_name'][$modelName][$col])) {
+                                $file_id = \App::$primary->files->upload([
+                                    'tmp_name' => $_FILES["ActiveForm_{$formName}"]['tmp_name'][$modelName][$col],
+                                    'name' => $_FILES["ActiveForm_{$formName}"]['name'][$modelName][$col],
+                                    'type' => $_FILES["ActiveForm_{$formName}"]['type'][$modelName][$col],
+                                    'size' => $_FILES["ActiveForm_{$formName}"]['size'][$modelName][$col],
+                                    'error' => $_FILES["ActiveForm_{$formName}"]['error'][$modelName][$col],
+                                ]);
+                                if ($file_id) {
+                                    $this->model->$col = $file_id;
+                                }
+                            }
+                            break;
                         case 'list':
                             $relations = $modelName::relations();
                             break;
@@ -100,6 +114,9 @@ class ActiveForm extends \Object {
                 ];
                 $inputOptions['value'] = ($this->model && $this->model->pk()) ? $this->model->$col : $inputOptions['value'];
 
+                if ($this->form['inputs'][$col]['type'] == 'image' && $inputOptions['value']) {
+                    $inputOptions['value'] = \Files\File::get($inputOptions['value'])->path;
+                }
                 if ($this->form['inputs'][$col]['type'] == 'select') {
                     $inputOptions['values'] = $this->getOptionsList($this->form['inputs'][$col], $params);
                 }

@@ -8,7 +8,7 @@ class UsersController extends Controller {
     }
 
     function loginAction() {
-        if (!App::$cur->Users->curUser->user_id) {
+        if (!Users\User::$cur->user_id) {
             $this->view->page(['template' => 'login', 'content' => 'login']);
         } else {
             $this->view->page(['content' => 'profile']);

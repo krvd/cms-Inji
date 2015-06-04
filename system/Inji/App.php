@@ -51,6 +51,7 @@ class App {
      * @return object
      */
     function getObject($className) {
+        
         $className = ucfirst($className);
         if (isset($this->_objects[$className])) {
             return $this->_objects[$className];
@@ -89,6 +90,10 @@ class App {
         }
         return false;
     }
+    
+    function isLoaded($moduleName){
+        return !empty($this->_objects[$moduleName]);
+    }
 
     /**
      * Load module by name or alias
@@ -97,13 +102,13 @@ class App {
      * @return mixed
      */
     function loadObject($className) {
+        
         $moduleClassName = $this->findModuleClass($className);
         if (!is_bool($moduleClassName) && $moduleClassName != $className) {
             return $this->_objects[$moduleClassName] = $this->_objects[$className] = $this->getObject($moduleClassName);
         } elseif (class_exists($className)) {
             $this->_objects[$className] = new $className($this);
         }
-
 
         if (isset($this->_objects[$className])) {
             if (method_exists($this->_objects[$className], 'init')) {
