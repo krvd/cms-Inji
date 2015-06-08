@@ -99,7 +99,7 @@ class Module {
                 $controller = new $controllerName();
                 $controller->params = $params;
                 $controller->module = $this;
-                $controller->path = pathinfo($params, PATHINFO_DIRNAME);
+                $controller->path = pathinfo($path, PATHINFO_DIRNAME);
                 $controller->name = $controllerName;
                 return $controller;
             }
