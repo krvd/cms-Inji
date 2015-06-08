@@ -10,6 +10,17 @@
  */
 class Modules extends Module {
 
+    function createBlankModule($name, $codeName) {
+        Tools::createDir(App::$primary->path . '/modules/' . $codeName);
+        ob_start();
+        include $this->path . '/moduleTpls/BlankModule.php';
+        $moduleCode = ob_get_contents();
+        ob_end_clean();
+        file_put_contents(App::$primary->path . '/modules/' . $codeName . '/' . $codeName . '.php', $moduleCode);
+        file_put_contents(App::$primary->path . '/modules/' . $codeName . '/info.php', Config::buildPhpArray(['name' => $name]));
+        file_put_contents(App::$primary->path . '/modules/' . $codeName . '/generatorHash.php', Config::buildPhpArray(['moduleFile' => md5($moduleCode)]));
+    }
+
     function install($module, $params = []) {
 
         $type = 'modules';
