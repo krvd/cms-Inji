@@ -2,6 +2,7 @@
     <?= $table->name; ?>
     <div class ='pull-right'>
         <?php
+        $html = '';
         foreach ($table->buttons as $button) {
             $html = '<a class = "btn btn-primary"';
             if (!empty($button['href'])) {
