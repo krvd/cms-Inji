@@ -27,6 +27,7 @@ class Module {
     }
 
     static function getModulePaths($moduleName) {
+        $moduleName = ucfirst($moduleName);
         $paths = [];
         if (App::$cur !== App::$primary) {
             $paths['primaryAppPath'] = App::$primary->path . '/modules/' . $moduleName;
@@ -34,6 +35,16 @@ class Module {
         $paths['curAppPath'] = App::$cur->path . '/modules/' . $moduleName;
         $paths['systemPath'] = INJI_SYSTEM_DIR . '/modules/' . $moduleName;
         return $paths;
+    }
+
+    static function getModulePath($moduleName) {
+        $moduleName = ucfirst($moduleName);
+        $paths = Module::getModulePaths($moduleName);
+        foreach ($paths as $path) {
+            if (file_exists($path . '/' . $moduleName . '.php')) {
+                return $path;
+            }
+        }
     }
 
     static function resolveModule($app) {
@@ -57,48 +68,41 @@ class Module {
         return null;
     }
 
+    function getControllerPaths() {
+        $paths = [];
+
+        if (!empty($this->params[0])) {
+            $paths['appTypePath_slice'] = $this->path . '/' . $this->app->type . 'Controllers/' . ucfirst($this->params[0]) . 'Controller.php';
+        }
+        $paths['appTypePath'] = $this->path . '/' . $this->app->type . 'Controllers/' . $this->moduleName . 'Controller.php';
+
+        if (!empty($this->params[0])) {
+            $paths['universalPath_slice'] = $this->path . '/Controllers/' . ucfirst($this->params[0]) . 'Controller.php';
+        }
+        $paths['universalPath'] = $this->path . '/Controllers/' . $this->moduleName . 'Controller.php';
+
+        return $paths;
+    }
+
     function findController() {
-        $controllersPath = $this->path . '/' . $this->app->type . 'Controllers';
-        if (!empty($this->params[0]) && file_exists($controllersPath . '/' . ucfirst($this->params[0]) . 'Controller.php')) {
-            include $controllersPath . '/' . ucfirst($this->params[0]) . 'Controller.php';
-            $controllerName = ucfirst($this->params[0]) . 'Controller';
-            $controller = new $controllerName();
-            $controller->params = array_slice($this->params, 1);
-            $controller->module = $this;
-            $controller->path = $controllersPath;
-            $controller->name = ucfirst($this->params[0]);
-            return $controller;
-        }
-        if (file_exists($controllersPath . '/' . $this->moduleName . 'Controller.php')) {
-            include $controllersPath . '/' . $this->moduleName . 'Controller.php';
-            $controllerName = $this->moduleName . 'Controller';
-            $controller = new $controllerName();
-            $controller->params = $this->params;
-            $controller->module = $this;
-            $controller->path = $controllersPath;
-            $controller->name = $this->moduleName;
-            return $controller;
-        }
-        $controllersPath = $this->path . '/Controllers';
-        if (!empty($this->params[0]) && file_exists($controllersPath . '/' . ucfirst($this->params[0]) . 'Controller.php')) {
-            include $controllersPath . '/' . ucfirst($this->params[0]) . 'Controller.php';
-            $controllerName = $this->params[0] . 'Controller';
-            $controller = new $controllerName();
-            $controller->params = array_slice($this->params, 1);
-            $controller->module = $this;
-            $controller->path = $controllersPath;
-            $controller->name = ucfirst($this->params[0]);
-            return $controller;
-        };
-        if (file_exists($controllersPath . '/' . $this->moduleName . 'Controller.php')) {
-            include $controllersPath . '/' . $this->moduleName . 'Controller.php';
-            $controllerName = $this->moduleName . 'Controller';
-            $controller = new $controllerName();
-            $controller->params = $this->params;
-            $controller->module = $this;
-            $controller->path = $controllersPath;
-            $controller->name = $this->moduleName;
-            return $controller;
+        $paths = $this->getControllerPaths();
+        foreach ($paths as $pathName => $path) {
+            if (file_exists($path)) {
+                include $path;
+                if (strpos($pathName, 'slice')) {
+                    $controllerName = ucfirst($this->params[0]) . 'Controller';
+                    $params = array_slice($this->params, 1);
+                } else {
+                    $controllerName = $this->moduleName . 'Controller';
+                    $params = $this->params;
+                }
+                $controller = new $controllerName();
+                $controller->params = $params;
+                $controller->module = $this;
+                $controller->path = pathinfo($params, PATHINFO_DIRNAME);
+                $controller->name = $controllerName;
+                return $controller;
+            }
         }
     }
 
@@ -108,9 +112,11 @@ class Module {
         } elseif (!$moduleName) {
             return [];
         }
-
-        if (file_exists(INJI_SYSTEM_DIR . '/modules/' . $moduleName . '/info.php')) {
-            return include INJI_SYSTEM_DIR . '/modules/' . $moduleName . '/info.php';
+        $paths = Module::getModulePaths($moduleName);
+        foreach ($paths as $path) {
+            if (file_exists($path . '/info.php')) {
+                return include $path . '/info.php';
+            }
         }
         return [];
     }
