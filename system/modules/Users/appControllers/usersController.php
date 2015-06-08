@@ -29,9 +29,9 @@ class usersController extends Controller {
               if ($_POST['user_pass'][0] == $_POST['user_pass'][1]) {
               Users\User::$cur->user_pass = $this->users->hashpass($_POST['user_pass'][0]);
               $changepass = true;
-              $this->msg->add('Пароль был изменен', 'success');
+              Msg::add('Пароль был изменен', 'success');
               } else {
-              $this->msg->add('Пароли не совпали', 'danger');
+              Msg::add('Пароли не совпали', 'danger');
               }
               }
               Users\User::$cur->save();
@@ -60,11 +60,11 @@ class usersController extends Controller {
             $response = $this->Recaptcha->check($_POST['g-recaptcha-response']);
             if ($response) {
                 if (!$response->success) {
-                    $this->msg->add('Вы не прошли проверку на робота', 'danger');
+                    Msg::add('Вы не прошли проверку на робота', 'danger');
                     $error = true;
                 }
             } else {
-                $this->msg->add('Произошла ошибка, попробуйте ещё раз');
+                Msg::add('Произошла ошибка, попробуйте ещё раз');
                 $error = true;
             }
             if (!$error) {

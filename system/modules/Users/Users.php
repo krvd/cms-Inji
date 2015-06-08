@@ -51,14 +51,14 @@ class Users extends Module {
         } else {
             setcookie("user_session_hash", '', 0, "/");
             setcookie("user_id", '', 0, "/");
-            App::$cur->msg->add('Ваша сессия устарела или более недействительна, вам необходимо пройти <a href = "/users/login">авторазиацию</a> заного', 'info');
+            Msg::add('Ваша сессия устарела или более недействительна, вам необходимо пройти <a href = "/users/login">авторазиацию</a> заного', 'info');
         }
     }
 
     function passre($user_mail) {
         $user = $this->get($user_mail, 'mail');
         if (!$user) {
-            $this->msg->add('Пользователь ' . $user_mail . ' не найден, проверьте првильность ввода e-mail или зарегистрируйтесь', 'danger');
+            Msg::add('Пользователь ' . $user_mail . ' не найден, проверьте првильность ввода e-mail или зарегистрируйтесь', 'danger');
             return false;
         }
         $passre = Users\Passre::get([['user_id', $user->id], ['status', 1]]);
@@ -120,9 +120,9 @@ class Users extends Module {
         }
         if (isset($_POST['autorization'])) {
             if ($user) {
-                App::$cur->msg->add('Вы ошиблись при наборе пароля или логина, попробуйте ещё раз или воспользуйтесь <a href = "?passre=1&user_mail=' . $user->mail . '">Восстановлением пароля</a>', 'danger');
+                Msg::add('Вы ошиблись при наборе пароля или логина, попробуйте ещё раз или воспользуйтесь <a href = "?passre=1&user_mail=' . $user->mail . '">Восстановлением пароля</a>', 'danger');
             } else {
-                App::$cur->msg->add('Данный почтовый ящик не зарегистрирован в системе', 'danger');
+                Msg::add('Данный почтовый ящик не зарегистрирован в системе', 'danger');
             }
         }
 
@@ -148,22 +148,22 @@ class Users extends Module {
     function registration($data) {
         extract($data);
         if (empty($user_name)) {
-            $this->msg->add('Вы не ввели ФИО', 'danger');
+            Msg::add('Вы не ввели ФИО', 'danger');
             return false;
         }
 
         if (empty($user_mail)) {
-            $this->msg->add('Вы не ввели E-mail', 'danger');
+            Msg::add('Вы не ввели E-mail', 'danger');
             return false;
         }
         if (!filter_var($user_mail, FILTER_VALIDATE_EMAIL)) {
-            $this->msg->add('Вы ввели не корректный E-mail', 'danger');
+            Msg::add('Вы ввели не корректный E-mail', 'danger');
             return false;
         }
 
         $user = $this->get($user_mail, 'mail');
         if ($user) {
-            $this->msg->add('Введенный вами почтовый ящик зарегистрирован в нашей системе, войдите или введите другой почтовый ящик', 'danger');
+            Msg::add('Введенный вами почтовый ящик зарегистрирован в нашей системе, войдите или введите другой почтовый ящик', 'danger');
             return false;
         }
         if (empty($user_login)) {
@@ -171,7 +171,7 @@ class Users extends Module {
         }
         $user = $this->get($user_login, 'login');
         if ($user) {
-            $this->msg->add('Введенный вами логин зарегистрирован в нашей системе, войдите или введите другой логин', 'danger');
+            Msg::add('Введенный вами логин зарегистрирован в нашей системе, войдите или введите другой логин', 'danger');
             return false;
         }
         if (empty($user_city)) {
@@ -199,7 +199,7 @@ class Users extends Module {
         ]);
         $user->save();
         if (!$user->id) {
-            $this->msg->add('Не удалось зарегистрировать', 'danger');
+            Msg::add('Не удалось зарегистрировать', 'danger');
             return false;
         }
         $this->autorization($user_mail, $pass, 'mail');
@@ -209,7 +209,7 @@ class Users extends Module {
         $theme = 'Регистрация на сайте ' . INJI_DOMAIN_NAME;
         $text = 'Вы были зарегистрированы на сайте ' . INJI_DOMAIN_NAME . '<br />для входа используйте ваш почтовый ящик в качестве логина и пароль: ' . $pass;
         Tools::sendMail($from, $to, $theme, $text);
-        $this->msg->add('Вы были зарегистрированы. На указанный почтовый ящик был выслан ваш пароль', 'success');
+        Msg::add('Вы были зарегистрированы. На указанный почтовый ящик был выслан ваш пароль', 'success');
 
         return $user_id;
     }

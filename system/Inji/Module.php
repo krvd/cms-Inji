@@ -26,6 +26,16 @@ class Module {
         $this->config = Config::module($this->moduleName, !empty($this->info['systemConfig']), $this->app);
     }
 
+    static function getModulePaths($moduleName) {
+        $paths = [];
+        if (App::$cur !== App::$primary) {
+            $paths['primaryAppPath'] = App::$primary->path . '/modules/' . $moduleName;
+        }
+        $paths['curAppPath'] = App::$cur->path . '/modules/' . $moduleName;
+        $paths['systemPath'] = INJI_SYSTEM_DIR . '/modules/' . $moduleName;
+        return $paths;
+    }
+
     static function resolveModule($app) {
         $moduleName = false;
         if (!empty($app->params[0]) && $app->{$app->params[0]}) {
@@ -38,9 +48,9 @@ class Module {
             $module->params = $app->params;
             return $module;
         }
-        
+
         if ($app->Main) {
-            $module = $app->main;
+            $module = $app->Main;
             $module->params = $app->params;
             return $module;
         }
@@ -95,10 +105,10 @@ class Module {
     static function getInfo($moduleName = '') {
         if (!$moduleName && get_called_class()) {
             $moduleName = get_called_class();
-        } elseif(!$moduleName) {
+        } elseif (!$moduleName) {
             return [];
         }
-        
+
         if (file_exists(INJI_SYSTEM_DIR . '/modules/' . $moduleName . '/info.php')) {
             return include INJI_SYSTEM_DIR . '/modules/' . $moduleName . '/info.php';
         }

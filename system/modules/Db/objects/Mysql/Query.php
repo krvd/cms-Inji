@@ -16,7 +16,7 @@ class Query extends \Object {
     public $curInstance = null;
     public $where = [];
     public $whereString = '';
-    public $cols = '*';
+    public $cols = [];
     public $order = NULL;
     public $join = [];
     public $group = [];
@@ -211,7 +211,8 @@ class Query extends \Object {
 
         switch ($this->operation) {
             case 'SELECT':
-                $query .= ' ' . (is_array($this->cols) ? implode(',', $this->cols) : $this->cols);
+                
+                $query .= ' ' . (!$this->cols ? '*' : ((is_array($this->cols) ? implode(',', $this->cols) : $this->cols)));
             case 'DELETE':
                 $query .= ' FROM';
                 break;

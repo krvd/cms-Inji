@@ -140,7 +140,7 @@ class Tools extends Model {
     static function redirect($href = '/', $text = false, $status = 'info') {
 
         if ($text !== false) {
-            App::$cur->msg->add($text, $status);
+            Msg::add($text, $status);
         }
 
         header("Location: {$href}");

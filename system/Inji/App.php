@@ -51,7 +51,7 @@ class App {
      * @return object
      */
     function getObject($className) {
-        
+
         $className = ucfirst($className);
         if (isset($this->_objects[$className])) {
             return $this->_objects[$className];
@@ -66,13 +66,12 @@ class App {
      * @return mixed
      */
     function findModuleClass($moduleName) {
-        if (file_exists($this->path . '/modules/' . $moduleName . '/' . $moduleName . '.php')) {
-            include_once  $this->path . '/modules/' . $moduleName . '/' . $moduleName . '.php';
-            return $moduleName;
-        }
-        if (file_exists(INJI_SYSTEM_DIR . '/modules/' . $moduleName . '/' . $moduleName . '.php')) {
-            include_once INJI_SYSTEM_DIR . '/modules/' . $moduleName . '/' . $moduleName . '.php';
-            return $moduleName;
+        $paths = Module::getModulePaths($moduleName);
+        foreach ($paths as $path) {
+            if (file_exists($path . '/' . $moduleName . '.php')) {
+                include_once $path . '/' . $moduleName . '.php';
+                return $moduleName;
+            }
         }
         if (!empty($this->config['moduleRouter'])) {
             foreach ($this->config['moduleRouter'] as $route => $module) {
@@ -90,8 +89,8 @@ class App {
         }
         return false;
     }
-    
-    function isLoaded($moduleName){
+
+    function isLoaded($moduleName) {
         return !empty($this->_objects[$moduleName]);
     }
 
@@ -102,7 +101,7 @@ class App {
      * @return mixed
      */
     function loadObject($className) {
-        
+
         $moduleClassName = $this->findModuleClass($className);
         if (!is_bool($moduleClassName) && $moduleClassName != $className) {
             return $this->_objects[$moduleClassName] = $this->_objects[$className] = $this->getObject($moduleClassName);

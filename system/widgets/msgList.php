@@ -1,6 +1,5 @@
 <?php
-$msgs = App::$cur->SystemMessages->get();
-foreach ($msgs as $msg) {
+foreach (Msg::get() as $msg) {
     ?>
     <div class="alert alert-<?= $msg['status']; ?> alert-dismissable">
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
@@ -8,4 +7,5 @@ foreach ($msgs as $msg) {
     </div>
     <?php
 }
+Msg::flush();
 ?>

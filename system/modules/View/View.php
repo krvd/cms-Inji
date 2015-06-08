@@ -91,15 +91,12 @@ class View extends Module {
         }
         //set module
         if (!empty($params['module'])) {
-            $data['module'] = App::$cur->$params['module'];
+            $this->tmp_data['module'] = $data['module'] = App::$cur->$params['module'];
         }
         //set content
         if (!empty($params['content'])) {
 
-            $paths = [
-                'template' => $this->templatesPath . '/' . $this->template['name'] . "/modules/{$data['module']->moduleName}",
-                'controlelrContent' => Controller::$cur->path . '/content'
-            ];
+            $paths = $this->getContentPaths();
 
             foreach ($paths as $type => $path) {
                 if (file_exists($path . '/' . $params['content'] . '.php')) {
@@ -116,18 +113,48 @@ class View extends Module {
         return $data;
     }
 
+    function getContentPaths() {
+        $paths = [
+            'template' => $this->templatesPath . '/' . $this->template['name'] . "/modules/{$this->tmp_data['module']->moduleName}",
+            'controllerContent' => Controller::$cur->path . '/content'
+        ];
+        return $paths;
+    }
+
     function content($params = []) {
 
-        if (App::$cur->msg && empty($this->template['noSysMesAutoShow'])) {
-            App::$cur->msg->show(true);
+        if (empty($this->template['noSysMsgAutoShow'])) {
+            Msg::show(true);
         }
 
         $_params = $this->paramsParse($params);
-        extract($this->contentData);
+
         if (!file_exists($_params['contentPath'] . '/' . $_params['content'] . '.php')) {
             echo 'Content not found';
         } else {
+            extract($this->contentData);
             include $_params['contentPath'] . '/' . $_params['content'] . '.php';
+        }
+    }
+
+    function parentContent() {
+        $paths = $this->getContentPaths();
+        $data = [];
+        foreach ($paths as $type => $path) {
+            if (file_exists($path . '/' . $this->tmp_data['content'] . '.php')) {
+                if ($path == $this->tmp_data['contentPath']) {
+                    continue;
+                }
+                $data['contentPath'] = $path;
+                $data['content'] = $this->tmp_data['content'];
+                break;
+            }
+        }
+        if (!$data) {
+            echo 'Content not found';
+        } else {
+            extract($this->contentData);
+            include $data['contentPath'] . '/' . $data['content'] . '.php';
         }
     }
 
@@ -331,22 +358,46 @@ class View extends Module {
         }
     }
 
-    function widget($widgetName, $params = []) {
-        if ($params && is_array($params)) {
-            extract($params);
-        }
-        if (strpos($widgetName, '\\')) {
-            $widgetName = explode('\\', $widgetName);
-            if (App::$cur->$widgetName[0] && file_exists(App::$cur->$widgetName[0]->path . '/widgets/' . $widgetName[1] . '.php')) {
-                include App::$cur->$widgetName[0]->path . '/widgets/' . $widgetName[1] . '.php';
+    function widget($_widgetName, $_params = []) {
+
+        $_paths = $this->getWidgetPaths($_widgetName);
+        foreach ($_paths as $_path) {
+            if (file_exists($_path)) {
+                if ($_params && is_array($_params)) {
+                    extract($_params);
+                }
+                include $_path;
+                break;
             }
-        } elseif (file_exists($this->templatesPath . '/' . $this->template['name'] . '/widgets/' . $widgetName . '.php')) {
-            include $this->templatesPath . '/' . $this->template['name'] . '/widgets/' . $widgetName . '.php';
-        } elseif (file_exists(App::$cur->path . '/widgets/' . $widgetName . '.php')) {
-            include App::$cur->path . '/widgets/' . $widgetName . '.php';
         }
     }
-    
+
+    function getWidgetPaths($widgetName) {
+        $paths = [];
+        if (strpos($widgetName, '\\')) {
+            $widgetName = explode('\\', $widgetName);
+
+            $paths['templatePath_widgetDir'] = $this->templatesPath . '/' . $this->template['name'] . '/widgets/' . $widgetName[0] . '/' . $widgetName[1] . '/' . $widgetName[1] . '.php';
+            $paths['templatePath'] = $this->templatesPath . '/' . $this->template['name'] . '/widgets/' . $widgetName[0] . '/' . $widgetName[1] . '.php';
+
+            $modulePaths = Module::getModulePaths(ucfirst($widgetName[0]));
+            foreach ($modulePaths as $pathName => $path) {
+                $paths[$pathName . '_widgetDir'] = $path . '/widgets/' . $widgetName[1] . '/' . $widgetName[1] . '.php';
+                $paths[$pathName] = $path . '/widgets/' . $widgetName[1] . '.php';
+            }
+            return $paths;
+        } else {
+            $paths['templatePath_widgetDir'] = $this->templatesPath . '/' . $this->template['name'] . '/widgets/' . $widgetName . '/' . $widgetName . '.php';
+            $paths['templatePath'] = $this->templatesPath . '/' . $this->template['name'] . '/widgets/' . $widgetName . '.php';
+
+            $paths['curAppPath_widgetDir'] = App::$cur->path . '/widgets/' . $widgetName . '/' . $widgetName . '.php';
+            $paths['curAppPath'] = App::$cur->path . '/widgets/' . $widgetName . '.php';
+
+            $paths['systemPath_widgetDir'] = INJI_SYSTEM_DIR . '/widgets/' . $widgetName . '/' . $widgetName . '.php';
+            $paths['systemPath'] = INJI_SYSTEM_DIR . '/widgets/' . $widgetName . '.php';
+        }
+        return $paths;
+    }
 
 }
 

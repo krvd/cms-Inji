@@ -23,7 +23,7 @@ class MaterialsController extends Controller {
         }
 
         if (!$material && !$category) {
-            App::$cur->msg->add('Не найдено страницы для отображения', 'danger');
+            Msg::add('Не найдено страницы для отображения', 'danger');
         }
         if (!$category) {
             $this->view->setTitle($material->material_name);
@@ -41,7 +41,7 @@ class MaterialsController extends Controller {
         $chpu = trim(implode('/', $args));
         $category = MaterialCatalog::get($chpu, 'mc_chpu');
         if (!$category) {
-            App::$cur->msg->add('Не найдено страницы для отображения', 'danger');
+            Msg::add('Не найдено страницы для отображения', 'danger');
         }
         $this->view->set_title($category->mc_name);
 

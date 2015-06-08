@@ -8,7 +8,7 @@ return [
                     'ai' => '2'
                 ],
                 'Item' => [
-                    'ai' => '5'
+                    'ai' => '6'
                 ]
             ],
             'Menu' => [
@@ -46,6 +46,13 @@ return [
                     'name' => 'Пользователи',
                     'href' => '/admin/users',
                     'id' => '4'
+                ],
+                '4' => [
+                    'Menu_id' => '1',
+                    'type' => 'href',
+                    'name' => 'Модули',
+                    'href' => '/admin/modules',
+                    'id' => '5'
                 ]
             ]
         ]
