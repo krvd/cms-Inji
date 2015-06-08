@@ -42,6 +42,9 @@ class Config {
      * @return type
      */
     public static function app($app) {
+        if (!$app) {
+            $app = App::$primary;
+        }
         if (isset(self::$_configs['app'][$app->name]))
             return self::$_configs['app'][$app->name];
 
@@ -71,16 +74,15 @@ class Config {
             $path = INJI_PROGRAM_DIR . "/config/config.php";
         }
         if (!file_exists($path)) {
-            
+
             if (file_exists(INJI_SYSTEM_DIR . "/modules/{$module}/defaultConfig.php")) {
-                
+
                 $path = INJI_SYSTEM_DIR . "/modules/{$module}/defaultConfig.php";
-            }
-            else {
+            } else {
                 return array();
             }
         }
-        
+
         if ($module) {
             return self::$_configs['shareModules'][$module] = include $path;
         } else {
@@ -90,7 +92,7 @@ class Config {
 
     public static function module($module_name, $system = false, $app = null) {
         if (!$app) {
-            $app = App::$cur;
+            $app = App::$primary;
         }
         if ($system) {
             $appName = 'system';
@@ -119,7 +121,7 @@ class Config {
 
     public static function save($type, $data, $module = NULL, $app = null) {
         if (!$app) {
-            $app = App::$cur;
+            $app = App::$primary;
         }
 
         $site_name = $app->name;
