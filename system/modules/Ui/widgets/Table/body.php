@@ -1,20 +1,22 @@
 <h1>
     <?= $table->name; ?>
     <div class ='pull-right'>
-        <?php
-        $html = '';
-        foreach ($table->buttons as $button) {
-            $html = '<a class = "btn btn-primary"';
-            if (!empty($button['href'])) {
-                $html .= " href = '{$button['href']}'";
+        <div class="btn-group">
+            <?php
+            $html = '';
+            foreach ($table->buttons as $button) {
+                $html .= '<a class = "btn btn-primary btn-sm"';
+                if (!empty($button['href'])) {
+                    $html .= " href = '{$button['href']}'";
+                }
+                if (!empty($button['onclick'])) {
+                    $html .= " onclick = '{$button['onclick']}'";
+                }
+                $html .= ">{$button['text']}</a> ";
             }
-            if (!empty($button['onclick'])) {
-                $html .= " onclick = '{$button['onclick']}'";
-            }
-            $html .= ">{$button['text']}</a> ";
-        }
-        echo $html;
-        ?>
+            echo $html;
+            ?>
+        </div>
     </div>
 </h1>
 <table 
