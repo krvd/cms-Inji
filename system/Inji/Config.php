@@ -151,12 +151,12 @@ class Config {
                 self::$_configs['custom'][$path] = $data;
                 break;
         }
-        $text = self::save_parse($data);
+        $text = self::buildPhpArray($data);
         Tools::createDir(substr($path, 0, strripos($path, '/')));
         file_put_contents($path, $text);
     }
 
-    private static function save_parse($data, $level = 0) {
+    static function buildPhpArray($data, $level = 0) {
         $return = '';
         if ($level == 0)
             $return = "<?php\nreturn [";
@@ -166,7 +166,7 @@ class Config {
                 $return .= "'{$item}',";
             else {
                 $return .= "[";
-                $return .= rtrim(self::save_parse($item, $level + 1), ',');
+                $return .= rtrim(self::buildPhpArray($item, $level + 1), ',');
                 $return .= "\n" . str_repeat(' ', ( $level * 4 + 4)) . "],";
             }
         }
