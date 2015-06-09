@@ -71,14 +71,13 @@ class Mysql extends \Object {
         $this->db_name = $old_db;
         $this->table_prefix = $old_prefix;
         return $result->getArray('COLUMN_NAME');
-        
     }
 
     function add_col($table = false, $name = false, $param = 'TEXT NOT NULL') {
         if (!$table || !$name)
             return false;
-
-        return $this->query("ALTER TABLE `{$this->table_prefix}{$table}` ADD `{$name}` {$param}");
+        $query = new Mysql\Query();
+        return $query->query("ALTER TABLE `{$this->table_prefix}{$table}` ADD `{$name}` {$param}");
     }
 
     function del_col($table = false, $name = false) {

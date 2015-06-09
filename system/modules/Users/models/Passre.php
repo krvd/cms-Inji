@@ -12,6 +12,6 @@
  */
 
 namespace Users;
-class Passre {
+class Passre extends \Model {
     //put your code here
 }

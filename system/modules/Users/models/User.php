@@ -22,7 +22,7 @@ class User extends \Model {
         'user_city' => ['type' => 'text'],
         'user_group_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'group', 'showCol' => 'group_name'],
         'user_role_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'role', 'showCol' => 'role_name'],
-        'user_photo_file_id' => ['type' => 'image', 'relation' => 'photo', 'showCol' => 'file_path'],
+        'user_photo_file_id' => ['type' => 'image'],
     ];
     static $dataManagers = [
         'manager' => [

@@ -16,7 +16,7 @@ foreach (App::$primary->config['modules'] as $module) {
         $info['name'],
         '',
         '',
-        ''
+        "<a class = 'btn btn-primary btn-xs' href = '/admin/modules/editor/{$module}'>Редактировать</a>"
     ]);
 }
 

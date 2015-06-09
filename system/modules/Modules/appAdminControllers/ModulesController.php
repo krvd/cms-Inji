@@ -42,4 +42,37 @@ class ModulesController extends Controller {
         $this->view->page();
     }
 
+    function editorAction($module) {
+        if (!file_exists(Module::getModulePath($module) . '/generatorHash.php')) {
+            Msg::add('Этот модуль был создан без помощи генератора. Возможности его изменения ограничены и могут привести к порче модуля', 'danger');
+        }
+        $this->view->page(['data' => compact('module')]);
+    }
+
+    function editModelAction($module, $modelName) {
+        $path = Modules::getModulePath($module) . '/models/' . $modelName . '.php';
+        if (!file_exists($path)) {
+            Tools::redirect('/admin/modules/edit/' . $module, 'Модель ' . $modelName . ' не найдена', 'danger');
+        }
+        include_once Modules::getModulePath($module) . '/models/' . $modelName . '.php';
+        $modelFullName = $module . '\\' . $modelName;
+        $model = new $modelFullName;
+        if (filter_input(INPUT_POST, 'codeName') && filter_input(INPUT_POST, 'name')) {
+            $this->modules->editModel($module, filter_input(INPUT_POST, 'name'), filter_input(INPUT_POST, 'codeName'), [
+                'cols' => $_POST['cols']
+            ]);
+        }
+        $this->view->page(['content' => 'modelEditor', 'data' => compact('module', 'modelName', 'modelFullName', 'model')]);
+    }
+
+    function createModelAction($module) {
+        if (filter_input(INPUT_POST, 'codeName') && filter_input(INPUT_POST, 'name')) {
+            $this->modules->createModel($module, filter_input(INPUT_POST, 'name'), filter_input(INPUT_POST, 'codeName'), [
+                'cols' => $_POST['cols']
+            ]);
+            Tools::redirect('/admin/modules/editor/' . $module, 'Модель ' . filter_input(INPUT_POST, 'codeName') . ' была создана');
+        }
+        $this->view->page(['content' => 'modelEditor', 'data' => compact('module')]);
+    }
+
 }

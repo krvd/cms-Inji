@@ -41,7 +41,7 @@ class Config {
      * @param type $site_name
      * @return type
      */
-    public static function app($app) {
+    public static function app($app = false) {
         if (!$app) {
             $app = App::$primary;
         }
@@ -92,7 +92,7 @@ class Config {
 
     public static function module($module_name, $system = false, $app = null) {
         if (!$app) {
-            $app = App::$primary;
+            $app = App::$cur;
         }
         if ($system) {
             $appName = 'system';
@@ -153,7 +153,7 @@ class Config {
                 self::$_configs['custom'][$path] = $data;
                 break;
         }
-        $text = self::buildPhpArray($data);
+        $text = "<?php\nreturn ".self::buildPhpArray($data);
         Tools::createDir(substr($path, 0, strripos($path, '/')));
         file_put_contents($path, $text);
     }
@@ -161,7 +161,7 @@ class Config {
     static function buildPhpArray($data, $level = 0) {
         $return = '';
         if ($level == 0)
-            $return = "<?php\nreturn [";
+            $return = "[";
         foreach ($data as $key => $item) {
             $return .= "\n" . str_repeat(' ', ( $level * 4 + 4)) . "'{$key}' => ";
             if (!is_array($item))

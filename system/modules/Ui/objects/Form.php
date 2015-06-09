@@ -28,6 +28,11 @@ class Form extends \Object {
 
     function input($type, $name, $label = '', $options = []) {
         switch ($type) {
+            case 'dynamicList':
+                $params = compact('name', 'label', 'options');
+                $params['form'] = $this;
+                \App::$cur->view->widget('Ui\Form/dynamicList', $params);
+                break;
             case 'textarea':
                 $params = compact('name', 'label', 'options');
                 $params['form'] = $this;

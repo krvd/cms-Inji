@@ -130,8 +130,14 @@ class ActiveForm extends \Object {
         $form->end($this->model ? ($this->model->pk() ? 'Сохранить' : 'Создать') : 'Отправить');
     }
 
-    function getOptionsList($inputParams, $params) {
-        $modelName = get_class($this->model);
+    function drawCol() {
+        
+    }
+
+    static function getOptionsList($inputParams, $params, $modelName = false) {
+        if (!$modelName) {
+            $modelName = get_class($this->model);
+        }
         switch ($inputParams['source']) {
             case 'array':
                 return $inputParams['sourceArray'];

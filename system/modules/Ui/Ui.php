@@ -12,6 +12,7 @@ class Ui extends Module {
 
     function init() {
         App::$cur->view->customAsset('js', ['file' => '/static/moduleAsset/Ui/js/Ui.js', 'name' => 'Ui']);
+        App::$cur->view->customAsset('css', '/static/moduleAsset/Ui/css/Ui.css');
     }
 
 }

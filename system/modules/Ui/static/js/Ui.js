@@ -208,3 +208,36 @@ Forms.prototype.submitAjax = function (form) {
         }
     });
 }
+Forms.prototype.addRowToList = function (btn) {
+    var container = $(btn).closest('.dynamicList');
+    var counter = parseInt(container.find('.sourceRow').data('counter')) + 1;
+    container.find('.sourceRow').data('counter', counter);
+    var trHtml = container.find('.sourceRow script').html().replace(/^\/\*/g, '').replace(/\*\/$/g, '').replace(/\[counterPlaceholder\]/g, '[' + counter + ']');
+    container.find('.listBody').append(trHtml);
+}
+Forms.prototype.checkAditionals = function (select) {
+    var selectedInputAd = $(select).find('option:selected').attr('data-aditionalInput');
+    var nextSelect = $(select).next();
+    i = 0;
+    if ($(select).data('aditionalEnabled') == 1) {
+        $(select).data('aditionalEnabled', 0);
+        $(select).attr('name', $(select).attr('name').replace(/\[primary\]$/g, ''));
+    }
+    while (nextSelect.length) {
+        if (i != selectedInputAd) {
+            nextSelect[0].disabled = true;
+            nextSelect.addClass('hidden');
+        }
+        else {
+            if ($(select).data('aditionalEnabled') != 1) {
+                $(select).data('aditionalEnabled', 1);
+                $(select).attr('name', $(select).attr('name') + '[primary]');
+            }
+            nextSelect[0].disabled = false;
+            nextSelect.removeClass('hidden');
+        }
+        nextSelect = $(nextSelect).next();
+        i++;
+    }
+
+}
