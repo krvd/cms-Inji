@@ -28,36 +28,40 @@ class Router {
     }
 
     static function loadClass($className) {
+        $paths = [];
         if (strpos($className, '\\')) {
             $classPath = explode('\\', $className);
             $moduleName = $classPath[0];
-            $classPath = array_slice($classPath, 1);
+            $classPath = implode('/', array_slice($classPath, 1));
 
-            $paths = [
-                'primaryAppObject' => App::$primary->path . '/modules/' . $moduleName . '/objects/' . implode('/', $classPath) . '.php',
-                'primaryAppObjectDir' => App::$primary->path . '/modules/' . $moduleName . '/objects/' . $classPath[0] . '/' . $classPath[0] . '.php',
-                'primaryAppModel' => App::$primary->path . '/modules/' . $moduleName . '/models/' . $classPath[0] . '.php',
-                'appObject' => App::$cur->path . '/modules/' . $moduleName . '/objects/' . implode('/', $classPath) . '.php',
-                'appObjectDir' => App::$cur->path . '/modules/' . $moduleName . '/objects/' . $classPath[0] . '/' . $classPath[0] . '.php',
-                'appModel' => App::$cur->path . '/modules/' . $moduleName . '/models/' . $classPath[0] . '.php',
-                'object' => INJI_SYSTEM_DIR . '/modules/' . $moduleName . '/objects/' . implode('/', $classPath) . '.php',
-                'objectDir' => INJI_SYSTEM_DIR . '/modules/' . $moduleName . '/objects/' . $classPath[0] . '/' . $classPath[0] . '.php',
-                'model' => INJI_SYSTEM_DIR . '/modules/' . $moduleName . '/models/' . $classPath[0] . '.php',
-            ];
+            if (App::$cur !== App::$primary) {
+                $paths['primaryAppModuleObject'] = App::$primary->path . '/modules/' . $moduleName . '/objects/' . $classPath . '.php';
+                $paths['primaryAppModuleObjectDir'] = App::$primary->path . '/modules/' . $moduleName . '/objects/' . $classPath . '/' . $classPath . '.php';
+                $paths['primaryAppModuleModel'] = App::$primary->path . '/modules/' . $moduleName . '/models/' . $classPath . '.php';
+            }
+            $paths['appModuleObject'] = App::$cur->path . '/modules/' . $moduleName . '/objects/' . $classPath . '.php';
+            $paths['appModuleObjectDir'] = App::$cur->path . '/modules/' . $moduleName . '/objects/' . $classPath . '/' . $classPath . '.php';
+            $paths['appModuleModel'] = App::$cur->path . '/modules/' . $moduleName . '/models/' . $classPath . '.php';
+            $paths['systemModuleObject'] = INJI_SYSTEM_DIR . '/modules/' . $moduleName . '/objects/' . $classPath . '.php';
+            $paths['systemModuleModel'] = INJI_SYSTEM_DIR . '/modules/' . $moduleName . '/models/' . $classPath . '.php';
+            $paths['systemModuleObjectDir'] = INJI_SYSTEM_DIR . '/modules/' . $moduleName . '/objects/' . $classPath . '/' . $classPath . '.php';
+        }
+        $classPath = str_replace('\\', '/', $className);
 
-            foreach ($paths as $path) {
-                if (file_exists($path)) {
-                    include_once $path;
-                    return true;
-                }
-            }
-        } else {
-            $path = INJI_SYSTEM_DIR . '/objects/' . $className . '.php';
-            if (file_exists($path)) {
-                include_once $path;
-                return true;
-            }
-            $path = INJI_SYSTEM_DIR . '/models/' . $className . '.php';
+        if (App::$cur !== App::$primary) {
+            $paths['primaryAppObject'] = App::$primary->path . '/objects/' . $classPath . '.php';
+            $paths['primaryAppObjectDir'] = App::$primary->path . '/objects/' . $classPath . '/' . $classPath . '.php';
+            $paths['primaryAppModel'] = App::$primary->path . '/models/' . $classPath . '.php';
+        }
+        $paths['appObject'] = App::$cur->path . '/objects/' . $classPath . '.php';
+        $paths['appObjectDir'] = App::$cur->path . '/objects/' . $classPath . '/' . $classPath . '.php';
+        $paths['appModel'] = App::$cur->path . '/models/' . $classPath . '.php';
+
+        $paths['systemObject'] = INJI_SYSTEM_DIR . '/objects/' . $classPath . '.php';
+        $paths['systemObjectDir'] = INJI_SYSTEM_DIR . '/objects/' . $className . '/' . $className . '.php';
+        $paths['systemModel'] = INJI_SYSTEM_DIR . '/models/' . $classPath . '.php';
+
+        foreach ($paths as $path) {
             if (file_exists($path)) {
                 include_once $path;
                 return true;
