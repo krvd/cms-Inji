@@ -73,18 +73,28 @@ class Mysql extends \Object {
         return $result->getArray('COLUMN_NAME');
     }
 
-    function add_col($table = false, $name = false, $param = 'TEXT NOT NULL') {
-        if (!$table || !$name)
-            return false;
+    function tableExist($tableName) {
         $query = new Mysql\Query();
-        return $query->query("ALTER TABLE `{$this->table_prefix}{$table}` ADD `{$name}` {$param}");
+        return (bool) $query->query("SHOW TABLES FROM `{$this->db_name}` LIKE '{$this->table_prefix}{$tableName}'")->getArray();
+    }
+
+    function add_col($table = false, $name = false, $param = 'TEXT NOT NULL') {
+        if (!$table || !$name) {
+            return false;
+        }
+        if ($param == 'pk') {
+            $param = "int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (`{$name}`)";
+        }
+        $query = new Mysql\Query();
+        return $query->query("ALTER TABLE `{$this->db_name}`.`{$this->table_prefix}{$table}` ADD `{$name}` {$param}");
     }
 
     function del_col($table = false, $name = false) {
-        if (!$table || !$name)
+        if (!$table || !$name) {
             return false;
+        }
 
-        return $this->query("ALTER TABLE `{$this->table_prefix}{$table}` DROP `{$name}`");
+        return $this->query("ALTER TABLE `{$this->db_name}`.`{$this->table_prefix}{$table}` DROP `{$name}`");
     }
 
 }
