@@ -22,10 +22,11 @@ if (file_exists($path)) {
         $modelName = pathinfo($file, PATHINFO_FILENAME);
         $table->addRow([
             $modelName,
-            (!empty($config['models/' . $modelName]) && $config['models/' . $modelName] == md5(file_get_contents($path . '/' . $file))) ? '<b class="text-success">Нету</b>' : '<b class="text-danger">Есть</b>',
+            (!empty($config['models/' . $file]) && $config['models/' . $file] == md5(file_get_contents($path . '/' . $file))) ? '<b class="text-success">Нету</b>' : '<b class="text-danger">Есть</b>',
             [
                 'class'=>'actionTd',
                 'html' => '<a class="btn btn-xs btn-success" href="/admin/modules/editModel/' . $module . '/' . $modelName . '"><i class="glyphicon glyphicon-edit"></i></a>'
+                . ' <a class="btn btn-xs btn-danger" href="/admin/modules/delModel/' . $module . '/' . $modelName . '"><i class="glyphicon glyphicon-remove"></i></a>'
             ]
         ]);
     }

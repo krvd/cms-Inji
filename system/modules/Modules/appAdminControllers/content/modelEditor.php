@@ -13,7 +13,7 @@ $cols = [
                 'dateTime' => 'Дата и время',
                 'image' => 'Изображение',
                 'currentDateTime' => 'Текущая дата и время (Автоматически заполняется при создании)',
-                'relationParent' => [
+                'relation' => [
                     'text' => 'Зависимость (ссылка на родительский элемент)',
                     'input' => ['type' => 'select', 'options' => ['values' => App::$cur->modules->getSelectListModels(!empty($module) ? $module : false)]]
                 ]
@@ -33,11 +33,12 @@ $cols = [
 <?php
 $values = [];
 if (!empty($modelFullName)) {
+    $relations = $modelFullName::relations();
     foreach ($modelFullName::$cols as $colName => $col) {
         $values[] = [
             'label' => !empty($modelFullName::$labels[$colName]) ? $modelFullName::$labels[$colName] : '',
             'code' => $colName,
-            'type' => $col['type']
+            'type' => !empty($col['relation']) ? ['primary'=>'relation','aditional'=>$relations[$col['relation']]['model']] : $col['type']
         ];
     }
 }

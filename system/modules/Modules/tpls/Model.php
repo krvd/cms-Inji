@@ -8,10 +8,10 @@ class <?=$codeName;?> extends \Model {
         echo "\n    static ".'$objectName = \''.$name."';";
     }
     if(!empty($labels)){
-        echo "\n    static ".'$labels = ['.Config::buildPhpArray($labels,1)."\n    ];";
+        echo "\n    static ".'$labels = ['.CodeGenerator::genArray($labels,1)."\n    ];";
     }
     if(!empty($cols)){
-        echo "\n    static ".'$cols = ['.Config::buildPhpArray($cols,1)."\n    ];";
+        echo "\n    static ".'$cols = ['.CodeGenerator::genArray($cols,1)."\n    ];";
     }
     ?>
     //!modelParams

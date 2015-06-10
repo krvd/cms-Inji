@@ -58,21 +58,31 @@ class ModulesController extends Controller {
         $modelFullName = $module . '\\' . $modelName;
         $model = new $modelFullName;
         if (filter_input(INPUT_POST, 'codeName') && filter_input(INPUT_POST, 'name')) {
-            $this->modules->editModel($module, filter_input(INPUT_POST, 'name'), filter_input(INPUT_POST, 'codeName'), [
+            $this->modules->generateModel($module, filter_input(INPUT_POST, 'name'), filter_input(INPUT_POST, 'codeName'), [
                 'cols' => $_POST['cols']
             ]);
+            Tools::redirect('/admin/modules/editor/' . $module, 'Модель ' . filter_input(INPUT_POST, 'codeName') . ' была сохранена');
         }
         $this->view->page(['content' => 'modelEditor', 'data' => compact('module', 'modelName', 'modelFullName', 'model')]);
     }
 
     function createModelAction($module) {
         if (filter_input(INPUT_POST, 'codeName') && filter_input(INPUT_POST, 'name')) {
-            $this->modules->createModel($module, filter_input(INPUT_POST, 'name'), filter_input(INPUT_POST, 'codeName'), [
+            $this->modules->generateModel($module, filter_input(INPUT_POST, 'name'), filter_input(INPUT_POST, 'codeName'), [
                 'cols' => $_POST['cols']
             ]);
             Tools::redirect('/admin/modules/editor/' . $module, 'Модель ' . filter_input(INPUT_POST, 'codeName') . ' была создана');
         }
         $this->view->page(['content' => 'modelEditor', 'data' => compact('module')]);
+    }
+    function delModelAction($module, $modelName){
+        unlink(App::$primary->path . '/modules/' . $module . '/models/' . $modelName . '.php');
+        $config = Config::custom(App::$primary->path . '/modules/' . $module . '/generatorHash.php');
+        if(isset($config['models/' . $modelName . '.php'])){
+            unset($config['models/' . $modelName . '.php']);
+            Config::save(App::$primary->path . '/modules/' . $module . '/generatorHash.php', $config);
+        }
+        Tools::redirect('/admin/modules/editor/' . $module, 'Модель ' . $modelName . ' была удалена');
     }
 
 }

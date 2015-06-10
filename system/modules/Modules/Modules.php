@@ -18,114 +18,97 @@ class Modules extends Module {
         $moduleCode = ob_get_contents();
         ob_end_clean();
         file_put_contents(App::$primary->path . '/modules/' . $codeName . '/' . $codeName . '.php', $moduleCode);
-        file_put_contents(App::$primary->path . '/modules/' . $codeName . '/info.php', Config::buildPhpArray(['name' => $name]));
-        file_put_contents(App::$primary->path . '/modules/' . $codeName . '/generatorHash.php', Config::buildPhpArray([$codeName . '.php' => md5($moduleCode)]));
+        file_put_contents(App::$primary->path . '/modules/' . $codeName . '/info.php', CodeGenerator::genArray(['name' => $name]));
+        file_put_contents(App::$primary->path . '/modules/' . $codeName . '/generatorHash.php', CodeGenerator::genArray([$codeName . '.php' => md5($moduleCode)]));
     }
 
-    function createModel($module, $name, $codeName, $options) {
-        $codeName = ucfirst($codeName);
-        $cols = [];
-        if (!empty($options['cols'])) {
-            $colPrefix = strtolower($codeName) . '_';
-            $tableCols = [$colPrefix . 'id' => 'pk'];
-            foreach ($options['cols'] as $col) {
-                $cols[$col['code']] = ['type' => $col['type']];
-                $labels[$col['code']] = $col['label'];
-                switch ($col['type']) {
-                    case 'image':
-                    case 'number':
-                        $tableCols[$colPrefix . $col['code']] = 'int(11) NOT NULL';
-                        break;
-                    case 'decimal':
-                        $tableCols[$colPrefix . $col['code']] = 'decimal(11,2) NOT NULL';
-                        break;
-                    case 'dateTime':
-                        $tableCols[$colPrefix . $col['code']] = 'timestamp NOT NULL';
-                        break;
-                    case 'currentDateTime':
-                        $tableCols[$colPrefix . $col['code']] = 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP';
-                        break;
-                    case 'text':
-                        $tableCols[$colPrefix . $col['code']] = 'varchar(255) NOT NULL';
-                        break;
-                    case 'textarea':
-                    default:
-                        $tableCols[$colPrefix . $col['code']] = 'text NOT NULL';
-                        break;
-                }
+    function parseColsForModel($cols = []) {
+        $modelCols = [ 'labels' => [], 'cols' => [], 'relations' => []];
+        foreach ($cols as $col) {
+            $modelCols['labels'][$col['code']] = $col['label'];
+            $colType = !empty($col['type']['primary']) ? $col['type']['primary'] : $col['type'];
+            switch ($colType) {
+                case 'relation':
+                    $relationName = Tools::randomString();
+                    $modelCols['cols'][$col['code']] = ['type' => 'select', 'source' => 'relation', 'relation' => $relationName, 'showCol' => 'name'];
+                    $modelCols['relations'][$relationName] = [
+                        'model' => $col['type']['aditional'],
+                        'col' => $col['code']
+                    ];
+                    break;
+                default :
+                    $modelCols['cols'][$col['code']] = ['type' => $colType];
             }
-            App::$cur->db->createTable(strtolower($module) . '_' . strtolower($codeName), $tableCols);
         }
-
-        Tools::createDir(App::$primary->path . '/modules/' . $module . '/models');
-        ob_start();
-        include $this->path . '/tpls/Model.php';
-        $modelCode = ob_get_contents();
-        ob_end_clean();
-        file_put_contents(App::$primary->path . '/modules/' . $module . '/models/' . $codeName . '.php', $modelCode);
-        $config = Config::custom(App::$primary->path . '/modules/' . $module . '/generatorHash.php');
-        $config['models/' . $codeName . '.php'] = md5($modelCode);
-        Config::save(App::$primary->path . '/modules/' . $module . '/generatorHash.php', $config);
+        return $modelCols;
     }
 
-    function editModel($module, $name, $codeName, $options) {
+    function parseColsForTable($cols, $colPrefix, $tableName) {
+
+        $colsExist = App::$cur->db->getTableCols($tableName);
+        $tableCols = [];
+        if (empty($colsExist[$colPrefix . 'id'])) {
+            $tableCols[$colPrefix . 'id'] = 'pk';
+        }
+        foreach ($cols as $col) {
+            if (!empty($colsExist[$colPrefix . $col['code']])) {
+                continue;
+            }
+            $colType = !empty($col['type']['primary']) ? $col['type']['primary'] : $col['type'];
+            switch ($colType) {
+                case 'image':
+                case 'number':
+                case 'relation':
+                    $tableCols[$colPrefix . $col['code']] = 'int(11) NOT NULL';
+                    break;
+                case 'decimal':
+                    $tableCols[$colPrefix . $col['code']] = 'decimal(11,2) NOT NULL';
+                    break;
+                case 'dateTime':
+                    $tableCols[$colPrefix . $col['code']] = 'timestamp NOT NULL';
+                    break;
+                case 'currentDateTime':
+                    $tableCols[$colPrefix . $col['code']] = 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP';
+                    break;
+                case 'text':
+                    $tableCols[$colPrefix . $col['code']] = 'varchar(255) NOT NULL';
+                    break;
+                case 'textarea':
+                default:
+                    $tableCols[$colPrefix . $col['code']] = 'text NOT NULL';
+                    break;
+            }
+        }
+        return $tableCols;
+    }
+
+    function generateModel($module, $name, $codeName, $options) {
         $codeName = ucfirst($codeName);
         $cols = [];
+        $class = new CodeGenerator\ClassGenerator();
+        $class->name = $codeName;
+        $class->extends = '\Model';
+        $modelCols = $this->parseColsForModel();
         if (!empty($options['cols'])) {
-            $colPrefix = strtolower($codeName) . '_';
-            $tableCols = [];
+            $modelCols = $this->parseColsForModel($options['cols']);
             $tableName = strtolower($module) . '_' . strtolower($codeName);
-
-            $colsExist = App::$cur->db->getTableCols($tableName);
-            if (empty($colsExist[$colPrefix . 'id'])) {
-                $tableCols[$colPrefix . 'id'] = 'pk';
-            }
-
-            foreach ($options['cols'] as $col) {
-                $colType = !empty($col['type']['primary']) ? $col['type']['primary'] : $col['type'];
-                $cols[$col['code']] = ['type' => $colType];
-                if ($colType == 'relationParent') {
-                    $cols[$col['code']]['relation'] = $col['type']['aditional'];
+            $tableCols = $this->parseColsForTable($options['cols'], strtolower($codeName) . '_', $tableName);
+            if (App::$cur->db->tableExist($tableName)) {
+                foreach ($tableCols as $colKey => $params) {
+                    App::$cur->db->add_col($tableName, $colKey, $params);
                 }
-                $labels[$col['code']] = $col['label'];
-                if (!empty($colsExist[$colPrefix . $col['code']])) {
-                    continue;
-                }
-
-                switch ($colType) {
-                    case 'image':
-                    case 'number':
-                    case 'relationParent':
-                        $tableCols[$colPrefix . $col['code']] = 'int(11) NOT NULL';
-                        break;
-                    case 'decimal':
-                        $tableCols[$colPrefix . $col['code']] = 'decimal(11,2) NOT NULL';
-                        break;
-                    case 'dateTime':
-                        $tableCols[$colPrefix . $col['code']] = 'timestamp NOT NULL';
-                        break;
-                    case 'currentDateTime':
-                        $tableCols[$colPrefix . $col['code']] = 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP';
-                        break;
-                    case 'text':
-                        $tableCols[$colPrefix . $col['code']] = 'varchar(255) NOT NULL';
-                        break;
-                    case 'textarea':
-                    default:
-                        $tableCols[$colPrefix . $col['code']] = 'text NOT NULL';
-                        break;
-                }
-            }
-            foreach ($tableCols as $colKey => $params) {
-                App::$cur->db->add_col($tableName, $colKey, $params);
+            } else {
+                App::$cur->db->createTable($tableName, $tableCols);
             }
         }
+        $class->addProperty('objectName', $name, true);
+        $class->addProperty('cols', $modelCols['cols'], true);
+        $class->addProperty('labels', $modelCols['labels'], true);
+        $class->addMethod('relations', 'return ' . CodeGenerator::genArray($modelCols['relations']), [], true);
+        $modelCode = "<?php \n\nnamespace {$module};\n\n" . $class->generate();
+
 
         Tools::createDir(App::$primary->path . '/modules/' . $module . '/models');
-        ob_start();
-        include $this->path . '/tpls/Model.php';
-        $modelCode = ob_get_contents();
-        ob_end_clean();
         file_put_contents(App::$primary->path . '/modules/' . $module . '/models/' . $codeName . '.php', $modelCode);
         $config = Config::custom(App::$primary->path . '/modules/' . $module . '/generatorHash.php');
         $config['models/' . $codeName . '.php'] = md5($modelCode);
