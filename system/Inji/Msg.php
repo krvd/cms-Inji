@@ -13,7 +13,7 @@ class Msg extends Module {
 
     static function get($clean = true) {
         if (empty($_SESSION['_INJI_MSG']))
-            return array();
+            return [];
 
         return $_SESSION['_INJI_MSG'];
     }
