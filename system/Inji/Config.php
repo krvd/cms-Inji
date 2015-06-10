@@ -153,29 +153,8 @@ class Config {
                 self::$_configs['custom'][$path] = $data;
                 break;
         }
-        $text = "<?php\nreturn ".self::buildPhpArray($data);
+        $text = "<?php\nreturn ". CodeGenerator::genArray($data);
         Tools::createDir(substr($path, 0, strripos($path, '/')));
         file_put_contents($path, $text);
     }
-
-    static function buildPhpArray($data, $level = 0) {
-        $return = '';
-        if ($level == 0)
-            $return = "[";
-        foreach ($data as $key => $item) {
-            $return .= "\n" . str_repeat(' ', ( $level * 4 + 4)) . "'{$key}' => ";
-            if (!is_array($item))
-                $return .= "'{$item}',";
-            else {
-                $return .= "[";
-                $return .= rtrim(self::buildPhpArray($item, $level + 1), ',');
-                $return .= "\n" . str_repeat(' ', ( $level * 4 + 4)) . "],";
-            }
-        }
-        if ($level == 0)
-            $return = rtrim($return, ',') . "\n];";
-
-        return $return;
-    }
-
 }
