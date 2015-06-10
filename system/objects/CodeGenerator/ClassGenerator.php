@@ -26,7 +26,7 @@ class ClassGenerator extends \Object {
         $this->propertys[$name]->security = $security;
     }
 
-    function addMethod($name, $body = null, $propertys = [], $static = false, $security = 'public') {
+    function addMethod($name, $body = '', $propertys = [], $static = false, $security = 'public') {
         $this->methods[$name] = new Method();
         $this->methods[$name]->name = $name;
         $this->methods[$name]->body = $body;

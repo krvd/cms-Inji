@@ -107,12 +107,12 @@ class Modules extends Module {
         $class->addMethod('relations', 'return ' . CodeGenerator::genArray($modelCols['relations']), [], true);
         $modelCode = "<?php \n\nnamespace {$module};\n\n" . $class->generate();
 
-
-        Tools::createDir(App::$primary->path . '/modules/' . $module . '/models');
-        file_put_contents(App::$primary->path . '/modules/' . $module . '/models/' . $codeName . '.php', $modelCode);
-        $config = Config::custom(App::$primary->path . '/modules/' . $module . '/generatorHash.php');
+        $modulePath = Module::getModulePath($module);
+        Tools::createDir($modulePath . '/models');
+        file_put_contents($modulePath . '/models/' . $codeName . '.php', $modelCode);
+        $config = Config::custom($modulePath . '/generatorHash.php');
         $config['models/' . $codeName . '.php'] = md5($modelCode);
-        Config::save(App::$primary->path . '/modules/' . $module . '/generatorHash.php', $config);
+        Config::save($modulePath . '/generatorHash.php', $config);
     }
 
     function install($module, $params = []) {
@@ -181,6 +181,33 @@ class Modules extends Module {
             }
         }
         return $models;
+    }
+
+    function createController($module, $controllerType) {
+        $modulePath = Module::getModulePath($module);
+        $path = $modulePath . '/' . $controllerType . '/' . $module . 'Controller.php';
+        $class = new CodeGenerator\ClassGenerator();
+        $class->name = $module . 'Controller';
+        $class->extends = 'Controller';
+        $controllerCode = "<?php\n\n" . $class->generate();
+        Tools::createDir(pathinfo($path, PATHINFO_DIRNAME));
+        file_put_contents($path, $controllerCode);
+        $config = Config::custom($modulePath . '/generatorHash.php');
+        $config[$controllerType . '/' . $module . 'Controller.php'] = md5($controllerCode);
+        Config::save($modulePath . '/generatorHash.php', $config);
+    }
+
+    function addActionToController($module, $type, $controller, $url) {
+        $modulePath = Module::getModulePath($module);
+        $path = Modules::getModulePath($module) . '/' . $type . '/' . $controller . '.php';
+        $class = CodeGenerator::parseClass($path);
+        $class->addMethod($url . 'Action');
+        $controllerCode = "<?php\n\n" . $class->generate();
+        Tools::createDir(pathinfo($path, PATHINFO_DIRNAME));
+        file_put_contents($path, $controllerCode);
+        $config = Config::custom($modulePath . '/generatorHash.php');
+        $config[$type . '/' . $module . 'Controller.php'] = md5($controllerCode);
+        Config::save($modulePath . '/generatorHash.php', $config);
     }
 
 }

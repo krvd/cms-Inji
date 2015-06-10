@@ -91,8 +91,9 @@ class Config {
     }
 
     public static function module($module_name, $system = false, $app = null) {
+        
         if (!$app) {
-            $app = App::$cur;
+            $app = App::$primary;
         }
         if ($system) {
             $appName = 'system';
@@ -107,7 +108,6 @@ class Config {
         }
 
         $path = $appPath . "/config/modules/{$module_name}.php";
-
         if (!file_exists($path)) {
             $path = INJI_SYSTEM_DIR . "/modules/{$module_name}/defaultConfig.php";
         }

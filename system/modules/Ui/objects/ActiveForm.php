@@ -78,10 +78,10 @@ class ActiveForm extends \Object {
                     }
                 }
 
-                \App::$cur->SystemMessages->add($this->model->pk() ? 'Изменнеия были успешно сохранены' : 'Новый элемент был успешно добавлен', 'success');
+                \Msg::add($this->model->pk() ? 'Изменнеия были успешно сохранены' : 'Новый элемент был успешно добавлен', 'success');
                 $this->model->save(!empty($params['dataManagerParams']) ? $params['dataManagerParams'] : []);
                 if ($ajax) {
-                    \App::$cur->SystemMessages->show();
+                    \Msg::show();
                 }
             }
             if (!is_array($params) && is_callable($params)) {
@@ -112,7 +112,7 @@ class ActiveForm extends \Object {
                 $inputOptions = [
                     'value' => $value = isset($this->form['inputs'][$col]['default']) ? $this->form['inputs'][$col]['default'] : ''
                 ];
-                $inputOptions['value'] = ($this->model && $this->model->pk()) ? $this->model->$col : $inputOptions['value'];
+                $inputOptions['value'] = ($this->model) ? $this->model->$col : $inputOptions['value'];
 
                 if ($this->form['inputs'][$col]['type'] == 'image' && $inputOptions['value']) {
                     $inputOptions['value'] = \Files\File::get($inputOptions['value'])->path;
@@ -134,7 +134,7 @@ class ActiveForm extends \Object {
         
     }
 
-    static function getOptionsList($inputParams, $params, $modelName = false) {
+    function getOptionsList($inputParams, $params, $modelName = false) {
         if (!$modelName) {
             $modelName = get_class($this->model);
         }

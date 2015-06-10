@@ -103,7 +103,7 @@ class DataManager extends \Object {
                             break;
                     }
                 } else {
-                    
+
                     $row[] = $item->$colName;
                 }
             }
@@ -129,14 +129,14 @@ class DataManager extends \Object {
 
         $buttons = $this->getButtons($dataManagerName, $params, $model);
         $cols = $this->getCols($dataManagerName);
-        $rows = $this->getRows($dataManagerName, $params, $model);
+        //$rows = $this->getRows($dataManagerName, $params, $model);
 
         $table = new Table();
         $table->name = $this->name;
         $table->class = 'table dataManager';
         $table->id = 'dataManager_' . $modelName . '_' . $dataManagerName . '_' . \Tools::randomString();
         $table->attributes['data-params'] = json_encode($params);
-        $table->attributes['data-modelname'] = $modelName;
+        $table->attributes['data-modelname'] = ($model ? get_class($model) : $modelName) . ($model ? ':' . $model->pk() : '');
         $table->attributes['data-managername'] = $dataManagerName;
         $table->setCols($cols);
         foreach ($buttons as $button) {
@@ -167,7 +167,7 @@ class DataManager extends \Object {
             return false;
         }
         $manager = $modelName::$dataManagers[$dataManagerName];
-        
+
         if (!empty($manager['options']['access']['groups']) && !in_array(\Users\User::$cur->user_group_id, $manager['options']['access']['groups'])) {
             return false;
         }

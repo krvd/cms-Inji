@@ -1,5 +1,6 @@
 {
     "require": {
-        "php":">=5.5.0"
+        "php":">=5.5.0",
+        "nikic/php-parser": "~1.3"
     }
 }

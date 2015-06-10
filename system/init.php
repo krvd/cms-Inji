@@ -8,6 +8,8 @@
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
+session_start();
+
 define('INJI_DOMAIN_NAME', filter_input(INPUT_SERVER, 'SERVER_NAME'));
 
 spl_autoload_register(function($class_name) {
@@ -71,6 +73,9 @@ if (App::$cur->name != 'install' && empty($shareConfig['installed'])) {
 }
 
 spl_autoload_register('Router::findClass');
+if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+    include_once __DIR__ . '/../vendor/autoload.php';
+}
 /*
   if (!file_exists(__DIR__ . '/../vendor/autoload.php')) {
   Tools::createDir(__DIR__ . '/../vendor/composer');

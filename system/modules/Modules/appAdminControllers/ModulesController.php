@@ -75,14 +75,41 @@ class ModulesController extends Controller {
         }
         $this->view->page(['content' => 'modelEditor', 'data' => compact('module')]);
     }
-    function delModelAction($module, $modelName){
+
+    function delModelAction($module, $modelName) {
         unlink(App::$primary->path . '/modules/' . $module . '/models/' . $modelName . '.php');
         $config = Config::custom(App::$primary->path . '/modules/' . $module . '/generatorHash.php');
-        if(isset($config['models/' . $modelName . '.php'])){
+        if (isset($config['models/' . $modelName . '.php'])) {
             unset($config['models/' . $modelName . '.php']);
             Config::save(App::$primary->path . '/modules/' . $module . '/generatorHash.php', $config);
         }
         Tools::redirect('/admin/modules/editor/' . $module, 'Модель ' . $modelName . ' была удалена');
+    }
+
+    function createControllerAction($module) {
+        $controllerType = filter_input(INPUT_POST, 'type');
+        if ($controllerType) {
+            $this->modules->createController($module, $controllerType);
+            Tools::redirect('/admin/modules/editor/' . $module, 'Контроллер был создан');
+        }
+        $this->view->page();
+    }
+
+    function controllerEditorAction($module, $type, $controller) {
+        $this->view->page(['data' => compact('module', 'type', 'controller')]);
+    }
+
+    function createControllerMethodAction($module, $type, $controller) {
+        $url = filter_input(INPUT_POST, 'url');
+        if ($url) {
+            $this->modules->addActionToController($module, $type, $controller, $url);
+            Tools::redirect('/admin/modules/editor/' . $module, 'Контроллер был изменен');
+        }
+        $this->view->page(['data' => compact('module', 'type', 'controller')]);
+    }
+
+    function editControllerMethodAction($module, $type, $controller, $method) {
+        $this->view->page(['data' => compact('module', 'type', 'controller','method')]);
     }
 
 }

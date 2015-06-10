@@ -30,4 +30,29 @@ class CodeGenerator {
         return $return;
     }
 
+    static function parseClass($path) {
+        $code = file_get_contents($path);
+
+        $parser = new PhpParser\Parser(new PhpParser\Lexer\Emulative);
+
+        try {
+            $stmts = $parser->parse($code);
+            //var_dump($stmts);
+
+            $class = new CodeGenerator\ClassGenerator();
+            $class->name = $stmts[0]->name;
+            $class->extends = implode(',', $stmts[0]->extends->parts);
+            foreach ($stmts[0]->stmts as $stmt) {
+                if (get_class($stmt) == 'PhpParser\Node\Stmt\ClassMethod') {
+                    $class->addMethod($stmt->name);
+                }
+            }
+            return $class;
+            // $stmts is an array of statement nodes
+        } catch (PhpParser\Error $e) {
+            echo 'Parse Error: ', $e->getMessage();
+            exit();
+        }
+    }
+
 }

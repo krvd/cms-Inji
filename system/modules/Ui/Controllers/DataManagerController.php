@@ -44,8 +44,27 @@ class DataManagerController extends Controller {
     function loadRowsAction() {
         $result = new Server\Result();
         ob_start();
-        $dataManager = new Ui\DataManager($_GET['modelName']);
-        $rows = $dataManager->getRows($_GET['managerName'], !empty($_GET['params']) ? $_GET['params'] : []);
+        if (strpos($_GET['modelName'], ':')) {
+            $raw = explode(':', $_GET['modelName']);
+            $modelName = $raw[0];
+            $id = $raw[1];
+            $model = $modelName::get($id);
+        } else {
+            $modelName = $_GET['modelName'];
+            $id = null;
+            $model = null;
+        }
+        if (!empty($_GET['params'])) {
+            $params = $_GET['params'];
+            if (!empty($params['relation'])) {
+                $relations = $modelName::relations();
+                $modelName = $relations[$params['relation']]['model'];
+            }
+        } else {
+            $params = [];
+        }
+        $dataManager = new Ui\DataManager($modelName);
+        $rows = $dataManager->getRows($_GET['managerName'], $params, $model);
         foreach ($rows as $row) {
             Ui\Table::drawRow($row);
         }

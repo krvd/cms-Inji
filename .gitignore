@@ -2,3 +2,4 @@
 !/program/.gitkeep
 /program/*
 /vendor/
+/composer.lock

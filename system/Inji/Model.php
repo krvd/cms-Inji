@@ -305,8 +305,7 @@ class Model {
             App::$cur->db->join($options['join']);
 
         App::$cur->db->cols = 'COUNT(*) as `count`';
-        $result = App::$cur->db->select(static::table());
-        $count = $result->fetch_assoc();
+        $count = App::$cur->db->select(static::table())->fetch();
         return $count['count'];
     }
 

@@ -23,19 +23,20 @@ Modals.prototype.show = function (title, body, code, size) {
     if (code == null) {
         code = 'modal' + (++this.modals);
     }
-    if (size == null) {
-        size = '';
-    }
-    if (title) {
-        title = '<div class="modal-header">\
+    if ($('#' + code).length == 0) {
+        if (size == null) {
+            size = '';
+        }
+        if (title) {
+            title = '<div class="modal-header">\
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>\
                   <h4 class="modal-title">' + title + '</h4>\
                 </div>';
-    }
-    else {
-        title = '';
-    }
-    var html = '\
+        }
+        else {
+            title = '';
+        }
+        var html = '\
           <div class="modal fade" id = "' + code + '" >\
             <div class="modal-dialog ' + size + '">\
               <div class="modal-content">\
@@ -49,7 +50,9 @@ Modals.prototype.show = function (title, body, code, size) {
               </div>\
             </div>\
           </div>';
-    $('body').append(html);
+        $('body').append(html);
+        
+    }
     var modal = $('#' + code);
     $('body').append(modal);
     modal.modal('show');
@@ -241,6 +244,6 @@ Forms.prototype.checkAditionals = function (select) {
     }
 
 }
-Forms.prototype.delRowFromList = function(btn){
+Forms.prototype.delRowFromList = function (btn) {
     $(btn).closest('tr').remove();
 }

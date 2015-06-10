@@ -18,14 +18,14 @@ class Method extends \Object {
     public $security = 'public';
     public $static = false;
     public $name = 'property';
-    public $params = [];
+    public $propertys = [];
     public $body = '';
 
     function generate() {
         $code = $this->security . ' ';
         $code .= $this->static ? 'static ' : '';
         $code .= 'function ' . $this->name . '(';
-        foreach ($this->params as $param) {
+        foreach ($this->propertys as $param) {
             $code .= '$' . $param . ',';
         }
         $code = rtrim($code, ',');
