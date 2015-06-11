@@ -43,6 +43,13 @@ class Menu extends \Model {
     ];
     static $forms = [
         'manager' => [
+            'options' => [
+                'access' => [
+                    'groups' => [
+                        3
+                    ]
+                ]
+            ],
             'map' => [
                 ['name', 'code']
             ]
