@@ -2,82 +2,105 @@
 
 namespace Materials;
 
-class Catalog extends \Model
-{
+class Catalog extends \Model {
 
     static $labels = [
-        'mc_name' => 'Название',
-        'mc_description' => 'Описание',
-        'mc_image' => 'Изображение',
-        'mc_parent_id' => 'Родитель',
-        'mc_chpu' => 'Алиас',
+        'name' => 'Название',
+        'description' => 'Описание',
+        'image' => 'Изображение',
+        'parent_id' => 'Родитель',
+        'chpu' => 'Алиас',
+    ];
+    static $cols = [
+        'name' => ['type' => 'text'],
+        'description' => ['type' => 'html'],
+        'chpu' => ['type' => 'text'],
+        'image' => ['type' => 'image'],
+        'parent_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'parent', 'showCol' => 'name']
+    ];
+    static $dataManagers = [
+        'manager' => [
+            'options' => [
+                'access' => [
+                    'groups' => [
+                        3
+                    ]
+                ]
+            ],
+            'cols' => [
+                'name',
+                'chpu',
+                'parent_id',
+            ],
+        ]
     ];
     static $forms = [
-        'manage' => [
+        'manager' => [
             'options' => [
-                'mc_name' => 'text',
-                'mc_description' => 'html',
-                'mc_chpu' => 'text',
-                'mc_image' => 'image',
-                'mc_parent_id' => ['relation' => 'parent', 'showCol' => 'mc_name']
+                'access' => [
+                    'groups' => [
+                        3
+                    ]
+                ]
             ],
             'map' => [
-                ['mc_name', 'mc_parent_id'],
-                ['mc_chpu', 'mc_image'],
-                ['mc_description'],
+                ['name', 'parent_id'],
+                ['chpu', 'image'],
+                ['description'],
             ]
         ]
     ];
 
-    function beforeDelete()
-    {
+    function beforeDelete() {
         foreach ($this->childs as $child) {
             $child->delete();
         }
     }
 
-    static function relations()
-    {
+    static function relations() {
         return [
             'parent' => [
-                'model' => 'MaterialCatalog',
-                'col' => 'mc_parent_id'
+                'model' => 'Materials\Catalog',
+                'col' => 'parent_id'
             ],
             'childs' => [
                 'type' => 'many',
-                'model' => 'MaterialCatalog',
-                'col' => 'mc_parent_id'
+                'model' => 'Materials\Catalog',
+                'col' => 'parent_id'
             ]
         ];
     }
 
-    function beforeSave()
-    {
-        $oldPath = $this->mc_tree_path;
-        $this->mc_tree_path = $this->getCatalogTree($this);
-        if ($oldPath) {
-            App::$cur->db->query('UPDATE
-                ' . App::$cur->db->table_prefix . 'materials_catalogs 
-                    SET 
-                        mc_tree_path = REPLACE(mc_tree_path, "' . $oldPath . $this->mc_id . '/' . '", "' . $this->mc_tree_path . $this->mc_id . '/' . '") 
-                    WHERE mc_tree_path LIKE "' . $oldPath . $this->mc_id . '/' . '%"');
+    function beforeSave() {
+        $oldPath = $this->tree_path;
+        $this->tree_path = $this->getCatalogTree($this);
+        $itemsTable = \App::$cur->db->table_prefix . Material::table();
+        $itemTreeCol = Material::colPrefix() . 'tree_path';
 
-            App::$cur->db->query('UPDATE
-                ' . App::$cur->db->table_prefix . 'materials
+        $categoryTreeCol = $this->colPrefix() . 'tree_path';
+        $categoryTable = \App::$cur->db->table_prefix . $this->table();
+        if ($oldPath) {
+            \App::$cur->db->query('UPDATE
+                ' . $categoryTable . ' 
                     SET 
-                        material_tree_path = REPLACE(material_tree_path, "' . $oldPath . $this->mc_id . '/' . '", "' . $this->mc_tree_path . $this->mc_id . '/' . '") 
-                    WHERE material_tree_path LIKE "' . $oldPath . $this->mc_id . '/' . '%"');
+                        ' . $categoryTreeCol . ' = REPLACE(' . $categoryTreeCol . ', "' . $oldPath . $this->id . '/' . '", "' . $this->tree_path . $this->id . '/' . '") 
+                    WHERE ' . $categoryTreeCol . ' LIKE "' . $oldPath . $this->id . '/' . '%"');
+
+            \App::$cur->db->query('UPDATE
+                ' . $itemsTable . '
+                    SET 
+                        ' . $itemTreeCol . ' = REPLACE(' . $itemTreeCol . ', "' . $oldPath . $this->id . '/' . '", "' . $this->tree_path . $this->id . '/' . '") 
+                    WHERE ' . $itemTreeCol . ' LIKE "' . $oldPath . $this->id . '/' . '%"');
         }
-        Material::update(['material_tree_path' => $this->mc_tree_path . $this->mc_id . '/'], ['material_mc_id', $this->mc_id]);
+        Material::update([$itemTreeCol => $this->tree_path . $this->id . '/'], [Material::colPrefix() . $this->colPrefix() . 'id', $this->id]);
     }
 
-    function getCatalogTree($catalog)
-    {
+    function getCatalogTree($catalog) {
         if ($catalog && $catalog->parent) {
-            if ($catalog->parent->mc_tree_path) {
-                return $catalog->parent->mc_tree_path . $catalog->parent->mc_id . '/';
+            if ($catalog->parent->tree_path) {
+                return $catalog->parent->tree_path . $catalog->parent->id . '/';
             } else {
-                return $this->getCatalogTree($catalog->parent) . $catalog->parent->mc_id . '/';
+                return $this->getCatalogTree($catalog->parent) . $catalog->parent->id . '/';
             }
         }
         return '/';

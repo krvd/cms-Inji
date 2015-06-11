@@ -15,6 +15,13 @@ class Material extends \Model {
     ];
     static $dataManagers = [
         'manager' => [
+            'options' => [
+                'access' => [
+                    'groups' => [
+                        3
+                    ]
+                ]
+            ],
             'cols' => [
                 'material_name',
                 'material_chpu',
@@ -36,6 +43,13 @@ class Material extends \Model {
     ];
     static $forms = [
         'manager' => [
+            'options' => [
+                'access' => [
+                    'groups' => [
+                        3
+                    ]
+                ]
+            ],
             'map' => [
                 ['material_name', 'material_catalog_id'],
                 ['material_chpu'],
@@ -49,7 +63,7 @@ class Material extends \Model {
     static function relations() {
         return [
             'catalog' => [
-                'model' => 'Materials\Catalog',
+                'model' => '\Materials\Catalog',
                 'col' => 'material_catalog_id'
             ]
         ];
