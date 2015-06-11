@@ -85,7 +85,7 @@ class ActiveForm extends \Object {
                             $relations = $modelName::relations();
                             break;
                         default:
-                            if (!empty($request[$col])) {
+                            if (isset($request[$col])) {
                                 $this->model->$col = $request[$col];
                             }
                             break;
@@ -159,7 +159,7 @@ class ActiveForm extends \Object {
                 $relations = $modelName::relations();
                 $selectParams = !empty($params['dataManagerParams']) ? $params['dataManagerParams'] : [];
                 $items = $relations[$inputParams['relation']]['model']::getList($selectParams);
-                $values = [];
+                $values = [0=>'Не задано'];
                 foreach ($items as $key => $item) {
                     $values[$key] = $item->$inputParams['showCol'];
                 }

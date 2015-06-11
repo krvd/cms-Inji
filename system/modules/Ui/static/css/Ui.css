@@ -2,3 +2,7 @@
     vertical-align: middle;
     width:40px;
 }
+.nav-list{padding-left:15px;margin-bottom:0;}
+.nav-list-categorys label{font-weight: 400; font-size:14px;}
+.nav-list-categorys{padding-left:0px;padding-right:0px;margin-bottom:0;}
+span.nav-toggle-icon{font-size:14px !important;top:0px !important;color:#888 !important;cursor:pointer;}

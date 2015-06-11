@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Item name
  *
@@ -24,10 +23,10 @@ class DataManager extends \Object {
         $this->modelName = $modelName;
         if (is_string($dataManager)) {
             $this->managerName = $dataManager;
-            $dataManager = \App::$cur->ui->getModelManager($modelName,$dataManager);
+            $dataManager = \App::$cur->ui->getModelManager($modelName, $dataManager);
         }
         $this->managerOptions = $dataManager;
-        
+
         if (!empty($modelName::$objectName)) {
             $this->name = 'Менеджер данных: ' . $modelName::$objectName;
         } else {
@@ -134,22 +133,98 @@ class DataManager extends \Object {
 
         $modelName = $this->modelName;
 
-        $buttons = $this->getButtons( $params, $model);
+        $buttons = $this->getButtons($params, $model);
         $cols = $this->getCols();
-        //$rows = $this->getRows($params, $model);
 
         $table = new Table();
-        $table->name = $this->name;
-        $table->class = 'table dataManager';
-        $table->id = 'dataManager_' . $modelName . '_' . $this->managerName . '_' . \Tools::randomString();
-        $table->attributes['data-params'] = json_encode($params);
-        $table->attributes['data-modelname'] = ($model ? get_class($model) : $modelName) . ($model ? ':' . $model->pk() : '');
-        $table->attributes['data-managername'] = $this->managerName;
+        $table->name = empty($this->managerOptions['categorys']) ? $this->name : false;
         $table->setCols($cols);
         foreach ($buttons as $button) {
             $table->addButton($button);
         }
-        $table->draw();
+
+        echo '<div '
+        . 'id = "dataManager_' . $this->modelName . '_' . $this->managerName . '_' . \Tools::randomString() . '" '
+        . 'class = "dataManager" '
+        . 'data-params = \'' . json_encode($params) . '\' '
+        . 'data-modelname = \'' . ($model ? get_class($model) : $this->modelName) . ($model && $model->pk() ? ':' . $model->pk() : '') . '\' '
+        . 'data-managername = \'' . $this->managerName . '\''
+        . '>';
+        if (!empty($this->managerOptions['categorys'])) {
+            ?>
+            <h1><?= $this->name; ?></h1>
+            <div class ="col-lg-2" style = 'overflow-x: auto;max-height:400px;'>
+                <h3>Категории
+                    <div class="pull-right">
+                        <a class ='btn btn-xs btn-primary' onclick='<?= 'inji.Ui.forms.popUp("' . str_replace('\\', '\\\\', $this->managerOptions['categorys']['model']) . '");'; ?>'>Создать</a>
+                    </div>
+                </h3>
+                <div class="categoryTree">
+                    <?php
+                    $this->drawCategorys();
+                    ?>
+                </div>
+            </div>
+            <div class ="col-lg-10">
+                <?php
+                $table->draw();
+                ?>
+            </div>
+            <div class="clearfix"></div>
+            <?php
+        } else {
+            $table->draw();
+        }
+        echo '</div>';
+    }
+
+    function drawCategorys() {
+        ?>
+        <ul class="nav nav-list-categorys" data-col='tree_path'>
+            <?php
+            $categoryModel = $this->managerOptions['categorys']['model'];
+            $categorys = $categoryModel::get_list();
+            foreach ($categorys as $category) {
+                if ($category->parent_id == 0)
+                    $this->showCategory($categorys, $category);
+            }
+            ?>
+        </ul>
+        <?php
+    }
+
+    function showCategory($categorys, $category) {
+        $isset = false;
+        $class = get_class($category);
+        foreach ($categorys as $categoryChild) {
+            if ($categoryChild->{$category->colPrefix() . 'parent_id'} == $category->{$category->index()}) {
+                if (!$isset) {
+                    $isset = true;
+                    echo "<li>
+                            <label class='nav-toggle nav-header'>
+                                <span class='nav-toggle-icon glyphicon glyphicon-chevron-right'></span> 
+                                <a href='#' onclick='switchCategory(this);return false;' data-path ='" . $category->tree_path . $category->pk() . "/'> " . $category->name . "</a>
+                                <a href = '#' onclick = 'inji.Ui.forms.popUp(\"" . str_replace('\\', '\\\\', get_class($category)) . ':' . $category->pk() . "\")' class ='glyphicon glyphicon-edit'></a>&nbsp;    
+                                <a onclick='inji.Ui.dataManagers.get(this).delCategory({$category->pk()});return false;' class ='glyphicon glyphicon-remove'></a>
+                            </label>
+                            <ul class='nav nav-list nav-left-ml'>";
+                }
+                $this->showCategory($categorys, $categoryChild);
+            }
+        }
+
+        if ($isset) {
+            echo '</ul>
+                    </li>';
+        } else {
+            echo "<li>
+            <label class='nav-header'>
+                <span  class=' nav-toggle-icon fa fa-minus'></span>&nbsp;
+                <a href='#' onclick='switchCategory(this);return false;' title = '" . $category->{$category->colPrefix() . 'name'} . "' data-path ='" . $category->{$category::colPrefix() . 'tree_path'} . "" . $category->{$category::index()} . "/'> " . $category->{$category->colPrefix() . 'name'} . "</a>
+                <a href = '#' onclick = 'inji.Ui.forms.popUp(\"" . str_replace('\\', '\\\\', get_class($category)) . ':' . $category->pk() . "\")' class ='glyphicon glyphicon-edit'></a>&nbsp;    
+                <a onclick='inji.Ui.dataManagers.get(this).delCategory({$category->pk()});return false;' class ='glyphicon glyphicon-remove'></a>
+            </label></li>";
+        }
     }
 
     /**

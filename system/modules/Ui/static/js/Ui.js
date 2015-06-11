@@ -10,6 +10,22 @@ Ui.prototype.init = function () {
     this.modals = new Modals();
     this.forms = new Forms();
     this.dataManagers = new DataManagers();
+    inji.onLoad(function () {
+        inji.Ui.bindMenu($('.nav-list-categorys'));
+    });
+}
+Ui.prototype.bindMenu = function (container) {
+    container.find('.nav-left-ml').toggle();
+    container.find('label.nav-toggle span').click(function () {
+        $(this).parent().parent().children('ul.nav-left-ml').toggle(300);
+        var cs = $(this).attr("class");
+        if (cs == 'nav-toggle-icon glyphicon glyphicon-chevron-right') {
+            $(this).removeClass('glyphicon-chevron-right').addClass('glyphicon-chevron-down');
+        }
+        if (cs == 'nav-toggle-icon glyphicon glyphicon-chevron-down') {
+            $(this).removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-right');
+        }
+    });
 }
 /**
  * Modals objects
@@ -133,6 +149,18 @@ DataManager.prototype.delRow = function (key) {
         });
     }
 }
+DataManager.prototype.delCategory = function (key) {
+    if (confirm('Вы уверены, что хотите удалить элемент?'))
+    {
+        inji.Server.request({
+            url: 'ui/dataManager/delCategory',
+            data: {params: this.params, modelName: this.modelName, key: key, managerName: this.managerName},
+            success: function () {
+                inji.Ui.dataManagers.reloadAll();
+            }
+        });
+    }
+}
 DataManager.prototype.reload = function () {
     this.load();
 }
@@ -146,6 +174,17 @@ DataManager.prototype.load = function () {
             dataManager.element.find('tbody').html(data.content);
         }
     });
+    if (dataManager.element.find('.categoryTree').length > 0) {
+        dataManager.element.find('.categoryTree').html('<img class ="img-responsive" src = "' + inji.options.appRoot + 'static/moduleAsset/Ui/images/ajax-loader.gif" />');
+        inji.Server.request({
+            url: 'ui/dataManager/loadCategorys',
+            data: {params: this.params, modelName: this.modelName, managerName: this.managerName},
+            success: function (data) {
+                dataManager.element.find('.categoryTree').html(data.content);
+                inji.Ui.bindMenu(dataManager.element.find('.categoryTree .nav-list-categorys'));
+            }
+        });
+    }
 }
 /**
  * Forms object
@@ -157,6 +196,10 @@ function Forms() {
 }
 Forms.prototype.popUp = function (item, params) {
     var code = item;
+
+    if (typeof params == 'undefined') {
+        params = {};
+    }
     if (typeof (params.relation) != 'undefined') {
         code += params.relation;
     }
