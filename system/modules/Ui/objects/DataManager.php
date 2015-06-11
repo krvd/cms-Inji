@@ -173,7 +173,7 @@ class DataManager extends \Object {
             return false;
         }
 
-        if (!empty($this->managerOptions['options']['access']['groups']) && !in_array(\Users\User::$cur->group_id, $manager['options']['access']['groups'])) {
+        if (!empty($this->managerOptions['options']['access']['groups']) && !in_array(\Users\User::$cur->group_id, $this->managerOptions['options']['access']['groups'])) {
             return false;
         }
         return true;
