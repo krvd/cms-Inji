@@ -37,7 +37,7 @@ class ActiveForm extends \Object {
                 $this->form = $form;
             } else {
                 $this->formName = $form;
-                $this->form = \App::$cur->ui->getModelForm($this->modelName,$form);
+                $this->form = \App::$cur->ui->getModelForm($this->modelName, $form);
                 $this->form['inputs'] = $this->getInputs();
             }
         }
@@ -57,6 +57,10 @@ class ActiveForm extends \Object {
     }
 
     function checkRequest($params = [], $ajax = false) {
+        if (!$this->chackAccess()) {
+            $this->drawError('you not have access to "' . $this->modelName . '" manager with name: "' . $this->formName . '"');
+            return [];
+        }
         $modelName = $this->modelName;
         if (!empty($_POST[$this->requestFormName][$this->modelName])) {
             $request = $_POST[$this->requestFormName][$this->modelName];
@@ -101,6 +105,10 @@ class ActiveForm extends \Object {
     }
 
     function draw($params = [], $ajax = true) {
+        if (!$this->chackAccess()) {
+            $this->drawError('you not have access to "' . $this->modelName . '" manager with name: "' . $this->formName . '"');
+            return [];
+        }
         $form = new Form();
         $form->action = $this->action;
         $form->begin($this->header, ['onsubmit' => $ajax ? 'inji.Ui.forms.submitAjax(this);return false;' : '']);
@@ -159,6 +167,32 @@ class ActiveForm extends \Object {
                 break;
         }
         return [];
+    }
+
+    /**
+     * Draw error message
+     * 
+     * @param text $errorText
+     */
+    function drawError($errorText) {
+        echo $errorText;
+    }
+
+    /**
+     * Check access cur user to form with name in param and $model
+     * 
+     * @return boolean
+     */
+    function chackAccess() {
+        if (empty($this->form)) {
+            $this->drawError('"' . $this->modelName . '" manager with name: "' . $this->managerName . '" not found');
+            return false;
+        }
+
+        if (!empty($this->form['options']['access']['groups']) && !in_array(\Users\User::$cur->group_id, $this->form['options']['access']['groups'])) {
+            return false;
+        }
+        return true;
     }
 
 }

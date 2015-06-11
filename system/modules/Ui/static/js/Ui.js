@@ -167,21 +167,23 @@ Forms.prototype.popUp = function (item, params) {
         data: {item: item, params: params},
         success: function (data) {
             modal.find('.modal-body').html(data.content);
-            CKEDITOR.replaceAll(function (textarea, config) {
-                console.log(textarea);
-                if ($(textarea).hasClass('htmleditor') && $(textarea).css('display') != 'none') {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            });
+            if (typeof CKEDITOR != 'undefined') {
+                CKEDITOR.replaceAll(function (textarea, config) {
+                    console.log(textarea);
+                    if ($(textarea).hasClass('htmleditor') && $(textarea).css('display') != 'none') {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                });
+            }
         }
     });
 }
 Forms.prototype.submitAjax = function (form) {
-    if (typeof CKEDITOR.instances != 'undefined') {
+    if (typeof CKEDITOR != 'undefined' && typeof CKEDITOR.instances != 'undefined') {
         for (instance in CKEDITOR.instances) {
             CKEDITOR.instances[instance].updateElement();
         }
