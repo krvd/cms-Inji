@@ -1,7 +1,7 @@
 <h3>Мой профиль</h3>
 <?php
 
-$form->draw('profile');
+$form->draw();
 /*
 ?>
 <form action = '' method = 'POST' enctype="multipart/form-data">
