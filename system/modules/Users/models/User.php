@@ -26,6 +26,13 @@ class User extends \Model {
     ];
     static $dataManagers = [
         'manager' => [
+            'options' => [
+                'access' => [
+                    'groups' => [
+                        3
+                    ]
+                ]
+            ],
             'cols' => [
                 'user_name',
                 'user_mail',
@@ -39,6 +46,13 @@ class User extends \Model {
     ];
     static $forms = [
         'manager' => [
+            'options' => [
+                'access' => [
+                    'groups' => [
+                        3
+                    ]
+                ]
+            ],
             'map' => [
                 ['user_name', 'user_mail',],
                 ['user_photo_file_id'],
