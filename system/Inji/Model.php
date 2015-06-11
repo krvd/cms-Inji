@@ -311,7 +311,7 @@ class Model {
 
     static function update($params, $where = []) {
 
-        $cols = $this->cols();
+        $cols = self::cols();
 
         $values = array();
         foreach ($cols as $col => $param) {
