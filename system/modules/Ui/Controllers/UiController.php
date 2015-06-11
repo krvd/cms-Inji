@@ -17,7 +17,7 @@ class UiController extends Controller {
             $raw = explode(':', $_GET['item']);
             $modelName = $raw[0];
             $id = $raw[1];
-            $model = $modelName::get($id,$modelName::index(),!empty($_GET['params']['dataManagerParams'])?$_GET['params']['dataManagerParams']:[]);
+            $model = $modelName::get($id, $modelName::index(), !empty($_GET['params']['dataManagerParams']) ? $_GET['params']['dataManagerParams'] : []);
         } else {
             $modelName = $_GET['item'];
             $id = null;
@@ -31,10 +31,10 @@ class UiController extends Controller {
         } else {
             $params = [];
         }
-        $form = new Ui\ActiveForm($model);
+        $form = new Ui\ActiveForm($model, 'manager');
         $form->action = '/ui/formPopUp/?' . http_build_query($_GET);
-        $form->checkRequest('manager', $params, true);
-        $form->draw('manager', $params);
+        $form->checkRequest($params, true);
+        $form->draw($params);
         $return['content'] = ob_get_contents();
         ob_end_clean();
         echo json_encode($return);

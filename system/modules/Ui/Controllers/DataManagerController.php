@@ -34,8 +34,8 @@ class DataManagerController extends Controller {
         } else {
             $params = [];
         }
-        $dataManager = new Ui\DataManager($modelName);
-        $dataManager->draw('manager', $params, $model);
+        $dataManager = new Ui\DataManager($modelName, 'manager');
+        $dataManager->draw($params, $model);
         $result->content = ob_get_contents();
         ob_end_clean();
         $result->send();
@@ -63,8 +63,8 @@ class DataManagerController extends Controller {
         } else {
             $params = [];
         }
-        $dataManager = new Ui\DataManager($modelName);
-        $rows = $dataManager->getRows($_GET['managerName'], $params, $model);
+        $dataManager = new Ui\DataManager($modelName, $_GET['managerName']);
+        $rows = $dataManager->getRows($params, $model);
         foreach ($rows as $row) {
             Ui\Table::drawRow($row);
         }
@@ -74,9 +74,13 @@ class DataManagerController extends Controller {
     }
 
     function delRowAction() {
-        $model = $_GET['modelName']::get($_GET['key'], $_GET['modelName']::index(), !empty($_GET['params']) ? $_GET['params'] : []);
-        if ($model) {
-            $model->delete(!empty($_GET['params']) ? $_GET['params'] : []);
+
+        $dataManager = new Ui\DataManager($_GET['modelName'], $_GET['managerName']);
+        if ($dataManager->chackAccess()) {
+            $model = $_GET['modelName']::get($_GET['key'], $_GET['modelName']::index(), !empty($_GET['params']) ? $_GET['params'] : []);
+            if ($model) {
+                $model->delete(!empty($_GET['params']) ? $_GET['params'] : []);
+            }
         }
         $result = new Server\Result();
         $result->send();

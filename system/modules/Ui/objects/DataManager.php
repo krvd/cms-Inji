@@ -16,10 +16,18 @@ namespace Ui;
 class DataManager extends \Object {
 
     public $modelName = '';
+    public $managerOptions = [];
+    public $managerName = 'noNameManager';
     public $name = 'Менеджер данных';
 
-    function __construct($modelName) {
+    function __construct($modelName, $dataManager = 'manager') {
         $this->modelName = $modelName;
+        if (is_string($dataManager)) {
+            $this->managerName = $dataManager;
+            $dataManager = \App::$cur->ui->getModelManager($modelName,$dataManager);
+        }
+        $this->managerOptions = $dataManager;
+        
         if (!empty($modelName::$objectName)) {
             $this->name = 'Менеджер данных: ' . $modelName::$objectName;
         } else {
@@ -30,11 +38,10 @@ class DataManager extends \Object {
     /**
      * Get buttons for monager
      * 
-     * @param string $dataManagerName
      * @param string $params
      * @param object $model
      */
-    function getButtons($dataManagerName = 'manager', $params = [], $model = null) {
+    function getButtons($params = [], $model = null) {
         $formModelName = $modelName = $this->modelName;
         $formParams = [
             'dataManagerParams' => $params
@@ -55,12 +62,11 @@ class DataManager extends \Object {
     /**
      * Get cols for manager
      * 
-     * @param string $dataManagerName
      * @return string
      */
-    function getCols($dataManagerName = 'manager') {
+    function getCols() {
         $modelName = $this->modelName;
-        $cols = $modelName::$dataManagers[$dataManagerName]['cols'];
+        $cols = $this->managerOptions['cols'];
         foreach ($cols as $key => $col) {
             if (!empty($modelName::$labels[$col])) {
                 $cols[$key] = $modelName::$labels[$col];
@@ -73,14 +79,13 @@ class DataManager extends \Object {
     /**
      * Get rows for manager
      * 
-     * @param string $dataManagerName
      * @param string $params
      * @param object $model
      * @return type
      */
-    function getRows($dataManagerName = 'manager', $params = [], $model = null) {
-        if (!$this->chackAccess($dataManagerName)) {
-            $this->drawError('you not have access to "' . $this->modelName . '" manager with name: "' . $dataManagerName . '"');
+    function getRows($params = [], $model = null) {
+        if (!$this->chackAccess()) {
+            $this->drawError('you not have access to "' . $this->modelName . '" manager with name: "' . $this->managerName . '"');
             return [];
         }
         $modelName = $this->modelName;
@@ -92,7 +97,7 @@ class DataManager extends \Object {
         $rows = [];
         foreach ($items as $key => $item) {
             $row = [];
-            foreach ($modelName::$dataManagers[$dataManagerName]['cols'] as $colName) {
+            foreach ($this->managerOptions['cols'] as $colName) {
                 $relations = $modelName::relations();
                 if (!empty($modelName::$cols[$colName]['relation']) && !empty($relations[$modelName::$cols[$colName]['relation']]['type']) && $relations[$modelName::$cols[$colName]['relation']]['type'] == 'many') {
                     switch ($relations[$modelName::$cols[$colName]['relation']]['type']) {
@@ -124,20 +129,22 @@ class DataManager extends \Object {
         return $buttons;
     }
 
-    function draw($dataManagerName = 'manager', $params = [], $model = null) {
+    function draw($params = [], $model = null) {
+
+
         $modelName = $this->modelName;
 
-        $buttons = $this->getButtons($dataManagerName, $params, $model);
-        $cols = $this->getCols($dataManagerName);
-        //$rows = $this->getRows($dataManagerName, $params, $model);
+        $buttons = $this->getButtons( $params, $model);
+        $cols = $this->getCols();
+        //$rows = $this->getRows($params, $model);
 
         $table = new Table();
         $table->name = $this->name;
         $table->class = 'table dataManager';
-        $table->id = 'dataManager_' . $modelName . '_' . $dataManagerName . '_' . \Tools::randomString();
+        $table->id = 'dataManager_' . $modelName . '_' . $this->managerName . '_' . \Tools::randomString();
         $table->attributes['data-params'] = json_encode($params);
         $table->attributes['data-modelname'] = ($model ? get_class($model) : $modelName) . ($model ? ':' . $model->pk() : '');
-        $table->attributes['data-managername'] = $dataManagerName;
+        $table->attributes['data-managername'] = $this->managerName;
         $table->setCols($cols);
         foreach ($buttons as $button) {
             $table->addButton($button);
@@ -157,18 +164,16 @@ class DataManager extends \Object {
     /**
      * Check access cur user to manager with name in param
      * 
-     * @param text $dataManagerName
      * @return boolean
      */
-    function chackAccess($dataManagerName) {
+    function chackAccess() {
         $modelName = $this->modelName;
-        if (empty($modelName::$dataManagers[$dataManagerName])) {
-            $this->drawError('"' . $this->modelName . '" manager with name: "' . $dataManagerName . '" not found');
+        if (empty($this->managerOptions)) {
+            $this->drawError('"' . $this->modelName . '" manager with name: "' . $this->managerName . '" not found');
             return false;
         }
-        $manager = $modelName::$dataManagers[$dataManagerName];
 
-        if (!empty($manager['options']['access']['groups']) && !in_array(\Users\User::$cur->user_group_id, $manager['options']['access']['groups'])) {
+        if (!empty($this->managerOptions['options']['access']['groups']) && !in_array(\Users\User::$cur->group_id, $manager['options']['access']['groups'])) {
             return false;
         }
         return true;

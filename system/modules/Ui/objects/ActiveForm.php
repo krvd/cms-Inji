@@ -16,21 +16,38 @@ namespace Ui;
 class ActiveForm extends \Object {
 
     public $model = null;
+    public $modelName = '';
     public $header = "";
     public $action = "";
     public $form = [];
+    public $formName = 'noNameForm';
+    public $requestFormName = '';
+    public $requestFullFormName = '';
 
     function __construct($model, $form = []) {
         if (is_array($model)) {
             $this->form = $model;
+            if (is_string($form)) {
+                $this->formName = $form;
+            }
         } else {
             $this->model = $model;
-            $this->form = $form;
+            $this->modelName = get_class($model);
+            if (is_array($form)) {
+                $this->form = $form;
+            } else {
+                $this->formName = $form;
+                $this->form = \App::$cur->ui->getModelForm($this->modelName,$form);
+                $this->form['inputs'] = $this->getInputs();
+            }
         }
+        $this->requestFormName = "ActiveForm_{$this->formName}";
+        $this->header = 'Создание ' . $this->modelName;
     }
 
-    function getInputs($modelName) {
+    function getInputs() {
         $inputs = [];
+        $modelName = $this->modelName;
         foreach ($this->form['map'] as $row) {
             foreach ($row as $col) {
                 $inputs[$col] = $modelName::$cols[$col];
@@ -39,28 +56,21 @@ class ActiveForm extends \Object {
         return $inputs;
     }
 
-    function checkRequest($formName = 'manager', $params = [], $ajax = false) {
-        if ($this->model) {
-            $modelName = get_class($this->model);
-            $this->form = $modelName::$forms[$formName];
-            $this->form['inputs'] = $this->getInputs($modelName);
-        } else {
-            $modelName = $formName;
-        }
-
-        if (!empty($_POST["ActiveForm_{$formName}"][$modelName])) {
-            $request = $_POST["ActiveForm_{$formName}"][$modelName];
+    function checkRequest($params = [], $ajax = false) {
+        $modelName = $this->modelName;
+        if (!empty($_POST[$this->requestFormName][$this->modelName])) {
+            $request = $_POST[$this->requestFormName][$this->modelName];
             if ($this->model) {
                 foreach ($this->form['inputs'] as $col => $param) {
                     switch ($param['type']) {
                         case 'image':
-                            if (!empty($_FILES["ActiveForm_{$formName}"]['tmp_name'][$modelName][$col])) {
+                            if (!empty($_FILES[$this->requestFormName]['tmp_name'][$this->modelName][$col])) {
                                 $file_id = \App::$primary->files->upload([
-                                    'tmp_name' => $_FILES["ActiveForm_{$formName}"]['tmp_name'][$modelName][$col],
-                                    'name' => $_FILES["ActiveForm_{$formName}"]['name'][$modelName][$col],
-                                    'type' => $_FILES["ActiveForm_{$formName}"]['type'][$modelName][$col],
-                                    'size' => $_FILES["ActiveForm_{$formName}"]['size'][$modelName][$col],
-                                    'error' => $_FILES["ActiveForm_{$formName}"]['error'][$modelName][$col],
+                                    'tmp_name' => $_FILES[$this->requestFormName]['tmp_name'][$this->modelName][$col],
+                                    'name' => $_FILES[$this->requestFormName]['name'][$this->modelName][$col],
+                                    'type' => $_FILES[$this->requestFormName]['type'][$this->modelName][$col],
+                                    'size' => $_FILES[$this->requestFormName]['size'][$this->modelName][$col],
+                                    'error' => $_FILES[$this->requestFormName]['error'][$this->modelName][$col],
                                 ]);
                                 if ($file_id) {
                                     $this->model->$col = $file_id;
@@ -90,20 +100,11 @@ class ActiveForm extends \Object {
         }
     }
 
-    function draw($formName = 'manager', $params = [], $ajax = true) {
-        if ($this->model) {
-            $modelName = get_class($this->model);
-            if ($this->header === '') {
-                $this->header = 'Создание ' . $modelName;
-            }
-            $this->form = $modelName::$forms[$formName];
-            $this->form['inputs'] = $this->getInputs($modelName);
-        } else {
-            $modelName = $formName;
-        }
+    function draw($params = [], $ajax = true) {
         $form = new Form();
         $form->action = $this->action;
         $form->begin($this->header, ['onsubmit' => $ajax ? 'inji.Ui.forms.submitAjax(this);return false;' : '']);
+        $modelName = $this->modelName;
         foreach ($this->form['map'] as $row) {
             $colSize = 12 / count($row);
             echo "<div class ='row'>";
@@ -121,7 +122,7 @@ class ActiveForm extends \Object {
                     $inputOptions['values'] = $this->getOptionsList($this->form['inputs'][$col], $params);
                 }
 
-                $form->input($this->form['inputs'][$col]['type'], "ActiveForm_{$formName}[$modelName][{$col}]", ($this->model && !empty($modelName::$labels[$col])) ? $modelName::$labels[$col] : $col, $inputOptions);
+                $form->input($this->form['inputs'][$col]['type'], "{$this->requestFormName}[$this->modelName][{$col}]", ($this->model && !empty($modelName::$labels[$col])) ? $modelName::$labels[$col] : $col, $inputOptions);
                 echo '</div>';
             }
             echo '</div>';
@@ -136,7 +137,7 @@ class ActiveForm extends \Object {
 
     function getOptionsList($inputParams, $params, $modelName = false) {
         if (!$modelName) {
-            $modelName = get_class($this->model);
+            $modelName = $this->modelName;
         }
         switch ($inputParams['source']) {
             case 'array':

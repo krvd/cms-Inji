@@ -51,7 +51,7 @@ Modals.prototype.show = function (title, body, code, size) {
             </div>\
           </div>';
         $('body').append(html);
-        
+
     }
     var modal = $('#' + code);
     $('body').append(modal);
@@ -126,7 +126,7 @@ DataManager.prototype.delRow = function (key) {
     {
         inji.Server.request({
             url: 'ui/dataManager/delRow',
-            data: {params: this.params, modelName: this.modelName, key: key},
+            data: {params: this.params, modelName: this.modelName, key: key, managerName: this.managerName},
             success: function () {
                 inji.Ui.dataManagers.reloadAll();
             }
