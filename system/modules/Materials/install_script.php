@@ -41,5 +41,6 @@ return function ($step = NULL, $params = array()) {
         'material_preview' => '<p>Главная страница</p>',
         'material_weight' => '0',
         'material_hidden' => '0',
+        'material_tree_path' => '/'
     ));
 };

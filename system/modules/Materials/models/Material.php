@@ -32,7 +32,7 @@ class Material extends \Model {
         'material_template' => ['type' => 'select', 'source' => 'method', 'method' => 'templatesList', 'module' => 'Materials'],
         'material_preview' => ['type' => 'html'],
         'material_text' => ['type' => 'html'],
-        'material_catalog_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'catalog', 'showCol' => 'mc_name'],
+        'material_catalog_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'catalog', 'showCol' => 'catalog_name'],
     ];
     static $forms = [
         'manager' => [
@@ -57,9 +57,9 @@ class Material extends \Model {
 
     function beforeSave() {
         if ($this->catalog) {
-            $this->material_tree_path = $this->catalog->catalog_tree_path . $this->catalog->mc_id . '/';
+            $this->tree_path = $this->catalog->tree_path . $this->catalog->id . '/';
         } else {
-            $this->material_tree_path = '/';
+            $this->tree_path = '/';
         }
     }
 
