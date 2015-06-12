@@ -18,8 +18,8 @@ class Modules extends Module {
         $moduleCode = ob_get_contents();
         ob_end_clean();
         file_put_contents(App::$primary->path . '/modules/' . $codeName . '/' . $codeName . '.php', $moduleCode);
-        file_put_contents(App::$primary->path . '/modules/' . $codeName . '/info.php', CodeGenerator::genArray(['name' => $name]));
-        file_put_contents(App::$primary->path . '/modules/' . $codeName . '/generatorHash.php', CodeGenerator::genArray([$codeName . '.php' => md5($moduleCode)]));
+        file_put_contents(App::$primary->path . '/modules/' . $codeName . '/info.php', "<?php\nreturn " . CodeGenerator::genArray(['name' => $name]));
+        file_put_contents(App::$primary->path . '/modules/' . $codeName . '/generatorHash.php', "<?php\nreturn " . CodeGenerator::genArray([$codeName . '.php' => md5($moduleCode)]));
     }
 
     function parseColsForModel($cols = []) {
