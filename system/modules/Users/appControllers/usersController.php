@@ -8,9 +8,9 @@ class usersController extends Controller {
 
     function profileAction() {
         $this->view->setTitle('Профиль');
-        $form = new Ui\ActiveForm(Users\User::$cur);
+        $form = new Ui\ActiveForm(Users\User::$cur, 'profile');
         $form->header = false;
-        $form->checkRequest('profile');
+        $form->checkRequest();
 
         if (!empty($_POST)) {
             /*
