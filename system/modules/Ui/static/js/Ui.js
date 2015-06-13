@@ -135,6 +135,15 @@ function DataManager(element) {
     this.params = element.data('params');
     this.modelName = element.data('modelname');
     this.managerName = element.data('managername');
+    this.limit = 10;
+    this.page = 1;
+    var instance = this;
+    $(this.element).find('.pagesContainer').on('click', 'a', function () {
+        instance.page = $(this).attr('href').match(/page\=(\d+)\&?/)[1];
+        instance.limit = $(this).attr('href').match(/limit\=(\d+)\&?/)[1];
+        instance.load();
+        return false;
+    })
     this.load();
 }
 DataManager.prototype.delRow = function (key) {
@@ -166,19 +175,33 @@ DataManager.prototype.reload = function () {
 }
 DataManager.prototype.load = function () {
     var dataManager = this;
+    console.log(typeof this.params);
+    if (typeof this.params == 'string') {
+        var params = JSON.parse(this.params);
+    }
+    else if(Object.prototype.toString.call( this.params ) === '[object Array]' ) {
+        var params = {};
+    }
+    else{
+        var params = this.params;
+    }
+    params.limit = this.limit;
+    params.page = this.page;
+    console.log(params);
     dataManager.element.find('tbody').html('<tr><td colspan="' + dataManager.element.find('thead tr th').length + '"><div class = "text-center"><img src = "' + inji.options.appRoot + 'static/moduleAsset/Ui/images/ajax-loader.gif" /></div></td></tr>');
     inji.Server.request({
         url: 'ui/dataManager/loadRows',
-        data: {params: this.params, modelName: this.modelName, managerName: this.managerName},
+        data: {params: params, modelName: this.modelName, managerName: this.managerName},
         success: function (data) {
-            dataManager.element.find('tbody').html(data.content);
+            dataManager.element.find('tbody').html(data.content.rows);
+            dataManager.element.find('.pagesContainer').html(data.content.pages);
         }
     });
     if (dataManager.element.find('.categoryTree').length > 0) {
         dataManager.element.find('.categoryTree').html('<img class ="img-responsive" src = "' + inji.options.appRoot + 'static/moduleAsset/Ui/images/ajax-loader.gif" />');
         inji.Server.request({
             url: 'ui/dataManager/loadCategorys',
-            data: {params: this.params, modelName: this.modelName, managerName: this.managerName},
+            data: {params: params, modelName: this.modelName, managerName: this.managerName},
             success: function (data) {
                 dataManager.element.find('.categoryTree').html(data.content);
                 inji.Ui.bindMenu(dataManager.element.find('.categoryTree .nav-list-categorys'));

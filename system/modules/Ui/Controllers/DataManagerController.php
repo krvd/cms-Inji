@@ -43,6 +43,7 @@ class DataManagerController extends Controller {
 
     function loadRowsAction() {
         $result = new Server\Result();
+        $result->content = [];
         ob_start();
         if (strpos($_GET['modelName'], ':')) {
             $raw = explode(':', $_GET['modelName']);
@@ -68,7 +69,12 @@ class DataManagerController extends Controller {
         foreach ($rows as $row) {
             Ui\Table::drawRow($row);
         }
-        $result->content = ob_get_contents();
+        $result->content['rows'] = ob_get_contents();
+        ob_end_clean();
+        $pages = $dataManager->getPages($params, $model);
+        ob_start();
+        $pages->draw();
+        $result->content['pages'] = ob_get_contents();
         ob_end_clean();
         $result->send();
     }

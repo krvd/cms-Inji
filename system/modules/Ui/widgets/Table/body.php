@@ -19,6 +19,7 @@
         </div>
     </div>
 </h1>
+<?= $table->afterHeader; ?>
 <table 
 <?php
 echo $table->id ? " id = '{$table->id}' " : "";

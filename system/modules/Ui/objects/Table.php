@@ -17,6 +17,7 @@ class Table extends \Object {
     public $rows = [];
     public $buttons = [];
     public $name = '&nbsp;';
+    public $afterHeader = '';
     public $id = '';
     public $class = 'table';
     public $attributes = [];

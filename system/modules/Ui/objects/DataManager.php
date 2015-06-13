@@ -18,8 +18,10 @@ class DataManager extends \Object {
     public $managerOptions = [];
     public $managerName = 'noNameManager';
     public $name = 'Менеджер данных';
+    public $limit = 10;
+    public $page = 1;
 
-    function __construct($modelName, $dataManager = 'manager') {
+    function __construct($modelName, $dataManager = 'manager', $options = []) {
         $this->modelName = $modelName;
         if (is_string($dataManager)) {
             $this->managerName = $dataManager;
@@ -35,7 +37,7 @@ class DataManager extends \Object {
     }
 
     /**
-     * Get buttons for monager
+     * Get buttons for manager
      * 
      * @param string $params
      * @param object $model
@@ -87,11 +89,21 @@ class DataManager extends \Object {
             $this->drawError('you not have access to "' . $this->modelName . '" manager with name: "' . $this->managerName . '"');
             return [];
         }
+        if (!empty($params['limit'])) {
+            $this->limit = (int) $params['limit'];
+        }
+        if (!empty($params['page'])) {
+            $this->page = (int) $params['page'];
+        }
         $modelName = $this->modelName;
+        $queryParams = [
+            'limit' => $this->limit,
+            'start' => $this->page * $this->limit - $this->limit
+        ];
         if ($model && !empty($params['relation'])) {
-            $items = $model->$params['relation'];
+            $items = $model->$params['relation']($queryParams);
         } else {
-            $items = $modelName::getList($params);
+            $items = $modelName::getList($queryParams);
         }
         $rows = [];
         foreach ($items as $key => $item) {
@@ -128,6 +140,32 @@ class DataManager extends \Object {
         return $buttons;
     }
 
+    function getPages($params = [], $model = null) {
+        if (!$this->chackAccess()) {
+            $this->drawError('you not have access to "' . $this->modelName . '" manager with name: "' . $this->managerName . '"');
+            return [];
+        }
+        if (!empty($params['limit'])) {
+            $this->limit = (int) $params['limit'];
+        }
+        if (!empty($params['page'])) {
+            $this->page = (int) $params['page'];
+        }
+        $modelName = $this->modelName;
+        if ($model && !empty($params['relation'])) {
+            $count = $model->$params['relation'](['count' => true]);
+        } else {
+            $count = $modelName::getCount();
+        }
+        $pages = new Pages([
+            'limit' => $this->limit,
+            'page' => $this->page,
+                ], [
+            'count' => $count
+        ]);
+        return $pages;
+    }
+
     function draw($params = [], $model = null) {
 
 
@@ -139,9 +177,11 @@ class DataManager extends \Object {
         $table = new Table();
         $table->name = empty($this->managerOptions['categorys']) ? $this->name : false;
         $table->setCols($cols);
+        $table->afterHeader='<div class="pagesContainer text-right"></div>';
         foreach ($buttons as $button) {
             $table->addButton($button);
         }
+        $this->getPages($params, $model);
 
         echo '<div '
         . 'id = "dataManager_' . $this->modelName . '_' . $this->managerName . '_' . \Tools::randomString() . '" '
@@ -169,11 +209,13 @@ class DataManager extends \Object {
                 <?php
                 $table->draw();
                 ?>
+                <div class="pagesContainer text-right"></div>
             </div>
             <div class="clearfix"></div>
             <?php
         } else {
             $table->draw();
+            echo '<div class="pagesContainer text-right"></div>';
         }
         echo '</div>';
     }
