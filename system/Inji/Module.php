@@ -90,13 +90,14 @@ class Module {
             if (file_exists($path)) {
                 include $path;
                 if (strpos($pathName, 'slice')) {
-                    $controllerName = ucfirst($this->params[0]) . 'Controller';
+                    $controllerName = ucfirst($this->params[0]);
                     $params = array_slice($this->params, 1);
                 } else {
-                    $controllerName = $this->moduleName . 'Controller';
+                    $controllerName = $this->moduleName;
                     $params = $this->params;
                 }
-                $controller = new $controllerName();
+                $fullControllerName = $controllerName . 'Controller';
+                $controller = new $fullControllerName();
                 $controller->params = $params;
                 $controller->module = $this;
                 $controller->path = pathinfo($path, PATHINFO_DIRNAME);
