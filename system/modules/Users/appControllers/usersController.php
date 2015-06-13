@@ -8,41 +8,9 @@ class usersController extends Controller {
 
     function profileAction() {
         $this->view->setTitle('Профиль');
-        $form = new Ui\ActiveForm(Users\User::$cur, 'profile');
+        $form = new Ui\ActiveForm(Users\User::$cur->info, 'profile');
         $form->header = false;
         $form->checkRequest();
-
-        if (!empty($_POST)) {
-            /*
-              $changepass = false;
-              Users\User::$cur->user_name = htmlspecialchars($_POST['user_name']);
-              Users\User::$cur->user_birthday = htmlspecialchars($_POST['user_birthday']);
-              Users\User::$cur->user_city = htmlspecialchars($_POST['user_city']);
-              Users\User::$cur->user_phone = htmlspecialchars($_POST['user_phone']);
-              Users\User::$cur->user_about = htmlspecialchars($_POST['user_about']);
-              Users\User::$cur->user_vk_href = htmlspecialchars($_POST['user_vk_href']);
-              Users\User::$cur->user_ok_href = htmlspecialchars($_POST['user_ok_href']);
-              if (!empty($_FILES['user_photo']['tmp_name'])) {
-              Users\User::$cur->user_photo = $this->Files->upload($_FILES['user_photo']);
-              }
-              if (!empty($_POST['user_pass'][0]) && !empty($_POST['user_pass'][1])) {
-              if ($_POST['user_pass'][0] == $_POST['user_pass'][1]) {
-              Users\User::$cur->user_pass = $this->users->hashpass($_POST['user_pass'][0]);
-              $changepass = true;
-              Msg::add('Пароль был изменен', 'success');
-              } else {
-              Msg::add('Пароли не совпали', 'danger');
-              }
-              }
-              Users\User::$cur->save();
-              if ($changepass) {
-              $this->users->autorization(Users\User::$cur->user_mail, Users\User::$cur->user_pass);
-              }
-              Tools::redirect('/users/profile', 'Информация была изменена!', 'success');
-             * 
-             */
-        }
-
         $this->view->page(['data' => compact('form')]);
     }
 

@@ -1,9 +1,7 @@
 <?php
 
 $table = new Ui\Table();
-$table->name = 'Установленные модули';
-$table->addButton(['href' => '/admin/modules/create', 'text' => 'Создать']);
-$table->addButton(['href' => '/admin/modules/install', 'text' => 'Установить']);
+$table->name = 'Модули';
 $table->setCols([
     'Модуль',
     'Панель администратора',

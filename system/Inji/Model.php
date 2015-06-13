@@ -513,7 +513,7 @@ class Model {
         if (isset($relations[$name])) {
             $relation = $relations[$name];
             if (!isset($relation['type']))
-                $type = 'one';
+                $type = 'to';
             else
                 $type = $relation['type'];
 
@@ -552,6 +552,10 @@ class Model {
                         'appType' => (isset($params['appType'])) ? $params['appType'] : ((isset($relation['appType'])) ? $relation['appType'] : null),
                     ];
                     break;
+                case 'one':
+                    $getType = 'get';
+                    $options = [$relation['col'],$this->pk()];
+                    break;
                 default:
                     if ($this->$relation['col'] === NULL)
                         return NULL;
@@ -573,7 +577,7 @@ class Model {
         $relations = $this->relations();
         if (isset($relations[$relName])) {
             $relation = $relations[$relName];
-            App::$cur->db->where($relation['relTablePrefix'] . $this->index(), $this->{$this->index()});
+            App::$cur->db->where($relation['relTablePrefix'] . $this->index(), $this->pk());
             App::$cur->db->where($relation['relTablePrefix'] . $relation['model']::index(), $objectId);
             $isset = App::$cur->db->select($relation['relTable'])->fetch_assoc();
             if ($isset)

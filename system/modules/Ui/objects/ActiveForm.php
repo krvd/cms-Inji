@@ -104,7 +104,7 @@ class ActiveForm extends \Object {
         }
     }
 
-    function draw($params = [], $ajax = true) {
+    function draw($params = [], $ajax = false) {
         if (!$this->chackAccess()) {
             $this->drawError('you not have access to "' . $this->modelName . '" manager with name: "' . $this->formName . '"');
             return [];

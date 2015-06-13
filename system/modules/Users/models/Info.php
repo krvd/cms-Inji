@@ -1,8 +1,9 @@
-<?php 
+<?php
 
 namespace Users;
 
 class Info extends \Model {
+
     public static $objectName = "Расширеная информация пользователя";
     public static $cols = [
         'first_name' => [
@@ -15,9 +16,15 @@ class Info extends \Model {
             'type' => 'text'
         ],
         'sex' => [
-            'type' => 'number'
+            'type' => 'select',
+            'source'=>'array',
+            'sourceArray'=>[
+                0=>'Не определился',
+                1=>'Мужчина',
+                2=>'Женщина'
+            ]
         ],
-        'photo' => [
+        'photo_file_id' => [
             'type' => 'image'
         ],
         'bday' => [
@@ -36,6 +43,24 @@ class Info extends \Model {
             'showCol' => 'name'
         ]
     ];
+    static $forms = [
+        'profile' => [
+            'options' => [
+                'access' => [
+                    'groups' => [
+                        3
+                    ],
+                    'self' => true
+                ]
+            ],
+            'map' => [
+                ['first_name', 'last_name'],
+                ['middle_name', 'city'],
+                ['sex', 'photo_file_id'],
+                ['bday', 'phone']
+            ]
+        ]
+    ];
     public static $labels = [
         'first_name' => 'Имя',
         'last_name' => 'Фамилия',
@@ -47,12 +72,18 @@ class Info extends \Model {
         'city' => 'Город',
         'user_id' => 'Пользователь'
     ];
+
     public static function relations() {
         return [
             'user' => [
                 'model' => 'Users\User',
                 'col' => 'user_id'
+            ],
+            'photo' => [
+                'model' => 'Files\File',
+                'col' => 'photo_file_id'
             ]
         ];
     }
+
 }

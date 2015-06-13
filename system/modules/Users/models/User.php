@@ -45,7 +45,8 @@ class User extends \Model {
             ],
             'map' => [
                 ['login', 'mail',],
-                ['group_id', 'role_id']
+                ['group_id', 'role_id'],
+                ['info:profile']
             ]
         ]
     ];
@@ -59,6 +60,11 @@ class User extends \Model {
             'role' => [
                 'model' => 'Users\Role',
                 'col' => 'role_id'
+            ],
+            'info'=>[
+                'type'=>'one',
+                'model'=>'Users\Info',
+                'col'=>'user_id'
             ]
         ];
     }

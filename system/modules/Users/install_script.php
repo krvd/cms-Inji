@@ -61,7 +61,7 @@ return function ($step = NULL, $params = array()) {
         'info_city' => 'varchar(255) NOT NULL',
         'info_user_id' => 'int(11) NOT NULL',
         'info_sex' => 'int(11) NOT NULL',
-        'info_photo' => 'int(11) NOT NULL',
+        'info_photo_file_id' => 'int(11) NOT NULL',
         'info_bday' => 'datetime NOT NULL',
     ));
     //users group

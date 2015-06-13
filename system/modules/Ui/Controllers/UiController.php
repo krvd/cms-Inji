@@ -34,7 +34,7 @@ class UiController extends Controller {
         $form = new Ui\ActiveForm($model, 'manager');
         $form->action = '/ui/formPopUp/?' . http_build_query($_GET);
         $form->checkRequest($params, true);
-        $form->draw($params);
+        $form->draw($params,true);
         $return['content'] = ob_get_contents();
         ob_end_clean();
         echo json_encode($return);
