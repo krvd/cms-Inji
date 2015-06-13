@@ -5,20 +5,12 @@ return function ($step = NULL, $params = array()) {
     App::$cur->db->createTable('users_user', array(
         'user_id' => 'pk',
         'user_login' => 'varchar(255) NOT NULL',
-        'user_name' => 'varchar(255) NOT NULL',
         'user_mail' => 'varchar(255) NOT NULL',
-        'user_phone' => 'varchar(255) NOT NULL',
-        'user_vk_href' => 'varchar(255) NOT NULL',
-        'user_ok_href' => 'varchar(255) NOT NULL',
         'user_pass' => 'text NOT NULL',
         'user_parent_id' => 'INT NOT NULL',
-        'user_photo_file_id' => 'INT NOT NULL',
         'user_group_id' => 'INT NOT NULL',
         'user_role_id' => 'INT NOT NULL',
         'user_activ' => 'text NOT NULL',
-        'user_city' => 'text NOT NULL',
-        'user_about' => 'text NOT NULL',
-        'user_birthday' => 'DATE NOT NULL',
         'user_admin_text' => 'text NOT NULL',
         'user_reg_date' => 'timestamp DEFAULT CURRENT_TIMESTAMP',
         'user_last_activ' => 'timestamp',
@@ -58,6 +50,19 @@ return function ($step = NULL, $params = array()) {
         'passre_user_id' => 'int(11) NOT NULL',
         'passre_status' => 'int(11) NOT NULL',
         'passre_date' => 'timestamp DEFAULT CURRENT_TIMESTAMP',
+    ));
+    //users info
+    App::$cur->db->createTable('users_info', array(
+        'info_id' => 'pk',
+        'info_first_name' => 'varchar(255) NOT NULL',
+        'info_last_name' => 'varchar(255) NOT NULL',
+        'info_middle_name' => 'varchar(255) NOT NULL',
+        'info_phone' => 'varchar(255) NOT NULL',
+        'info_city' => 'varchar(255) NOT NULL',
+        'info_user_id' => 'int(11) NOT NULL',
+        'info_sex' => 'int(11) NOT NULL',
+        'info_photo' => 'int(11) NOT NULL',
+        'info_bday' => 'datetime NOT NULL',
     ));
     //users group
     App::$cur->db->createTable('users_group', array(

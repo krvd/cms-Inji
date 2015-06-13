@@ -6,23 +6,16 @@ class User extends \Model {
 
     static $cur;
     static $labels = [
-        'user_name' => 'ФИО',
-        'user_mail' => 'E-Mail',
-        'user_phone' => 'Телефон',
-        'user_city' => 'Город',
-        'user_group_id' => 'Группа пользователя',
-        'user_role_id' => 'Роль пользователя',
-        'user_parent_id' => 'Спонсор',
-        'user_photo_file_id' => 'Фото'
+        'mail' => 'E-Mail',
+        'group_id' => 'Группа пользователя',
+        'role_id' => 'Роль пользователя',
+        'parent_id' => 'Спонсор',
     ];
     static $cols = [
-        'user_name' => ['type' => 'text'],
-        'user_mail' => ['type' => 'email'],
-        'user_phone' => ['type' => 'text'],
-        'user_city' => ['type' => 'text'],
-        'user_group_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'group', 'showCol' => 'group_name'],
-        'user_role_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'role', 'showCol' => 'role_name'],
-        'user_photo_file_id' => ['type' => 'image'],
+        'mail' => ['type' => 'email'],
+        'login' => ['type' => 'text'],
+        'group_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'group', 'showCol' => 'group_name'],
+        'role_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'role', 'showCol' => 'role_name'],
     ];
     static $dataManagers = [
         'manager' => [
@@ -34,14 +27,11 @@ class User extends \Model {
                 ]
             ],
             'cols' => [
-                'user_name',
-                'user_mail',
-                'user_phone',
-                'user_city',
-                'user_group_id',
-                'user_role_id',
+                'mail',
+                'group_id',
+                'role_id',
             ],
-            'searchableCols' => ['user_name', 'user_mail', 'user_city', 'user_phone']
+            'searchableCols' => ['mail']
         ],
     ];
     static $forms = [
@@ -54,16 +44,8 @@ class User extends \Model {
                 ]
             ],
             'map' => [
-                ['user_name', 'user_mail',],
-                ['user_photo_file_id'],
-                ['user_phone', 'user_city'],
-                ['user_group_id', 'user_role_id']
-            ]
-        ],
-        'profile' => [
-            'map' => [
-                ['user_name', 'user_photo_file_id'],
-                ['user_phone', 'user_city'],
+                ['login', 'mail',],
+                ['group_id', 'role_id']
             ]
         ]
     ];
@@ -72,15 +54,11 @@ class User extends \Model {
         return [
             'group' => [
                 'model' => 'Users\Group',
-                'col' => 'user_group_id'
+                'col' => 'group_id'
             ],
             'role' => [
                 'model' => 'Users\Role',
-                'col' => 'user_role_id'
-            ],
-            'photo' => [
-                'model' => 'Files\File',
-                'col' => 'user_photo_file_id'
+                'col' => 'role_id'
             ]
         ];
     }
