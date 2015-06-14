@@ -625,6 +625,11 @@ class Model {
         static::fixPrefix($name);
         $this->_params[$name] = $value;
     }
+    
+    function __isset($name) {
+        static::fixPrefix($name);
+        return isset($this->_params[$name]);
+    }
 
     public function __toString() {
         if (!empty($this->_params['name'])) {
