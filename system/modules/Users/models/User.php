@@ -5,6 +5,7 @@ namespace Users;
 class User extends \Model {
 
     static $cur;
+    public static $objectName = "Пользователь";
     static $labels = [
         'mail' => 'E-Mail',
         'group_id' => 'Группа пользователя',
@@ -46,7 +47,7 @@ class User extends \Model {
             'map' => [
                 ['login', 'mail',],
                 ['group_id', 'role_id'],
-                ['info:profile']
+                ['form:info:profile']
             ]
         ]
     ];

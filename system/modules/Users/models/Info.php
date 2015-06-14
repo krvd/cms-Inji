@@ -4,7 +4,7 @@ namespace Users;
 
 class Info extends \Model {
 
-    public static $objectName = "Расширеная информация пользователя";
+    public static $objectName = "Расширеная информация";
     public static $cols = [
         'first_name' => [
             'type' => 'text'
