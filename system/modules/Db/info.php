@@ -2,5 +2,4 @@
 
 return [
     'name' => 'Базы данных',
-    'systemConfig' => true
 ];

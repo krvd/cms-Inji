@@ -10,7 +10,10 @@ class Db extends Module {
     public $QueryClassName = '';
     public $ResultClassName = '';
 
-    function init($param = 'local') {
+    function init($param = null) {
+        if ($param === null) {
+            $param = isset($this->config['default']) ? $this->config['default'] : 'local';
+        }
         if (!is_array($param)) {
             if (!($dbOption = Db\Options::get($param, 'connect_alias', ['array' => true])))
                 return false;
@@ -70,7 +73,6 @@ class Db extends Module {
         if (isset($this->curQuery->$name)) {
             return $this->curQuery->$name = $value;
         }
-        
     }
 
 }
