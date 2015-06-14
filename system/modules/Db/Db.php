@@ -11,7 +11,7 @@ class Db extends Module {
     public $ResultClassName = '';
 
     function init($param = null) {
-        if ($param === null) {
+        if (!$param) {
             $param = isset($this->config['default']) ? $this->config['default'] : 'local';
         }
         if (!is_array($param)) {

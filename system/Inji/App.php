@@ -50,13 +50,13 @@ class App {
      * @param string $className
      * @return object
      */
-    function getObject($className) {
-
+    function getObject($className,$params=[]) {
+        $paramsStr = serialize($params);
         $className = ucfirst($className);
-        if (isset($this->_objects[$className])) {
-            return $this->_objects[$className];
+        if (isset($this->_objects[$className][$paramsStr])) {
+            return $this->_objects[$className][$paramsStr];
         }
-        return $this->loadObject($className);
+        return $this->loadObject($className,$params);
     }
 
     /**
@@ -100,26 +100,30 @@ class App {
      * @param string $className
      * @return mixed
      */
-    function loadObject($className) {
-
+    function loadObject($className,$params=[]) {
+        $paramsStr = serialize($params);
         $moduleClassName = $this->findModuleClass($className);
         if (!is_bool($moduleClassName) && $moduleClassName != $className) {
-            return $this->_objects[$moduleClassName] = $this->_objects[$className] = $this->getObject($moduleClassName);
+            return $this->_objects[$moduleClassName][$paramsStr] = $this->_objects[$className][$paramsStr] = $this->getObject($moduleClassName);
         } elseif (class_exists($className)) {
-            $this->_objects[$className] = new $className($this);
+            $this->_objects[$className][$paramsStr] = new $className($this);
         }
 
-        if (isset($this->_objects[$className])) {
-            if (method_exists($this->_objects[$className], 'init')) {
-                $this->_objects[$className]->init();
+        if (isset($this->_objects[$className][$paramsStr])) {
+            if (method_exists($this->_objects[$className][$paramsStr], 'init')) {
+                call_user_func_array([$this->_objects[$className][$paramsStr],'init'],$params);
+                //$this->_objects[$className][$paramsStr]->init();
             }
-            return $this->_objects[$className];
+            return $this->_objects[$className][$paramsStr];
         }
         return null;
     }
 
     function __get($className) {
         return $this->getObject($className);
+    }
+    function __call($className,$params) {
+        return $this->getObject($className,$params);
     }
 
 }

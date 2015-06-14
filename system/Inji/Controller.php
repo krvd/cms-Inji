@@ -42,6 +42,13 @@ class Controller {
     }
 
     /**
+     * Reference to short access core modules
+     */
+    function __call($name, $params) {
+        return App::$cur->__call($name, $params);
+    }
+
+    /**
      * Check access to controller method
      * 
      * @return boolean
