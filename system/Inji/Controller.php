@@ -47,22 +47,7 @@ class Controller {
      * @return boolean
      */
     function checkAccess() {
-        $accesses = !empty($this->access->config[App::$cur->type])?$this->access->config[App::$cur->type]:[];
-        $access = array();
-
-        if (isset($accesses['dostup_tree'][$this->module->moduleName][$this->name][$this->method]['_access'])) {
-            $access = $accesses['dostup_tree'][$this->module->moduleName][$this->name][$this->method]['_access'];
-        } elseif (isset($accesses['dostup_tree'][$this->module->moduleName][$this->name]['_access']))
-            $access = $accesses['dostup_tree'][$this->module->moduleName][$this->name]['_access'];
-        elseif (isset($accesses['dostup_tree'][$this->module->moduleName]['_access']))
-            $access = $accesses['dostup_tree'][$this->module->moduleName]['_access'];
-        elseif (isset($accesses['dostup_tree']['_access']))
-            $access = $accesses['dostup_tree']['_access'];
-
-        if (Users\User::$cur->user_group_id && !empty($access) && !in_array(Users\User::$cur->user_group_id, $access))
-            return false;
-
-        return true;
+        return $this->module->app->access->checkAccess($this, Users\User::$cur);
     }
 
 }

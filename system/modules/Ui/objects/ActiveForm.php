@@ -158,7 +158,7 @@ class ActiveForm extends \Object {
                     $inputOptions = [
                         'value' => $value = isset($this->form['inputs'][$col]['default']) ? $this->form['inputs'][$col]['default'] : ''
                     ];
-                    $inputOptions['value'] = ($this->model) ? $this->model->$col : $inputOptions['value'];
+                    $inputOptions['value'] = ($this->model && isset($this->model->_params[$col])) ? $this->model->$col : $inputOptions['value'];
 
                     if ($this->form['inputs'][$col]['type'] == 'image' && $inputOptions['value']) {
                         $inputOptions['value'] = \Files\File::get($inputOptions['value'])->path;

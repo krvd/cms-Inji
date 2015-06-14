@@ -9,5 +9,13 @@
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
 class Main extends Module {
-    //put your code here
+
+    function init() {
+        $config = Config::share();
+        if (!empty($config['installed'])) {
+            Tools::redirect('/', 'Приложение уже установлено');
+        }
+        Users\User::$cur->group_id = 3;
+    }
+
 }

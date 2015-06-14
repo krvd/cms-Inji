@@ -31,7 +31,7 @@ return function ($step = NULL, $params = array()) {
         'material_date_create' => 'timestamp DEFAULT CURRENT_TIMESTAMP',
     ));
     App::$cur->db->insert('materials_material', array(
-        'material_mc_id' => '0',
+        'material_catalog_id' => '0',
         'material_name' => 'Главная',
         'material_chpu' => 'index',
         'material_text' => '<p>Главная страница сайта</p>',

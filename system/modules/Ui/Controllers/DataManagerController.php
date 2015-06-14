@@ -64,20 +64,24 @@ class DataManagerController extends Controller {
         } else {
             $params = [];
         }
+        
         $dataManager = new Ui\DataManager($modelName, $_GET['managerName']);
         $rows = $dataManager->getRows($params, $model);
         foreach ($rows as $row) {
             Ui\Table::drawRow($row);
         }
         $result->content['rows'] = ob_get_contents();
-        ob_end_clean();
+        ob_clean();
         $pages = $dataManager->getPages($params, $model);
-        ob_start();
-        $pages->draw();
+        
+        if ($pages) {
+            $pages->draw();
+        }
         $result->content['pages'] = ob_get_contents();
         ob_end_clean();
         $result->send();
     }
+
     function loadCategorysAction() {
         $result = new Server\Result();
         ob_start();
@@ -119,6 +123,7 @@ class DataManagerController extends Controller {
         $result = new Server\Result();
         $result->send();
     }
+
     function delCategoryAction() {
 
         $dataManager = new Ui\DataManager($_GET['modelName'], $_GET['managerName']);

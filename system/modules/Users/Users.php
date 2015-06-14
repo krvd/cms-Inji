@@ -28,13 +28,7 @@ class Users extends Module {
     function logOut() {
         setcookie("user_session_hash", '', 0, "/");
         setcookie("user_id", '', 0, "/");
-        $accesses = Config::module('Access');
-        if (!empty($this->Access->modConf[App::$cur->app->type]['denied_redirect'])) {
-            $url = $this->Access->modConf[App::$cur->app->type]['denied_redirect'];
-        } else {
-            $url = '/';
-        }
-        Tools::redirect($url, 'Вы вышли из своего профиля', 'success');
+        Tools::redirect(App::$cur->access->getDeniedRedirect(), 'Вы вышли из своего профиля', 'success');
     }
 
     function cuntinueSession($hash, $userId) {
@@ -112,9 +106,8 @@ class Users extends Module {
             Users\User::$cur = $user;
             Users\User::$cur->last_activ = 'CURRENT_TIMESTAMP';
             Users\User::$cur->save();
-
-            if (isset($_POST['autorization']) && !empty(App::$cur->Access->config[App::$cur->app->type]['login_redirect'])) {
-                Tools::redirect(App::$cur->Access->config[App::$cur->app->type]['login_redirect']);
+            if (isset($_POST['autorization']) && !empty($this->config['loginUrl'][$this->app->type])) {
+                Tools::redirect($this->config['loginUrl'][$this->app->type]);
             }
             return true;
         }

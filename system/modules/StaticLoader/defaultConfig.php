@@ -1,7 +1,13 @@
 <?php
 
 return [
+    'access' => [
+        'accessTree' => [
+            '_access'=>[]
+        ]
+    ],
     'mimes' => [
+
         '323' => 'text/h323',
         'acx' => 'application/internet-property-stream',
         'aiff' => 'audio/x-aiff',

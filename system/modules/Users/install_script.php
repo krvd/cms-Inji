@@ -18,7 +18,6 @@ return function ($step = NULL, $params = array()) {
     if (!empty($params['user'])) {
         App::$cur->db->insert('users_user', array(
             'user_login' => $params['user']['user_login'],
-            'user_name' => 'Администратор',
             'user_mail' => $params['user']['user_mail'],
             'user_pass' => App::$cur->Users->hashpass($params['user']['user_pass']),
             'user_group_id' => '3',
@@ -27,7 +26,6 @@ return function ($step = NULL, $params = array()) {
     } else {
         App::$cur->db->insert('users_user', array(
             'user_login' => 'admin',
-            'user_name' => 'Администратор',
             'user_mail' => 'admin@' . INJI_DOMAIN_NAME,
             'user_pass' => App::$cur->Users->hashpass('admin'),
             'user_group_id' => '3',

@@ -10,21 +10,27 @@
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
+
 namespace Server;
-class Result extends \Object{
+
+class Result extends \Object {
+
     public $content = null;
     public $success = true;
-    function send(){
+
+    function send() {
         $return = [];
         $return['success'] = $this->success;
-        if($this->success){
+        if ($this->success) {
             $return['content'] = $this->content;
-        }
-        else {
+        } else {
             $return['error'] = $this->content;
         }
-        header('Content-type: application/json');
+        if (!headers_sent()) {
+            header('Content-type: application/json');
+        }
         echo json_encode($return);
         exit();
     }
+
 }

@@ -49,11 +49,11 @@ class Options extends \Model {
     static $dataManagers = [
         'manager' => [
             'options' => [
-                /*'access' => [
+                'access' => [
                     'groups' => [
                         3
                     ]
-                ]*/
+                ]
             ],
             'cols' => [
                 'connect_name',
