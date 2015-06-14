@@ -23,7 +23,7 @@ class Module {
         $this->moduleName = get_class($this);
         $this->path = Router::getLoadedClassPath($this->moduleName);
         $this->info = $this->getInfo();
-        $this->config = Config::module($this->moduleName, !empty($this->info['systemConfig']), $this->app);
+        $this->config = Config::module($this->moduleName, !empty($this->info['systemConfig']));
     }
 
     static function getModulePaths($moduleName) {
