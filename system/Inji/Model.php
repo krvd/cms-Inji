@@ -507,6 +507,11 @@ class Model {
         static::fixPrefix($params);
         $this->_params = array_merge($this->_params, $params);
     }
+    
+    static function getRelationOptions($relName){
+        $relations = static::relations();
+        return $relations[$relName];
+    }
 
     function loadRelation($name, $params = []) {
         $relations = $this->relations();
@@ -591,6 +596,7 @@ class Model {
         }
         return false;
     }
+    
 
     function checkFormAccess($formName) {
         if ($formName == 'manage' && !Users\User::$cur->isAdmin()) {
