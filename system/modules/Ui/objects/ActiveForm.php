@@ -23,6 +23,7 @@ class ActiveForm extends \Object {
     public $formName = 'noNameForm';
     public $requestFormName = '';
     public $requestFullFormName = '';
+    public $parent = null;
 
     function __construct($model, $form = []) {
         if (is_array($model)) {
@@ -42,7 +43,13 @@ class ActiveForm extends \Object {
             }
         }
         $this->requestFormName = "ActiveForm_{$this->formName}";
-        $this->header = 'Создание ' . $this->modelName;
+        $modeName = $this->modelName;
+
+        if (!empty($modeName::$objectName)) {
+            $this->header = $modeName::$objectName;
+        } else {
+            $this->header = $this->modelName;
+        }
     }
 
     function getInputs() {
@@ -50,7 +57,22 @@ class ActiveForm extends \Object {
         $modelName = $this->modelName;
         foreach ($this->form['map'] as $row) {
             foreach ($row as $col) {
-                $inputs[$col] = $modelName::$cols[$col];
+                if (strpos($col, 'form:') === 0) {
+                    $colPath = explode(':', $col);
+                    if ($this->model->{$colPath[1]}) {
+                        $inputs[$col] = new ActiveForm($this->model->{$colPath[1]}, $colPath[2]);
+                    } else {
+                        $relOptions = $modelName::getRelationOptions($colPath[1]);
+                        if (!isset($this->model->_params[$modelName::index()])) {
+                            $this->model->_params[$modelName::index()] = 0;
+                        }
+                        $relOptions['model']::fixPrefix($relOptions['col']);
+                        $inputs[$col] = new ActiveForm(new $relOptions['model']([ $relOptions['col'] => &$this->model->_params[$modelName::index()]]), $colPath[2]);
+                    }
+                    $inputs[$col]->parent = $this;
+                } else {
+                    $inputs[$col] = $modelName::$cols[$col];
+                }
             }
         }
         return $inputs;
@@ -65,7 +87,12 @@ class ActiveForm extends \Object {
         if (!empty($_POST[$this->requestFormName][$this->modelName])) {
             $request = $_POST[$this->requestFormName][$this->modelName];
             if ($this->model) {
+                $afterSave = [];
                 foreach ($this->form['inputs'] as $col => $param) {
+                    if (is_object($param)) {
+                        $afterSave[] = $param;
+                        continue;
+                    }
                     switch ($param['type']) {
                         case 'image':
                             if (!empty($_FILES[$this->requestFormName]['tmp_name'][$this->modelName][$col])) {
@@ -94,6 +121,9 @@ class ActiveForm extends \Object {
 
                 \Msg::add($this->model->pk() ? 'Изменнеия были успешно сохранены' : 'Новый элемент был успешно добавлен', 'success');
                 $this->model->save(!empty($params['dataManagerParams']) ? $params['dataManagerParams'] : []);
+                foreach ($afterSave as $form) {
+                    $form->checkRequest();
+                }
                 if ($ajax) {
                     \Msg::show();
                 }
@@ -110,33 +140,42 @@ class ActiveForm extends \Object {
             return [];
         }
         $form = new Form();
-        $form->action = $this->action;
-        $form->begin($this->header, ['onsubmit' => $ajax ? 'inji.Ui.forms.submitAjax(this);return false;' : '']);
+        if ($this->parent === null) {
+            $form->action = $this->action;
+            $form->begin($this->header, ['onsubmit' => $ajax ? 'inji.Ui.forms.submitAjax(this);return false;' : '']);
+        } else {
+            echo "<h3>{$this->header}</h3>";
+        }
         $modelName = $this->modelName;
         foreach ($this->form['map'] as $row) {
             $colSize = 12 / count($row);
             echo "<div class ='row'>";
             foreach ($row as $col) {
                 echo "<div class = 'col-xs-{$colSize}'>";
-                $inputOptions = [
-                    'value' => $value = isset($this->form['inputs'][$col]['default']) ? $this->form['inputs'][$col]['default'] : ''
-                ];
-                $inputOptions['value'] = ($this->model) ? $this->model->$col : $inputOptions['value'];
+                if (is_object($this->form['inputs'][$col])) {
+                    $this->form['inputs'][$col]->draw();
+                } else {
+                    $inputOptions = [
+                        'value' => $value = isset($this->form['inputs'][$col]['default']) ? $this->form['inputs'][$col]['default'] : ''
+                    ];
+                    $inputOptions['value'] = ($this->model) ? $this->model->$col : $inputOptions['value'];
 
-                if ($this->form['inputs'][$col]['type'] == 'image' && $inputOptions['value']) {
-                    $inputOptions['value'] = \Files\File::get($inputOptions['value'])->path;
-                }
-                if ($this->form['inputs'][$col]['type'] == 'select') {
-                    $inputOptions['values'] = $this->getOptionsList($this->form['inputs'][$col], $params);
-                }
+                    if ($this->form['inputs'][$col]['type'] == 'image' && $inputOptions['value']) {
+                        $inputOptions['value'] = \Files\File::get($inputOptions['value'])->path;
+                    }
+                    if ($this->form['inputs'][$col]['type'] == 'select') {
+                        $inputOptions['values'] = $this->getOptionsList($this->form['inputs'][$col], $params);
+                    }
 
-                $form->input($this->form['inputs'][$col]['type'], "{$this->requestFormName}[$this->modelName][{$col}]", ($this->model && !empty($modelName::$labels[$col])) ? $modelName::$labels[$col] : $col, $inputOptions);
+                    $form->input($this->form['inputs'][$col]['type'], "{$this->requestFormName}[$this->modelName][{$col}]", ($this->model && !empty($modelName::$labels[$col])) ? $modelName::$labels[$col] : $col, $inputOptions);
+                }
                 echo '</div>';
             }
             echo '</div>';
         }
-
-        $form->end($this->model ? ($this->model->pk() ? 'Сохранить' : 'Создать') : 'Отправить');
+        if ($this->parent === null) {
+            $form->end($this->model ? ($this->model->pk() ? 'Сохранить' : 'Создать') : 'Отправить');
+        }
     }
 
     function drawCol() {
@@ -159,7 +198,7 @@ class ActiveForm extends \Object {
                 $relations = $modelName::relations();
                 $selectParams = !empty($params['dataManagerParams']) ? $params['dataManagerParams'] : [];
                 $items = $relations[$inputParams['relation']]['model']::getList($selectParams);
-                $values = [0=>'Не задано'];
+                $values = [0 => 'Не задано'];
                 foreach ($items as $key => $item) {
                     $values[$key] = $item->$inputParams['showCol'];
                 }
