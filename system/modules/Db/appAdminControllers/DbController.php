@@ -1,7 +1,11 @@
 <?php
-class DbController extends Inji {
-    function index() {
+
+class DbController extends \Controller {
+
+    function indexAction() {
         $this->view->page();
     }
+
 }
+
 ?>
