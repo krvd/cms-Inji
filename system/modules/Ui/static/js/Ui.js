@@ -175,7 +175,6 @@ DataManager.prototype.reload = function () {
 }
 DataManager.prototype.load = function () {
     var dataManager = this;
-    console.log(typeof this.params);
     if (typeof this.params == 'string') {
         var params = JSON.parse(this.params);
     }
@@ -187,7 +186,6 @@ DataManager.prototype.load = function () {
     }
     params.limit = this.limit;
     params.page = this.page;
-    console.log(params);
     dataManager.element.find('tbody').html('<tr><td colspan="' + dataManager.element.find('thead tr th').length + '"><div class = "text-center"><img src = "' + inji.options.appRoot + 'static/moduleAsset/Ui/images/ajax-loader.gif" /></div></td></tr>');
     inji.Server.request({
         url: 'ui/dataManager/loadRows',
@@ -235,7 +233,6 @@ Forms.prototype.popUp = function (item, params) {
             modal.find('.modal-body').html(data.content);
             if (typeof CKEDITOR != 'undefined') {
                 CKEDITOR.replaceAll(function (textarea, config) {
-                    console.log(textarea);
                     if ($(textarea).hasClass('htmleditor') && $(textarea).css('display') != 'none') {
                         return true;
                     }

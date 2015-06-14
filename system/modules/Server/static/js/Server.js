@@ -28,6 +28,5 @@ Server.prototype.request = function (options) {
     if (options.url) {
         ajaxOptions.url = inji.options.appRoot + (options.url.replace(/^\//g, ''));
     }
-    console.log(ajaxOptions.url);
     $.ajax(ajaxOptions);
 };
