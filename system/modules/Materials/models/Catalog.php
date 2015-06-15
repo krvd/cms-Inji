@@ -4,6 +4,8 @@ namespace Materials;
 
 class Catalog extends \Model {
 
+    static $objectModel = 'Категория';
+    static $treeCategory = 'Materials\Material';
     static $labels = [
         'name' => 'Название',
         'description' => 'Описание',
@@ -69,41 +71,6 @@ class Catalog extends \Model {
                 'col' => 'parent_id'
             ]
         ];
-    }
-
-    function beforeSave() {
-        $oldPath = $this->tree_path;
-        $this->tree_path = $this->getCatalogTree($this);
-        $itemsTable = \App::$cur->db->table_prefix . Material::table();
-        $itemTreeCol = Material::colPrefix() . 'tree_path';
-
-        $categoryTreeCol = $this->colPrefix() . 'tree_path';
-        $categoryTable = \App::$cur->db->table_prefix . $this->table();
-        if ($oldPath) {
-            \App::$cur->db->query('UPDATE
-                ' . $categoryTable . ' 
-                    SET 
-                        ' . $categoryTreeCol . ' = REPLACE(' . $categoryTreeCol . ', "' . $oldPath . $this->id . '/' . '", "' . $this->tree_path . $this->id . '/' . '") 
-                    WHERE ' . $categoryTreeCol . ' LIKE "' . $oldPath . $this->id . '/' . '%"');
-
-            \App::$cur->db->query('UPDATE
-                ' . $itemsTable . '
-                    SET 
-                        ' . $itemTreeCol . ' = REPLACE(' . $itemTreeCol . ', "' . $oldPath . $this->id . '/' . '", "' . $this->tree_path . $this->id . '/' . '") 
-                    WHERE ' . $itemTreeCol . ' LIKE "' . $oldPath . $this->id . '/' . '%"');
-        }
-        Material::update([$itemTreeCol => $this->tree_path . $this->id . '/'], [Material::colPrefix() . $this->colPrefix() . 'id', $this->id]);
-    }
-
-    function getCatalogTree($catalog) {
-        if ($catalog && $catalog->parent) {
-            if ($catalog->parent->tree_path) {
-                return $catalog->parent->tree_path . $catalog->parent->id . '/';
-            } else {
-                return $this->getCatalogTree($catalog->parent) . $catalog->parent->id . '/';
-            }
-        }
-        return '/';
     }
 
 }

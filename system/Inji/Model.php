@@ -4,9 +4,10 @@ class Model {
 
     static $storage = ['type' => 'db'];
     static $objectName = '';
-    public $modelLogKey = 0;
     public $_params = [];
     public $loadedRelations = [];
+    static $treeCategory = '';
+    static $categoryModel = '';
     static $labels = [];
     static $forms = [];
     static $cols = [];
@@ -386,10 +387,68 @@ class Model {
         return true;
     }
 
+    function changeCategoryTree() {
+        $class = get_class($this);
+        $itemModel = $class::$treeCategory;
+        $oldPath = $this->tree_path;
+        $this->tree_path = $this->getCatalogTree($this);
+        $itemsTable = \App::$cur->db->table_prefix . $itemModel::table();
+        $itemTreeCol = $itemModel::colPrefix() . 'tree_path';
+
+        $categoryTreeCol = $this->colPrefix() . 'tree_path';
+        $categoryTable = \App::$cur->db->table_prefix . $this->table();
+        if ($oldPath) {
+            \App::$cur->db->query('UPDATE
+                ' . $categoryTable . ' 
+                    SET 
+                        ' . $categoryTreeCol . ' = REPLACE(' . $categoryTreeCol . ', "' . $oldPath . $this->id . '/' . '", "' . $this->tree_path . $this->id . '/' . '") 
+                    WHERE ' . $categoryTreeCol . ' LIKE "' . $oldPath . $this->id . '/' . '%"');
+
+            \App::$cur->db->query('UPDATE
+                ' . $itemsTable . '
+                    SET 
+                        ' . $itemTreeCol . ' = REPLACE(' . $itemTreeCol . ', "' . $oldPath . $this->id . '/' . '", "' . $this->tree_path . $this->id . '/' . '") 
+                    WHERE ' . $itemTreeCol . ' LIKE "' . $oldPath . $this->id . '/' . '%"');
+        }
+        $array = [$itemTreeCol => $this->tree_path . $this->id . '/'];
+        $itemModel::update([$itemTreeCol => $this->tree_path . $this->id . '/'], [$itemModel::colPrefix() . $this->index(), $this->id]);
+    }
+
+    function getCatalogTree($catalog) {
+        $catalogClass = get_class($catalog);
+        $catalogParent = $catalogClass::get($catalog->parent_id);
+        if ($catalog && $catalogParent) {
+            if ($catalogParent->tree_path) {
+                return $catalogParent->tree_path . $catalogParent->id . '/';
+            } else {
+                return $this->getCatalogTree($catalogParent) . $catalogParent->id . '/';
+            }
+        }
+        return '/';
+    }
+
+    function changeItemTree() {
+        $class = get_class($this);
+        $categoryModel = $class::$categoryModel;
+        $category = $categoryModel::get($this->{$categoryModel::index()});
+        if ($category) {
+            $this->tree_path = $category->tree_path . $category->pk() . '/';
+        } else {
+            $this->tree_path = '/';
+        }
+    }
+
     function save($options = []) {
 
         if (static::$storage['type'] == 'moduleConfig') {
             return static::saveModuleStorage($options);
+        }
+        $class = get_class($this);
+        if ($class::$categoryModel) {
+            $this->changeItemTree();
+        }
+        if ($class::$treeCategory) {
+            $this->changeCategoryTree();
         }
         $this->beforeSave();
 
@@ -507,8 +566,8 @@ class Model {
         static::fixPrefix($params);
         $this->_params = array_merge($this->_params, $params);
     }
-    
-    static function getRelationOptions($relName){
+
+    static function getRelationOptions($relName) {
         $relations = static::relations();
         return $relations[$relName];
     }
@@ -559,7 +618,7 @@ class Model {
                     break;
                 case 'one':
                     $getType = 'get';
-                    $options = [$relation['col'],$this->pk()];
+                    $options = [$relation['col'], $this->pk()];
                     break;
                 default:
                     if ($this->$relation['col'] === NULL)
@@ -596,7 +655,6 @@ class Model {
         }
         return false;
     }
-    
 
     function checkFormAccess($formName) {
         if ($formName == 'manage' && !Users\User::$cur->isAdmin()) {
@@ -625,7 +683,7 @@ class Model {
         static::fixPrefix($name);
         $this->_params[$name] = $value;
     }
-    
+
     function __isset($name) {
         static::fixPrefix($name);
         return isset($this->_params[$name]);

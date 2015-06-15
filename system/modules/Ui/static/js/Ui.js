@@ -137,6 +137,7 @@ function DataManager(element) {
     this.managerName = element.data('managername');
     this.limit = 10;
     this.page = 1;
+    this.categoryPath = '/';
     var instance = this;
     $(this.element).find('.pagesContainer').on('click', 'a', function () {
         instance.page = $(this).attr('href').match(/page\=(\d+)\&?/)[1];
@@ -178,15 +179,17 @@ DataManager.prototype.load = function () {
     if (typeof this.params == 'string') {
         var params = JSON.parse(this.params);
     }
-    else if(Object.prototype.toString.call( this.params ) === '[object Array]' ) {
+    if (Object.prototype.toString.call(this.params) === '[object Array]') {
         var params = {};
     }
-    else{
+    else {
         var params = this.params;
     }
     params.limit = this.limit;
     params.page = this.page;
+    params.categoryPath = this.categoryPath;
     dataManager.element.find('tbody').html('<tr><td colspan="' + dataManager.element.find('thead tr th').length + '"><div class = "text-center"><img src = "' + inji.options.appRoot + 'static/moduleAsset/Ui/images/ajax-loader.gif" /></div></td></tr>');
+    var instance = this;
     inji.Server.request({
         url: 'ui/dataManager/loadRows',
         data: {params: params, modelName: this.modelName, managerName: this.managerName},
@@ -202,10 +205,19 @@ DataManager.prototype.load = function () {
             data: {params: params, modelName: this.modelName, managerName: this.managerName},
             success: function (data) {
                 dataManager.element.find('.categoryTree').html(data.content);
+                var active = dataManager.element.find('.categoryTree [data-path="' + instance.categoryPath + '"]');
+                if(active.length>0){
+                    active.parents('.nav-left-ml').css('display', 'none');
+                }
+
                 inji.Ui.bindMenu(dataManager.element.find('.categoryTree .nav-list-categorys'));
             }
         });
     }
+}
+DataManager.prototype.switchCategory = function (categoryBtn) {
+    this.categoryPath = $(categoryBtn).data('path');
+    this.reload();
 }
 /**
  * Forms object

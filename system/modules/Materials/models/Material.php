@@ -4,6 +4,10 @@ namespace Materials;
 
 class Material extends \Model {
 
+    static $objectName = 'Материал';
+    static $categoryModel = 'Materials\Catalog';
+
+
     static $labels = [
         'material_name' => 'Заголовок',
         'material_catalog_id' => 'Раздел',
@@ -67,14 +71,6 @@ class Material extends \Model {
                 'col' => 'material_catalog_id'
             ]
         ];
-    }
-
-    function beforeSave() {
-        if ($this->catalog) {
-            $this->tree_path = $this->catalog->tree_path . $this->catalog->id . '/';
-        } else {
-            $this->tree_path = '/';
-        }
     }
 
 }

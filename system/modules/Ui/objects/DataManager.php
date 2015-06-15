@@ -67,7 +67,7 @@ class DataManager extends \Object {
      */
     function getCols() {
         $modelName = $this->modelName;
-        $cols = $this->managerOptions['cols'];
+        $cols = array_merge(['#'], $this->managerOptions['cols']);
         foreach ($cols as $key => $col) {
             if (!empty($modelName::$labels[$col])) {
                 $cols[$key] = $modelName::$labels[$col];
@@ -100,6 +100,9 @@ class DataManager extends \Object {
             'limit' => $this->limit,
             'start' => $this->page * $this->limit - $this->limit
         ];
+        if (!empty($params['categoryPath'])  && $modelName::$categoryModel) {
+            $queryParams['where'] = ['tree_path', $params['categoryPath'] . '%','LIKE'];
+        }
         if ($model && !empty($params['relation'])) {
             $items = $model->$params['relation']($queryParams);
         } else {
@@ -108,6 +111,7 @@ class DataManager extends \Object {
         $rows = [];
         foreach ($items as $key => $item) {
             $row = [];
+            $row[] = $item->pk();
             foreach ($this->managerOptions['cols'] as $colName) {
                 $relations = $modelName::relations();
                 if (!empty($modelName::$cols[$colName]['relation']) && !empty($relations[$modelName::$cols[$colName]['relation']]['type']) && $relations[$modelName::$cols[$colName]['relation']]['type'] == 'many') {
@@ -151,11 +155,18 @@ class DataManager extends \Object {
         if (!empty($params['page'])) {
             $this->page = (int) $params['page'];
         }
+        $queryParams = [
+            'count' => true
+        ];
+        $modelName = $this->modelName;
+        if (!empty($params['categoryPath']) && $modelName::$categoryModel) {
+            $queryParams['where'] = ['tree_path', $params['categoryPath'] . '%','LIKE'];
+        }
         $modelName = $this->modelName;
         if ($model && !empty($params['relation'])) {
-            $count = $model->$params['relation'](['count' => true]);
+            $count = $model->$params['relation']($queryParams);
         } else {
-            $count = $modelName::getCount();
+            $count = $modelName::getCount($queryParams);
         }
         $pages = new Pages([
             'limit' => $this->limit,
@@ -175,9 +186,9 @@ class DataManager extends \Object {
         $cols = $this->getCols();
 
         $table = new Table();
-        $table->name = empty($this->managerOptions['categorys']) ? $this->name : false;
+        $table->name = $this->name;
         $table->setCols($cols);
-        $table->afterHeader='<div class="pagesContainer text-right"></div>';
+        $table->afterHeader = '<div class="pagesContainer text-right"></div>';
         foreach ($buttons as $button) {
             $table->addButton($button);
         }
@@ -192,7 +203,6 @@ class DataManager extends \Object {
         . '>';
         if (!empty($this->managerOptions['categorys'])) {
             ?>
-            <h1><?= $this->name; ?></h1>
             <div class ="col-lg-2" style = 'overflow-x: auto;max-height:400px;'>
                 <h3>Категории
                     <div class="pull-right">
@@ -225,7 +235,12 @@ class DataManager extends \Object {
         <ul class="nav nav-list-categorys" data-col='tree_path'>
             <?php
             $categoryModel = $this->managerOptions['categorys']['model'];
-            $categorys = $categoryModel::get_list();
+            $categorys = $categoryModel::getList();
+            echo "<li>
+                        <label class='nav-header'>
+                            <a href='#' onclick='inji.Ui.dataManagers.get(this).switchCategory(this);return false;' data-path ='/'>/</a> 
+                        </label>
+                    </li>";
             foreach ($categorys as $category) {
                 if ($category->parent_id == 0)
                     $this->showCategory($categorys, $category);
@@ -239,33 +254,33 @@ class DataManager extends \Object {
         $isset = false;
         $class = get_class($category);
         foreach ($categorys as $categoryChild) {
-            if ($categoryChild->{$category->colPrefix() . 'parent_id'} == $category->{$category->index()}) {
+            if ($categoryChild->parent_id == $category->pk()) {
                 if (!$isset) {
                     $isset = true;
                     echo "<li>
                             <label class='nav-toggle nav-header'>
                                 <span class='nav-toggle-icon glyphicon glyphicon-chevron-right'></span> 
-                                <a href='#' onclick='switchCategory(this);return false;' data-path ='" . $category->tree_path . $category->pk() . "/'> " . $category->name . "</a>
-                                <a href = '#' onclick = 'inji.Ui.forms.popUp(\"" . str_replace('\\', '\\\\', get_class($category)) . ':' . $category->pk() . "\")' class ='glyphicon glyphicon-edit'></a>&nbsp;    
-                                <a onclick='inji.Ui.dataManagers.get(this).delCategory({$category->pk()});return false;' class ='glyphicon glyphicon-remove'></a>
-                            </label>
+                                <a href='#' onclick='inji.Ui.dataManagers.get(this).switchCategory(this);return false;' data-path ='" . $category->tree_path . ($category->pk()?$category->pk() . "/":'')."'> " . $category->name . "</a> 
+                                    <a href = '#' onclick = 'inji.Ui.forms.popUp(\"" . str_replace('\\', '\\\\', get_class($category)) . ':' . $category->pk() . "\")' class ='glyphicon glyphicon-edit'></a>&nbsp;    
+                <a onclick='inji.Ui.dataManagers.get(this).delCategory({$category->pk()});return false;' class ='glyphicon glyphicon-remove'></a>
+                    </label>
                             <ul class='nav nav-list nav-left-ml'>";
                 }
                 $this->showCategory($categorys, $categoryChild);
             }
         }
-
         if ($isset) {
             echo '</ul>
                     </li>';
         } else {
             echo "<li>
-            <label class='nav-header'>
-                <span  class=' nav-toggle-icon fa fa-minus'></span>&nbsp;
-                <a href='#' onclick='switchCategory(this);return false;' title = '" . $category->{$category->colPrefix() . 'name'} . "' data-path ='" . $category->{$category::colPrefix() . 'tree_path'} . "" . $category->{$category::index()} . "/'> " . $category->{$category->colPrefix() . 'name'} . "</a>
-                <a href = '#' onclick = 'inji.Ui.forms.popUp(\"" . str_replace('\\', '\\\\', get_class($category)) . ':' . $category->pk() . "\")' class ='glyphicon glyphicon-edit'></a>&nbsp;    
-                <a onclick='inji.Ui.dataManagers.get(this).delCategory({$category->pk()});return false;' class ='glyphicon glyphicon-remove'></a>
-            </label></li>";
+                <label class='nav-header'>
+                    <span  class=' nav-toggle-icon fa fa-minus'></span>&nbsp;
+                    <a href='#' onclick='inji.Ui.dataManagers.get(this).switchCategory(this);return false;' data-path ='" . $category->tree_path . ($category->pk() ? $category->pk() . "/" : '') . "'> " . $category->name . "</a> 
+                    <a href = '#' onclick = 'inji.Ui.forms.popUp(\"" . str_replace('\\', '\\\\', get_class($category)) . ':' . $category->pk() . "\")' class ='glyphicon glyphicon-edit'></a>&nbsp;    
+                    <a onclick='inji.Ui.dataManagers.get(this).delCategory({$category->pk()});return false;' class ='glyphicon glyphicon-remove'></a>
+                </label>
+            </li>";
         }
     }
 

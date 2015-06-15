@@ -39,16 +39,16 @@ class MaterialsController extends Controller {
         $args = func_get_args();
         $category = null;
         $chpu = trim(implode('/', $args));
-        $category = MaterialCatalog::get($chpu, 'mc_chpu');
+        $category = Materials\Catalog::get($chpu, 'chpu');
         if (!$category) {
             Msg::add('Не найдено страницы для отображения', 'danger');
         }
-        $this->view->set_title($category->mc_name);
+        $this->view->setTitle($category->name);
 
-        $pages = new Pages($_GET, ['count' => Material::getCount(['where' => ['material_mc_id', $category->mc_id]]), 'limit' => 20]);
-        $materials = Material::get_list(['where' => ['material_mc_id', $category->mc_id], 'order' => ['material_date_create', 'desc'], 'start' => $pages->params['start'], 'limit' => $pages->params['limit']]);
+        $pages = new Ui\Pages($_GET, ['count' => Materials\Material::getCount(['where' => ['material_catalog_id', $category->id]]), 'limit' => 20]);
+        $materials = Materials\Material::get_list(['where' => ['material_catalog_id', $category->id], 'order' => ['material_date_create', 'desc'], 'start' => $pages->params['start'], 'limit' => $pages->params['limit']]);
 
-        App::$cur->view->page('category', compact('materials', 'pages', 'category'));
+        App::$cur->view->page(['content' => 'category', 'data' => compact('materials', 'pages', 'category')]);
     }
 
 }
