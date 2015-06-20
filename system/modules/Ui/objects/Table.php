@@ -21,6 +21,7 @@ class Table extends \Object {
     public $id = '';
     public $class = 'table';
     public $attributes = [];
+    public $indexCol = null;
 
     function setCols($cols) {
         $this->cols = $cols;

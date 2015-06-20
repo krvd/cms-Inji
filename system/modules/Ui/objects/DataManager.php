@@ -67,7 +67,7 @@ class DataManager extends \Object {
      */
     function getCols() {
         $modelName = $this->modelName;
-        $cols = array_merge(['#'], $this->managerOptions['cols']);
+        $cols = array_merge(['№'], $this->managerOptions['cols']);
         foreach ($cols as $key => $col) {
             if (!empty($modelName::$labels[$col])) {
                 $cols[$key] = $modelName::$labels[$col];
@@ -123,12 +123,16 @@ class DataManager extends \Object {
                             $row[] = "<a class = 'btn btn-xs btn-primary' onclick = 'inji.Ui.dataManagers.popUp(\"" . str_replace('\\', '\\\\', $modelName) . ":" . $item->pk() . "\"," . json_encode(array_merge($params, $managerParams)) . ")'>{$count} Элементы</a>";
                             break;
                         default :
-                            $row[] = $item->{$modelName::$cols[$colName]['relation']}->name();
+                            if ($item->{$modelName::$cols[$colName]['relation']}) {
+                                $row[] = $item->{$modelName::$cols[$colName]['relation']}->name();
+                            } else {
+                                $row[] = $item->$colName;
+                            }
                     }
                 } else {
                     switch ($modelName::$cols[$colName]['type']) {
                         case'select':
-                            $row[] =!empty($modelName::$cols[$colName]['sourceArray'][$item->$colName])?$modelName::$cols[$colName]['sourceArray'][$item->$colName]:$item->$colName;
+                            $row[] = !empty($modelName::$cols[$colName]['sourceArray'][$item->$colName]) ? $modelName::$cols[$colName]['sourceArray'][$item->$colName] : $item->$colName;
                             break;
                         default :
                             $row[] = $item->$colName;
@@ -201,41 +205,12 @@ class DataManager extends \Object {
             $table->addButton($button);
         }
         $this->getPages($params, $model);
-
-        echo '<div '
-        . 'id = "dataManager_' . $this->modelName . '_' . $this->managerName . '_' . \Tools::randomString() . '" '
-        . 'class = "dataManager" '
-        . 'data-params = \'' . json_encode($params) . '\' '
-        . 'data-modelname = \'' . ($model ? get_class($model) : $this->modelName) . ($model && $model->pk() ? ':' . $model->pk() : '') . '\' '
-        . 'data-managername = \'' . $this->managerName . '\''
-        . '>';
-        if (!empty($this->managerOptions['categorys'])) {
-            ?>
-            <div class ="col-lg-2" style = 'overflow-x: auto;max-height:400px;'>
-                <h3>Категории
-                    <div class="pull-right">
-                        <a class ='btn btn-xs btn-primary' onclick='<?= 'inji.Ui.forms.popUp("' . str_replace('\\', '\\\\', $this->managerOptions['categorys']['model']) . '");'; ?>'>Создать</a>
-                    </div>
-                </h3>
-                <div class="categoryTree">
-                    <?php
-                    $this->drawCategorys();
-                    ?>
-                </div>
-            </div>
-            <div class ="col-lg-10">
-                <?php
-                $table->draw();
-                ?>
-                <div class="pagesContainer text-right"></div>
-            </div>
-            <div class="clearfix"></div>
-            <?php
-        } else {
-            $table->draw();
-            echo '<div class="pagesContainer text-right"></div>';
-        }
-        echo '</div>';
+        \App::$cur->view->widget('Ui\DataManager/DataManager', [
+            'dataManager' => $this,
+            'model' => $model,
+            'table' => $table,
+            'params' => $params
+        ]);
     }
 
     function drawCategorys() {

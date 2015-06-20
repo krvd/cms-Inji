@@ -11,6 +11,7 @@
 class DashboardController extends Controller {
 
     function indexAction() {
+        $this->view->setTitle('Панель управления');
         App::$cur->view->page();
     }
 

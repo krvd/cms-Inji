@@ -59,6 +59,14 @@ class View extends Module {
         }
         if (empty($this->tmp_data['content'])) {
             $this->tmp_data['content'] = Controller::$cur->method;
+            $paths = $this->getContentPaths();
+            foreach ($paths as $type => $path) {
+                if (file_exists($path . '/' . $this->tmp_data['content'] . '.php')) {
+                    $this->tmp_data['contentPath'] = $path;
+                    $this->tmp_data['content'] = $this->tmp_data['content'];
+                    break;
+                }
+            }
         }
         $data = $this->paramsParse($params);
         if (file_exists($data['path'])) {
@@ -95,9 +103,7 @@ class View extends Module {
         }
         //set content
         if (!empty($params['content'])) {
-
             $paths = $this->getContentPaths();
-
             foreach ($paths as $type => $path) {
                 if (file_exists($path . '/' . $params['content'] . '.php')) {
                     $data['contentPath'] = $path;
@@ -174,6 +180,10 @@ class View extends Module {
                 case 'CONTENT':
                     $source = $this->cutTag($source, $rawTag);
                     $this->content();
+                    break;
+                case 'TITLE':
+                    $source = $this->cutTag($source, $rawTag);
+                    echo $this->title;
                     break;
                 case 'WIDGET':
                     $source = $this->cutTag($source, $rawTag);
