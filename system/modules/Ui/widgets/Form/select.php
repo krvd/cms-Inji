@@ -7,7 +7,6 @@ foreach ($options['values'] as $key => $value) {
     
     $primaryValue = isset($options['value']) ? $options['value'] : null;
     $primaryValue = is_array($primaryValue) ? $primaryValue['primary'] : $primaryValue;
-    
     if ($key == $primaryValue) {
         $selected = ' selected="selected"';
     }

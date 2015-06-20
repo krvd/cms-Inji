@@ -84,6 +84,10 @@ class Model {
         return 'name';
     }
 
+    function name() {
+        return $this->name ? $this->name : $this->pk();
+    }
+
     static function get($param = null, $col = null, $options = []) {
         if (static::$storage['type'] == 'moduleConfig') {
             return static::getFromModuleStorage($param, $col, $options);
@@ -175,6 +179,9 @@ class Model {
         }
         if (!empty($options['where'])) {
             static::fixPrefix($options['where'], 'first');
+        }
+        if (!empty($options['order'])) {
+            static::fixPrefix($options['order'], 'first');
         }
         return static::get_list($options);
     }

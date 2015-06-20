@@ -202,61 +202,6 @@ class View extends Module {
         return substr($source, ( $pos + strlen($rawTag) + 2));
     }
 
-    function bodyEnd() {
-        $options = [
-            'scripts' => [],
-            'styles' => [],
-        ];
-        $scripts = [];
-        if (!empty($this->libAssets['js'])) {
-            foreach ($this->libAssets['js'] as $js) {
-                $href = $this->getHref('js', $js);
-                if (!$href)
-                    continue;
-
-                $scripts[] = $href;
-            }
-        }
-        if (!empty(Inji::$config['assets']['js'])) {
-            foreach (Inji::$config['assets']['js'] as $js) {
-                if (is_array($js)) {
-                    $asset = $js;
-                } else {
-                    $asset = [];
-                }
-                $asset['file'] = $this->getHref('js', $js);
-                if (!$asset['file'])
-                    continue;
-                $scripts[] = $asset;
-            }
-        }
-        if (!empty($this->dynAssets['js'])) {
-            foreach ($this->dynAssets['js'] as $js) {
-                if (is_array($js)) {
-                    $asset = $js;
-                } else {
-                    $asset = [];
-                }
-                $asset['file'] = $this->getHref('js', $js);
-                if (!$asset['file'])
-                    continue;
-                $scripts[] = $asset;
-            }
-        }
-        if (!empty($this->template['js'])) {
-            foreach ($this->template['js'] as $js) {
-                if (strpos($js, '//') !== false)
-                    $href = $js;
-                else
-                    $href = App::$cur->templatesPath . "/{$this->template['name']}/js/{$js}";
-                $scripts[] = $href;
-            }
-        }
-        $options['scripts'] = $scripts;
-        $options['appRoot'] = App::$cur->type == 'app' ? '/' : '/' . App::$cur->name . '/';
-        $this->widget('View\bodyEnd', compact('options'));
-    }
-
     function getHref($type, $params) {
         if (is_string($params)) {
             return (App::$cur->type != 'app' ? '/' . App::$cur->name : '' ) . $params . "?" . rand(0, 100);
@@ -303,38 +248,134 @@ class View extends Module {
             foreach (App::$cur->Config->app['site']['metatags'] as $meta)
                 echo "\n        <meta name='{$meta['name']}' content='{$meta['content']}' />";
         }
+        if (!empty(Inji::$config['assets']['js'])) {
+            foreach (Inji::$config['assets']['js'] as $js) {
+                $this->customAsset('js', $js);
+            }
+        }
 
         $this->checkNeedLibs();
 
         if (!empty($this->libAssets['css'])) {
-            foreach ($this->libAssets['css'] as $css) {
-                if (strpos($css, '//') !== false)
-                    $href = $css;
-                else
-                    $href = (App::$cur->type != 'app' ? '/' . App::$cur->name : '' ) . $css;
-                echo "\n        <link href='{$href}' rel='stylesheet' type='text/css' />";
-            }
+            $this->renderCss($this->libAssets['css'], 'libs');
         }
         if (!empty($this->template['css'])) {
-            foreach ($this->template['css'] as $css) {
-                if (strpos($css, '://') !== false)
-                    $href = $css;
-                else
-                    $href = App::$cur->templatesPath . "/{$this->template['name']}/css/{$css}";
-                echo "\n        <link href='{$href}' rel='stylesheet' type='text/css' />";
-            }
+            $this->renderCss($this->template['css'], 'template');
         }
         if (!empty($this->dynAssets['css'])) {
-            foreach ($this->dynAssets['css'] as $css) {
-                if (strpos($css, '//') !== false)
-                    $href = $css;
-                else
-                    $href = (App::$cur->type != 'app' ? '/' . App::$cur->name : '' ) . $css;
-                echo "\n        <link href='{$href}' rel='stylesheet' type='text/css' />";
-            }
+            $this->renderCss($this->dynAssets['css'], 'custom');
         }
-
         echo "\n        <script src='" . (App::$cur->type != 'app' ? '/' . App::$cur->name : '' ) . "/static/system/js/Inji.js'></script>";
+    }
+
+    function renderCss($cssArray, $type = 'custom') {
+        switch ($type) {
+            case'libs':
+                foreach ($cssArray as $css) {
+                    if (is_array($css)) {
+                        $this->renderCss($css, $type);
+                        continue;
+                    }
+                    if (strpos($css, '//') !== false)
+                        $href = $css;
+                    else
+                        $href = (App::$cur->type != 'app' ? '/' . App::$cur->name : '' ) . $css;
+                    echo "\n        <link href='{$href}' rel='stylesheet' type='text/css' />";
+                }
+                break;
+            case'template':
+                foreach ($cssArray as $css) {
+                    if (is_array($css)) {
+                        $this->renderCss($css, $type);
+                        continue;
+                    }
+                    if (strpos($css, '://') !== false)
+                        $href = $css;
+                    else
+                        $href = App::$cur->templatesPath . "/{$this->template['name']}/css/{$css}";
+                    echo "\n        <link href='{$href}' rel='stylesheet' type='text/css' />";
+                }
+                break;
+            case 'custom':
+                foreach ($cssArray as $css) {
+                    if (is_array($css)) {
+                        $this->renderCss($css, $type);
+                        continue;
+                    }
+                    if (strpos($css, '//') !== false)
+                        $href = $css;
+                    else
+                        $href = (App::$cur->type != 'app' ? '/' . App::$cur->name : '' ) . $css;
+                    echo "\n        <link href='{$href}' rel='stylesheet' type='text/css' />";
+                }
+                break;
+        }
+    }
+
+    function bodyEnd() {
+        $options = [
+            'scripts' => [],
+            'styles' => [],
+        ];
+        if (!empty($this->libAssets['js'])) {
+            $this->genScriptArray($this->libAssets['js'], 'libs', $options['scripts']);
+        }
+        if (!empty($this->dynAssets['js'])) {
+            $this->genScriptArray($this->dynAssets['js'], 'custom', $options['scripts']);
+        }
+        if (!empty($this->template['js'])) {
+            $this->genScriptArray($this->template['js'], 'template', $options['scripts']);
+        }
+        $options['appRoot'] = App::$cur->type == 'app' ? '/' : '/' . App::$cur->name . '/';
+        $this->widget('View\bodyEnd', compact('options'));
+    }
+
+    function genScriptArray($jsArray, $type = 'custom', &$resultArray) {
+        switch ($type) {
+            case 'libs':
+                foreach ($jsArray as $js) {
+                    if (is_array($js)) {
+                        $this->genScriptArray($js, $type, $resultArray);
+                        continue;
+                    }
+                    $href = $this->getHref('js', $js);
+                    if (!$href)
+                        continue;
+
+                    $resultArray[] = $href;
+                }
+                break;
+            case'template':
+                foreach ($jsArray as $js) {
+                    if (is_array($js)) {
+                        $this->genScriptArray($js, $type, $resultArray);
+                        continue;
+                    }
+                    if (strpos($js, '//') !== false)
+                        $href = $js;
+                    else
+                        $href = App::$cur->templatesPath . "/{$this->template['name']}/js/{$js}";
+                    $resultArray[] = $href;
+                }
+                break;
+            case 'custom':
+                foreach ($jsArray as $js) {
+                    if (is_array($js)) {
+                        if (!empty($js[0]) && is_array($js[0])) {
+                            $this->genScriptArray($js, $type, $resultArray);
+                            continue;
+                        }
+                        $asset = $js;
+                    } else {
+                        $asset = [];
+                    }
+                    $asset['file'] = $this->getHref('js', $js);
+                    if (!$asset['file'])
+                        continue;
+                    $resultArray[] = $asset;
+                }
+                break;
+        }
     }
 
     function timegen() {
@@ -346,7 +387,7 @@ class View extends Module {
         if (!$lib) {
             $this->dynAssets[$type][] = $asset;
         } else {
-            $this->libAssets[$type][] = $asset;
+            $this->libAssets[$type][$lib][] = $asset;
         }
     }
 

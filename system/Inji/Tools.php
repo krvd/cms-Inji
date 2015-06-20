@@ -130,7 +130,7 @@ class Tools extends Model {
         return $img_type;
     }
 
-    function sendMail($from, $to, $subject, $text, $charset = 'utf-8', $ctype = 'text/html') {
+    static function sendMail($from, $to, $subject, $text, $charset = 'utf-8', $ctype = 'text/html') {
         $headers = "From: {$from}\r\n";
         $headers .= "Content-type: {$ctype}; charset={$charset}\r\n";
         $headers .= "Mime-Version: 1.0\r\n";

@@ -9,7 +9,8 @@ return [
         'js' => [
             [
                 'file' => '/static/moduleAsset/Server/js/Server.js',
-                'name' => 'Server'
+                'name' => 'Server',
+                'libs' => ['noty']
             ]
         ]
     ]

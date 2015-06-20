@@ -85,5 +85,8 @@ class Info extends \Model {
             ]
         ];
     }
+    function name(){
+        return $this->first_name.' '.$this->last_name.' '.$this->middle_name;
+    }
 
 }

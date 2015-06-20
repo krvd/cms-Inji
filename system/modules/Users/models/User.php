@@ -69,6 +69,9 @@ class User extends \Model {
             ]
         ];
     }
+    function name(){
+        return $this->info->name();
+    }
 
     function isAdmin() {
         if ($this->group_id == 3) {

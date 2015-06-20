@@ -17,12 +17,14 @@ class Result extends \Object {
 
     public $content = null;
     public $success = true;
+    public $successMsg = '';
 
     function send() {
         $return = [];
         $return['success'] = $this->success;
         if ($this->success) {
             $return['content'] = $this->content;
+            $return['successMsg'] = $this->successMsg;
         } else {
             $return['error'] = $this->content;
         }

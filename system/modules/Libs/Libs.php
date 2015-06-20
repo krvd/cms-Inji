@@ -12,12 +12,12 @@ class Libs extends Module {
             }
             if (!empty($lib['files']['css'])) {
                 foreach ($lib['files']['css'] as $file) {
-                    App::$cur->view->customAsset('css', '/static/moduleAsset/libs/libs/' . $libName . '/' . $file, true);
+                    App::$cur->view->customAsset('css', '/static/moduleAsset/libs/libs/' . $libName . '/' . $file, $libName);
                 }
             }
             if (!empty($lib['files']['js'])) {
                 foreach ($lib['files']['js'] as $file) {
-                    App::$cur->view->customAsset('js', '/static/moduleAsset/libs/libs/' . $libName . '/' . $file, true);
+                    App::$cur->view->customAsset('js', '/static/moduleAsset/libs/libs/' . $libName . '/' . $file, $libName);
                 }
             }
         }

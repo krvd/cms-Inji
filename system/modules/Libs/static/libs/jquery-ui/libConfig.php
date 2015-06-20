@@ -5,10 +5,11 @@ return [
     'version' => '1.11.4',
     'files' => [
         'js' => [
-            'jquery-ui.min.js'
+            'jquery-ui.min.js',
+			'i18n/datepicker-ru.js'
         ],
         'css'=>[
-            'jquery-ui.min.css'
+            'custom-theme/jquery-ui-1.10.3.custom.css'
         ]
     ]
 ];

@@ -118,7 +118,7 @@ DataManagers.prototype.popUp = function (item, params) {
         dataType: 'json',
         data: {item: item, params: params},
         success: function (data) {
-            modal.find('.modal-body').html(data.content);
+            modal.find('.modal-body').html(data);
             $.each(modal.find('.modal-body .dataManager'), function () {
                 inji.Ui.dataManagers.instances[$(this).attr('id')] = new DataManager($(this));
             });
@@ -194,8 +194,8 @@ DataManager.prototype.load = function () {
         url: 'ui/dataManager/loadRows',
         data: {params: params, modelName: this.modelName, managerName: this.managerName},
         success: function (data) {
-            dataManager.element.find('tbody').html(data.content.rows);
-            dataManager.element.find('.pagesContainer').html(data.content.pages);
+            dataManager.element.find('tbody').html(data.rows);
+            dataManager.element.find('.pagesContainer').html(data.pages);
         }
     });
     if (dataManager.element.find('.categoryTree').length > 0) {
@@ -204,7 +204,7 @@ DataManager.prototype.load = function () {
             url: 'ui/dataManager/loadCategorys',
             data: {params: params, modelName: this.modelName, managerName: this.managerName},
             success: function (data) {
-                dataManager.element.find('.categoryTree').html(data.content);
+                dataManager.element.find('.categoryTree').html(data);
                 var active = dataManager.element.find('.categoryTree [data-path="' + instance.categoryPath + '"]');
                 if(active.length>0){
                     active.parents('.nav-left-ml').css('display', 'none');
@@ -242,7 +242,7 @@ Forms.prototype.popUp = function (item, params) {
         url: 'ui/formPopUp/',
         data: {item: item, params: params},
         success: function (data) {
-            modal.find('.modal-body').html(data.content);
+            modal.find('.modal-body').html(data);
             if (typeof CKEDITOR != 'undefined') {
                 CKEDITOR.replaceAll(function (textarea, config) {
                     if ($(textarea).hasClass('htmleditor') && $(textarea).css('display') != 'none') {
@@ -277,7 +277,7 @@ Forms.prototype.submitAjax = function (form) {
         data: formData,
         processData: false,
         success: function (data) {
-            container.html(data.content);
+            container.html(data);
             var btn = container.find('form button');
             var text = btn.text();
             btn.text('Изменения сохранены!');

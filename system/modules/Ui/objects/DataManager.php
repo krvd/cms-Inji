@@ -100,8 +100,8 @@ class DataManager extends \Object {
             'limit' => $this->limit,
             'start' => $this->page * $this->limit - $this->limit
         ];
-        if (!empty($params['categoryPath'])  && $modelName::$categoryModel) {
-            $queryParams['where'] = ['tree_path', $params['categoryPath'] . '%','LIKE'];
+        if (!empty($params['categoryPath']) && $modelName::$categoryModel) {
+            $queryParams['where'] = ['tree_path', $params['categoryPath'] . '%', 'LIKE'];
         }
         if ($model && !empty($params['relation'])) {
             $items = $model->$params['relation']($queryParams);
@@ -114,17 +114,25 @@ class DataManager extends \Object {
             $row[] = $item->pk();
             foreach ($this->managerOptions['cols'] as $colName) {
                 $relations = $modelName::relations();
-                if (!empty($modelName::$cols[$colName]['relation']) && !empty($relations[$modelName::$cols[$colName]['relation']]['type']) && $relations[$modelName::$cols[$colName]['relation']]['type'] == 'many') {
-                    switch ($relations[$modelName::$cols[$colName]['relation']]['type']) {
+                if (!empty($modelName::$cols[$colName]['relation'])) {
+                    $type = !empty($relations[$modelName::$cols[$colName]['relation']]['type']) ? $relations[$modelName::$cols[$colName]['relation']]['type'] : 'to';
+                    switch ($type) {
                         case'many':
                             $managerParams = ['relation' => $modelName::$cols[$colName]['relation']];
                             $count = $item->{$modelName::$cols[$colName]['relation']}(array_merge($params, ['count' => 1]));
                             $row[] = "<a class = 'btn btn-xs btn-primary' onclick = 'inji.Ui.dataManagers.popUp(\"" . str_replace('\\', '\\\\', $modelName) . ":" . $item->pk() . "\"," . json_encode(array_merge($params, $managerParams)) . ")'>{$count} Элементы</a>";
                             break;
+                        default :
+                            $row[] = $item->{$modelName::$cols[$colName]['relation']}->name();
                     }
                 } else {
-
-                    $row[] = $item->$colName;
+                    switch ($modelName::$cols[$colName]['type']) {
+                        case'select':
+                            $row[] =!empty($modelName::$cols[$colName]['sourceArray'][$item->$colName])?$modelName::$cols[$colName]['sourceArray'][$item->$colName]:$item->$colName;
+                            break;
+                        default :
+                            $row[] = $item->$colName;
+                    }
                 }
             }
             $row[] = $this->rowButtons($item, $params);
@@ -160,7 +168,7 @@ class DataManager extends \Object {
         ];
         $modelName = $this->modelName;
         if (!empty($params['categoryPath']) && $modelName::$categoryModel) {
-            $queryParams['where'] = ['tree_path', $params['categoryPath'] . '%','LIKE'];
+            $queryParams['where'] = ['tree_path', $params['categoryPath'] . '%', 'LIKE'];
         }
         $modelName = $this->modelName;
         if ($model && !empty($params['relation'])) {
@@ -260,7 +268,7 @@ class DataManager extends \Object {
                     echo "<li>
                             <label class='nav-toggle nav-header'>
                                 <span class='nav-toggle-icon glyphicon glyphicon-chevron-right'></span> 
-                                <a href='#' onclick='inji.Ui.dataManagers.get(this).switchCategory(this);return false;' data-path ='" . $category->tree_path . ($category->pk()?$category->pk() . "/":'')."'> " . $category->name . "</a> 
+                                <a href='#' onclick='inji.Ui.dataManagers.get(this).switchCategory(this);return false;' data-path ='" . $category->tree_path . ($category->pk() ? $category->pk() . "/" : '') . "'> " . $category->name . "</a> 
                                     <a href = '#' onclick = 'inji.Ui.forms.popUp(\"" . str_replace('\\', '\\\\', get_class($category)) . ':' . $category->pk() . "\")' class ='glyphicon glyphicon-edit'></a>&nbsp;    
                 <a onclick='inji.Ui.dataManagers.get(this).delCategory({$category->pk()});return false;' class ='glyphicon glyphicon-remove'></a>
                     </label>

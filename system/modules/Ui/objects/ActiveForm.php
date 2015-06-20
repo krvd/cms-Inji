@@ -197,10 +197,14 @@ class ActiveForm extends \Object {
 
                 $relations = $modelName::relations();
                 $selectParams = !empty($params['dataManagerParams']) ? $params['dataManagerParams'] : [];
-                $items = $relations[$inputParams['relation']]['model']::getList($selectParams);
+                $items = $relations[$inputParams['relation']]['model']::getList();
                 $values = [0 => 'Не задано'];
                 foreach ($items as $key => $item) {
-                    $values[$key] = $item->$inputParams['showCol'];
+                    if (!empty($inputParams['showCol'])) {
+                        $values[$key] = $item->$inputParams['showCol'];
+                    } else {
+                        $values[$key] = $item->name();
+                    }
                 }
                 return $values;
                 break;

@@ -1,9 +1,10 @@
 <?php
 
 class Users extends Module {
+
     function init() {
         \Users\User::$cur = new Users\User(array('group_id' => 1, 'role_id' => 1));
-        
+
         if (!App::$cur->db->connect) {
             return;
         }
@@ -60,21 +61,26 @@ class Users extends Module {
             $passre->status = 2;
             $passre->save();
         }
-        $hash = $user->id . '_' . Tools::randomString(255);
+        $hash = $user->id . '_' . Tools::randomString(50);
         $passre = new Users\Passre(['user_id' => $user->id, 'status' => 1, 'hash' => $hash]);
+        $passre->save();
         Tools::sendMail('noreply@' . INJI_DOMAIN_NAME, $user_mail, 'Восстановление пароля на сайте ' . INJI_DOMAIN_NAME, 'Было запрошено восстановление пароля на сайте ' . INJI_DOMAIN_NAME . '<br />для продолжения восстановления пароля перейдите по ссылке: <a href = "http://' . INJI_DOMAIN_NAME . '/?passrecont=1&hash=' . $hash . '">' . INJI_DOMAIN_NAME . '/?passrecont=1&hash=' . $hash . '</a>');
         Tools::redirect('/', 'На указанный почтовый ящик была выслана инструкция по восстановлению пароля', 'success');
     }
 
     function passrecont($hash) {
-        $passre = Users\Passre::get([[$hash, 'hash'], ['status', 1]]);
+        $passre = Users\Passre::get([['hash', $hash]]);
         if ($passre) {
+            if ($passre->status != 1) {
+                Tools::redirect('/', 'Этот код восстановление более недействителен', 'danger');
+            }
             $passre->status = 3;
+            $passre->save();
             $pass = Tools::randomString(10);
             $user = Users\User::get($passre->user_id);
             $user->pass = $this->hashpass($pass);
             $user->save();
-            $this->users->autorization($user->mail, $user->pass, 'mail');
+            $this->autorization($user->mail, $user->pass, 'mail');
             Tools::sendMail('noreply@' . INJI_DOMAIN_NAME, $user->mail, 'Новый пароль на сайте ' . INJI_DOMAIN_NAME, 'Было запрошено восстановление пароля на сайте ' . INJI_DOMAIN_NAME . '<br />Ваш новый пароль: ' . $pass);
             Tools::redirect('/', 'На указанный почтовый ящик был выслан новый пароль', 'success');
         }
