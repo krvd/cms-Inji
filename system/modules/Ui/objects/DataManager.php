@@ -103,6 +103,9 @@ class DataManager extends \Object {
         if (!empty($params['categoryPath']) && $modelName::$categoryModel) {
             $queryParams['where'] = ['tree_path', $params['categoryPath'] . '%', 'LIKE'];
         }
+        if(!empty($params['appType'])){
+            $queryParams['appType'] = $params['appType'];
+        }
         if ($model && !empty($params['relation'])) {
             $items = $model->$params['relation']($queryParams);
         } else {
@@ -131,6 +134,9 @@ class DataManager extends \Object {
                     }
                 } else {
                     switch ($modelName::$cols[$colName]['type']) {
+                        case'bool':
+                            $row[] = $item->$colName ? 'Да' : 'Нет';
+                            break;
                         case'select':
                             $row[] = !empty($modelName::$cols[$colName]['sourceArray'][$item->$colName]) ? $modelName::$cols[$colName]['sourceArray'][$item->$colName] : $item->$colName;
                             break;

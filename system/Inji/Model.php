@@ -539,7 +539,7 @@ class Model {
         return true;
     }
 
-    function delete($options) {
+    function delete($options = []) {
         $this->beforeDelete();
 
         if (static::$storage['type'] == 'moduleConfig') {

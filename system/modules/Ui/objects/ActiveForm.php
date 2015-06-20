@@ -115,6 +115,16 @@ class ActiveForm extends \Object {
                             if (isset($request[$col])) {
                                 $this->model->$col = $request[$col];
                             }
+                            else {
+                                switch ($param['type']){
+                                    case 'checkbox':
+                                    case 'number':
+                                        $this->model->$col = 0;
+                                        break;
+                                    default :
+                                        $this->model->$col = '';
+                                }
+                            }
                             break;
                     }
                 }
@@ -166,8 +176,15 @@ class ActiveForm extends \Object {
                     if ($this->form['inputs'][$col]['type'] == 'select') {
                         $inputOptions['values'] = $this->getOptionsList($this->form['inputs'][$col], $params);
                     }
+                    switch ($this->form['inputs'][$col]['type']) {
+                        case 'bool';
+                            $type = 'checkbox';
+                            break;
+                        default :
+                            $type = $this->form['inputs'][$col]['type'];
+                    }
 
-                    $form->input($this->form['inputs'][$col]['type'], "{$this->requestFormName}[$this->modelName][{$col}]", ($this->model && !empty($modelName::$labels[$col])) ? $modelName::$labels[$col] : $col, $inputOptions);
+                    $form->input($type, "{$this->requestFormName}[$this->modelName][{$col}]", ($this->model && !empty($modelName::$labels[$col])) ? $modelName::$labels[$col] : $col, $inputOptions);
                 }
                 echo '</div>';
             }

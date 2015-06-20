@@ -39,8 +39,8 @@ class Users extends Module {
                     ['ip', filter_input(INPUT_SERVER, 'REMOTE_ADDR')],
                     ['hash', $hash]
         ]);
-        if ($session) {
-            Users\User::$cur = Users\User::get($session->user_id);
+        if ($session && $sessionUser = Users\User::get($session->user_id)) {
+            Users\User::$cur = $sessionUser;
             Users\User::$cur->last_activ = 'CURRENT_TIMESTAMP';
             Users\User::$cur->save();
         } else {

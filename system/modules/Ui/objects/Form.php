@@ -28,6 +28,11 @@ class Form extends \Object {
 
     function input($type, $name, $label = '', $options = []) {
         switch ($type) {
+            case 'checkbox':
+                $params = compact('name', 'label', 'options');
+                $params['form'] = $this;
+                \App::$cur->view->widget('Ui\Form/checkbox', $params);
+                break;
             case 'dynamicList':
                 $params = compact('name', 'label', 'options');
                 $params['form'] = $this;

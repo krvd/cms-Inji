@@ -64,7 +64,7 @@ class DataManagerController extends Controller {
         } else {
             $params = [];
         }
-        
+
         $dataManager = new Ui\DataManager($modelName, $_GET['managerName']);
         $rows = $dataManager->getRows($params, $model);
         foreach ($rows as $row) {
@@ -73,7 +73,7 @@ class DataManagerController extends Controller {
         $result->content['rows'] = ob_get_contents();
         ob_clean();
         $pages = $dataManager->getPages($params, $model);
-        
+
         if ($pages) {
             $pages->draw();
         }
@@ -112,15 +112,37 @@ class DataManagerController extends Controller {
     }
 
     function delRowAction() {
-
-        $dataManager = new Ui\DataManager($_GET['modelName'], $_GET['managerName']);
+        
+        if (strpos($_GET['modelName'], ':')) {
+            $raw = explode(':', $_GET['modelName']);
+            $modelName = $raw[0];
+            $id = $raw[1];
+            $model = $modelName::get($id);
+        } else {
+            $modelName = $_GET['modelName'];
+            $id = null;
+            $model = null;
+        }
+        if (!empty($_GET['params'])) {
+            $params = $_GET['params'];
+            if (!empty($params['relation'])) {
+                $relations = $modelName::relations();
+                
+                $modelName = $relations[$params['relation']]['model'];
+                
+            }
+        } else {
+            $params = [];
+        }
+        $dataManager = new Ui\DataManager($modelName, $_GET['managerName']);
         if ($dataManager->chackAccess()) {
-            $model = $_GET['modelName']::get($_GET['key'], $_GET['modelName']::index(), !empty($_GET['params']) ? $_GET['params'] : []);
+            $model = $modelName::get($_GET['key'], $modelName::index(), !empty($_GET['params']) ? $_GET['params'] : []);
             if ($model) {
                 $model->delete(!empty($_GET['params']) ? $_GET['params'] : []);
             }
         }
         $result = new Server\Result();
+        $result->successMsg = 'Запись удалена';
         $result->send();
     }
 
