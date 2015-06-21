@@ -19,7 +19,7 @@ class usersController extends Controller {
     }
 
     function registrationAction() {
-        $this->view->set_title('Регистрация');
+        $this->view->setTitle('Регистрация');
         if (Users\User::$cur->user_id) {
             Tools::redirect('/', 'Вы уже зарегистрированы');
         }

@@ -34,20 +34,20 @@
                 <div class="col-sm-6">
                     <div class ='form-group'>
                         <label>Загрузите ваше фото</label>
-                        <img src ='/static/images/no-image.png' class ='img-responsive' />
+                        <img src ='/static/system/images/no-image.png' class ='img-responsive' />
                         <input type ='file' name ='user_photo'/>
                     </div>
                 </div>
 
             </div>
             <div class ='form-group'>
-                <?php $this->Recaptcha->show(); ?>
+                <?php App::$cur->Recaptcha->show(); ?>
             </div>
-            <div class="checkbox">
+            <!--<div class="checkbox">
                 <label>
                     <input type="checkbox" name = 'accept_license' required> Я принимаю <a href = '#userLicense' type="button" data-toggle="modal" data-target="#userLicense">Пользовательское соглашение</a>
                 </label>
-            </div>
+            </div>-->
             <div class="form-actions text-center">
                 <button class ="btn btn-success" >Зарегистрироваться</button>
             </div>

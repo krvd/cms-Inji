@@ -10,6 +10,9 @@ return [
                 'Users' => [
                     'login' => [
                         '_access' => []
+                    ],
+                    'registration' => [
+                        '_access' => []
                     ]
                 ],
             ],
@@ -22,8 +25,8 @@ return [
             ]
         ]
     ],
-    'loginUrl'=>[
-        'app'=>'/',
-        'appAdmin'=>'/admin'
+    'loginUrl' => [
+        'app' => '/',
+        'appAdmin' => '/admin'
     ]
 ];
