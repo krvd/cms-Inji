@@ -12,7 +12,7 @@ class File extends \Model {
     }
 
     function getRealPath() {
-        $sitePath = App::$primary->path;
+        $sitePath = \App::$primary->path;
         return "{$sitePath}/{$this->file_path}";
     }
 
