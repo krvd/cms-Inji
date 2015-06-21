@@ -9,10 +9,10 @@
 
     </div>
     <div class="col-sm-9 blockMap">
-        <div class ='pull-right'>
+        <!--<div class ='pull-right'>
             <a type='button' class="btn btn-primary btn-sm" onclick="blockDrop.addRow('.blockMap .rows');">Добавить ряд</a>
         </div>
-        <div class ='clearfix'></div>
+        <div class ='clearfix'></div>-->
         <div class ='rows'>
             <?= !empty($map) ? $map : ''; ?>
         </div>
