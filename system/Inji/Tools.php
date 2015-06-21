@@ -86,6 +86,9 @@ class Tools extends Model {
                 $new_width = $max_width;
                 $new_height = $max_height;
             }
+            if ($pos == 'top') {
+                $imgY = 0;
+            }
         } elseif ($crop == 'c') {
 //Вычисляем некий коэффициент масштабирования
             $k1 = $img_width / $max_width;
