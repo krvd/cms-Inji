@@ -9,6 +9,7 @@ function Ui() {
 Ui.prototype.init = function () {
     this.modals = new Modals();
     this.forms = new Forms();
+    this.editors = new Editors();
     this.dataManagers = new DataManagers();
     inji.onLoad(function () {
         inji.Ui.bindMenu($('.nav-list-categorys'));
@@ -26,6 +27,58 @@ Ui.prototype.bindMenu = function (container) {
             $(this).removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-right');
         }
     });
+}
+/**
+ * Editors
+ * 
+ */
+Editors = function () {
+    this.ckeditor = false;
+    if (typeof CKEDITOR != 'undefined') {
+        this.ckeditor = true;
+    }
+}
+Editors.prototype.loadAll = function () {
+
+}
+Editors.prototype.loadIn = function (selector, search) {
+    if (this.ckeditor) {
+        var instances;
+        if (typeof search != 'undefined') {
+            instances = $(selector).find(search);
+        }
+        else {
+            instances = $(selector);
+        }
+        $.each(instances, function () {
+            if ($(this).closest('.modal').length == 0 || $(this).closest('.modal').hasClass('in')) {
+                $(this).ckeditor();
+            }
+            if ($(this).closest('.modal').length != 0) {
+                var _this = this;
+                $(this).closest('.modal').on('shown.bs.modal', function () {
+                    $(_this).ckeditor();
+                })
+                $(this).closest('.modal').on('hide.bs.modal', function () {
+                    if ($(_this).next().hasClass('cke')) {
+                        var instance = $(_this).next().attr('id').replace('cke_', '');
+                        CKEDITOR.instances[instance].updateElement();
+                        CKEDITOR.instances[instance].destroy();
+                    }
+                })
+            }
+        })
+    }
+}
+Editors.prototype.beforeSubmit = function (form) {
+    if (this.ckeditor) {
+        $.each($(form).find('.cke'), function () {
+            var instance = $(this).attr('id').replace('cke_', '');
+            CKEDITOR.instances[instance].updateElement();
+            $(CKEDITOR.instances[instance].element).closest('.modal').unbind();
+            CKEDITOR.instances[instance].destroy();
+        });
+    }
 }
 /**
  * Modals objects
@@ -206,7 +259,7 @@ DataManager.prototype.load = function () {
             success: function (data) {
                 dataManager.element.find('.categoryTree').html(data);
                 var active = dataManager.element.find('.categoryTree [data-path="' + instance.categoryPath + '"]');
-                if(active.length>0){
+                if (active.length > 0) {
                     active.parents('.nav-left-ml').css('display', 'none');
                 }
 
@@ -237,32 +290,24 @@ Forms.prototype.popUp = function (item, params) {
         code += params.relation;
     }
     code = code.replace(':', '_').replace('\\', '_');
+    var exist = false;
+    if ($('#' + code).length != 0) {
+        exist = true;
+    }
     var modal = inji.Ui.modals.show('', '<div class = "text-center"><img src = "' + inji.options.appRoot + 'static/moduleAsset/Ui/images/ajax-loader.gif" /></div>', code, 'modal-lg');
-    inji.Server.request({
-        url: 'ui/formPopUp/',
-        data: {item: item, params: params},
-        success: function (data) {
-            modal.find('.modal-body').html(data);
-            if (typeof CKEDITOR != 'undefined') {
-                CKEDITOR.replaceAll(function (textarea, config) {
-                    if ($(textarea).hasClass('htmleditor') && $(textarea).css('display') != 'none') {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                });
+    if (!exist) {
+        inji.Server.request({
+            url: 'ui/formPopUp/',
+            data: {item: item, params: params},
+            success: function (data) {
+                modal.find('.modal-body').html(data);
+                inji.Ui.editors.loadIn(modal.find('.modal-body'), '.htmleditor');
             }
-        }
-    });
+        });
+    }
 }
 Forms.prototype.submitAjax = function (form) {
-    if (typeof CKEDITOR != 'undefined' && typeof CKEDITOR.instances != 'undefined') {
-        for (instance in CKEDITOR.instances) {
-            CKEDITOR.instances[instance].updateElement();
-        }
-    }
+    inji.Ui.editors.beforeSubmit(form);
     var form = $(form);
     var container = form.parent();
     var btn = form.find('button');
@@ -278,6 +323,7 @@ Forms.prototype.submitAjax = function (form) {
         processData: false,
         success: function (data) {
             container.html(data);
+            inji.Ui.editors.loadIn(container, '.htmleditor');
             var btn = container.find('form button');
             var text = btn.text();
             btn.text('Изменения сохранены!');
@@ -319,7 +365,6 @@ Forms.prototype.checkAditionals = function (select) {
         nextSelect = $(nextSelect).next();
         i++;
     }
-
 }
 Forms.prototype.delRowFromList = function (btn) {
     $(btn).closest('tr').remove();

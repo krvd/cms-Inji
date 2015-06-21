@@ -47,7 +47,7 @@ class User extends \Model {
             'map' => [
                 ['login', 'mail',],
                 ['group_id', 'role_id'],
-                ['form:info:profile']
+                ['form:info:manager']
             ]
         ]
     ];

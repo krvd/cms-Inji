@@ -17,11 +17,11 @@ class Info extends \Model {
         ],
         'sex' => [
             'type' => 'select',
-            'source'=>'array',
-            'sourceArray'=>[
-                0=>'Не определился',
-                1=>'Мужчина',
-                2=>'Женщина'
+            'source' => 'array',
+            'sourceArray' => [
+                0 => 'Не определился',
+                1 => 'Мужчина',
+                2 => 'Женщина'
             ]
         ],
         'photo_file_id' => [
@@ -44,6 +44,21 @@ class Info extends \Model {
         ]
     ];
     static $forms = [
+        'manager' => [
+            'options' => [
+                'access' => [
+                    'groups' => [
+                        3
+                    ],
+                ]
+            ],
+            'map' => [
+                ['first_name', 'last_name'],
+                ['middle_name', 'city'],
+                ['sex', 'photo_file_id'],
+                ['bday', 'phone']
+            ]
+        ],
         'profile' => [
             'options' => [
                 'access' => [
@@ -85,8 +100,9 @@ class Info extends \Model {
             ]
         ];
     }
-    function name(){
-        return $this->first_name.' '.$this->last_name.' '.$this->middle_name;
+
+    function name() {
+        return $this->first_name . ' ' . $this->last_name . ' ' . $this->middle_name;
     }
 
 }
