@@ -11,6 +11,7 @@ class Model {
     static $labels = [];
     static $forms = [];
     static $cols = [];
+    static $needJoin = [];
 
     function __construct($params = array()) {
         $this->setParams($params);
@@ -37,6 +38,8 @@ class Model {
                     }
                     if (is_array($array[$key])) {
                         static::fixPrefix($array[$key], 'key');
+                    } else {
+                        static::checkForJoin($key);
                     }
                 }
                 break;
@@ -45,6 +48,8 @@ class Model {
                 if (isset($array[0]) && is_string($array[0])) {
                     if (!isset($cols[$array[0]]) && isset($cols[static::colPrefix() . $array[0]])) {
                         $array[0] = static::colPrefix() . $array[0];
+                    } else {
+                        static::checkForJoin($array[0]);
                     }
                 } elseif (isset($array[0]) && is_array($array[0])) {
                     foreach ($array as &$item) {
@@ -52,6 +57,19 @@ class Model {
                     }
                 }
                 break;
+        }
+    }
+
+    static function checkForJoin(&$col) {
+        if (strpos($col, ':') !== false) {
+            $raw = explode(':', $col);
+            $relations = static::relations();
+            if (isset($relations[$raw[0]])) {
+                $rel = $raw[0];
+                $col = $raw[1];
+                $relations[$rel]['model']::fixPrefix($col);
+                static::$needJoin[$rel] = $rel;
+            }
         }
     }
 
@@ -142,6 +160,24 @@ class Model {
             App::$cur->db->order($options['order']);
         if (!empty($options['join']))
             App::$cur->db->join($options['join']);
+        if (!empty(static::$needJoin)) {
+            foreach (static::$needJoin as $rel) {
+                $relations = static::relations();
+                if (isset($relations[$rel])) {
+                    $type = empty($relations[$rel]['type']) ? 'to' : $relations[$rel]['type'];
+                    switch ($type) {
+                        case 'to':
+                            App::$cur->db->join($relations[$rel]['model']::table(), $relations[$rel]['model']::index() . ' = ' . $relations[$rel]['col']);
+                            break;
+                        case 'one':
+                            $col = $relations[$rel]['col'];
+                            $relations[$rel]['model']::fixPrefix($col);
+                            App::$cur->db->join($relations[$rel]['model']::table(), static::index() . ' = ' . $col);
+                            break;
+                    }
+                }
+            }
+        }
         if (!empty($options['limit']))
             $limit = (int) $options['limit'];
         else {
