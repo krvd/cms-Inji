@@ -125,7 +125,7 @@ class Query extends \Object {
         if (is_array($table)) {
             $join .= call_user_func_array([$this, 'buildJoin'], $table);
         } else {
-            $join .= " {$type} JOIN `{$this->table_prefix}{$table}`";
+            $join .= " {$type} JOIN `{$this->curInstance->table_prefix}{$table}`";
             if ($alias)
                 $join .= " AS `{$alias}`";
             if ($where)
