@@ -91,14 +91,17 @@ class StaticLoader extends Module {
                         $crop = 'q';
                     else
                         $crop = '';
-
+                    $pos = 'center';
+                    if (!empty($_GET['resize_pos']) && in_array($_GET['resize_pos'], array('top', 'center'))) {
+                        $pos = $_GET['resize_pos'];
+                    }
                     $dirnoslash = str_replace('/', '', substr($fileinfo['dirname'], strpos($fileinfo['dirname'], '/static')));
-                    $path = $dir . '/static/cache/' . $dirnoslash . $fileinfo['filename'] . '.' . $sizes[0] . 'x' . $sizes[1] . $crop . '.' . $fileinfo['extension'];
+                    $path = $dir . '/static/cache/' . $dirnoslash . $fileinfo['filename'] . '.' . $sizes[0] . 'x' . $sizes[1] . $crop . $pos . '.' . $fileinfo['extension'];
                     //exit($path);
                     if (!file_exists($path)) {
                         Tools::createDir($dir . '/static/cache/');
                         copy($file, $path);
-                        Tools::resizeImage($path, $sizes[0], $sizes[1], $crop);
+                        Tools::resizeImage($path, $sizes[0], $sizes[1], $crop, $pos);
                     }
 
                     $file = $path;
