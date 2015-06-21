@@ -15,15 +15,15 @@ class Files extends Module {
         $site_path = App::$primary->path;
 
         if (!is_uploaded_file($file['tmp_name']))
-            return false;
+            return 0;
 
         $fileinfo = pathinfo($file['name']);
         if (empty($fileinfo['extension']))
-            return false;
+            return 0;
 
         $type = Files\Type::get($fileinfo['extension'], 'ext');
         if (!$type)
-            return false;
+            return 0;
 
         $fileObject = new Files\File();
         if (!empty($options['file_code'])) {
@@ -33,14 +33,14 @@ class Files extends Module {
         }
 
         $fileObject->path = $type->type_dir . date('Y-m-d') . '/' . $fileObject->name . '.' . $fileinfo['extension'];
-        if ($fileObject->id && file_exists($site_path .$fileObject->path))
-            unlink($site_path .$fileObject->path);
+        if ($fileObject->id && file_exists($site_path . $fileObject->path))
+            unlink($site_path . $fileObject->path);
 
         Tools::createDir($site_path . $type->type_dir . date('Y-m-d') . '/');
 
         if (!move_uploaded_file($file['tmp_name'], $site_path . $fileObject->path))
             return false;
-        
+
         $fileObject->type_id = $type->pk();
         $fileObject->original_name = $file['name'];
         $fileObject->date_create = 'CURRENT_TIMESTAMP';
@@ -65,23 +65,23 @@ class Files extends Module {
           'extension' => string 'gif' (length=3)
           'filename' => string 'avtokran(1)' (length=11)
          */
-        
-            $site_path = App::$primary->path;
+
+        $site_path = App::$primary->path;
         Tools::createDir($site_path . '/static/tmp/');
         $file = @file_get_contents($url);
-        if(!$file){
-            return false;
+        if ($file === false) {
+            return 0;
         }
         file_put_contents($site_path . '/static/tmp/' . $fileinfo['basename'], $file);
         /* if (!copy($url, App::$cur->app['path'] . '/static/tmp/' . $fileinfo['basename']))
           return false; */
 
         if (empty($fileinfo['extension']))
-            return false;
+            return 0;
 
         $type = Files\Type::get($fileinfo['extension'], 'ext');
         if (!$type)
-            return false;
+            return 0;
 
         $fileObject = new Files\File();
         if (!empty($options['file_code'])) {
@@ -99,7 +99,7 @@ class Files extends Module {
         if (!copy($site_path . '/static/tmp/' . $fileinfo['basename'], $site_path . $fileObject->path))
             return false;
         unlink($site_path . '/static/tmp/' . $fileinfo['basename']);
-        
+
         $fileObject->type_id = $type->pk();
         $fileObject->original_name = $fileinfo['basename'];
         $fileObject->date_create = 'CURRENT_TIMESTAMP';
