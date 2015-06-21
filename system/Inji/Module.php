@@ -72,13 +72,17 @@ class Module {
         $paths = [];
 
         if (!empty($this->params[0])) {
+            $paths['appAppTypePath_slice'] = $this->app->path . '/modules/' . $this->moduleName . '/' . $this->app->type . 'Controllers/' . ucfirst($this->params[0]) . 'Controller.php';
             $paths['appTypePath_slice'] = $this->path . '/' . $this->app->type . 'Controllers/' . ucfirst($this->params[0]) . 'Controller.php';
         }
+        $paths['appAppTypePath'] = $this->app->path . '/modules/' . $this->moduleName . '/' . $this->app->type . 'Controllers/' . $this->moduleName . 'Controller.php';
         $paths['appTypePath'] = $this->path . '/' . $this->app->type . 'Controllers/' . $this->moduleName . 'Controller.php';
 
         if (!empty($this->params[0])) {
+            $paths['appUniversalPath_slice'] = $this->app->path . '/modules/' . $this->moduleName . '/Controllers/' . ucfirst($this->params[0]) . 'Controller.php';
             $paths['universalPath_slice'] = $this->path . '/Controllers/' . ucfirst($this->params[0]) . 'Controller.php';
         }
+        $paths['appUniversalPath'] = $this->app->path . '/modules/' . $this->moduleName . '/Controllers/' . $this->moduleName . 'Controller.php';
         $paths['universalPath'] = $this->path . '/Controllers/' . $this->moduleName . 'Controller.php';
 
         return $paths;
