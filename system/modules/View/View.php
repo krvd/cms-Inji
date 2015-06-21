@@ -54,6 +54,9 @@ class View extends Module {
     }
 
     function page($params = []) {
+        if (empty($this->tmp_data['module'])) {
+            $this->tmp_data['module'] = Module::$cur;
+        }
         if (empty($this->tmp_data['contentPath'])) {
             $this->tmp_data['contentPath'] = Controller::$cur->path . '/content';
         }

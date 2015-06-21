@@ -8,7 +8,7 @@
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
-.blockPreset .block {
+.block-preset .block {
     padding:20px;
     border:10px solid #ccc;
     margin:5px;
@@ -37,11 +37,25 @@
     border:1px dotted #ccc;
     padding:15px;
 }
-.ui-state-hover {
+.ui-state-hover  {
     background: #ddd;
     min-height: 150px;
 }
-.ui-state-highlight {
+.ui-state-highlight  {
     background: #ddd;
     height:40px;
+
+}
+.ui-sortable-helper {
+    width:150px;
+    display: table;
+}
+.blockMap .row {
+    border:1px dotted #ccc;
+    padding:15px;
+}
+.block-preset {
+    border:1px dotted #ccc;
+    padding:15px;
+    min-height: 100px;
 }
