@@ -125,6 +125,7 @@ class View extends Module {
     function getContentPaths() {
         $paths = [
             'template' => $this->templatesPath . '/' . $this->template['name'] . "/modules/{$this->tmp_data['module']->moduleName}",
+            'appControllerContent' => Controller::$cur->app->path . '/modules/' . Controller::$cur->module->moduleName . '/' . Controller::$cur->app->type . 'Controllers/content',
             'controllerContent' => Controller::$cur->path . '/content'
         ];
         return $paths;
@@ -137,7 +138,6 @@ class View extends Module {
         }
 
         $_params = $this->paramsParse($params);
-
         if (!file_exists($_params['contentPath'] . '/' . $_params['content'] . '.php')) {
             echo 'Content not found';
         } else {
