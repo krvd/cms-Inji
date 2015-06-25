@@ -123,7 +123,10 @@ class Query extends \Object {
     function buildJoin($table, $where = false, $type = 'LEFT', $alias = '') {
         $join = '';
         if (is_array($table)) {
-            $join .= call_user_func_array([$this, 'buildJoin'], $table);
+            $joins = func_get_args();
+            foreach ($joins as $joinAr) {
+                $join .= call_user_func_array([$this, 'buildJoin'], $joinAr);
+            }
         } else {
             $join .= " {$type} JOIN `{$this->curInstance->table_prefix}{$table}`";
             if ($alias)
@@ -211,7 +214,7 @@ class Query extends \Object {
 
         switch ($this->operation) {
             case 'SELECT':
-                
+
                 $query .= ' ' . (!$this->cols ? '*' : ((is_array($this->cols) ? implode(',', $this->cols) : $this->cols)));
             case 'DELETE':
                 $query .= ' FROM';
@@ -283,6 +286,7 @@ class Query extends \Object {
         }
         $prepare = $this->curInstance->pdo->prepare($query['query']);
         $prepare->execute($query['params']);
+        $this->curInstance->lastQuery = $query;
         $result = new Result();
         $result->pdoResult = $prepare;
         $this->curInstance->dbInstance->curQuery = null;

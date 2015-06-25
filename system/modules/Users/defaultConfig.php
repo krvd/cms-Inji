@@ -12,7 +12,7 @@ return [
                         '_access' => []
                     ],
                     'registration' => [
-                        '_access' => []
+                        '_access' => [1]
                     ]
                 ],
             ],

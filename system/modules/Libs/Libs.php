@@ -3,6 +3,7 @@
 class Libs extends Module {
 
     function loadLib($libName) {
+        
         if (file_exists($this->path . '/static/libs/' . $libName . '/libConfig.php')) {
             $lib = include $this->path . '/static/libs/' . $libName . '/libConfig.php';
             if (!empty($lib['requiredLibs'])) {
@@ -17,7 +18,13 @@ class Libs extends Module {
             }
             if (!empty($lib['files']['js'])) {
                 foreach ($lib['files']['js'] as $file) {
-                    App::$cur->view->customAsset('js', '/static/moduleAsset/libs/libs/' . $libName . '/' . $file, $libName);
+                    if (strpos($file,'//') !== false) {
+
+                        App::$cur->view->customAsset('js', $file, $libName);
+                    } else {
+
+                        App::$cur->view->customAsset('js', '/static/moduleAsset/libs/libs/' . $libName . '/' . $file, $libName);
+                    }
                 }
             }
         }

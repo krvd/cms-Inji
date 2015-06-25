@@ -39,11 +39,22 @@ Server.prototype.request = function (options, btn) {
     }
     ajaxOptions.success = function (data, textStatus, jqXHR) {
         if (data.success) {
-            if(data.successMsg){
+            if (data.successMsg) {
                 noty({text: data.successMsg, type: 'success', timeout: 3500, layout: 'center'});
             }
-            if (callback != null) {
-                callback(data.content, textStatus, jqXHR);
+            if (typeof data.scripts == 'object') {
+                inji.loaded = false;
+                if (callback != null) {
+                    inji.onLoad(function () {
+                        callback(data.content, textStatus, jqXHR)
+                    });
+                }
+                inji.loadScripts(data.scripts, 0);
+            }
+            else {
+                if (callback != null) {
+                    callback(data.content, textStatus, jqXHR);
+                }
             }
         }
         else {

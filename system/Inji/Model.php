@@ -12,12 +12,16 @@ class Model {
     static $forms = [];
     static $cols = [];
     static $needJoin = [];
+    static $relJoins = [];
 
     function __construct($params = array()) {
         $this->setParams($params);
     }
 
-    static function fixPrefix(&$array, $searchtype = 'key') {
+    static function fixPrefix(&$array, $searchtype = 'key', $rootModel = '') {
+        if (!$rootModel) {
+            $rootModel = get_called_class();
+        }
         $cols = static::cols();
         if (!$array) {
             return;
@@ -25,6 +29,8 @@ class Model {
         if (!is_array($array)) {
             if (!isset($cols[$array]) && isset($cols[static::colPrefix() . $array])) {
                 $array = static::colPrefix() . $array;
+            } else {
+                static::checkForJoin($array, $rootModel);
             }
             return;
         }
@@ -37,9 +43,9 @@ class Model {
                         $key = static::colPrefix() . $key;
                     }
                     if (is_array($array[$key])) {
-                        static::fixPrefix($array[$key], 'key');
+                        static::fixPrefix($array[$key], 'key', $rootModel);
                     } else {
-                        static::checkForJoin($key);
+                        static::checkForJoin($key, $rootModel);
                     }
                 }
                 break;
@@ -49,26 +55,39 @@ class Model {
                     if (!isset($cols[$array[0]]) && isset($cols[static::colPrefix() . $array[0]])) {
                         $array[0] = static::colPrefix() . $array[0];
                     } else {
-                        static::checkForJoin($array[0]);
+                        static::checkForJoin($array[0], $rootModel);
                     }
                 } elseif (isset($array[0]) && is_array($array[0])) {
                     foreach ($array as &$item) {
-                        static::fixPrefix($item, 'first');
+                        static::fixPrefix($item, 'first', $rootModel);
                     }
                 }
                 break;
         }
     }
 
-    static function checkForJoin(&$col) {
+    static function checkForJoin(&$col, $rootModel) {
+
         if (strpos($col, ':') !== false) {
-            $raw = explode(':', $col);
             $relations = static::relations();
-            if (isset($relations[$raw[0]])) {
-                $rel = $raw[0];
-                $col = $raw[1];
-                $relations[$rel]['model']::fixPrefix($col);
-                static::$needJoin[$rel] = $rel;
+            if (isset($relations[substr($col, 0, strpos($col, ':'))])) {
+                $rel = substr($col, 0, strpos($col, ':'));
+                $col = substr($col, strpos($col, ':') + 1);
+
+                $type = empty($relations[$rel]['type']) ? 'to' : $relations[$rel]['type'];
+                switch ($type) {
+                    case 'to':
+                        $relCol = $relations[$rel]['col'];
+                        static::fixPrefix($relCol);
+                        $rootModel::$relJoins[$relations[$rel]['model'] . '_' . $rel] = [$relations[$rel]['model']::table(), $relations[$rel]['model']::index() . ' = ' . $relCol];
+                        break;
+                    case 'one':
+                        $relCol = $relations[$rel]['col'];
+                        $relations[$rel]['model']::fixPrefix($relCol);
+                        $rootModel::$relJoins[$relations[$rel]['model'] . '_' . $rel] = [$relations[$rel]['model']::table(), static::index() . ' = ' . $relCol];
+                        break;
+                }
+                $relations[$rel]['model']::fixPrefix($col, 'key', $rootModel);
             }
         }
     }
@@ -156,28 +175,38 @@ class Model {
         $return = array();
         if (!empty($options['where']))
             App::$cur->db->where($options['where']);
+        if (!empty($options['group'])) {
+            App::$cur->db->group($options['group']);
+        }
         if (!empty($options['order']))
             App::$cur->db->order($options['order']);
         if (!empty($options['join']))
             App::$cur->db->join($options['join']);
-        if (!empty(static::$needJoin)) {
-            foreach (static::$needJoin as $rel) {
-                $relations = static::relations();
-                if (isset($relations[$rel])) {
-                    $type = empty($relations[$rel]['type']) ? 'to' : $relations[$rel]['type'];
-                    switch ($type) {
-                        case 'to':
-                            App::$cur->db->join($relations[$rel]['model']::table(), $relations[$rel]['model']::index() . ' = ' . $relations[$rel]['col']);
-                            break;
-                        case 'one':
-                            $col = $relations[$rel]['col'];
-                            $relations[$rel]['model']::fixPrefix($col);
-                            App::$cur->db->join($relations[$rel]['model']::table(), static::index() . ' = ' . $col);
-                            break;
-                    }
+
+        foreach (static::$relJoins as $join) {
+            App::$cur->db->join($join[0], $join[1]);
+        }
+        static::$relJoins = [];
+        foreach (static::$needJoin as $rel) {
+            $relations = static::relations();
+            if (isset($relations[$rel])) {
+                $type = empty($relations[$rel]['type']) ? 'to' : $relations[$rel]['type'];
+                switch ($type) {
+                    case 'to':
+                        $relCol = $relations[$rel]['col'];
+                        static::fixPrefix($relCol);
+                        App::$cur->db->join($relations[$rel]['model']::table(), $relations[$rel]['model']::index() . ' = ' . $relCol);
+                        break;
+                    case 'one':
+                        $col = $relations[$rel]['col'];
+                        $relations[$rel]['model']::fixPrefix($col);
+                        App::$cur->db->join($relations[$rel]['model']::table(), static::index() . ' = ' . $col);
+                        break;
                 }
             }
         }
+        static::$needJoin = [];
+
         if (!empty($options['limit']))
             $limit = (int) $options['limit'];
         else {
@@ -197,10 +226,18 @@ class Model {
             $key = static::index();
         }
         $result = App::$cur->db->select(static::table());
-        if (empty($options['array'])) {
-            return $result->getObjects(get_called_class(), $key);
+        if (!empty($options['array'])) {
+            return $result->getArray($key);
         }
-        return $result->getArray($key);
+        $list = $result->getObjects(get_called_class(), $key);
+        if (!empty($options['forSelect'])) {
+            $return = [];
+            foreach ($list as $key => $item) {
+                $return[$key] = $item->name();
+            }
+            return $return;
+        }
+        return $list;
     }
 
     /**
@@ -347,10 +384,56 @@ class Model {
             App::$cur->db->where($options['where']);
         if (!empty($options['join']))
             App::$cur->db->join($options['join']);
+        if (!empty($options['order'])) {
+            App::$cur->db->order($options['order']);
+        }
+        if (!empty($options['limit']))
+            $limit = (int) $options['limit'];
+        else {
+            $limit = 0;
+        }
+        if (!empty($options['start']))
+            $start = (int) $options['start'];
+        else {
+            $start = 0;
+        }
+        if ($limit || $start) {
+            App::$cur->db->limit($start, $limit);
+        }
 
-        App::$cur->db->cols = 'COUNT(*) as `count`';
-        $count = App::$cur->db->select(static::table())->fetch();
-        return $count['count'];
+        foreach (static::$relJoins as $join) {
+            App::$cur->db->join($join[0], $join[1]);
+        }
+        static::$relJoins = [];
+        foreach (static::$needJoin as $rel) {
+            $relations = static::relations();
+            if (isset($relations[$rel])) {
+                $type = empty($relations[$rel]['type']) ? 'to' : $relations[$rel]['type'];
+                switch ($type) {
+                    case 'to':
+                        $relCol = $relations[$rel]['col'];
+                        static::fixPrefix($relCol);
+                        App::$cur->db->join($relations[$rel]['model']::table(), $relations[$rel]['model']::index() . ' = ' . $relCol);
+                        break;
+                    case 'one':
+                        $col = $relations[$rel]['col'];
+                        $relations[$rel]['model']::fixPrefix($col);
+                        App::$cur->db->join($relations[$rel]['model']::table(), static::index() . ' = ' . $col);
+                        break;
+                }
+            }
+        }
+        static::$needJoin = [];
+        if (!empty($options['group'])) {
+            App::$cur->db->group($options['group']);
+            App::$cur->db->cols = 'COUNT(*) as `count`' . (!empty($options['cols']) ? ',' . $options['cols'] : '');
+            $count = App::$cur->db->select(static::table())->getArray();
+            return $count;
+        } else {
+            App::$cur->db->cols = 'COUNT(*) as `count`';
+            $count = App::$cur->db->select(static::table())->fetch();
+            return $count['count'];
+        }
     }
 
     static function update($params, $where = []) {

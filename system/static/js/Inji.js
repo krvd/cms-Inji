@@ -11,19 +11,26 @@ function Inji() {
     this.options = {};
     this.onLoadCallbacks = [];
     this.loaded = false;
+    this.loadedScripts = {};
 }
 Inji.prototype.onLoad = function (callback) {
-    if (this.loaded) {
-        callback();
-    }
-    else {
-        this.onLoadCallbacks.push(callback);
+    if (typeof callback == 'function') {
+        if (this.loaded) {
+            callback();
+        }
+        else {
+            this.onLoadCallbacks.push(callback);
+        }
     }
 }
 Inji.prototype.startCallbacks = function () {
-    console.log('start onLoadeds');
-    for (var key in this.onLoadCallbacks) {
-        this.onLoadCallbacks[key]();
+    while (callback = this.onLoadCallbacks.shift()) {
+        if (typeof callback == 'function') {
+            callback();
+        }
+    }
+    if (this.onLoadCallbacks.length != 0) {
+        this.startCallbacks();
     }
     document.getElementById('loading-indicator').style.display = 'none';
     inji.loaded = true;
@@ -37,13 +44,17 @@ Inji.prototype.start = function (options) {
 Inji.prototype.loadScripts = function (scripts, key) {
     this.addScript(scripts[key], function () {
         if (typeof (scripts[key].name) != 'undefined') {
-            console.log('js ' + scripts[key].name + '(' + scripts[key].file + ') loaded');
-            inji[scripts[key].name] = new window[scripts[key].name]();
-            if (typeof (inji[scripts[key].name].init) == 'function') {
-                inji[scripts[key].name].init();
+            inji.loadedScripts[scripts[key].file] = true;
+            if (typeof inji[scripts[key].name] == 'undefined') {
+                console.log('js ' + scripts[key].name + '(' + scripts[key].file + ') loaded');
+                inji[scripts[key].name] = new window[scripts[key].name]();
+                if (typeof (inji[scripts[key].name].init) == 'function') {
+                    inji[scripts[key].name].init();
+                }
             }
         }
         else {
+            inji.loadedScripts[scripts[key]] = true;
             console.log('js ' + scripts[key] + ' loaded');
         }
         if (typeof (scripts[key + 1]) != 'undefined') {
@@ -57,17 +68,27 @@ Inji.prototype.loadScripts = function (scripts, key) {
 }
 Inji.prototype.addScript = function (script, callback) {
     var element = document.createElement('script');
+    var src = '';
+    if (typeof (script.file) != 'undefined') {
+        src = script.file;
+    }
+    else {
+        src = script;
+    }
+    if (inji.loadedScripts[src]) {
+        if (typeof (callback) == 'function') {
+            callback();
+        }
+        return true;
+    }
+    element.src = src;
     element.type = 'text/javascript';
     if (typeof (callback) == 'function') {
         element.onload = callback;
     }
-    if (typeof (script.file) != 'undefined') {
-        element.src = script.file;
-    }
-    else {
-        element.src = script;
-    }
     document.head.appendChild(element);
+
+
 }
 var inji = new Inji();
 

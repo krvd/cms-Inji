@@ -63,6 +63,12 @@ class Form extends \Object {
                 $params['form'] = $this;
                 \App::$cur->view->widget('Ui\Form/date', $params);
                 break;
+            case 'map':
+                $params = compact('name', 'label', 'options');
+                $params['form'] = $this;
+                \App::$cur->libs->loadLib('yandexMap');
+                \App::$cur->view->widget('Ui\Form/map', $params);
+                break;
             case 'select':
                 $params = compact('name', 'label', 'options');
                 $params['form'] = $this;

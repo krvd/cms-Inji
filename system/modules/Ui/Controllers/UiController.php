@@ -11,8 +11,6 @@
 class UiController extends Controller {
 
     function formPopUpAction() {
-        $return = new Server\Result();
-        ob_start();
         if (strpos($_GET['item'], ':')) {
             $raw = explode(':', $_GET['item']);
             $modelName = $raw[0];
@@ -34,10 +32,16 @@ class UiController extends Controller {
         $form = new Ui\ActiveForm($model, 'manager');
         $form->action = '/ui/formPopUp/?' . http_build_query($_GET);
         $form->checkRequest($params, true);
-        $form->draw($params,true);
-        $return->content = ob_get_contents();
-        ob_end_clean();
-        $return->send();
+        if (!empty($_GET['_'])) {
+            $return = new Server\Result();
+            ob_start();
+            $form->draw($params, true);
+            $return->content = ob_get_contents();
+            ob_end_clean();
+            $return->send();
+        } else {
+            $this->view->page(['content' => 'form', 'data' => compact('form', 'params')]);
+        }
     }
 
 }

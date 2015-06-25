@@ -18,7 +18,7 @@ class Mysql extends \Object {
     public $db_name = 'test';         // выбраная в данный момент база
     public $table_prefix = 'inji_';   // префикс названий таблиц
     public $pdo = NULL;
-    public $last_query = '';
+    public $lastQuery = '';
     public $last_error = '';
     public $noConnectAbort = false;
     public $dbInstance = null;

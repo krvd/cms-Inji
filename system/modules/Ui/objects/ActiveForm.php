@@ -114,9 +114,8 @@ class ActiveForm extends \Object {
                         default:
                             if (isset($request[$col])) {
                                 $this->model->$col = $request[$col];
-                            }
-                            else {
-                                switch ($param['type']){
+                            } else {
+                                switch ($param['type']) {
                                     case 'checkbox':
                                     case 'number':
                                         $this->model->$col = 0;
@@ -156,36 +155,12 @@ class ActiveForm extends \Object {
         } else {
             echo "<h3>{$this->header}</h3>";
         }
-        $modelName = $this->modelName;
         foreach ($this->form['map'] as $row) {
             $colSize = 12 / count($row);
             echo "<div class ='row'>";
             foreach ($row as $col) {
                 echo "<div class = 'col-xs-{$colSize}'>";
-                if (is_object($this->form['inputs'][$col])) {
-                    $this->form['inputs'][$col]->draw();
-                } else {
-                    $inputOptions = [
-                        'value' => $value = isset($this->form['inputs'][$col]['default']) ? $this->form['inputs'][$col]['default'] : ''
-                    ];
-                    $inputOptions['value'] = ($this->model && isset($this->model->$col)) ? $this->model->$col : $inputOptions['value'];
-
-                    if ($this->form['inputs'][$col]['type'] == 'image' && $inputOptions['value']) {
-                        $inputOptions['value'] = \Files\File::get($inputOptions['value'])->path;
-                    }
-                    if ($this->form['inputs'][$col]['type'] == 'select') {
-                        $inputOptions['values'] = $this->getOptionsList($this->form['inputs'][$col], $params);
-                    }
-                    switch ($this->form['inputs'][$col]['type']) {
-                        case 'bool';
-                            $type = 'checkbox';
-                            break;
-                        default :
-                            $type = $this->form['inputs'][$col]['type'];
-                    }
-
-                    $form->input($type, "{$this->requestFormName}[$this->modelName][{$col}]", ($this->model && !empty($modelName::$labels[$col])) ? $modelName::$labels[$col] : $col, $inputOptions);
-                }
+                $this->drawCol($col, $this->form['inputs'][$col], $form, $params);
                 echo '</div>';
             }
             echo '</div>';
@@ -195,8 +170,38 @@ class ActiveForm extends \Object {
         }
     }
 
-    function drawCol() {
-        
+    function drawCol($colName, $options, $form, $params = []) {
+        $modelName = $this->modelName;
+        if (is_object($options)) {
+            $options->draw();
+        } else {
+            $inputOptions = [
+                'value' => $value = isset($options['default']) ? $options['default'] : ''
+            ];
+            $inputOptions['value'] = ($this->model && isset($this->model->$colName)) ? $this->model->$colName : $inputOptions['value'];
+
+            if ($options['type'] == 'image' && $inputOptions['value']) {
+                $inputOptions['value'] = \Files\File::get($inputOptions['value'])->path;
+            }
+            if ($options['type'] == 'select') {
+                $inputOptions['values'] = $this->getOptionsList($options, $params);
+            }
+            switch ($options['type']) {
+                case 'bool';
+                    $type = 'checkbox';
+                    break;
+                default :
+                    $type = $options['type'];
+            }
+            if ($type == 'map') {
+                $inputOptions['value'] = [
+                    'lat' => $this->model ? $this->model->{$colName . '_lat'} : 0,
+                    'lng' => $this->model ? $this->model->{$colName . '_lng'} : 0,
+                ];
+            }
+
+            $form->input($type, "{$this->requestFormName}[$this->modelName][{$colName}]", ($this->model && !empty($modelName::$labels[$colName])) ? $modelName::$labels[$colName] : $colName, $inputOptions);
+        }
     }
 
     function getOptionsList($inputParams, $params, $modelName = false) {
@@ -248,7 +253,9 @@ class ActiveForm extends \Object {
             $this->drawError('"' . $this->modelName . '" manager with name: "' . $this->managerName . '" not found');
             return false;
         }
-
+        if ($this->model && !empty($this->form['options']['access']['self']) && \Users\User::$cur->id == $this->model->user_id) {
+            return true;
+        }
         if (!empty($this->form['options']['access']['groups']) && !in_array(\Users\User::$cur->group_id, $this->form['options']['access']['groups'])) {
             return false;
         }

@@ -57,9 +57,6 @@ class View extends Module {
         if (empty($this->tmp_data['module'])) {
             $this->tmp_data['module'] = Module::$cur;
         }
-        if (empty($this->tmp_data['contentPath'])) {
-            $this->tmp_data['contentPath'] = Controller::$cur->path . '/content';
-        }
         if (empty($this->tmp_data['content'])) {
             $this->tmp_data['content'] = Controller::$cur->method;
             $paths = $this->getContentPaths();
@@ -70,6 +67,9 @@ class View extends Module {
                     break;
                 }
             }
+        }
+        if (empty($this->tmp_data['contentPath'])) {
+            $this->tmp_data['contentPath'] = Controller::$cur->path . '/content';
         }
         $data = $this->paramsParse($params);
         if (file_exists($data['path'])) {
@@ -126,7 +126,8 @@ class View extends Module {
         $paths = [
             'template' => $this->templatesPath . '/' . $this->template['name'] . "/modules/{$this->tmp_data['module']->moduleName}",
             'appControllerContent' => Controller::$cur->app->path . '/modules/' . Controller::$cur->module->moduleName . '/' . Controller::$cur->app->type . 'Controllers/content',
-            'controllerContent' => Controller::$cur->path . '/content'
+            'controllerContent' => Controller::$cur->path . '/content',
+            'moduleControllerContent' => Controller::$cur->module->path . '/' . Controller::$cur->module->app->type . 'Controllers/content',
         ];
         return $paths;
     }
@@ -327,20 +328,25 @@ class View extends Module {
 
     function bodyEnd() {
         $options = [
-            'scripts' => [],
+            'scripts' => $this->getScripts(),
             'styles' => [],
+            'appRoot' => App::$cur->type == 'app' ? '/' : '/' . App::$cur->name . '/'
         ];
+        $this->widget('View\bodyEnd', compact('options'));
+    }
+
+    function getScripts() {
+        $scripts = [];
         if (!empty($this->libAssets['js'])) {
-            $this->genScriptArray($this->libAssets['js'], 'libs', $options['scripts']);
+            $this->genScriptArray($this->libAssets['js'], 'libs', $scripts);
         }
         if (!empty($this->dynAssets['js'])) {
-            $this->genScriptArray($this->dynAssets['js'], 'custom', $options['scripts']);
+            $this->genScriptArray($this->dynAssets['js'], 'custom', $scripts);
         }
         if (!empty($this->template['js'])) {
-            $this->genScriptArray($this->template['js'], 'template', $options['scripts']);
+            $this->genScriptArray($this->template['js'], 'template', $scripts);
         }
-        $options['appRoot'] = App::$cur->type == 'app' ? '/' : '/' . App::$cur->name . '/';
-        $this->widget('View\bodyEnd', compact('options'));
+        return $scripts;
     }
 
     function genScriptArray($jsArray, $type = 'custom', &$resultArray) {
@@ -351,7 +357,10 @@ class View extends Module {
                         $this->genScriptArray($js, $type, $resultArray);
                         continue;
                     }
-                    $href = $this->getHref('js', $js);
+                    if (strpos($js, '//') !== false)
+                        $href = $js;
+                    else
+                        $href = $this->getHref('js', $js);
                     if (!$href)
                         continue;
 
