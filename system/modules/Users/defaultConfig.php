@@ -11,7 +11,16 @@ return [
                     'login' => [
                         '_access' => []
                     ],
+                    'activation' => [
+                        '_access' => []
+                    ],
                     'registration' => [
+                        '_access' => [1]
+                    ],
+                    'passre' => [
+                        '_access' => [1]
+                    ],
+                    'vkAuth' => [
                         '_access' => [1]
                     ]
                 ],

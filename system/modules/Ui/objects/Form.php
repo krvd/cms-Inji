@@ -19,6 +19,21 @@ class Form extends \Object {
     public $action = '';
     public $inputs = [];
     public $map = [];
+    public $userDataTree = [];
+
+    function __construct() {
+        $this->genUserDataTree($_POST);
+    }
+
+    function genUserDataTree($data, $treeKey = '') {
+        foreach ($data as $key => $item) {
+            if (is_array($item)) {
+                $this->genUserDataTree($item, $treeKey ? $treeKey . "[{$key}]" : $key);
+            } else {
+                $this->userDataTree[$treeKey ? $treeKey . "[{$key}]" : $key] = $item;
+            }
+        }
+    }
 
     function begin($header = '', $options = []) {
         $params = compact('header', 'options');

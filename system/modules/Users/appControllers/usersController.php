@@ -11,10 +11,12 @@ class usersController extends Controller {
         $form = new Ui\ActiveForm(Users\User::$cur->info, 'profile');
         $form->header = false;
         $form->checkRequest();
+        $this->view->setTitle('Редактирование профиля');
         $this->view->page(['data' => compact('form')]);
     }
 
     function loginAction() {
+        $this->view->setTitle('Авторизация');
         $this->view->page();
     }
 
@@ -42,7 +44,17 @@ class usersController extends Controller {
                 }
             }
         }
+        $this->view->setTitle('Регистрация');
         $this->view->page();
+    }
+    function activationAction($userId = 0, $hash = '') {
+        $user = \Users\User::get((int) $userId);
+        if (!$user || $user->activation !== (string) $hash) {
+            Tools::redirect('/', 'Во время активации произошли ошибки', 'danger');
+        }
+        $user->activation = '';
+        $user->save();
+        Tools::redirect('/', 'Вы успешно активировали ваш аккаунт, теперь вы можете войти');
     }
 
     function logoutAction() {

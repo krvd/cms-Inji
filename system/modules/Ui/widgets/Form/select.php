@@ -4,10 +4,10 @@ $showedInput = false;
 $optionsHtml = '';
 foreach ($options['values'] as $key => $value) {
     $selected = '';
-    
+
     $primaryValue = isset($options['value']) ? $options['value'] : null;
     $primaryValue = is_array($primaryValue) ? $primaryValue['primary'] : $primaryValue;
-    if ($key == $primaryValue) {
+    if ($key == $primaryValue || (!empty($form->userDataTree[$name]) && $form->userDataTree[$name] == $key)) {
         $selected = ' selected="selected"';
     }
     if (is_array($value)) {
@@ -34,8 +34,7 @@ foreach ($aditionalInputs as $key => $input) {
     if ($key !== $showedInput) {
         $input['options']['disabled'] = true;
         $input['options']['class'] = !empty($input['options']['class']) ? $input['options']['class'] . ' hidden' : 'hidden';
-    }
-    else {
+    } else {
         $input['options']['value'] = $aditionValue;
     }
     $form->input($input['type'], $name . '[aditional]', false, $input['options']);

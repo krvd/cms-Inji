@@ -24,6 +24,7 @@ return function ($step = NULL, $params = array()) {
         'material_viewer' => 'varchar(255) NOT NULL',
         'material_preview' => 'text NOT NULL',
         'material_weight' => 'INT(11) NOT NULL',
+        'material_image_file_id' => 'INT(11) NOT NULL',
         'material_hidden' => 'BOOL NOT NULL',
         'material_nexts' => 'text NOT NULL',
         'material_keywords' => 'text NOT NULL',

@@ -6,7 +6,7 @@
                 <div class="col-sm-6">
                     <div class ='form-group'>
                         <label>Логин или email</label>
-                        <input type ='email' name ='user_login' class ='form-control' placeholder ='mail@mail.ru' required />
+                        <input type ='text' name ='user_login' class ='form-control' placeholder ='mail@mail.ru' required />
                     </div>
                 </div>
                 <div class="col-sm-6">

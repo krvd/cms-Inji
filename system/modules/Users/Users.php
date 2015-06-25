@@ -19,7 +19,7 @@ class Users extends Module {
             return $this->passre(filter_input(INPUT_GET, 'user_mail'));
         }
         if (!empty($_GET['passrecont']) && filter_input(INPUT_GET, 'hash')) {
-            $this->passrecont(filter_input(INPUT_GET, 'hash'));
+            return $this->passrecont(filter_input(INPUT_GET, 'hash'));
         }
         if (filter_input(INPUT_COOKIE, 'user_session_hash') && filter_input(INPUT_COOKIE, 'user_id')) {
             return $this->cuntinueSession(filter_input(INPUT_COOKIE, 'user_session_hash'), filter_input(INPUT_COOKIE, 'user_id'));
@@ -29,7 +29,7 @@ class Users extends Module {
     function logOut() {
         setcookie("user_session_hash", '', 0, "/");
         setcookie("user_id", '', 0, "/");
-        Tools::redirect(App::$cur->access->getDeniedRedirect(), 'Вы вышли из своего профиля', 'success');
+        Tools::redirect('/', 'Вы вышли из своего профиля', 'success');
     }
 
     function cuntinueSession($hash, $userId) {
@@ -87,27 +87,13 @@ class Users extends Module {
     }
 
     function autorization($login, $pass, $ltype = 'login') {
+
         $user = $this->get($login, $ltype);
         if ($user && $this->verifypass($pass, $user->pass)) {
-            $hash = Tools::randomString(255);
-            $session = Users\Session::get([
-                        ['user_id', $user->id],
-                        ['agent', filter_input(INPUT_SERVER, 'HTTP_USER_AGENT')],
-                        ['ip', filter_input(INPUT_SERVER, 'REMOTE_ADDR')]
-            ]);
-            if (!$session) {
-                $session = new Users\Session([
-                    'user_id' => $user->id,
-                    'agent' => filter_input(INPUT_SERVER, 'HTTP_USER_AGENT'),
-                    'ip' => filter_input(INPUT_SERVER, 'REMOTE_ADDR')
-                ]);
+            if ($user->activation) {
+                Tools::redirect('/', 'Этот аккаунт ещё не активирован');
             }
-            $session->hash = $hash;
-            $session->save();
-            if (!headers_sent()) {
-                setcookie("user_session_hash", $session->hash, time() + 360000, "/");
-                setcookie("user_id", $session->user_id, time() + 360000, "/");
-            }
+            $this->newSession($user);
 
             Users\User::$cur = $user;
             Users\User::$cur->last_activ = 'CURRENT_TIMESTAMP';
@@ -128,11 +114,33 @@ class Users extends Module {
         return false;
     }
 
+    function newSession($user) {
+        $hash = Tools::randomString(255);
+        $session = Users\Session::get([
+                    ['user_id', $user->id],
+                    ['agent', filter_input(INPUT_SERVER, 'HTTP_USER_AGENT')],
+                    ['ip', filter_input(INPUT_SERVER, 'REMOTE_ADDR')]
+        ]);
+        if (!$session) {
+            $session = new Users\Session([
+                'user_id' => $user->id,
+                'agent' => filter_input(INPUT_SERVER, 'HTTP_USER_AGENT'),
+                'ip' => filter_input(INPUT_SERVER, 'REMOTE_ADDR')
+            ]);
+        }
+        $session->hash = $hash;
+        $session->save();
+        if (!headers_sent()) {
+            setcookie("user_session_hash", $session->hash, time() + 360000, "/");
+            setcookie("user_id", $session->user_id, time() + 360000, "/");
+        }
+    }
+
     function get($idn = false, $ltype = 'id') {
         if (!$idn)
             return false;
 
-        if (is_numeric($idn) && !$ltype != 'login')
+        if (is_numeric($idn) && $ltype != 'login')
             $user = Users\User::get($idn, 'id');
         elseif ($ltype == 'login')
             $user = Users\User::get($idn, 'login');

@@ -15,7 +15,8 @@ class Material extends \Model {
         'material_text' => 'Текст страницы',
         'material_chpu' => 'Алиас страницы',
         'material_template' => 'Шаблон сайта',
-        'material_viewer' => 'Тип страницы'
+        'material_viewer' => 'Тип страницы',
+        'material_image_file_id'=>'Фото материала'
     ];
     static $dataManagers = [
         'manager' => [
@@ -44,6 +45,7 @@ class Material extends \Model {
         'material_preview' => ['type' => 'html'],
         'material_text' => ['type' => 'html'],
         'material_catalog_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'catalog', 'showCol' => 'catalog_name'],
+        'material_image_file_id' => ['type' => 'image'],
     ];
     static $forms = [
         'manager' => [
@@ -56,7 +58,7 @@ class Material extends \Model {
             ],
             'map' => [
                 ['material_name', 'material_catalog_id'],
-                ['material_chpu'],
+                ['material_chpu','material_image_file_id'],
                 ['material_template', 'material_viewer'],
                 ['material_preview'],
                 ['material_text'],
@@ -69,6 +71,10 @@ class Material extends \Model {
             'catalog' => [
                 'model' => '\Materials\Catalog',
                 'col' => 'material_catalog_id'
+            ],
+            'image' => [
+                'model' => '\Files\File',
+                'col' => 'material_image_file_id'
             ]
         ];
     }

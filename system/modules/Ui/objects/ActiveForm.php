@@ -57,6 +57,9 @@ class ActiveForm extends \Object {
         $modelName = $this->modelName;
         foreach ($this->form['map'] as $row) {
             foreach ($row as $col) {
+                if (!$col) {
+                    continue;
+                }
                 if (strpos($col, 'form:') === 0) {
                     $colPath = explode(':', $col);
                     if ($this->model->{$colPath[1]}) {
@@ -160,7 +163,9 @@ class ActiveForm extends \Object {
             echo "<div class ='row'>";
             foreach ($row as $col) {
                 echo "<div class = 'col-xs-{$colSize}'>";
-                $this->drawCol($col, $this->form['inputs'][$col], $form, $params);
+                if ($col) {
+                    $this->drawCol($col, $this->form['inputs'][$col], $form, $params);
+                }
                 echo '</div>';
             }
             echo '</div>';

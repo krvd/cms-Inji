@@ -264,7 +264,7 @@ class Query extends \Object {
                 break;
         }
         if ($this->group) {
-            $query .= ' GROUP BY `' . implode('`,`', $this->group) . '`';
+            $query .= ' GROUP BY ' . implode(',', $this->group) ;
         }
         if ($this->order) {
             $query .= ' ORDER BY ' . implode(',', $this->order);

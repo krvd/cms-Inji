@@ -12,6 +12,7 @@ return function ($step = NULL, $params = array()) {
         'user_role_id' => 'INT NOT NULL',
         'user_activ' => 'text NOT NULL',
         'user_admin_text' => 'text NOT NULL',
+        'user_activation' => 'varchar(255) NOT NULL',
         'user_reg_date' => 'timestamp DEFAULT CURRENT_TIMESTAMP',
         'user_last_activ' => 'timestamp',
     ));
