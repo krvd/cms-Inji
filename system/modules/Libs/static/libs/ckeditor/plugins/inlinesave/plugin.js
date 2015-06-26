@@ -8,14 +8,10 @@ CKEDITOR.plugins.add('inlinesave',
                             {
 
                                 var data = {};
-                                data.content = editor.getData();
+                                data.data = editor.getData();
                                 data.col = $(editor.container)[0].data('col');
                                 data.model = $(editor.container)[0].data('model');
                                 data.key = $(editor.container)[0].data('key');
-
-                                console.log(data);
-                                console.log(editor.container);
-                                console.log($(editor.container));
                                 jQuery.ajax({
                                     type: "POST",
                                     //Specify the name of the file you wish to use to handle the data on your web page with this code:
@@ -24,7 +20,7 @@ CKEDITOR.plugins.add('inlinesave',
                                     //Data can be retrieved from the variable $_POST['editabledata']
                                     //The ID of the editor that the data came from can be retrieved from the variable $_POST['editorID']
 
-                                    url: '/admin/DataFactory/fastEdit',
+                                    url: '/Ui/fastEdit/',
                                     data: data
 
                                 })

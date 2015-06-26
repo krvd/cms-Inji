@@ -789,6 +789,13 @@ class Model {
         return true;
     }
 
+    function checkAccess($mode = 'write', $user = null) {
+        if (!$user) {
+            $user = \Users\User::$cur;
+        }
+        return $user->isAdmin();
+    }
+
     function __call($name, $params) {
         return call_user_func_array([$this, 'loadRelation'], array_merge([$name], $params));
     }

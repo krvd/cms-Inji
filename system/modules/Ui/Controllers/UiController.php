@@ -45,4 +45,12 @@ class UiController extends Controller {
         }
     }
 
+    function fastEditAction() {
+        $model = $_POST['model']::get($_POST['key']);
+        if ($model && $model->checkAccess()) {
+            $model->$_POST['col'] = $_POST['data'];
+            $model->save();
+        }
+    }
+
 }

@@ -6,7 +6,8 @@
 CKEDITOR.editorConfig = function (config) {
     config.filebrowserBrowseUrl = '/admin/static/filemanager/browser/default/browser.html?Connector=/admin/filemanager';
     config.filebrowserImageBrowseUrl = '/admin/static/filemanager/browser/default/browser.html?Connector=/admin/filemanager';
-    config.stylesSet = 'template_styles:/templates/current/css/editor.styles.js';
+    config.contentsCss = ['/view/editorcss'];
+    //config.stylesSet = 'template_styles:/templates/current/css/editor.styles.js';
     config.allowedContent = true;
 // Toolbar configuration generated automatically by the editor based on config.toolbarGroups.
     config.toolbar = [
