@@ -134,7 +134,7 @@ class DataManager extends \Object {
             $row = [];
             $row[] = $item->pk();
             foreach ($this->managerOptions['cols'] as $colName) {
-                $row[] = DataManager::drawCol($item, $colName);
+                $row[] = DataManager::drawCol($item, $colName,$params);
             }
             $row[] = $this->rowButtons($item, $params);
             $rows[] = $row;
@@ -142,7 +142,7 @@ class DataManager extends \Object {
         return $rows;
     }
 
-    static function drawCol($item, $colName) {
+    static function drawCol($item, $colName,$params=[]) {
         $modelName = get_class($item);
         $relations = $modelName::relations();
         if (strpos($colName, ':') !== false && !empty($relations[substr($colName, 0, strpos($colName, ':'))])) {
