@@ -59,6 +59,7 @@ class Form extends \Object {
                 \App::$cur->view->widget('Ui\Form/textarea', $params);
                 break;
             case 'html':
+                \App::$cur->libs->loadLib('ckeditor');
                 $params = compact('name', 'label', 'options');
                 $params['form'] = $this;
                 if (empty($params['options']['class'])) {

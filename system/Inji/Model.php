@@ -92,6 +92,52 @@ class Model {
         }
     }
 
+    static function getColInfo($col) {
+        return static::parseColRecursion($col);
+    }
+
+    private static function parseColRecursion($info) {
+        if (is_string($info)) {
+            $info = ['col' => $info, 'rawCol' => $info, 'modelName' => '', 'label' => [], 'joins' => []];
+        }
+        if (strpos($info['col'], ':') !== false) {
+            $relations = static::relations();
+            if (isset($relations[substr($info['col'], 0, strpos($info['col'], ':'))])) {
+                $rel = substr($info['col'], 0, strpos($info['col'], ':'));
+                $info['col'] = substr($info['col'], strpos($info['col'], ':') + 1);
+                $type = empty($relations[$rel]['type']) ? 'to' : $relations[$rel]['type'];
+                switch ($type) {
+                    case 'to':
+                        $relCol = $relations[$rel]['col'];
+                        static::fixPrefix($relCol);
+                        $info['modelName'] = $relations[$rel]['model'];
+                        $info['joins'][$relations[$rel]['model'] . '_' . $rel] = [$relations[$rel]['model']::table(), $relations[$rel]['model']::index() . ' = ' . $relCol];
+                        break;
+                    case 'one':
+                        $relCol = $relations[$rel]['col'];
+                        $relations[$rel]['model']::fixPrefix($relCol);
+                        $info['modelName'] = $relations[$rel]['model'];
+                        $info['joins'][$relations[$rel]['model'] . '_' . $rel] = [$relations[$rel]['model']::table(), static::index() . ' = ' . $relCol];
+                        break;
+                }
+                $info = $relations[$rel]['model']::parseColRecursion($info);
+            }
+        } else {
+
+            $cols = static::cols();
+            if (!empty(static::$labels[$info['col']])) {
+                $info['label'] = static::$labels[$info['col']];
+            }
+            if (!isset($cols[$info['col']]) && isset($cols[static::colPrefix() . $info['col']])) {
+                $info['col'] = static::colPrefix() . $info['col'];
+            }
+            if (!empty(static::$labels[$info['col']])) {
+                $info['label'] = static::$labels[$info['col']];
+            }
+        }
+        return $info;
+    }
+
     static function cols() {
         if (empty(Model::$cols[static::table()])) {
             Model::$cols[static::table()] = App::$cur->db->getTableCols(static::table());

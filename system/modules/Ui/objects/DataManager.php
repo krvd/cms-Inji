@@ -20,6 +20,10 @@ class DataManager extends \Object {
     public $name = 'Менеджер данных';
     public $limit = 10;
     public $page = 1;
+    public $table = null;
+    public $joins = [];
+    public $predraw = false;
+    public $cols = [];
 
     function __construct($modelName, $dataManager = 'manager', $options = []) {
         $this->modelName = $modelName;
@@ -67,13 +71,23 @@ class DataManager extends \Object {
      */
     function getCols() {
         $modelName = $this->modelName;
-        $cols = array_merge(['№'], $this->managerOptions['cols']);
-        foreach ($cols as $key => $col) {
-            if (!empty($modelName::$labels[$col])) {
-                $cols[$key] = $modelName::$labels[$col];
+        $cols = ['id' => ['label' => '№', 'sortable' => true]];
+        foreach ($this->managerOptions['cols'] as $key => $col) {
+            if (is_array($col)) {
+                $colName = $key;
+                $colOptions = $col;
+            } else {
+                $colName = $col;
+                $colOptions = [];
             }
+            $colInfo = $modelName::getColInfo($colName);
+            if (empty($colOptions['label']) && !empty($colInfo['label'])) {
+                $colOptions['label'] = $colInfo['label'];
+            } elseif (empty($colOptions['label'])) {
+                $colOptions['label'] = $colName;
+            }
+            $cols[$colName] = $colOptions;
         }
-        $cols[] = "";
         return $cols;
     }
 
@@ -85,10 +99,11 @@ class DataManager extends \Object {
      * @return type
      */
     function getRows($params = [], $model = null) {
-        if (!$this->chackAccess()) {
+        if (!$this->checkAccess()) {
             $this->drawError('you not have access to "' . $this->modelName . '" manager with name: "' . $this->managerName . '"');
             return [];
         }
+        $cols = $this->getCols();
         if (!empty($params['limit'])) {
             $this->limit = (int) $params['limit'];
         }
@@ -103,8 +118,11 @@ class DataManager extends \Object {
         if (!empty($params['categoryPath']) && $modelName::$categoryModel) {
             $queryParams['where'] = ['tree_path', $params['categoryPath'] . '%', 'LIKE'];
         }
-        if(!empty($params['appType'])){
+        if (!empty($params['appType'])) {
             $queryParams['appType'] = $params['appType'];
+        }
+        if ($this->joins) {
+            $queryParams['joins'] = $this->joins;
         }
         if ($model && !empty($params['relation'])) {
             $items = $model->$params['relation']($queryParams);
@@ -116,34 +134,7 @@ class DataManager extends \Object {
             $row = [];
             $row[] = $item->pk();
             foreach ($this->managerOptions['cols'] as $colName) {
-                $relations = $modelName::relations();
-                if (!empty($modelName::$cols[$colName]['relation'])) {
-                    $type = !empty($relations[$modelName::$cols[$colName]['relation']]['type']) ? $relations[$modelName::$cols[$colName]['relation']]['type'] : 'to';
-                    switch ($type) {
-                        case'many':
-                            $managerParams = ['relation' => $modelName::$cols[$colName]['relation']];
-                            $count = $item->{$modelName::$cols[$colName]['relation']}(array_merge($params, ['count' => 1]));
-                            $row[] = "<a class = 'btn btn-xs btn-primary' onclick = 'inji.Ui.dataManagers.popUp(\"" . str_replace('\\', '\\\\', $modelName) . ":" . $item->pk() . "\"," . json_encode(array_merge($params, $managerParams)) . ")'>{$count} Элементы</a>";
-                            break;
-                        default :
-                            if ($item->{$modelName::$cols[$colName]['relation']}) {
-                                $row[] = $item->{$modelName::$cols[$colName]['relation']}->name();
-                            } else {
-                                $row[] = $item->$colName;
-                            }
-                    }
-                } else {
-                    switch ($modelName::$cols[$colName]['type']) {
-                        case'bool':
-                            $row[] = $item->$colName ? 'Да' : 'Нет';
-                            break;
-                        case'select':
-                            $row[] = !empty($modelName::$cols[$colName]['sourceArray'][$item->$colName]) ? $modelName::$cols[$colName]['sourceArray'][$item->$colName] : $item->$colName;
-                            break;
-                        default :
-                            $row[] = $item->$colName;
-                    }
-                }
+                $row[] = DataManager::drawCol($item, $colName);
             }
             $row[] = $this->rowButtons($item, $params);
             $rows[] = $row;
@@ -151,19 +142,61 @@ class DataManager extends \Object {
         return $rows;
     }
 
+    static function drawCol($item, $colName) {
+        $modelName = get_class($item);
+        $relations = $modelName::relations();
+        if (strpos($colName, ':') !== false && !empty($relations[substr($colName, 0, strpos($colName, ':'))])) {
+            $rel = substr($colName, 0, strpos($colName, ':'));
+            $col = substr($colName, strpos($colName, ':') + 1);
+            return DataManager::drawCol($item->$rel, $col);
+        }
+        if (!empty($modelName::$cols[$colName]['relation'])) {
+            $type = !empty($relations[$modelName::$cols[$colName]['relation']]['type']) ? $relations[$modelName::$cols[$colName]['relation']]['type'] : 'to';
+            switch ($type) {
+                case'many':
+                    $managerParams = ['relation' => $modelName::$cols[$colName]['relation']];
+                    $count = $item->{$modelName::$cols[$colName]['relation']}(array_merge($params, ['count' => 1]));
+                    return "<a class = 'btn btn-xs btn-primary' onclick = 'inji.Ui.dataManagers.popUp(\"" . str_replace('\\', '\\\\', $modelName) . ":" . $item->pk() . "\"," . json_encode(array_merge($params, $managerParams)) . ")'>{$count} Элементы</a>";
+                    break;
+                default :
+                    if ($item->{$modelName::$cols[$colName]['relation']}) {
+                        return $item->{$modelName::$cols[$colName]['relation']}->name();
+                    } else {
+                        return $item->$colName;
+                    }
+            }
+        } else {
+            if (!empty($modelName::$cols[$colName]['type'])) {
+                switch ($modelName::$cols[$colName]['type']) {
+                    case'bool':
+                        return $item->$colName ? 'Да' : 'Нет';
+                        break;
+                    case'select':
+                        return !empty($modelName::$cols[$colName]['sourceArray'][$item->$colName]) ? $modelName::$cols[$colName]['sourceArray'][$item->$colName] : $item->$colName;
+                        break;
+                    default :
+                        return $item->$colName;
+                }
+            } else {
+                return $item->$colName;
+            }
+        }
+    }
+
     function rowButtons($item, $params) {
-        $modelName = $this->modelName;
-        $formParams = [
-            'dataManagerParams' => $params
-        ];
-        $buttons = '';
-        $buttons .= "<a onclick='inji.Ui.forms.popUp(\"" . str_replace('\\', '\\\\', $modelName) . ":{$item->pk()}\"," . json_encode($formParams) . ");return false;' class = 'btn btn-success btn-xs'><i class='glyphicon glyphicon-edit'></i></a>";
-        $buttons .= " <a onclick='inji.Ui.dataManagers.get(this).delRow({$item->pk()});return false;' class = 'btn btn-danger btn-xs'><i class='glyphicon glyphicon-remove'></i></a>";
+        ob_start();
+        \App::$cur->view->widget('Ui\DataManager/rowButtons', [
+            'dataManager' => $this,
+            'item' => $item,
+            'params' => $params
+        ]);
+        $buttons = ob_get_contents();
+        ob_end_clean();
         return $buttons;
     }
 
     function getPages($params = [], $model = null) {
-        if (!$this->chackAccess()) {
+        if (!$this->checkAccess()) {
             $this->drawError('you not have access to "' . $this->modelName . '" manager with name: "' . $this->managerName . '"');
             return [];
         }
@@ -195,26 +228,35 @@ class DataManager extends \Object {
         return $pages;
     }
 
-    function draw($params = [], $model = null) {
-
-
+    function preDraw($params = [], $model = null) {
+        $this->predraw = true;
         $modelName = $this->modelName;
 
         $buttons = $this->getButtons($params, $model);
         $cols = $this->getCols();
 
-        $table = new Table();
-        $table->name = $this->name;
-        $table->setCols($cols);
-        $table->afterHeader = '<div class="pagesContainer text-right"></div>';
-        foreach ($buttons as $button) {
-            $table->addButton($button);
+        $this->table = new Table();
+        $this->table->name = $this->name;
+        $tableCols = [];
+        foreach ($cols as $colName => $colOptions) {
+            $tableCols[] = $colOptions['label'];
         }
-        $this->getPages($params, $model);
+        $tableCols[] = '';
+        $this->table->setCols($tableCols);
+        $this->table->afterHeader = '<div class="pagesContainer text-right"></div>';
+        foreach ($buttons as $button) {
+            $this->table->addButton($button);
+        }
+    }
+
+    function draw($params = [], $model = null) {
+        if (!$this->predraw) {
+            $this->preDraw($params, $model);
+        }
         \App::$cur->view->widget('Ui\DataManager/DataManager', [
             'dataManager' => $this,
             'model' => $model,
-            'table' => $table,
+            'table' => $this->table,
             'params' => $params
         ]);
     }
@@ -287,7 +329,7 @@ class DataManager extends \Object {
      * 
      * @return boolean
      */
-    function chackAccess() {
+    function checkAccess() {
         $modelName = $this->modelName;
         if (empty($this->managerOptions)) {
             $this->drawError('"' . $this->modelName . '" manager with name: "' . $this->managerName . '" not found');

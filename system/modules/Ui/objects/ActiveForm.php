@@ -82,7 +82,7 @@ class ActiveForm extends \Object {
     }
 
     function checkRequest($params = [], $ajax = false) {
-        if (!$this->chackAccess()) {
+        if (!$this->checkAccess()) {
             $this->drawError('you not have access to "' . $this->modelName . '" manager with name: "' . $this->formName . '"');
             return [];
         }
@@ -147,7 +147,7 @@ class ActiveForm extends \Object {
     }
 
     function draw($params = [], $ajax = false) {
-        if (!$this->chackAccess()) {
+        if (!$this->checkAccess()) {
             $this->drawError('you not have access to "' . $this->modelName . '" manager with name: "' . $this->formName . '"');
             return [];
         }
@@ -253,7 +253,7 @@ class ActiveForm extends \Object {
      * 
      * @return boolean
      */
-    function chackAccess() {
+    function checkAccess() {
         if (empty($this->form)) {
             $this->drawError('"' . $this->modelName . '" manager with name: "' . $this->managerName . '" not found');
             return false;

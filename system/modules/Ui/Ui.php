@@ -12,8 +12,8 @@ class Ui extends Module {
 
     function init() {
         App::$cur->view->customAsset('js', ['file' => '/static/moduleAsset/Ui/js/Ui.js', 'name' => 'Ui']);
-        if (\Users\User::$cur->isAdmin()) {
-            App::$cur->view->customAsset('js', ['file' => '/static/moduleAsset/Ui/js/fastEdit.js', 'name' => 'Ui','libs'=>['ckeditor']]);
+        if (\Users\User::$cur->isAdmin() && \App::$cur->type == 'app') {
+            App::$cur->view->customAsset('js', ['file' => '/static/moduleAsset/Ui/js/fastEdit.js', 'name' => 'Ui', 'libs' => ['ckeditor']]);
         }
         App::$cur->view->customAsset('css', '/static/moduleAsset/Ui/css/Ui.css');
     }

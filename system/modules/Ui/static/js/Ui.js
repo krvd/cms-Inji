@@ -33,6 +33,15 @@ Ui.prototype.bindMenu = function (container) {
  * 
  */
 Editors = function () {
+    this.checkEditors();
+    inji.on('loadScript',function(){
+        inji.Ui.editors.checkEditors();
+    });
+    inji.onLoad(function(){
+        inji.Ui.editors.loadIn('.htmleditor');
+    })
+}
+Editors.prototype.checkEditors = function () {
     this.ckeditor = false;
     if (typeof CKEDITOR != 'undefined') {
         this.ckeditor = true;
@@ -289,7 +298,7 @@ Forms.prototype.popUp = function (item, params) {
     if (typeof (params.relation) != 'undefined') {
         code += params.relation;
     }
-    code = code.replace(':', '_').replace('\\', '_');
+    code = code.replace(/:/g, '_').replace(/\\/g, '_');
     var exist = false;
     if ($('#' + code).length != 0) {
         exist = true;

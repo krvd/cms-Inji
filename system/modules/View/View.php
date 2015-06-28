@@ -17,9 +17,13 @@ class View extends Module {
         }
         if (!empty($this->config[App::$cur->type]['current'])) {
             $this->template['name'] = $this->config[App::$cur->type]['current'];
+            if (!empty($this->config[App::$cur->type]['installed'][$this->template['name']]['location'])) {
+                $this->templatesPath = App::$primary->path . "/templates";
+            }
         }
-        $this->templatesPath = App::$cur->path . "/templates";
-
+        if (!$this->templatesPath) {
+            $this->templatesPath = App::$cur->path . "/templates";
+        }
         $template = $this->getConfig($this->template['name']);
         if ($template) {
             $this->template = $template;

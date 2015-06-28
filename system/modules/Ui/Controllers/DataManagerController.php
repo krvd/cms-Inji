@@ -135,7 +135,7 @@ class DataManagerController extends Controller {
             $params = [];
         }
         $dataManager = new Ui\DataManager($modelName, $_GET['managerName']);
-        if ($dataManager->chackAccess()) {
+        if ($dataManager->checkAccess()) {
             $model = $modelName::get($_GET['key'], $modelName::index(), !empty($_GET['params']) ? $_GET['params'] : []);
             if ($model) {
                 $model->delete(!empty($_GET['params']) ? $_GET['params'] : []);
@@ -149,7 +149,7 @@ class DataManagerController extends Controller {
     function delCategoryAction() {
 
         $dataManager = new Ui\DataManager($_GET['modelName'], $_GET['managerName']);
-        if ($dataManager->chackAccess() && !empty($dataManager->managerOptions['categorys'])) {
+        if ($dataManager->checkAccess() && !empty($dataManager->managerOptions['categorys'])) {
             $categoryModel = $dataManager->managerOptions['categorys']['model'];
             $model = $categoryModel::get($_GET['key'], $categoryModel::index(), !empty($_GET['params']) ? $_GET['params'] : []);
             if ($model) {

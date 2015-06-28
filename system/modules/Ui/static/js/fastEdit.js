@@ -55,5 +55,5 @@ function toggleEditor(btn) {
     return;
 }
 $(function () {
-    $('body').append("<div class ='btn-group' style = 'position:fixed;right:0;bottom:0;z-index:100000;' ><button onclick='toggleEditor(this);return false;' class ='btn btn-primary btn-sm' >Включить редактирование</button></div>");
+    $('body').append("<div class ='btn-group' style = 'position:fixed;right:0;bottom:0;z-index:100000;' ><button onclick='toggleEditor(this);return false;' class ='btn btn-default btn-xs' >Включить редактирование</button></div>");
 })
