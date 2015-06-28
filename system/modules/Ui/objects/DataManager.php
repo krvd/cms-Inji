@@ -133,8 +133,8 @@ class DataManager extends \Object {
         foreach ($items as $key => $item) {
             $row = [];
             $row[] = $item->pk();
-            foreach ($this->managerOptions['cols'] as $colName) {
-                $row[] = DataManager::drawCol($item, $colName,$params);
+            foreach ($this->managerOptions['cols'] as $key=> $colName) {
+                $row[] = DataManager::drawCol($item, is_array($colName)?$key:$colName,$params);
             }
             $row[] = $this->rowButtons($item, $params);
             $rows[] = $row;

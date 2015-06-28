@@ -4,7 +4,8 @@ class UsersController extends Controller {
 
     function indexAction() {
         $this->view->setTitle('Пользователи');
-        $this->view->page();
+        $dataManager = new Ui\DataManager('Users\User');
+        $this->view->page(['data' => compact('dataManager')]);
     }
 
     function loginAction() {

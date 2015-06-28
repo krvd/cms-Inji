@@ -33,7 +33,10 @@ Inji.prototype.startCallbacks = function () {
     if (this.onLoadCallbacks.length != 0) {
         this.startCallbacks();
     }
-    document.getElementById('loading-indicator').style.display = 'none';
+    var indicator = document.getElementById('loading-indicator');
+    if(indicator){
+        indicator.style.display = 'none';
+    }
     inji.loaded = true;
     console.log('inji start complete');
 }

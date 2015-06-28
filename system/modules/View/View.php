@@ -221,14 +221,15 @@ class View extends Module {
     }
 
     function getHref($type, $params) {
+        $href = '';
         if (is_string($params)) {
-            return (App::$cur->type != 'app' ? '/' . App::$cur->name : '' ) . $params . "?" . rand(0, 100);
+            $href = (App::$cur->type != 'app' ? '/' . App::$cur->name : '' ) . $params ;
         } elseif (empty($params['template']) && !empty($params['file'])) {
-            return (App::$cur->type != 'app' ? '/' . App::$cur->name : '' ) . $params['file'] . "?" . rand(0, 100);
+            $href = (App::$cur->type != 'app' ? '/' . App::$cur->name : '' ) . $params['file'];
         } elseif (!empty($params['template']) && !empty($params['file'])) {
-            return App::$cur->templatesPath . "/{$this->template['name']}/{$type}/{$js['file']}?" . rand(0, 100);
+            $href = App::$cur->templatesPath . "/{$this->template['name']}/{$type}/{$js['file']}";
         }
-        return '';
+        return $href. "?" . rand(0, 100);
     }
 
     function checkNeedLibs() {
