@@ -16,6 +16,18 @@ class Value {
         $colInfo = $modelName::getColInfo($this->valueKey);
         $type = !empty($colInfo['colParams']['type']) ? $colInfo['colParams']['type'] : 'string';
         switch ($type) {
+            case 'dateTime':
+            case 'date':
+                $yy = (int) substr($this->model->{$this->valueKey}, 0, 4);
+                $mm = (int) substr($this->model->{$this->valueKey}, 5, 2);
+                $dd = (int) substr($this->model->{$this->valueKey}, 8, 2);
+
+                $hours = substr($this->model->{$this->valueKey}, 11, 5);
+
+                $month = array('января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря');
+
+                return ($dd > 0 ? $dd . " " : '') . $month[$mm - 1] . " " . $yy . " г. " . $hours;
+                break;
             case'select':
                 switch ($colInfo['colParams']['source']) {
                     case 'array':

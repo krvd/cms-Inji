@@ -10,6 +10,9 @@
  */
 session_start();
 
+setlocale(LC_ALL, 'ru_RU', 'ru_RU.UTF-8', 'rus_RUS.UTF-8', 'Russian_Russia.65001');
+setlocale(LC_NUMERIC, 'C');
+
 define('INJI_DOMAIN_NAME', filter_input(INPUT_SERVER, 'SERVER_NAME'));
 
 spl_autoload_register(function($class_name) {
