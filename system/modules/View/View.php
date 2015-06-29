@@ -76,6 +76,7 @@ class View extends Module {
             $this->tmp_data['contentPath'] = Controller::$cur->path . '/content';
         }
         $data = $this->paramsParse($params);
+
         if (file_exists($data['path'])) {
             $source = file_get_contents($data['path']);
             if (strpos($source, 'BODYEND') === false) {
@@ -128,6 +129,8 @@ class View extends Module {
 
     function getContentPaths() {
         $paths = [
+            'customModuleTemplateControllerContent' => $this->templatesPath . '/' . $this->template['name'] . "/modules/" . $this->tmp_data['module']->moduleName,
+            'customModuleControllerContent' => $this->tmp_data['module']->path . '/' . Controller::$cur->module->app->type . 'Controllers/content',
             'template' => $this->templatesPath . '/' . $this->template['name'] . "/modules/{$this->tmp_data['module']->moduleName}",
             'appControllerContent' => Controller::$cur->app->path . '/modules/' . Controller::$cur->module->moduleName . '/' . Controller::$cur->app->type . 'Controllers/content',
             'controllerContent' => Controller::$cur->path . '/content',
@@ -223,7 +226,7 @@ class View extends Module {
     function getHref($type, $params) {
         $href = '';
         if (is_string($params)) {
-            $href = (App::$cur->type != 'app' ? '/' . App::$cur->name : '' ) . $params ;
+            $href = (App::$cur->type != 'app' ? '/' . App::$cur->name : '' ) . $params;
         } elseif (empty($params['template']) && !empty($params['file'])) {
             $href = (App::$cur->type != 'app' ? '/' . App::$cur->name : '' ) . $params['file'];
         } elseif (!empty($params['template']) && !empty($params['file'])) {

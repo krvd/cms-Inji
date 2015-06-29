@@ -130,14 +130,16 @@ class Model {
 
             if (isset(static::$cols[$info['col']])) {
                 $info['colParams'] = static::$cols[$info['col']];
-            } else {
+            } elseif(isset(static::$cols[str_replace (static::colPrefix (), '', $info['col'])])) {
+                $info['colParams'] = static::$cols[str_replace (static::colPrefix (), '', $info['col'])];
+            }
+            else {
                 $info['colParams'] = [];
             }
             if (!isset($cols[$info['col']]) && isset($cols[static::colPrefix() . $info['col']])) {
                 $info['col'] = static::colPrefix() . $info['col'];
             }
             $info['modelName'] = get_called_class();
-
         }
         return $info;
     }
@@ -847,6 +849,13 @@ class Model {
     }
 
     function __call($name, $params) {
+        $fixedName = $name;
+        static::fixPrefix($fixedName);
+        if (isset($this->_params[$fixedName])) {
+            return new Value($this, $fixedName);
+        } elseif ($this->_params[$name]) {
+            return new Value($this, $name);
+        }
         return call_user_func_array([$this, 'loadRelation'], array_merge([$name], $params));
     }
 
@@ -860,6 +869,17 @@ class Model {
             return $this->loadedRelations[$name][json_encode([])];
         }
         return $this->loadRelation($name);
+    }
+
+    function value($name) {
+        $fixedName = $name;
+        static::fixPrefix($fixedName);
+        if (isset($this->_params[$fixedName])) {
+            return new Value($this, $fixedName);
+        } elseif ($this->_params[$name]) {
+            return new Value($this, $name);
+        }
+        return null;
     }
 
     function __set($name, $value) {

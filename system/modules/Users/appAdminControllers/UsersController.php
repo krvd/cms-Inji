@@ -1,12 +1,6 @@
 <?php
 
-class UsersController extends Controller {
-
-    function indexAction() {
-        $this->view->setTitle('Пользователи');
-        $dataManager = new Ui\DataManager('Users\User');
-        $this->view->page(['data' => compact('dataManager')]);
-    }
+class UsersController extends adminController {
 
     function loginAction() {
         if (!Users\User::$cur->user_id) {

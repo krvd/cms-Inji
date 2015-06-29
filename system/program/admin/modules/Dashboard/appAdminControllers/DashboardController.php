@@ -8,7 +8,7 @@
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
-class DashboardController extends Controller {
+class DashboardController extends adminController {
 
     function indexAction() {
         $this->view->setTitle('Панель управления');
