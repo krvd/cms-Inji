@@ -853,7 +853,7 @@ class Model {
         static::fixPrefix($fixedName);
         if (isset($this->_params[$fixedName])) {
             return new Value($this, $fixedName);
-        } elseif ($this->_params[$name]) {
+        } elseif (isset($this->_params[$name])) {
             return new Value($this, $name);
         }
         return call_user_func_array([$this, 'loadRelation'], array_merge([$name], $params));
