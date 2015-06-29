@@ -129,12 +129,12 @@ class View extends Module {
 
     function getContentPaths() {
         $paths = [
-            'customModuleTemplateControllerContent' => $this->templatesPath . '/' . $this->template['name'] . "/modules/" . $this->tmp_data['module']->moduleName,
-            'customModuleControllerContent' => $this->tmp_data['module']->path . '/' . Controller::$cur->module->app->type . 'Controllers/content',
             'template' => $this->templatesPath . '/' . $this->template['name'] . "/modules/{$this->tmp_data['module']->moduleName}",
             'appControllerContent' => Controller::$cur->app->path . '/modules/' . Controller::$cur->module->moduleName . '/' . Controller::$cur->app->type . 'Controllers/content',
             'controllerContent' => Controller::$cur->path . '/content',
             'moduleControllerContent' => Controller::$cur->module->path . '/' . Controller::$cur->module->app->type . 'Controllers/content',
+            'customModuleTemplateControllerContent' => $this->templatesPath . '/' . $this->template['name'] . "/modules/" . $this->tmp_data['module']->moduleName,
+            'customModuleControllerContent' => $this->tmp_data['module']->path . '/' . Controller::$cur->module->app->type . 'Controllers/content',
         ];
         return $paths;
     }
