@@ -25,6 +25,7 @@ Inji.prototype.onLoad = function (callback) {
     }
 }
 Inji.prototype.startCallbacks = function () {
+    console.log('inji start onload');
     while (callback = this.onLoadCallbacks.shift()) {
         if (typeof callback == 'function') {
             callback();

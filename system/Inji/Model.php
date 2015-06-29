@@ -110,30 +110,34 @@ class Model {
                     case 'to':
                         $relCol = $relations[$rel]['col'];
                         static::fixPrefix($relCol);
-                        $info['modelName'] = $relations[$rel]['model'];
+                        //$info['modelName'] = $relations[$rel]['model'];
                         $info['joins'][$relations[$rel]['model'] . '_' . $rel] = [$relations[$rel]['model']::table(), $relations[$rel]['model']::index() . ' = ' . $relCol];
                         break;
                     case 'one':
                         $relCol = $relations[$rel]['col'];
                         $relations[$rel]['model']::fixPrefix($relCol);
-                        $info['modelName'] = $relations[$rel]['model'];
+                        //$info['modelName'] = $relations[$rel]['model'];
                         $info['joins'][$relations[$rel]['model'] . '_' . $rel] = [$relations[$rel]['model']::table(), static::index() . ' = ' . $relCol];
                         break;
                 }
                 $info = $relations[$rel]['model']::parseColRecursion($info);
             }
         } else {
-
             $cols = static::cols();
             if (!empty(static::$labels[$info['col']])) {
                 $info['label'] = static::$labels[$info['col']];
             }
+
+            if (isset(static::$cols[$info['col']])) {
+                $info['colParams'] = static::$cols[$info['col']];
+            } else {
+                $info['colParams'] = [];
+            }
             if (!isset($cols[$info['col']]) && isset($cols[static::colPrefix() . $info['col']])) {
                 $info['col'] = static::colPrefix() . $info['col'];
             }
-            if (!empty(static::$labels[$info['col']])) {
-                $info['label'] = static::$labels[$info['col']];
-            }
+            $info['modelName'] = get_called_class();
+
         }
         return $info;
     }

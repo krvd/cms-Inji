@@ -229,7 +229,7 @@ class View extends Module {
         } elseif (!empty($params['template']) && !empty($params['file'])) {
             $href = App::$cur->templatesPath . "/{$this->template['name']}/{$type}/{$js['file']}";
         }
-        return $href. "?" . rand(0, 100);
+        return $href;
     }
 
     function checkNeedLibs() {

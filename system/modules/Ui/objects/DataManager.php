@@ -116,13 +116,63 @@ class DataManager extends \Object {
             'start' => $this->page * $this->limit - $this->limit
         ];
         if (!empty($params['categoryPath']) && $modelName::$categoryModel) {
-            $queryParams['where'] = ['tree_path', $params['categoryPath'] . '%', 'LIKE'];
+            $queryParams['where'][] = ['tree_path', $params['categoryPath'] . '%', 'LIKE'];
         }
         if (!empty($params['appType'])) {
             $queryParams['appType'] = $params['appType'];
         }
         if ($this->joins) {
             $queryParams['joins'] = $this->joins;
+        }
+        if (!empty($this->managerOptions['filters'])) {
+            foreach ($this->managerOptions['filters'] as $col) {
+                $colInfo = $modelName::getColInfo($col);
+                switch ($colInfo['colParams']['type']) {
+                    case 'select':
+                        if (empty($params['filters'][$col]['value'])) {
+                            continue;
+                        }
+                        $queryParams['where'][] = [$col, $params['filters'][$col]['value']];
+                        break;
+                    case 'bool':
+                        
+                        if (empty($params['filters'][$col]['value'])) {
+                            continue;
+                        }
+                        $queryParams['where'][] = [$col, '1'];
+                        break;
+                    case 'number':
+                        if (empty($params['filters'][$col]['min']) && empty($params['filters'][$col]['max'])) {
+                            continue;
+                        }
+                        if (!empty($params['filters'][$col]['min'])) {
+                            $queryParams['where'][] = [$col, $params['filters'][$col]['min'], '>='];
+                        }
+                        if (!empty($params['filters'][$col]['max'])) {
+                            $queryParams['where'][] = [$col, $params['filters'][$col]['max'], '<='];
+                        }
+                        break;
+                    case'text':
+                        if (empty($params['filters'][$col]['value'])) {
+                            continue;
+                        }
+                        switch ($params['filters'][$col]['compareType']) {
+                            case 'contains':
+                                $queryParams['where'][] = [$col, '%' . $params['filters'][$col]['value'] . '%', 'LIKE'];
+                                break;
+                            case 'equals':
+                                $queryParams['where'][] = [$col, $params['filters'][$col]['value']];
+                                break;
+                            case 'starts_with':
+                                $queryParams['where'][] = [$col, $params['filters'][$col]['value'] . '%', 'LIKE'];
+                                break;
+                            case 'ends_with':
+                                $queryParams['where'][] = [$col, '%' . $params['filters'][$col]['value'], 'LIKE'];
+                                break;
+                        }
+                        break;
+                }
+            }
         }
         if ($model && !empty($params['relation'])) {
             $items = $model->$params['relation']($queryParams);
@@ -133,8 +183,8 @@ class DataManager extends \Object {
         foreach ($items as $key => $item) {
             $row = [];
             $row[] = $item->pk();
-            foreach ($this->managerOptions['cols'] as $key=> $colName) {
-                $row[] = DataManager::drawCol($item, is_array($colName)?$key:$colName,$params);
+            foreach ($this->managerOptions['cols'] as $key => $colName) {
+                $row[] = DataManager::drawCol($item, is_array($colName) ? $key : $colName, $params);
             }
             $row[] = $this->rowButtons($item, $params);
             $rows[] = $row;
@@ -142,7 +192,7 @@ class DataManager extends \Object {
         return $rows;
     }
 
-    static function drawCol($item, $colName,$params=[]) {
+    static function drawCol($item, $colName, $params = []) {
         $modelName = get_class($item);
         $relations = $modelName::relations();
         if (strpos($colName, ':') !== false && !empty($relations[substr($colName, 0, strpos($colName, ':'))])) {
@@ -211,9 +261,59 @@ class DataManager extends \Object {
         ];
         $modelName = $this->modelName;
         if (!empty($params['categoryPath']) && $modelName::$categoryModel) {
-            $queryParams['where'] = ['tree_path', $params['categoryPath'] . '%', 'LIKE'];
+            $queryParams['where'][] = ['tree_path', $params['categoryPath'] . '%', 'LIKE'];
         }
         $modelName = $this->modelName;
+        if (!empty($this->managerOptions['filters'])) {
+            foreach ($this->managerOptions['filters'] as $col) {
+                $colInfo = $modelName::getColInfo($col);
+                switch ($colInfo['colParams']['type']) {
+                    case 'select':
+                        if (empty($params['filters'][$col]['value'])) {
+                            continue;
+                        }
+                        $queryParams['where'][] = [$col, $params['filters'][$col]['value']];
+                        break;
+                    case 'bool':
+                        
+                        if (empty($params['filters'][$col]['value'])) {
+                            continue;
+                        }
+                        $queryParams['where'][] = [$col, '1'];
+                        break;
+                    case 'number':
+                        if (empty($params['filters'][$col]['min']) && empty($params['filters'][$col]['max'])) {
+                            continue;
+                        }
+                        if (!empty($params['filters'][$col]['min'])) {
+                            $queryParams['where'][] = [$col, $params['filters'][$col]['min'], '>='];
+                        }
+                        if (!empty($params['filters'][$col]['max'])) {
+                            $queryParams['where'][] = [$col, $params['filters'][$col]['max'], '<='];
+                        }
+                        break;
+                    case'text':
+                        if (empty($params['filters'][$col]['value'])) {
+                            continue;
+                        }
+                        switch ($params['filters'][$col]['compareType']) {
+                            case 'contains':
+                                $queryParams['where'][] = [$col, '%' . $params['filters'][$col]['value'] . '%', 'LIKE'];
+                                break;
+                            case 'equals':
+                                $queryParams['where'][] = [$col, $params['filters'][$col]['value']];
+                                break;
+                            case 'starts_with':
+                                $queryParams['where'][] = [$col, $params['filters'][$col]['value'] . '%', 'LIKE'];
+                                break;
+                            case 'ends_with':
+                                $queryParams['where'][] = [$col, '%' . $params['filters'][$col]['value'], 'LIKE'];
+                                break;
+                        }
+                        break;
+                }
+            }
+        }
         if ($model && !empty($params['relation'])) {
             $count = $model->$params['relation']($queryParams);
         } else {

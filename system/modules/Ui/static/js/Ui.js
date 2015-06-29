@@ -34,10 +34,10 @@ Ui.prototype.bindMenu = function (container) {
  */
 Editors = function () {
     this.checkEditors();
-    inji.on('loadScript',function(){
+    inji.on('loadScript', function () {
         inji.Ui.editors.checkEditors();
     });
-    inji.onLoad(function(){
+    inji.onLoad(function () {
         inji.Ui.editors.loadIn('.htmleditor');
     })
 }
@@ -250,11 +250,30 @@ DataManager.prototype.load = function () {
     params.limit = this.limit;
     params.page = this.page;
     params.categoryPath = this.categoryPath;
+    filters = {};
+    if (this.element.find('.dataManagerFilters [name^="datamanagerFilters"]').length > 0) {
+        this.element.find('.dataManagerFilters [name^="datamanagerFilters"]').each(function () {
+            var maths = $(this).attr('name').match(/\[([^\]]+)\]/g);
+            for (key in maths) {
+                maths[key] = maths[key].replace(/([\[\]])/g, '');
+            }
+            if (!filters[maths[0]]) {
+                filters[maths[0]] = {};
+            }
+            if ($(this).attr('type') == 'checkbox' && !$(this)[0].checked) {
+                filters[maths[0]][maths[1]] = 0;
+            }
+            else {
+                filters[maths[0]][maths[1]] = $(this).val();
+            }
+        });
+    }
     dataManager.element.find('tbody').html('<tr><td colspan="' + dataManager.element.find('thead tr th').length + '"><div class = "text-center"><img src = "' + inji.options.appRoot + 'static/moduleAsset/Ui/images/ajax-loader.gif" /></div></td></tr>');
     var instance = this;
+
     inji.Server.request({
         url: 'ui/dataManager/loadRows',
-        data: {params: params, modelName: this.modelName, managerName: this.managerName},
+        data: {params: params, modelName: this.modelName, managerName: this.managerName, filters: filters},
         success: function (data) {
             dataManager.element.find('tbody').html(data.rows);
             dataManager.element.find('.pagesContainer').html(data.pages);

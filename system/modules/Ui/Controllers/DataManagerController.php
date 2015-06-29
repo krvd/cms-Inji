@@ -65,6 +65,9 @@ class DataManagerController extends Controller {
             $params = [];
         }
 
+        if (!empty($_GET['filters'])) {
+            $params['filters'] = $_GET['filters'];
+        }
         $dataManager = new Ui\DataManager($modelName, $_GET['managerName']);
         $rows = $dataManager->getRows($params, $model);
         foreach ($rows as $row) {
@@ -104,6 +107,9 @@ class DataManagerController extends Controller {
         } else {
             $params = [];
         }
+        if (!empty($_GET['filters'])) {
+            $params['filters'] = $_GET['filters'];
+        }
         $dataManager = new Ui\DataManager($modelName, $_GET['managerName']);
         $dataManager->drawCategorys();
         $result->content = ob_get_contents();
@@ -112,7 +118,7 @@ class DataManagerController extends Controller {
     }
 
     function delRowAction() {
-        
+
         if (strpos($_GET['modelName'], ':')) {
             $raw = explode(':', $_GET['modelName']);
             $modelName = $raw[0];
@@ -127,9 +133,8 @@ class DataManagerController extends Controller {
             $params = $_GET['params'];
             if (!empty($params['relation'])) {
                 $relations = $modelName::relations();
-                
+
                 $modelName = $relations[$params['relation']]['model'];
-                
             }
         } else {
             $params = [];
