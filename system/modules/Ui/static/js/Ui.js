@@ -33,6 +33,7 @@ Ui.prototype.bindMenu = function (container) {
  * 
  */
 Editors = function () {
+    this.ckeditor = false;
     this.checkEditors();
     inji.on('loadScript', function () {
         inji.Ui.editors.checkEditors();
@@ -42,8 +43,7 @@ Editors = function () {
     })
 }
 Editors.prototype.checkEditors = function () {
-    this.ckeditor = false;
-    if (typeof CKEDITOR != 'undefined') {
+    if (!this.ckeditor && typeof CKEDITOR != 'undefined') {
         CKEDITOR.basePath = window.CKEDITOR_BASEPATH = inji.options.appRoot + 'static/moduleAsset/libs/libs/ckeditor/';
         this.ckeditor = true;
     }
