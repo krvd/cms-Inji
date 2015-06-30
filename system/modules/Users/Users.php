@@ -39,8 +39,8 @@ class Users extends Module {
                     ['ip', filter_input(INPUT_SERVER, 'REMOTE_ADDR')],
                     ['hash', $hash]
         ]);
-        if ($session && $sessionUser = Users\User::get($session->user_id)) {
-            Users\User::$cur = $sessionUser;
+        if ($session && $session->user && !$session->user->blocked) {
+            Users\User::$cur = $session->user;
             Users\User::$cur->last_activ = 'CURRENT_TIMESTAMP';
             Users\User::$cur->save();
         } else {
@@ -89,7 +89,7 @@ class Users extends Module {
     function autorization($login, $pass, $ltype = 'login') {
 
         $user = $this->get($login, $ltype);
-        if ($user && $this->verifypass($pass, $user->pass)) {
+        if ($user && $this->verifypass($pass, $user->pass) && !$user->blocked) {
             if ($user->activation) {
                 Tools::redirect('/', 'Этот аккаунт ещё не активирован');
             }
@@ -104,7 +104,9 @@ class Users extends Module {
             return true;
         }
         if (isset($_POST['autorization'])) {
-            if ($user) {
+            if ($user && $user->blocked) {
+                Msg::add('Вы заблокированы', 'danger');
+            } elseif ($user) {
                 Msg::add('Вы ошиблись при наборе пароля или логина, попробуйте ещё раз или воспользуйтесь <a href = "?passre=1&user_mail=' . $user->mail . '">Восстановлением пароля</a>', 'danger');
             } else {
                 Msg::add('Данный почтовый ящик не зарегистрирован в системе', 'danger');

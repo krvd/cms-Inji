@@ -48,6 +48,7 @@ Inji.prototype.start = function (options) {
         this.onLoad(function () {
             for (key in options.onLoadModules) {
                 if (typeof inji[key] == 'undefined') {
+                    console.log(key);
                     inji[key] = new window[key]();
                     if (typeof (inji[key].init) == 'function') {
                         console.log(key + ' init');

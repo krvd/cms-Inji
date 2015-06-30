@@ -346,6 +346,7 @@ class View extends Module {
                 $timeStr.=filemtime($path);
             } elseif (!empty($script['file'])) {
                 $urls[] = $path = App::$cur->staticLoader->parsePath($script['file']);
+                $onLoadModules[$script['name']] = $script['name'];
                 $timeStr.=filemtime($path);
             }
         }

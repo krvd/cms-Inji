@@ -10,5 +10,16 @@
  */
 
 namespace Users;
-class Session extends \Model{
+
+class Session extends \Model {
+
+    static function relations() {
+        return [
+            'user' => [
+                'model' => '\Users\User',
+                'col' => 'user_id'
+            ]
+        ];
+    }
+
 }

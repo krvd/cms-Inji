@@ -135,7 +135,7 @@ class DataManager extends \Object {
                         $queryParams['where'][] = [$col, $params['filters'][$col]['value']];
                         break;
                     case 'bool':
-                        
+
                         if (empty($params['filters'][$col]['value'])) {
                             continue;
                         }
@@ -171,6 +171,15 @@ class DataManager extends \Object {
                                 break;
                         }
                         break;
+                }
+            }
+        }
+        if (!empty($params['sortered']) && !empty($this->managerOptions['sortable'])) {
+            foreach ($params['sortered'] as $key => $sortType) {
+                if (!empty($this->managerOptions['cols'][$key]) && in_array($this->managerOptions['cols'][$key], $this->managerOptions['sortable'])) {
+                    $colName = $this->managerOptions['cols'][$key];
+                    $sortType = in_array($sortType, ['desc', 'asc']) ? $sortType : 'desc';
+                    $queryParams['order'][] = [$colName, $sortType];
                 }
             }
         }
@@ -275,7 +284,7 @@ class DataManager extends \Object {
                         $queryParams['where'][] = [$col, $params['filters'][$col]['value']];
                         break;
                     case 'bool':
-                        
+
                         if (empty($params['filters'][$col]['value'])) {
                             continue;
                         }

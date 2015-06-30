@@ -68,6 +68,10 @@ class DataManagerController extends Controller {
         if (!empty($_GET['filters'])) {
             $params['filters'] = $_GET['filters'];
         }
+
+        if (!empty($_GET['sortered'])) {
+            $params['sortered'] = $_GET['sortered'];
+        }
         $dataManager = new Ui\DataManager($modelName, $_GET['managerName']);
         $rows = $dataManager->getRows($params, $model);
         foreach ($rows as $row) {

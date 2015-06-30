@@ -198,8 +198,10 @@ function DataManager(element) {
     this.params = element.data('params');
     this.modelName = element.data('modelname');
     this.managerName = element.data('managername');
+    this.options = element.data('options');
     this.limit = 10;
     this.page = 1;
+    this.sortered = {};
     this.categoryPath = '/';
     var instance = this;
     $(this.element).find('.pagesContainer').on('click', 'a', function () {
@@ -269,12 +271,74 @@ DataManager.prototype.load = function () {
             }
         });
     }
+    if (this.options.sortable) {
+        sortableIndexes = [];
+        for (key in this.options.sortable) {
+            var colName = this.options.sortable[key];
+            for (key2 in  this.options.cols) {
+                if (this.options.cols[key2] == colName) {
+                    sortableIndexes.push(parseInt(key2));
+                }
+            }
+
+        }
+        for (key in sortableIndexes) {
+            var headTh = $(dataManager.element.find('thead th').get(sortableIndexes[key] + 1));
+            var footTh = $(dataManager.element.find('tfoot th').get(sortableIndexes[key] + 1));
+            if (!headTh.hasClass('sortable')) {
+                headTh.html('<a href = "#">' + headTh.html() + '</a>');
+                headTh.addClass('sortable');
+                headTh.click(function () {
+                    if (!$(this).hasClass('sorted-desc') && !$(this).hasClass('sorted-asc')) {
+                        $(this).addClass('sorted-desc');
+                        dataManager.sortered[$(this).index() - 1] = 'desc';
+                        dataManager.reload();
+                    }
+                    else if ($(this).hasClass('sorted-desc')) {
+                        $(this).removeClass('sorted-desc');
+                        $(this).addClass('sorted-asc');
+                        dataManager.sortered[$(this).index() - 1] = 'asc';
+                        dataManager.reload();
+                    }
+                    else if ($(this).hasClass('sorted-asc')) {
+                        $(this).removeClass('sorted-asc');
+                        delete dataManager.sortered[$(this).index() - 1];
+                        dataManager.reload();
+                    }
+                    return false;
+                })
+            }
+            if (!footTh.hasClass('sortable')) {
+                footTh.html('<a href = "#">' + footTh.html() + '</a>');
+                footTh.addClass('sortable');
+                footTh.click(function () {
+                    if (!$(this).hasClass('sorted-desc') && !$(this).hasClass('sorted-asc')) {
+                        $(this).addClass('sorted-desc');
+                        dataManager.sortered[$(this).index() - 1] = 'desc';
+                        dataManager.reload();
+                    }
+                    else if ($(this).hasClass('sorted-desc')) {
+                        $(this).removeClass('sorted-desc');
+                        $(this).addClass('sorted-asc');
+                        dataManager.sortered[$(this).index() - 1] = 'asc';
+                        dataManager.reload();
+                    }
+                    else if ($(this).hasClass('sorted-asc')) {
+                        $(this).removeClass('sorted-asc');
+                        delete dataManager.sortered[$(this).index() - 1];
+                        dataManager.reload();
+                    }
+                    return false;
+                })
+            }
+        }
+    }
     dataManager.element.find('tbody').html('<tr><td colspan="' + dataManager.element.find('thead tr th').length + '"><div class = "text-center"><img src = "' + inji.options.appRoot + 'static/moduleAsset/Ui/images/ajax-loader.gif" /></div></td></tr>');
     var instance = this;
 
     inji.Server.request({
         url: 'ui/dataManager/loadRows',
-        data: {params: params, modelName: this.modelName, managerName: this.managerName, filters: filters},
+        data: {params: params, modelName: this.modelName, managerName: this.managerName, filters: filters, sortered: this.sortered},
         success: function (data) {
             dataManager.element.find('tbody').html(data.rows);
             dataManager.element.find('.pagesContainer').html(data.pages);

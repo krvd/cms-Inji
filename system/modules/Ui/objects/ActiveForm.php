@@ -96,6 +96,9 @@ class ActiveForm extends \Object {
                         $afterSave[] = $param;
                         continue;
                     }
+                    if (!empty($this->form['options']['readonly']) && in_array($col, $this->form['options']['readonly'])) {
+                        continue;
+                    }
                     switch ($param['type']) {
                         case 'image':
                             if (!empty($_FILES[$this->requestFormName]['tmp_name'][$this->modelName][$col])) {
@@ -190,6 +193,9 @@ class ActiveForm extends \Object {
             }
             if ($options['type'] == 'select') {
                 $inputOptions['values'] = $this->getOptionsList($options, $params);
+            }
+            if (!empty($this->form['options']['readonly']) && in_array($colName, $this->form['options']['readonly'])) {
+                $inputOptions['disabled'] = true;
             }
             switch ($options['type']) {
                 case 'bool';
