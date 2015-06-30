@@ -11,11 +11,14 @@ class Msg extends Module {
         App::$cur->view->widget('msgList');
     }
 
-    static function get($clean = true) {
+    static function get($clean = false) {
         if (empty($_SESSION['_INJI_MSG']))
             return [];
-
-        return $_SESSION['_INJI_MSG'];
+        $msgs = $_SESSION['_INJI_MSG'];
+        if ($clean) {
+            $_SESSION['_INJI_MSG'] = [];
+        }
+        return $msgs;
     }
 
     static function flush() {
