@@ -136,7 +136,6 @@ class StaticLoader extends Module {
                     }
                     $dirnoslash = str_replace('/', '', substr($fileinfo['dirname'], strpos($fileinfo['dirname'], '/static')));
                     $path = $dir . '/static/cache/' . $dirnoslash . $fileinfo['filename'] . '.' . $sizes[0] . 'x' . $sizes[1] . $crop . $pos . '.' . $fileinfo['extension'];
-                    //exit($path);
                     if (!file_exists($path)) {
                         Tools::createDir($dir . '/static/cache/');
                         copy($file, $path);
@@ -148,6 +147,24 @@ class StaticLoader extends Module {
             }
         }
 
+        $request = getallheaders();
+        if (isset($request['If-Modified-Since'])) {
+            // Разделяем If-Modified-Since (Netscape < v6 отдаёт их неправильно)
+            $modifiedSince = explode(';', $request['If-Modified-Since']);
+
+            // Преобразуем запрос клиента If-Modified-Since в таймштамп
+            $modifiedSince = strtotime($modifiedSince[0]);
+        } else {
+            // Устанавливаем время модификации в ноль
+            $modifiedSince = 0;
+        }
+        
+        //&& isset($_SERVER['HTTP_CACHE_CONTROL']) && $_SERVER['HTTP_CACHE_CONTROL'] != 'no-cache'
+        if (filemtime($file) <= $modifiedSince ) {
+            // Разгружаем канал передачи данных!
+            header('HTTP/1.1 304 Not Modified');
+            exit();
+        }
 
         //if( strpos( $file, '/static/doc' ) !== false ) {
         header('Content-Description: File Transfer');
@@ -168,22 +185,7 @@ class StaticLoader extends Module {
         header('Last-Modified: ' . gmdate('D, d M Y H:i:s', filemtime($file)) . ' GMT');
         if (in_array($fileinfo['extension'], array('doc', 'docx', 'xls', 'xlsx')))
             header("Content-Disposition: attachment; filename=" . $file);
-        $request = getallheaders();
-        if (isset($request['If-Modified-Since'])) {
-            // Разделяем If-Modified-Since (Netscape < v6 отдаёт их неправильно)
-            $modifiedSince = explode(';', $request['If-Modified-Since']);
 
-            // Преобразуем запрос клиента If-Modified-Since в таймштамп
-            $modifiedSince = strtotime($modifiedSince[0]);
-        } else {
-            // Устанавливаем время модификации в ноль
-            $modifiedSince = 0;
-        }
-        if (filemtime($file) <= $modifiedSince && isset($_SERVER['HTTP_CACHE_CONTROL']) && $_SERVER['HTTP_CACHE_CONTROL'] != 'no-cache') {
-            // Разгружаем канал передачи данных!
-            header('HTTP/1.1 304 Not Modified');
-            exit();
-        }
 
 
         readfile($file);
