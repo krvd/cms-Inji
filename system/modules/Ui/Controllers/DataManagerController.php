@@ -155,6 +155,62 @@ class DataManagerController extends Controller {
         $result->send();
     }
 
+    function groupActionAction() {
+
+
+        if (strpos($_GET['modelName'], ':')) {
+            $raw = explode(':', $_GET['modelName']);
+            $modelName = $raw[0];
+            $id = $raw[1];
+            $model = $modelName::get($id);
+        } else {
+            $modelName = $_GET['modelName'];
+            $id = null;
+            $model = null;
+        }
+        if (!empty($_GET['params'])) {
+            $params = $_GET['params'];
+            if (!empty($params['relation'])) {
+                $relations = $modelName::relations();
+
+                $modelName = $relations[$params['relation']]['model'];
+            }
+        } else {
+            $params = [];
+        }
+        $dataManager = new Ui\DataManager($modelName, $_GET['managerName']);
+        if ($dataManager->checkAccess()) {
+            if (!empty($_GET['action']) && !empty($dataManager->managerOptions['groupActions'][$_GET['action']]) && !empty($_GET['ids'])) {
+                switch ($dataManager->managerOptions['groupActions'][$_GET['action']]['action']) {
+                    case'delete':
+                        $ids = filter_input(INPUT_GET, 'ids', FILTER_SANITIZE_STRING);
+                        if ($ids) {
+                            $ids = trim($ids, ',');
+                            $models = $modelName::getList(['where' => [[$modelName::index(), $ids, 'IN']]]);
+                            foreach ($models as $model) {
+                                $model->delete();
+                            }
+                        }
+                        break;
+                    case 'changeParam':
+                        $ids = filter_input(INPUT_GET, 'ids', FILTER_SANITIZE_STRING);
+                        if ($ids) {
+                            $ids = trim($ids, ',');
+                            $models = $modelName::getList(['where' => [[$modelName::index(), $ids, 'IN']]]);
+                            foreach ($models as $model) {
+                                $model->{$dataManager->managerOptions['groupActions'][$_GET['action']]['col']} = $dataManager->managerOptions['groupActions'][$_GET['action']]['value'];
+                                $model->save();
+                            }
+                        }
+                        break;
+                }
+            }
+        }
+        $result = new Server\Result();
+        $result->successMsg = 'Операция выполнена';
+        $result->send();
+    }
+
     function delCategoryAction() {
 
         $dataManager = new Ui\DataManager($_GET['modelName'], $_GET['managerName']);

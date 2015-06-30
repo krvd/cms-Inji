@@ -71,7 +71,11 @@ class DataManager extends \Object {
      */
     function getCols() {
         $modelName = $this->modelName;
-        $cols = ['id' => ['label' => '№', 'sortable' => true]];
+        $cols = [];
+        if (!empty($this->managerOptions['groupActions'])) {
+            $cols[] = ['label'=> '<input type="checkbox" />'];
+        }
+        $cols['id'] = ['label' => '№', 'sortable' => true];
         foreach ($this->managerOptions['cols'] as $key => $col) {
             if (is_array($col)) {
                 $colName = $key;
@@ -123,6 +127,17 @@ class DataManager extends \Object {
         }
         if ($this->joins) {
             $queryParams['joins'] = $this->joins;
+        }
+        if (!empty($this->managerOptions['userGroupFilter'][\Users\User::$cur->group_id]['getRows'])) {
+            foreach ($this->managerOptions['userGroupFilter'][\Users\User::$cur->group_id]['getRows'] as $colName => $colOptions) {
+                if (!empty($colOptions['userCol'])) {
+                    if (strpos($colOptions['userCol'], ':')) {
+                        $rel = substr($colOptions['userCol'], 0, strpos($colOptions['userCol'], ':'));
+                        $param = substr($colOptions['userCol'], strpos($colOptions['userCol'], ':') + 1);
+                        $queryParams['where'][] = [$colName, \Users\User::$cur->$rel->$param];
+                    }
+                }
+            }
         }
         if (!empty($this->managerOptions['filters'])) {
             foreach ($this->managerOptions['filters'] as $col) {
@@ -191,6 +206,9 @@ class DataManager extends \Object {
         $rows = [];
         foreach ($items as $key => $item) {
             $row = [];
+            if (!empty($this->managerOptions['groupActions'])) {
+                $row[] = '<input type ="checkbox" name = "pk[]" value =' . $item->pk() . '>';
+            }
             $row[] = $item->pk();
             foreach ($this->managerOptions['cols'] as $key => $colName) {
                 $row[] = DataManager::drawCol($item, is_array($colName) ? $key : $colName, $params);
@@ -272,6 +290,17 @@ class DataManager extends \Object {
         if (!empty($params['categoryPath']) && $modelName::$categoryModel) {
             $queryParams['where'][] = ['tree_path', $params['categoryPath'] . '%', 'LIKE'];
         }
+        if (!empty($this->managerOptions['userGroupFilter'][\Users\User::$cur->group_id]['getRows'])) {
+            foreach ($this->managerOptions['userGroupFilter'][\Users\User::$cur->group_id]['getRows'] as $colName => $colOptions) {
+                if (!empty($colOptions['userCol'])) {
+                    if (strpos($colOptions['userCol'], ':')) {
+                        $rel = substr($colOptions['userCol'], 0, strpos($colOptions['userCol'], ':'));
+                        $param = substr($colOptions['userCol'], strpos($colOptions['userCol'], ':') + 1);
+                        $queryParams['where'][] = [$colName, \Users\User::$cur->$rel->$param];
+                    }
+                }
+            }
+        }
         $modelName = $this->modelName;
         if (!empty($this->managerOptions['filters'])) {
             foreach ($this->managerOptions['filters'] as $col) {
@@ -348,7 +377,7 @@ class DataManager extends \Object {
         $this->table->name = $this->name;
         $tableCols = [];
         foreach ($cols as $colName => $colOptions) {
-            $tableCols[] = $colOptions['label'];
+            $tableCols[] = !empty($colOptions['label'])?$colOptions['label']:$colName;
         }
         $tableCols[] = '';
         $this->table->setCols($tableCols);

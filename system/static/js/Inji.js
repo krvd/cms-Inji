@@ -43,12 +43,14 @@ Inji.prototype.startCallbacks = function () {
 }
 Inji.prototype.start = function (options) {
     console.log('Inji start');
+    for (key in options.compresedScripts) {
+        inji.loadedScripts[options.compresedScripts[key]] = true;
+    }
     this.options = options;
     if (options.onLoadModules) {
         this.onLoad(function () {
             for (key in options.onLoadModules) {
                 if (typeof inji[key] == 'undefined') {
-                    console.log(key);
                     inji[key] = new window[key]();
                     if (typeof (inji[key].init) == 'function') {
                         console.log(key + ' init');

@@ -148,6 +148,25 @@ function DataManagers() {
         $.each($('.dataManager'), function () {
             inji.Ui.dataManagers.instances[$(this).attr('id')] = new DataManager($(this));
         });
+        $('.batch_action').click(function () {
+            var ids = '';
+            var instance = inji.Ui.dataManagers.get($(this).closest('#main_content').find('.dataManager'));
+            $(instance.element).find('tbody tr').each(function () {
+                if ($($(this).find('td').get(0)).find('[type="checkbox"]')[0].checked) {
+                    ids += ',' + $($(this).find('td').get(0)).find('[type="checkbox"]').val();
+                }
+            });
+            if (ids != '') {
+                inji.Server.request({
+                    url: 'ui/dataManager/groupAction',
+                    data: {params: instance.params, modelName: instance.modelName, ids: ids, managerName: instance.managerName, action: $(this).data('action')},
+                    success: function () {
+                        inji.Ui.dataManagers.reloadAll();
+                    }
+                });
+            }
+            $(this).closest('.dropdown_menu_list_wrapper').slideToggle();
+        });
     });
 }
 DataManagers.prototype.get = function (element) {
@@ -204,12 +223,25 @@ function DataManager(element) {
     this.sortered = {};
     this.categoryPath = '/';
     var instance = this;
+    $(this.element).find('thead [type="checkbox"],tfoot [type="checkbox"]').click(function () {
+        var index = $(this).closest('th').index();
+        if (!this.checked) {
+            $(instance.element).find('tbody tr').each(function () {
+                $($(this).find('td').get(index)).find('[type="checkbox"]')[0].checked = false;
+            });
+        }
+        else {
+            $(instance.element).find('tbody tr').each(function () {
+                $($(this).find('td').get(index)).find('[type="checkbox"]')[0].checked = true;
+            });
+        }
+    });
     $(this.element).find('.pagesContainer').on('click', 'a', function () {
         instance.page = $(this).attr('href').match(/page\=(\d+)\&?/)[1];
         instance.limit = $(this).attr('href').match(/limit\=(\d+)\&?/)[1];
         instance.load();
         return false;
-    })
+    });
     this.load();
 }
 DataManager.prototype.delRow = function (key) {
