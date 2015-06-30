@@ -44,6 +44,7 @@ Editors = function () {
 Editors.prototype.checkEditors = function () {
     this.ckeditor = false;
     if (typeof CKEDITOR != 'undefined') {
+        CKEDITOR.basePath = window.CKEDITOR_BASEPATH = inji.options.appRoot + 'static/moduleAsset/libs/libs/ckeditor/';
         this.ckeditor = true;
     }
 }

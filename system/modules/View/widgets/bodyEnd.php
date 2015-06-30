@@ -135,7 +135,5 @@
     }
 </style>
 <script>
-    window.onload = function () {
-        inji.start(<?= json_encode($options); ?>)
-    };
+    inji.start(<?= json_encode($options); ?>);
 </script>

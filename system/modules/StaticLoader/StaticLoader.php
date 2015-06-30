@@ -16,16 +16,55 @@ class StaticLoader extends Module {
         $this->mimes = $this->config['mimes'];
     }
 
-    function parsePath($params) {
-        foreach ($params as $key => $param) {
-            $param = trim($param);
-            if ($param == '..') {
-                unset($params[$key]);
-            } else {
-                $params[$key] = $param;
-            }
+    function parsePath($path) {
+        $path = Tools::parsePath($path);
+
+        if (strpos($path, '/') === 0) {
+            $path = substr($path, 1);
         }
-        return implode('/', $params);
+        $scriptApp = \App::$cur;
+        $app = substr($path, 0, strpos($path, '/'));
+        if (file_exists(INJI_SYSTEM_DIR . '/program/' . $app)) {
+            $path = substr($path, strpos($path, '/') + 1);
+            $scriptApp = new App();
+            $scriptApp->name = $app;
+            $scriptApp->system = true;
+            $scriptApp->staticPath = "/" . $scriptApp->name . "/static";
+            $scriptApp->templatesPath = "/" . $scriptApp->name . "/static/templates";
+            $scriptApp->path = INJI_SYSTEM_DIR . '/program/' . $scriptApp->name;
+            $scriptApp->type = 'app' . ucfirst(strtolower($scriptApp->name));
+            $scriptApp->installed = true;
+            $scriptApp->params = [];
+            $scriptApp->config = Config::app($scriptApp);
+        }
+
+        if (strpos($path, 'static/') !== false && strpos($path, 'static/') <= 1) {
+            $path = substr($path, strpos($path, 'static') + 7);
+        }
+        $type = substr($path, 0, strpos($path, '/'));
+
+        switch ($type) {
+            case 'templates':
+                $path = substr($path, strpos($path, '/') + 1);
+                return $scriptApp->view->templatesPath . '/' . $path;
+            case 'system':
+                $path = substr($path, strpos($path, '/') + 1);
+                return INJI_SYSTEM_DIR . '/static/' . $path;
+            case 'moduleAsset':
+                $path = substr($path, strpos($path, '/') + 1);
+                if (!strpos($path, '/')) {
+                    return false;
+                }
+                $module = substr($path, 0, strpos($path, '/'));
+
+                if (!$scriptApp->$module) {
+                    return false;
+                }
+                $path = substr($path, strpos($path, '/') + 1);
+                return $scriptApp->$module->path . '/static/' . $path;
+            default:
+                return $scriptApp->path . '/static/' . $path;
+        }
     }
 
     function header($code, $exit = false) {
@@ -48,10 +87,10 @@ class StaticLoader extends Module {
 
 
         $fileinfo = pathinfo($file);
-        //if( empty( $fileinfo['extension'] ) ) {
-        // header('HTTP/1.1 404 Not Found');
-        //  exit();
-        //}
+        if (empty($fileinfo['extension'])) {
+            header('HTTP/1.1 404 Not Found');
+            exit();
+        }
 
         if (!empty($_GET['resize'])) {
 

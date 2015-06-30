@@ -335,10 +335,24 @@ class View extends Module {
     }
 
     function bodyEnd() {
+        $scripts = $this->getScripts();
+        $onLoadModules = [];
+        $scriptAll = '';
+        foreach ($scripts as $script) {
+            if (is_string($script)) {
+                $scriptAll .= file_get_contents(App::$cur->staticLoader->parsePath($script));
+            } elseif (!empty($script['file'])) {
+                $onLoadModules[$script['name']] = $script['name'];
+                $scriptAll .= file_get_contents(App::$cur->staticLoader->parsePath($script['file']));
+            }
+        }
+        Tools::createDir(App::$primary->path . '/static/cache/');
+        file_put_contents(App::$primary->path . '/static/cache/all.js', $scriptAll);
         $options = [
-            'scripts' => $this->getScripts(),
+            'scripts' => ['/static/cache/all.js'],
             'styles' => [],
-            'appRoot' => App::$cur->type == 'app' ? '/' : '/' . App::$cur->name . '/'
+            'appRoot' => App::$cur->type == 'app' ? '/' : '/' . App::$cur->name . '/',
+            'onLoadModules' => $onLoadModules
         ];
         $this->widget('View\bodyEnd', compact('options'));
     }

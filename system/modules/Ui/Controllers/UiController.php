@@ -41,6 +41,10 @@ class UiController extends Controller {
             $return->send();
         } else {
             $form->checkRequest($params, true);
+            $this->view->setTitle($modelName::$objectName);
+            if($model){
+                $this->view->setTitle($model->name());
+            }
             $this->view->page(['content' => 'form', 'data' => compact('form', 'params')]);
         }
     }

@@ -176,4 +176,28 @@ class Tools extends Model {
         return $ending;
     }
 
+    static function parsePath($path) {
+        $path = str_replace('\\', '/', $path);
+        $pathArray = explode('/', $path);
+        $cleanPathArray = [];
+        do {
+            $changes = 0;
+            foreach ($pathArray as $pathItem) {
+                if (trim($pathItem) === '' || $pathItem == '.') {
+                    $changes++;
+                    continue;
+                }
+                if ($pathItem == '..') {
+                    array_pop($cleanPathArray);
+                    $changes++;
+                    continue;
+                }
+                $cleanPathArray[] = $pathItem;
+            }
+            $pathArray = $cleanPathArray;
+            $cleanPathArray = [];
+        } while ($changes);
+        return (strpos($path, '/') === 0 ? '/' : '') . implode('/', $pathArray);
+    }
+
 }

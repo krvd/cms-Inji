@@ -35,7 +35,7 @@ Inji.prototype.startCallbacks = function () {
         this.startCallbacks();
     }
     var indicator = document.getElementById('loading-indicator');
-    if(indicator){
+    if (indicator) {
         indicator.style.display = 'none';
     }
     inji.loaded = true;
@@ -44,6 +44,19 @@ Inji.prototype.startCallbacks = function () {
 Inji.prototype.start = function (options) {
     console.log('Inji start');
     this.options = options;
+    if (options.onLoadModules) {
+        this.onLoad(function () {
+            for (key in options.onLoadModules) {
+                if (typeof inji[key] == 'undefined') {
+                    inji[key] = new window[key]();
+                    if (typeof (inji[key].init) == 'function') {
+                        console.log(key + ' init');
+                        inji[key].init();
+                    }
+                }
+            }
+        })
+    }
     this.loadScripts(options.scripts, 0);
 }
 Inji.prototype.loadScripts = function (scripts, key) {
