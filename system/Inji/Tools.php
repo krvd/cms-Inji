@@ -200,4 +200,16 @@ class Tools extends Model {
         return (strpos($path, '/') === 0 ? '/' : '') . implode('/', $pathArray);
     }
 
+    static function toRusDate($date) {
+        $yy = (int) substr($date, 0, 4);
+        $mm = (int) substr($date, 5, 2);
+        $dd = (int) substr($date, 8, 2);
+
+        $hours = substr($date, 11, 5);
+
+        $month = array('января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря');
+
+        return ($dd > 0 ? $dd . " " : '') . $month[$mm - 1] . " " . $yy . " г. " . $hours;
+    }
+
 }
