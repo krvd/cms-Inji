@@ -159,13 +159,12 @@ class StaticLoader extends Module {
             $modifiedSince = 0;
         }
 
-        //&& isset($_SERVER['HTTP_CACHE_CONTROL']) && $_SERVER['HTTP_CACHE_CONTROL'] != 'no-cache'
         header("Cache-control: public");
         header("Accept-Ranges: bytes");
         header("Pragma: public");
         header("Content-Length: " . filesize($file));
         header('Last-Modified: ' . gmdate('D, d M Y H:i:s', filemtime($file)) . ' GMT');
-        if (filemtime($file) <= $modifiedSince) {
+        if (filemtime($file) <= $modifiedSince && (isset($_SERVER['HTTP_CACHE_CONTROL']) && $_SERVER['HTTP_CACHE_CONTROL'] != 'no-cache')) {
             // Разгружаем канал передачи данных!
             header('HTTP/1.1 304 Not Modified');
             exit();
