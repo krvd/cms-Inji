@@ -338,18 +338,29 @@ class View extends Module {
         $scripts = $this->getScripts();
         $onLoadModules = [];
         $scriptAll = '';
+        $urls = [];
+        $timeStr = '';
         foreach ($scripts as $script) {
             if (is_string($script)) {
-                $scriptAll .= file_get_contents(App::$cur->staticLoader->parsePath($script));
+                $urls[] = $path = App::$cur->staticLoader->parsePath($script);
+                $timeStr.=filemtime($path);
             } elseif (!empty($script['file'])) {
-                $onLoadModules[$script['name']] = $script['name'];
-                $scriptAll .= file_get_contents(App::$cur->staticLoader->parsePath($script['file']));
+                $urls[] = $path = App::$cur->staticLoader->parsePath($script['file']);
+                $timeStr.=filemtime($path);
             }
         }
-        Tools::createDir(App::$primary->path . '/static/cache/');
-        file_put_contents(App::$primary->path . '/static/cache/all.js', $scriptAll);
+        $timeMd5 = md5($timeStr);
+        if (!file_exists(App::$primary->path . '/static/cache/all' . $timeMd5 . '.js')) {
+            foreach ($urls as $url) {
+                $scriptAll .= file_get_contents($url);
+            }
+            Tools::createDir(App::$primary->path . '/static/cache/');
+            file_put_contents(App::$primary->path . '/static/cache/all' . $timeMd5 . '.js', $scriptAll);
+        }
+
+
         $options = [
-            'scripts' => ['/static/cache/all.js'],
+            'scripts' => ['/static/cache/all' . $timeMd5 . '.js'],
             'styles' => [],
             'appRoot' => App::$cur->type == 'app' ? '/' : '/' . App::$cur->name . '/',
             'onLoadModules' => $onLoadModules

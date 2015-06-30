@@ -158,9 +158,14 @@ class StaticLoader extends Module {
             // Устанавливаем время модификации в ноль
             $modifiedSince = 0;
         }
-        
+
         //&& isset($_SERVER['HTTP_CACHE_CONTROL']) && $_SERVER['HTTP_CACHE_CONTROL'] != 'no-cache'
-        if (filemtime($file) <= $modifiedSince ) {
+        header("Cache-control: public");
+        header("Accept-Ranges: bytes");
+        header("Pragma: public");
+        header("Content-Length: " . filesize($file));
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s', filemtime($file)) . ' GMT');
+        if (filemtime($file) <= $modifiedSince) {
             // Разгружаем канал передачи данных!
             header('HTTP/1.1 304 Not Modified');
             exit();
@@ -178,11 +183,6 @@ class StaticLoader extends Module {
 
         header('Content-Transfer-Encoding: binary');
         //}
-        header("Cache-control: public");
-        header("Accept-Ranges: bytes");
-        header("Pragma: public");
-        header("Content-Length: " . filesize($file));
-        header('Last-Modified: ' . gmdate('D, d M Y H:i:s', filemtime($file)) . ' GMT');
         if (in_array($fileinfo['extension'], array('doc', 'docx', 'xls', 'xlsx')))
             header("Content-Disposition: attachment; filename=" . $file);
 
