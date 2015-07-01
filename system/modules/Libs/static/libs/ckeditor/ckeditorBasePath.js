@@ -1,0 +1,1 @@
+var CKEDITOR_BASEPATH = inji.options.appRoot + 'static/moduleAsset/libs/libs/ckeditor/';

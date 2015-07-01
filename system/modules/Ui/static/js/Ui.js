@@ -45,6 +45,7 @@ Editors = function () {
 Editors.prototype.checkEditors = function () {
     if (!this.ckeditor && typeof CKEDITOR != 'undefined') {
         CKEDITOR.basePath = window.CKEDITOR_BASEPATH = inji.options.appRoot + 'static/moduleAsset/libs/libs/ckeditor/';
+        CKEDITOR.plugins.basePath = inji.options.appRoot + 'static/moduleAsset/libs/libs/ckeditor/plugins/';
         this.ckeditor = true;
     }
 }
@@ -62,7 +63,8 @@ Editors.prototype.loadIn = function (selector, search) {
         }
         $.each(instances, function () {
             if ($(this).closest('.modal').length == 0 || $(this).closest('.modal').hasClass('in')) {
-                $(this).ckeditor();
+                var editor = $(this).ckeditor();
+                console.log(editor);
             }
             if ($(this).closest('.modal').length != 0) {
                 var _this = this;
@@ -316,7 +318,7 @@ DataManager.prototype.load = function () {
         }
         for (key in sortableIndexes) {
             var shift = 1;
-            
+
             var headTh = $(dataManager.element.find('thead th').get(sortableIndexes[key] + shift));
             var footTh = $(dataManager.element.find('tfoot th').get(sortableIndexes[key] + shift));
             if (!headTh.hasClass('sortable')) {

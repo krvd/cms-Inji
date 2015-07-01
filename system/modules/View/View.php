@@ -353,11 +353,13 @@ class View extends Module {
                     continue;
                 $nativeUrl[$script['file']] = $script['file'];
                 $urls[$script['file']] = $path = App::$cur->staticLoader->parsePath($script['file']);
-                $onLoadModules[$script['name']] = $script['name'];
+                if (!empty($script['name'])) {
+                    $onLoadModules[$script['name']] = $script['name'];
+                }
                 $timeStr.=filemtime($path);
             }
         }
-        
+
         $timeMd5 = md5($timeStr);
         if (!file_exists(App::$primary->path . '/static/cache/all' . $timeMd5 . '.js')) {
             foreach ($urls as $url) {
