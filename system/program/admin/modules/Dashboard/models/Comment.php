@@ -15,7 +15,30 @@ namespace Dashboard;
 
 class Comment extends \Model {
 
-    static  function relations() {
+    static $dataManagers = [
+        'manager' => [
+            'options' => [
+                'access' => [
+                    'groups' => [
+                        3, 4
+                    ]
+                ],
+                'formOnPage' => true
+            ],
+            'cols' => [
+                'user_id',
+                'text',
+                'date',
+            ],
+            'sortable' => [
+                'user_id',
+                'text',
+                'date',
+            ]
+        ]
+    ];
+
+    static function relations() {
         return [
             'user' => [
                 'model' => 'Users\User',
