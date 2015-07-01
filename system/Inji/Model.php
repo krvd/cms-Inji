@@ -11,6 +11,7 @@ class Model {
     static $labels = [];
     static $forms = [];
     static $cols = [];
+    static $view = [];
     static $needJoin = [];
     static $relJoins = [];
 

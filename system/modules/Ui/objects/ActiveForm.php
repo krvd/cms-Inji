@@ -99,6 +99,19 @@ class ActiveForm extends \Object {
                     if (!empty($this->form['options']['readonly']) && in_array($col, $this->form['options']['readonly'])) {
                         continue;
                     }
+                    if (!empty($this->form['userGroupPreset'][\Users\User::$cur->group_id][$colName])) {
+                        $preset = $this->form['userGroupPreset'][\Users\User::$cur->group_id][$colName];
+                        if (!empty($preset['value'])) {
+                            $this->model->$col = $preset['value'];
+                        } elseif (!empty($preset['userCol'])) {
+                            if (strpos($preset['userCol'], ':')) {
+                                $rel = substr($preset['userCol'], 0, strpos($preset['userCol'], ':'));
+                                $param = substr($preset['userCol'], strpos($preset['userCol'], ':') + 1);
+                                $this->model->$col = \Users\User::$cur->$rel->$param;
+                            }
+                        }
+                        continue;
+                    }
                     switch ($param['type']) {
                         case 'image':
                             if (!empty($_FILES[$this->requestFormName]['tmp_name'][$this->modelName][$col])) {
@@ -158,7 +171,7 @@ class ActiveForm extends \Object {
         if ($this->parent === null) {
             $form->action = $this->action;
             $form->begin($this->header, ['onsubmit' => $ajax ? 'inji.Ui.forms.submitAjax(this);return false;' : '']);
-        } else {
+        } elseif ($this->header) {
             echo "<h3>{$this->header}</h3>";
         }
         foreach ($this->form['map'] as $row) {
@@ -187,6 +200,20 @@ class ActiveForm extends \Object {
                 'value' => $value = isset($options['default']) ? $options['default'] : ''
             ];
             $inputOptions['value'] = ($this->model && isset($this->model->$colName)) ? $this->model->$colName : $inputOptions['value'];
+            if (!empty($this->form['userGroupPreset'][\Users\User::$cur->group_id][$colName])) {
+                $preset = $this->form['userGroupPreset'][\Users\User::$cur->group_id][$colName];
+                $inputOptions['disabled'] = true;
+                if (!empty($preset['value'])) {
+                    $inputOptions['value'] = $preset['value'];
+                } elseif (!empty($preset['userCol'])) {
+                    if (strpos($preset['userCol'], ':')) {
+                        $rel = substr($preset['userCol'], 0, strpos($preset['userCol'], ':'));
+                        $param = substr($preset['userCol'], strpos($preset['userCol'], ':') + 1);
+
+                        $inputOptions['value'] = \Users\User::$cur->$rel->$param;
+                    }
+                }
+            }
 
             if ($options['type'] == 'image' && $inputOptions['value']) {
                 $inputOptions['value'] = \Files\File::get($inputOptions['value'])->path;

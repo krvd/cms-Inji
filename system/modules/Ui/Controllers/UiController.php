@@ -30,7 +30,7 @@ class UiController extends Controller {
             $params = [];
         }
         $form = new Ui\ActiveForm($model, 'manager');
-        $form->action = '/ui/formPopUp/?' . http_build_query($_GET);
+        $form->action = (App::$cur->system ? '/' . App::$cur->name : '') . '/ui/formPopUp/?' . http_build_query($_GET);
         if (!empty($_GET['_'])) {
             $return = new Server\Result();
             ob_start();
@@ -40,10 +40,10 @@ class UiController extends Controller {
             ob_end_clean();
             $return->send();
         } else {
-            $form->checkRequest($params, true);
+            $form->checkRequest($params);
             $this->view->setTitle($modelName::$objectName);
-            if($model){
-                $this->view->setTitle($model->name());
+            if ($model) {
+                //$this->view->setTitle($model->name());
             }
             $this->view->page(['content' => 'form', 'data' => compact('form', 'params')]);
         }

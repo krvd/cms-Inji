@@ -58,7 +58,11 @@ class adminController extends Controller {
             Tools::redirect($_SERVER['REQUEST_URI']);
         }
         $moduleName = $this->module->moduleName;
-        $this->view->page(['module' => 'Ui', 'content' => 'dataManager/view', 'data' => compact('item', 'moduleName')]);
+        $pageParam = ['module' => 'Ui', 'content' => 'dataManager/view', 'data' => compact('item', 'moduleName')];
+        if (isset($_GET['print'])) {
+            $pageParam['template'] = 'print';
+        }
+        $this->view->page($pageParam);
     }
 
 }

@@ -57,10 +57,21 @@ class DataManager extends \Object {
             $formParams['preset'] = [$relations[$params['relation']]['col'] => $model->pk()];
         }
         $buttons = [];
-        $buttons[] = [
-            'text' => 'Добавить элемент',
-            'onclick' => 'inji.Ui.forms.popUp("' . str_replace('\\', '\\\\', $modelName) . '",' . json_encode($formParams) . ')',
-        ];
+        if (!empty($this->managerOptions['options']['formOnPage'])) {
+            $query = [
+                'item' => $modelName,
+                'params' => $formParams
+            ];
+            $buttons[] = [
+                'text' => 'Добавить элемент',
+                'href' => '/admin/ui/formPopUp/?' . http_build_query($query),
+            ];
+        } else {
+            $buttons[] = [
+                'text' => 'Добавить элемент',
+                'onclick' => 'inji.Ui.forms.popUp("' . str_replace('\\', '\\\\', $modelName) . '",' . json_encode($formParams) . ')',
+            ];
+        }
         return $buttons;
     }
 
@@ -73,7 +84,7 @@ class DataManager extends \Object {
         $modelName = $this->modelName;
         $cols = [];
         if (!empty($this->managerOptions['groupActions'])) {
-            $cols[] = ['label'=> '<input type="checkbox" />'];
+            $cols[] = ['label' => '<input type="checkbox" />'];
         }
         $cols['id'] = ['label' => '№', 'sortable' => true];
         foreach ($this->managerOptions['cols'] as $key => $col) {
@@ -136,6 +147,8 @@ class DataManager extends \Object {
                         $param = substr($colOptions['userCol'], strpos($colOptions['userCol'], ':') + 1);
                         $queryParams['where'][] = [$colName, \Users\User::$cur->$rel->$param];
                     }
+                } elseif (!empty($colOptions['value'])) {
+                    $queryParams['where'][] = [$colName, $colOptions['value']];
                 }
             }
         }
@@ -377,7 +390,7 @@ class DataManager extends \Object {
         $this->table->name = $this->name;
         $tableCols = [];
         foreach ($cols as $colName => $colOptions) {
-            $tableCols[] = !empty($colOptions['label'])?$colOptions['label']:$colName;
+            $tableCols[] = !empty($colOptions['label']) ? $colOptions['label'] : $colName;
         }
         $tableCols[] = '';
         $this->table->setCols($tableCols);

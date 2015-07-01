@@ -315,26 +315,28 @@ DataManager.prototype.load = function () {
 
         }
         for (key in sortableIndexes) {
-            var headTh = $(dataManager.element.find('thead th').get(sortableIndexes[key] + 1));
-            var footTh = $(dataManager.element.find('tfoot th').get(sortableIndexes[key] + 1));
+            var shift = 1;
+            
+            var headTh = $(dataManager.element.find('thead th').get(sortableIndexes[key] + shift));
+            var footTh = $(dataManager.element.find('tfoot th').get(sortableIndexes[key] + shift));
             if (!headTh.hasClass('sortable')) {
                 headTh.html('<a href = "#">' + headTh.html() + '</a>');
                 headTh.addClass('sortable');
                 headTh.click(function () {
                     if (!$(this).hasClass('sorted-desc') && !$(this).hasClass('sorted-asc')) {
                         $(this).addClass('sorted-desc');
-                        dataManager.sortered[$(this).index() - 1] = 'desc';
+                        dataManager.sortered[$(this).index() - shift] = 'desc';
                         dataManager.reload();
                     }
                     else if ($(this).hasClass('sorted-desc')) {
                         $(this).removeClass('sorted-desc');
                         $(this).addClass('sorted-asc');
-                        dataManager.sortered[$(this).index() - 1] = 'asc';
+                        dataManager.sortered[$(this).index() - shift] = 'asc';
                         dataManager.reload();
                     }
                     else if ($(this).hasClass('sorted-asc')) {
                         $(this).removeClass('sorted-asc');
-                        delete dataManager.sortered[$(this).index() - 1];
+                        delete dataManager.sortered[$(this).index() - shift];
                         dataManager.reload();
                     }
                     return false;
@@ -346,18 +348,18 @@ DataManager.prototype.load = function () {
                 footTh.click(function () {
                     if (!$(this).hasClass('sorted-desc') && !$(this).hasClass('sorted-asc')) {
                         $(this).addClass('sorted-desc');
-                        dataManager.sortered[$(this).index() - 1] = 'desc';
+                        dataManager.sortered[$(this).index() - shift] = 'desc';
                         dataManager.reload();
                     }
                     else if ($(this).hasClass('sorted-desc')) {
                         $(this).removeClass('sorted-desc');
                         $(this).addClass('sorted-asc');
-                        dataManager.sortered[$(this).index() - 1] = 'asc';
+                        dataManager.sortered[$(this).index() - shift] = 'asc';
                         dataManager.reload();
                     }
                     else if ($(this).hasClass('sorted-asc')) {
                         $(this).removeClass('sorted-asc');
-                        delete dataManager.sortered[$(this).index() - 1];
+                        delete dataManager.sortered[$(this).index() - shift];
                         dataManager.reload();
                     }
                     return false;
