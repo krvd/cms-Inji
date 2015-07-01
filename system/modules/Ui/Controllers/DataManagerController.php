@@ -72,10 +72,47 @@ class DataManagerController extends Controller {
         if (!empty($_GET['sortered'])) {
             $params['sortered'] = $_GET['sortered'];
         }
+        if (!empty($_GET['download'])) {
+            $params['all'] = true;
+            set_time_limit(0);
+            ob_end_clean();
+            header('Content-Encoding: UTF-8');
+            header("Content-Type: text/csv");
+            header("Content-Disposition: attachment; filename=" . $modelName::$objectName . '.csv');
+            echo "\xEF\xBB\xBF"; // UTF-8 BOM
+        }
         $dataManager = new Ui\DataManager($modelName, $_GET['managerName']);
+        $cols = $dataManager->getCols();
+        $endRow = true;
+        foreach ($cols as $colName => $options) {
+            if (!$endRow) {
+                echo ";";
+            }
+            $endRow = false;
+            echo '"' . $options['label'] . '"';
+        }
+        echo "\n";
+        $endRow = true;
         $rows = $dataManager->getRows($params, $model);
+
         foreach ($rows as $row) {
-            Ui\Table::drawRow($row);
+            if (!empty($_GET['download'])) {
+                $row = array_slice($row, 0,-1);
+                foreach ($row as $col) {
+                    if (!$endRow) {
+                        echo ";";
+                    }
+                    $endRow = false;
+                    echo '"' . $col . '"';
+                }
+                echo "\n";
+                $endRow = true;
+            } else {
+                Ui\Table::drawRow($row);
+            }
+        }
+        if (!empty($_GET['download'])) {
+            exit();
         }
         $result->content['rows'] = ob_get_contents();
         ob_clean();

@@ -273,7 +273,7 @@ DataManager.prototype.delCategory = function (key) {
 DataManager.prototype.reload = function () {
     this.load();
 }
-DataManager.prototype.load = function () {
+DataManager.prototype.load = function (options) {
     var dataManager = this;
     if (typeof this.params == 'string') {
         var params = JSON.parse(this.params);
@@ -369,12 +369,18 @@ DataManager.prototype.load = function () {
             }
         }
     }
+    var data = {params: params, modelName: this.modelName, managerName: this.managerName, filters: filters, sortered: this.sortered};
+    if (options && options.download) {
+        data.download = true;
+        window.location = inji.options.appRoot + 'ui/dataManager/loadRows?' + $.param(data);
+        return;
+    }
     dataManager.element.find('tbody').html('<tr><td colspan="' + dataManager.element.find('thead tr th').length + '"><div class = "text-center"><img src = "' + inji.options.appRoot + 'static/moduleAsset/Ui/images/ajax-loader.gif" /></div></td></tr>');
     var instance = this;
 
     inji.Server.request({
         url: 'ui/dataManager/loadRows',
-        data: {params: params, modelName: this.modelName, managerName: this.managerName, filters: filters, sortered: this.sortered},
+        data: data,
         success: function (data) {
             dataManager.element.find('tbody').html(data.rows);
             dataManager.element.find('.pagesContainer').html(data.pages);

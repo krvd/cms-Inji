@@ -119,17 +119,18 @@ class DataManager extends \Object {
             return [];
         }
         $cols = $this->getCols();
-        if (!empty($params['limit'])) {
-            $this->limit = (int) $params['limit'];
-        }
-        if (!empty($params['page'])) {
-            $this->page = (int) $params['page'];
-        }
         $modelName = $this->modelName;
-        $queryParams = [
-            'limit' => $this->limit,
-            'start' => $this->page * $this->limit - $this->limit
-        ];
+        $queryParams = [];
+        if (empty($params['all'])) {
+            if (!empty($params['limit'])) {
+                $this->limit = (int) $params['limit'];
+            }
+            if (!empty($params['page'])) {
+                $this->page = (int) $params['page'];
+            }
+            $queryParams['limit'] = $this->limit;
+            $queryParams['start'] = $this->page * $this->limit - $this->limit;
+        }
         if (!empty($params['categoryPath']) && $modelName::$categoryModel) {
             $queryParams['where'][] = ['tree_path', $params['categoryPath'] . '%', 'LIKE'];
         }

@@ -19,6 +19,20 @@ class Model {
         $this->setParams($params);
     }
 
+    static function getColValue($object, $valuePath) {
+        if (strpos($valuePath, ':')) {
+            $rel = substr($valuePath, 0, strpos($valuePath, ':'));
+            $param = substr($valuePath, strpos($valuePath, ':') + 1);
+            if (strpos($valuePath, ':')) {
+                return self::getColValue($object->$rel, $param);
+            } else {
+                return $object->$rel->$param;
+            }
+        } else {
+            return $object->$valuePath;
+        }
+    }
+
     static function fixPrefix(&$array, $searchtype = 'key', $rootModel = '') {
         if (!$rootModel) {
             $rootModel = get_called_class();
