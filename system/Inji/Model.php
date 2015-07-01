@@ -131,10 +131,9 @@ class Model {
 
             if (isset(static::$cols[$info['col']])) {
                 $info['colParams'] = static::$cols[$info['col']];
-            } elseif(isset(static::$cols[str_replace (static::colPrefix (), '', $info['col'])])) {
-                $info['colParams'] = static::$cols[str_replace (static::colPrefix (), '', $info['col'])];
-            }
-            else {
+            } elseif (isset(static::$cols[str_replace(static::colPrefix(), '', $info['col'])])) {
+                $info['colParams'] = static::$cols[str_replace(static::colPrefix(), '', $info['col'])];
+            } else {
                 $info['colParams'] = [];
             }
             if (!isset($cols[$info['col']]) && isset($cols[static::colPrefix() . $info['col']])) {
@@ -784,7 +783,6 @@ class Model {
                     $getType = 'getList';
 
                     $options = [
-                        'where' => [$relation['col'], $this->{$this->index()}],
                         'join' => (isset($relation['params']['join'])) ? $relation['params']['join'] : null,
                         'order' => (isset($relation['params']['order'])) ? $relation['params']['join'] : null,
                         'key' => (isset($params['key'])) ? $params['key'] : ((isset($relation['resultKey'])) ? $relation['resultKey'] : null),
@@ -794,6 +792,10 @@ class Model {
                         'limit' => (isset($params['limit'])) ? $params['limit'] : ((isset($relation['limit'])) ? $relation['limit'] : null),
                         'appType' => (isset($params['appType'])) ? $params['appType'] : ((isset($relation['appType'])) ? $relation['appType'] : null),
                     ];
+                    $options['where'] = [$relation['col'], $this->{$this->index()}];
+                    if (!empty($params['where'])) {
+                        $options['where'] = array_merge([$options['where']], [$params['where']]);
+                    }
                     break;
                 case 'one':
                     $getType = 'get';
