@@ -24,6 +24,10 @@ class Files extends Module {
         $type = Files\Type::get($fileinfo['extension'], 'ext');
         if (!$type)
             return 0;
+        
+        if (!empty($options['accept_group']) && $options['accept_group'] != $type->group) {
+            return 0;
+        }
 
         $fileObject = new Files\File();
         if (!empty($options['file_code'])) {
@@ -43,7 +47,7 @@ class Files extends Module {
 
         $fileObject->type_id = $type->pk();
         $fileObject->original_name = $file['name'];
-        $fileObject->date_create = 'CURRENT_TIMESTAMP';
+        $fileObject->upload_code = !empty($options['upload_code']) ? $options['upload_code'] : 'untracked';
         $fileObject->save();
 
         return $fileObject->id;

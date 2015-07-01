@@ -99,8 +99,8 @@ class ActiveForm extends \Object {
                     if (!empty($this->form['options']['readonly']) && in_array($col, $this->form['options']['readonly'])) {
                         continue;
                     }
-                    if (!empty($this->form['userGroupPreset'][\Users\User::$cur->group_id][$colName])) {
-                        $preset = $this->form['userGroupPreset'][\Users\User::$cur->group_id][$colName];
+                    if (!empty($this->form['userGroupPreset'][\Users\User::$cur->group_id][$col])) {
+                        $preset = $this->form['userGroupPreset'][\Users\User::$cur->group_id][$col];
                         if (!empty($preset['value'])) {
                             $this->model->$col = $preset['value'];
                         } elseif (!empty($preset['userCol'])) {
@@ -121,6 +121,9 @@ class ActiveForm extends \Object {
                                     'type' => $_FILES[$this->requestFormName]['type'][$this->modelName][$col],
                                     'size' => $_FILES[$this->requestFormName]['size'][$this->modelName][$col],
                                     'error' => $_FILES[$this->requestFormName]['error'][$this->modelName][$col],
+                                        ], [
+                                    'upload_code' => 'activeForm:' . $modelName . ':' . $this->model->pk(),
+                                    'accept_group' => 'image'
                                 ]);
                                 if ($file_id) {
                                     $this->model->$col = $file_id;

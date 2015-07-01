@@ -16,4 +16,13 @@ class File extends \Model {
         return "{$sitePath}/{$this->file_path}";
     }
 
+    static function relations() {
+        return [
+            'type' => [
+                'model' => 'Files\Type',
+                'col' => 'type_id'
+            ]
+        ];
+    }
+
 }
