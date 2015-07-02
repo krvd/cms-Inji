@@ -3,7 +3,7 @@ echo empty($options['noContainer']) ? '<div class="form-group">' : '';
 echo $label !== false ? "<label>{$label}</label>" : '';
 $uid = Tools::randomString();
 ?>
-<input data-dateui="<?= $uid; ?>" type ="text" placeholder="<?= !empty($options['placeholder']) ? $options['placeholder'] : ''; ?>" class="form-control" name = '<?= $name; ?>' value = '<?= (!empty($form->userDataTree[$name]) ? addcslashes($form->userDataTree[$name], "'"):(!empty($options['value']) ? addcslashes($options['value'], "'"):'')); ?>' />
+<input data-dateui="<?= $uid; ?>" type ="text" placeholder="<?= !empty($options['placeholder']) ? $options['placeholder'] : ''; ?>" class=" <?= !empty($options['class']) ? $options['class'] : 'form-control'; ?>" name = '<?= $name; ?>' value = '<?= (!empty($form->userDataTree[$name]) ? addcslashes($form->userDataTree[$name], "'") : (!empty($options['value']) ? addcslashes($options['value'], "'") : '')); ?>' />
 <?php
 echo!empty($options['helpText']) ? "<div class='help-block'>{$options['helpText']}</div>" : '';
 echo empty($options['noContainer']) ? '</div>' : '';
@@ -14,8 +14,8 @@ echo empty($options['noContainer']) ? '</div>' : '';
             changeMonth: true,
             changeYear: true,
             numberOfMonths: 1,
-            dateFormat:'yy-mm-dd',
-            yearRange:"c-70:c+10"
+            dateFormat: 'yy-mm-dd',
+            yearRange: "c-70:c+10"
         });
     })
 </script>
