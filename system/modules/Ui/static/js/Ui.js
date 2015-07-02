@@ -318,12 +318,27 @@ DataManager.prototype.load = function (options) {
         }
         for (key in sortableIndexes) {
             var shift = 1;
+            if(this.options.groupActions){
+                shift++;
+            }
 
             var headTh = $(dataManager.element.find('thead th').get(sortableIndexes[key] + shift));
             var footTh = $(dataManager.element.find('tfoot th').get(sortableIndexes[key] + shift));
             if (!headTh.hasClass('sortable')) {
                 headTh.html('<a href = "#">' + headTh.html() + '</a>');
                 headTh.addClass('sortable');
+                if(this.options.preSort && this.options.preSort[this.options.sortable[key]]){
+                    if (this.options.preSort[this.options.sortable[key]] == 'asc') {
+                        headTh.addClass('sorted-asc');
+                        this.sortered[sortableIndexes[key]] = 'asc';
+                    }
+                    else if (this.options.preSort[this.options.sortable[key]] == 'desc') {
+                        headTh.addClass('sorted-desc');
+                        this.sortered[sortableIndexes[key]] = 'desc';
+                        console.log(this.sortered);
+                    }
+                }
+                //sorted-desc
                 headTh.click(function () {
                     if (!$(this).hasClass('sorted-desc') && !$(this).hasClass('sorted-asc')) {
                         $(this).addClass('sorted-desc');

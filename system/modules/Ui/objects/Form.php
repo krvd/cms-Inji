@@ -48,6 +48,11 @@ class Form extends \Object {
                 $params['form'] = $this;
                 \App::$cur->view->widget('Ui\Form/checkbox', $params);
                 break;
+            case 'password':
+                $params = compact('name', 'label', 'options');
+                $params['form'] = $this;
+                \App::$cur->view->widget('Ui\Form/password', $params);
+                break;
             case 'dynamicList':
                 $params = compact('name', 'label', 'options');
                 $params['form'] = $this;

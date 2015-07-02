@@ -72,6 +72,7 @@ class DataManagerController extends Controller {
         if (!empty($_GET['sortered'])) {
             $params['sortered'] = $_GET['sortered'];
         }
+        $dataManager = new Ui\DataManager($modelName, $_GET['managerName']);
         if (!empty($_GET['download'])) {
             $params['all'] = true;
             set_time_limit(0);
@@ -80,24 +81,26 @@ class DataManagerController extends Controller {
             header("Content-Type: text/csv");
             header("Content-Disposition: attachment; filename=" . $modelName::$objectName . '.csv');
             echo "\xEF\xBB\xBF"; // UTF-8 BOM
-        }
-        $dataManager = new Ui\DataManager($modelName, $_GET['managerName']);
-        $cols = $dataManager->getCols();
-        $endRow = true;
-        foreach ($cols as $colName => $options) {
-            if (!$endRow) {
-                echo ";";
+
+
+            $cols = $dataManager->getCols();
+            $cols = array_slice($cols, (!empty($dataManager->managerOptions['groupActions']) ? 1 : 0));
+            $endRow = true;
+            foreach ($cols as $colName => $options) {
+                if (!$endRow) {
+                    echo ";";
+                }
+                $endRow = false;
+                echo '"' . $options['label'] . '"';
             }
-            $endRow = false;
-            echo '"' . $options['label'] . '"';
+            echo "\n";
+            $endRow = true;
         }
-        echo "\n";
-        $endRow = true;
         $rows = $dataManager->getRows($params, $model);
 
         foreach ($rows as $row) {
             if (!empty($_GET['download'])) {
-                $row = array_slice($row, 0,-1);
+                $row = array_slice($row, (!empty($dataManager->managerOptions['groupActions']) ? 1 : 0), -1);
                 foreach ($row as $col) {
                     if (!$endRow) {
                         echo ";";

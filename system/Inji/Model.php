@@ -19,18 +19,59 @@ class Model {
         $this->setParams($params);
     }
 
-    static function getColValue($object, $valuePath) {
+    static function getColValue($object, $valuePath, $convert = false) {
         if (strpos($valuePath, ':')) {
             $rel = substr($valuePath, 0, strpos($valuePath, ':'));
             $param = substr($valuePath, strpos($valuePath, ':') + 1);
             if (strpos($valuePath, ':')) {
-                return self::getColValue($object->$rel, $param);
+                return self::getColValue($object->$rel, $param,$convert);
             } else {
-                return $object->$rel->$param;
+                return $convert ? Model::resloveTypeValue($object->$rel, $param) : $object->$rel->$param;
             }
         } else {
-            return $object->$valuePath;
+            return $convert ? Model::resloveTypeValue($object, $valuePath) : $object->$valuePath;
         }
+    }
+
+    static function resloveTypeValue($item, $colName) {
+        $modelName = get_class($item);
+        $colInfo = $modelName::getColInfo($colName);
+        $type = !empty($colInfo['colParams']['type']) ? $colInfo['colParams']['type'] : 'string';
+        switch ($type) {
+            case'select':
+                switch ($colInfo['colParams']['source']) {
+                    case 'array':
+                        $value = !empty($colInfo['colParams']['sourceArray'][$item->$colName]) ? $colInfo['colParams']['sourceArray'][$item->$colName] : 'Не задано';
+                        break;
+                    case 'method':
+                        $values = $colInfo['colParams']['module']->$colInfo['colParams']['method']();
+                        $value = !empty($values[$item->$colName]) ? $values[$item->$colName] : 'Не задано';
+                        break;
+                    case 'relation':
+                        $relations = $colInfo['modelName']::relations();
+                        $relValue = $relations[$colInfo['colParams']['relation']]['model']::get($item->$colName);
+                        $relModel = $relations[$colInfo['colParams']['relation']]['model'];
+                        $relModel = strpos($relModel, '\\') === 0 ? substr($relModel, 1) : $relModel;
+                        $value = $relValue ? "<a href='/admin/" . str_replace('\\', '/view/', $relModel) . "/" . $relValue->pk() . "'>" . $relValue->name() . "</a>" : 'Не задано';
+                        break;
+                }
+                break;
+            case 'image':
+                $file = Files\File::get($item->$colName);
+                if ($file) {
+                    $value = '<img src="' . $file->path . '?resize=60x120" />';
+                } else {
+                    $value = '<img src="/static/system/images/no-image.png?resize=60x120" />';
+                }
+                break;
+            case 'bool':
+                $value = $item->$colName ? 'Да' : 'Нет';
+                break;
+            default:
+                $value = $item->$colName;
+                break;
+        }
+        return $value;
     }
 
     static function fixPrefix(&$array, $searchtype = 'key', $rootModel = '') {
@@ -299,7 +340,7 @@ class Model {
         if (!empty($options['forSelect'])) {
             $return = [];
             foreach ($list as $key => $item) {
-                $return[$key] = $item->name();
+                $return[$item->pk()] = $item->name();
             }
             return $return;
         }

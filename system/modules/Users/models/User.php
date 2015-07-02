@@ -62,14 +62,15 @@ class User extends \Model {
                 'model' => 'Users\Role',
                 'col' => 'role_id'
             ],
-            'info'=>[
-                'type'=>'one',
-                'model'=>'Users\Info',
-                'col'=>'user_id'
+            'info' => [
+                'type' => 'one',
+                'model' => 'Users\Info',
+                'col' => 'user_id'
             ]
         ];
     }
-    function name(){
+
+    function name() {
         return $this->info->name();
     }
 

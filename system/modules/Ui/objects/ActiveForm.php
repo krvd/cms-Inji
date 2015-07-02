@@ -130,6 +130,23 @@ class ActiveForm extends \Object {
                                 }
                             }
                             break;
+                        case 'password':
+                            if (!empty($request[$col]['pass']) && !empty($request[$col]['pass'])) {
+                                if (empty($request[$col]['pass'])) {
+                                    \Msg::add('Вы не ввели пароль в первое поле', 'danger');
+                                    continue;
+                                }
+                                if (empty($request[$col]['repeat'])) {
+                                    \Msg::add('Вы не ввели пароль во второе поле', 'danger');
+                                    continue;
+                                }
+                                if ($request[$col]['pass'] != $request[$col]['repeat']) {
+                                    \Msg::add('Введенные пароли не совадают', 'danger');
+                                    continue;
+                                }
+                                $this->model->$col = \App::$cur->users->hashpass($request[$col]['pass']);
+                            }
+                            break;
                         case 'list':
                             $relations = $modelName::relations();
                             break;
