@@ -170,6 +170,18 @@ class DataManager extends \Object {
                         }
                         $queryParams['where'][] = [$col, '1'];
                         break;
+                    case 'dateTime':
+                    case 'date':
+                        if (empty($params['filters'][$col]['min']) && empty($params['filters'][$col]['max'])) {
+                            continue;
+                        }
+                        if (!empty($params['filters'][$col]['min'])) {
+                            $queryParams['where'][] = [$col, $params['filters'][$col]['min'], '>='];
+                        }
+                        if (!empty($params['filters'][$col]['max'])) {
+                            $queryParams['where'][] = [$col, $params['filters'][$col]['max'], '<='];
+                        }
+                        break;
                     case 'number':
                         if (empty($params['filters'][$col]['min']) && empty($params['filters'][$col]['max'])) {
                             continue;
@@ -332,6 +344,18 @@ class DataManager extends \Object {
                             continue;
                         }
                         $queryParams['where'][] = [$col, '1'];
+                        break;
+                    case 'dateTime':
+                    case 'date':
+                        if (empty($params['filters'][$col]['min']) && empty($params['filters'][$col]['max'])) {
+                            continue;
+                        }
+                        if (!empty($params['filters'][$col]['min'])) {
+                            $queryParams['where'][] = [$col, $params['filters'][$col]['min'], '>='];
+                        }
+                        if (!empty($params['filters'][$col]['max'])) {
+                            $queryParams['where'][] = [$col, $params['filters'][$col]['max'], '<='];
+                        }
                         break;
                     case 'number':
                         if (empty($params['filters'][$col]['min']) && empty($params['filters'][$col]['max'])) {
