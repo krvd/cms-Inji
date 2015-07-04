@@ -46,7 +46,7 @@ class Users extends Module {
         } else {
             setcookie("user_session_hash", '', 0, "/");
             setcookie("user_id", '', 0, "/");
-            Msg::add('Ваша сессия устарела или более недействительна, вам необходимо пройти <a href = "/users/login">авторазиацию</a> заного', 'info');
+            Msg::add('Ваша сессия устарела или более недействительна, вам необходимо пройти <a href = "/users/login">авторазиацию</a> заново', 'info');
         }
     }
 
