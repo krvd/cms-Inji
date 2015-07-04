@@ -307,18 +307,31 @@ DataManager.prototype.load = function (options) {
     }
     if (this.options.sortable) {
         sortableIndexes = [];
+        console.log(this.options.cols);
         for (key in this.options.sortable) {
             var colName = this.options.sortable[key];
+            var i = 0;
             for (key2 in  this.options.cols) {
-                if (this.options.cols[key2] == colName) {
-                    sortableIndexes.push(parseInt(key2));
+                var colname;
+                if (typeof this.options.cols[key2] == 'object') {
+                    colname = key2;
                 }
+                else {
+                    colname = this.options.cols[key2];
+                }
+                if (colname == colName) {
+                    sortableIndexes.push(parseInt(i));
+                }
+                i++;
             }
 
         }
+        console.log(sortableIndexes);
+        console.log(this.options.sortable);
+        console.log(this.options.preSort);
         for (key in sortableIndexes) {
             var shift = 1;
-            if(this.options.groupActions){
+            if (this.options.groupActions) {
                 shift++;
             }
 
@@ -327,7 +340,8 @@ DataManager.prototype.load = function (options) {
             if (!headTh.hasClass('sortable')) {
                 headTh.html('<a href = "#">' + headTh.html() + '</a>');
                 headTh.addClass('sortable');
-                if(this.options.preSort && this.options.preSort[this.options.sortable[key]]){
+                if (this.options.preSort && this.options.preSort[this.options.sortable[key]]) {
+                    console.log(this.options.sortable[key]);
                     if (this.options.preSort[this.options.sortable[key]] == 'asc') {
                         headTh.addClass('sorted-asc');
                         this.sortered[sortableIndexes[key]] = 'asc';
@@ -335,7 +349,6 @@ DataManager.prototype.load = function (options) {
                     else if (this.options.preSort[this.options.sortable[key]] == 'desc') {
                         headTh.addClass('sorted-desc');
                         this.sortered[sortableIndexes[key]] = 'desc';
-                        console.log(this.sortered);
                     }
                 }
                 //sorted-desc
