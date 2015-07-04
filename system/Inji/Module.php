@@ -70,6 +70,14 @@ class Module {
 
     function getControllerPaths() {
         $paths = [];
+        if (App::$cur != App::$primary) {
+            if (!empty($this->params[0])) {
+                $paths['primaryAppAppTypePath_slice'] = App::$primary->path . '/modules/' . $this->moduleName . '/' . $this->app->type . 'Controllers/' . ucfirst($this->params[0]) . 'Controller.php';
+                $paths['primaryAppAppTypePath_slice'] = App::$primary->{$this->moduleName}->path . '/' . $this->app->type . 'Controllers/' . ucfirst($this->params[0]) . 'Controller.php';
+            }
+            $paths['primaryAppAppAppTypePath'] = App::$primary->path . '/modules/' . $this->moduleName . '/' . $this->app->type . 'Controllers/' . $this->moduleName . 'Controller.php';
+            $paths['primaryAppAppTypePath'] = App::$primary->{$this->moduleName}->path . '/' . $this->app->type . 'Controllers/' . $this->moduleName . 'Controller.php';
+        }
 
         if (!empty($this->params[0])) {
             $paths['appAppTypePath_slice'] = $this->app->path . '/modules/' . $this->moduleName . '/' . $this->app->type . 'Controllers/' . ucfirst($this->params[0]) . 'Controller.php';
