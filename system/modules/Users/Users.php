@@ -39,6 +39,12 @@ class Users extends Module {
                     ['ip', filter_input(INPUT_SERVER, 'REMOTE_ADDR')],
                     ['hash', $hash]
         ]);
+        if($session->user->blocked){
+            setcookie("user_session_hash", '', 0, "/");
+            setcookie("user_id", '', 0, "/");
+            Msg::add('Ваш аккаунт заблокирован', 'info');
+            return ;
+        }
         if ($session && $session->user && !$session->user->blocked) {
             Users\User::$cur = $session->user;
             Users\User::$cur->last_activ = 'CURRENT_TIMESTAMP';
