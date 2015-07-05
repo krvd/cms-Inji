@@ -15,6 +15,29 @@ namespace Dashboard;
 
 class Comment extends \Model {
 
+    static $objectName = 'Комментарии';
+    static $labels = [
+        'model' => 'Тип ресурса',
+        'item_id' => 'Ресурс',
+        'user_id' => 'Автор',
+        'text' => 'Текст',
+        'date' => 'Дата',
+    ];
+    static $cols = [
+        'user_id' => [
+            'type' => 'relation',
+            'relation' => 'user',
+            'showCol' => 'mail'
+        ],
+        'item_id' => [
+            'type' => 'void',
+            'value' => [
+                'type' => 'moduleMethod',
+                'module' => 'Dashboard',
+                'method' => 'itemHref'
+            ]
+        ]
+    ];
     static $dataManagers = [
         'manager' => [
             'options' => [
@@ -26,16 +49,24 @@ class Comment extends \Model {
                 'formOnPage' => true
             ],
             'cols' => [
+                'model',
+                'item_id',
                 'user_id',
                 'text',
-                'date',
+                'date'
             ],
             'sortable' => [
                 'user_id',
                 'text',
-                'date',
+                'date'
+            ],
+            'preSort' => [
+                'date' => 'desc'
+            ],
+            'rowButtons' => [
+                'open'
             ]
-        ]
+        ],
     ];
 
     static function relations() {

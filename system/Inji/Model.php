@@ -23,8 +23,16 @@ class Model {
         if (strpos($valuePath, ':')) {
             $rel = substr($valuePath, 0, strpos($valuePath, ':'));
             $param = substr($valuePath, strpos($valuePath, ':') + 1);
+            if (!$object->$rel) {
+                $modelName = get_class($object);
+                $relations = $modelName::relations();
+                if (empty($relations[$rel]['type']) || $relations[$rel]['type'] == 'one') {
+                    return $object->{$relations[$rel]['col']};
+                }
+                return 0;
+            }
             if (strpos($valuePath, ':')) {
-                return self::getColValue($object->$rel, $param,$convert);
+                return self::getColValue($object->$rel, $param, $convert);
             } else {
                 return $convert ? Model::resloveTypeValue($object->$rel, $param) : $object->$rel->$param;
             }

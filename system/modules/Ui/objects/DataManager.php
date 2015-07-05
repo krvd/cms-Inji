@@ -222,8 +222,7 @@ class DataManager extends \Object {
                 if (isset($keys[$key])) {
                     if (is_array($this->managerOptions['cols'][$keys[$key]])) {
                         $colName = $keys[$key];
-                    }
-                    else {
+                    } else {
                         $colName = $this->managerOptions['cols'][$keys[$key]];
                     }
                 }
@@ -260,7 +259,11 @@ class DataManager extends \Object {
         if (strpos($colName, ':') !== false && !empty($relations[substr($colName, 0, strpos($colName, ':'))])) {
             $rel = substr($colName, 0, strpos($colName, ':'));
             $col = substr($colName, strpos($colName, ':') + 1);
-            return DataManager::drawCol($item->$rel, $col);
+            if ($item->$rel) {
+                return DataManager::drawCol($item->$rel, $col);
+            } else {
+                return 'Не указано';
+            }
         }
         if (!empty($modelName::$cols[$colName]['relation'])) {
             $type = !empty($relations[$modelName::$cols[$colName]['relation']]['type']) ? $relations[$modelName::$cols[$colName]['relation']]['type'] : 'to';
@@ -272,7 +275,14 @@ class DataManager extends \Object {
                     break;
                 default :
                     if ($item->{$modelName::$cols[$colName]['relation']}) {
-                        return $item->{$modelName::$cols[$colName]['relation']}->name();
+                        $href = "<a href='/admin/" . str_replace('\\', '/view/', $relations[$modelName::$cols[$colName]['relation']]['model']) . "/" . $item->{$modelName::$cols[$colName]['relation']}->pk() . "'>";
+                        if (!empty($modelName::$cols[$colName]['showCol'])) {
+                            $href .= $item->{$modelName::$cols[$colName]['relation']}->{$modelName::$cols[$colName]['showCol']};
+                        } else {
+                            $href .= $item->{$modelName::$cols[$colName]['relation']}->name();
+                        }
+                        $href .= '</a>';
+                        return $href;
                     } else {
                         return $item->$colName;
                     }
@@ -280,13 +290,18 @@ class DataManager extends \Object {
         } else {
             if (!empty($modelName::$cols[$colName]['type'])) {
                 switch ($modelName::$cols[$colName]['type']) {
+                    case 'void':
+                        if (!empty($modelName::$cols[$colName]['value']['type']) && $modelName::$cols[$colName]['value']['type'] == 'moduleMethod') {
+                            return \App::$cur->{$modelName::$cols[$colName]['value']['module']}->{$modelName::$cols[$colName]['value']['method']}($item, $colName, $modelName::$cols[$colName]);
+                        }
+                        break;
                     case'bool':
                         return $item->$colName ? 'Да' : 'Нет';
                         break;
                     case'select':
                         return !empty($modelName::$cols[$colName]['sourceArray'][$item->$colName]) ? $modelName::$cols[$colName]['sourceArray'][$item->$colName] : $item->$colName;
                         break;
-                    default :
+                    default:
                         return $item->$colName;
                 }
             } else {
