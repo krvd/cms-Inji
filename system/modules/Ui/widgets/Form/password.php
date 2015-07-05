@@ -10,7 +10,6 @@ echo $label !== false ? "<label>{$label}" . (!empty($options['required']) ? ' <s
             placeholder="Новый пароль" 
             class="form-control" 
             name = '<?= $name; ?>[pass]' 
-            value = '<?= !empty($options['value']) ? addcslashes($options['value'], "'") : (!empty($form->userDataTree[$name]) ? addcslashes($form->userDataTree[$name], "'") : ''); ?>' 
             />
     </div>
     <div class="col-xs-6">
@@ -19,7 +18,6 @@ echo $label !== false ? "<label>{$label}" . (!empty($options['required']) ? ' <s
             placeholder="Повторите пароль" 
             class="form-control" 
             name = '<?= $name; ?>[repeat]' 
-            value = '<?= !empty($options['value']) ? addcslashes($options['value'], "'") : (!empty($form->userDataTree[$name]) ? addcslashes($form->userDataTree[$name], "'") : ''); ?>' 
             />
     </div>
 </div>
