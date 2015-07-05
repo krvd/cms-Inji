@@ -39,7 +39,7 @@ class Users extends Module {
                     ['ip', filter_input(INPUT_SERVER, 'REMOTE_ADDR')],
                     ['hash', $hash]
         ]);
-        if($session->user->blocked){
+        if($session && $session->user && $session->user->blocked){
             setcookie("user_session_hash", '', 0, "/");
             setcookie("user_id", '', 0, "/");
             Msg::add('Ваш аккаунт заблокирован', 'info');
