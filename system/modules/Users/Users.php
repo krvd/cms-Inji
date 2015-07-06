@@ -35,15 +35,13 @@ class Users extends Module {
     function cuntinueSession($hash, $userId) {
         $session = Users\Session::get([
                     ['user_id', $userId],
-                    ['agent', filter_input(INPUT_SERVER, 'HTTP_USER_AGENT')],
-                    ['ip', filter_input(INPUT_SERVER, 'REMOTE_ADDR')],
                     ['hash', $hash]
         ]);
-        if($session && $session->user && $session->user->blocked){
+        if ($session && $session->user && $session->user->blocked) {
             setcookie("user_session_hash", '', 0, "/");
             setcookie("user_id", '', 0, "/");
             Msg::add('Ваш аккаунт заблокирован', 'info');
-            return ;
+            return;
         }
         if ($session && $session->user && !$session->user->blocked) {
             Users\User::$cur = $session->user;
@@ -124,20 +122,16 @@ class Users extends Module {
 
     function newSession($user) {
         $hash = Tools::randomString(255);
-        $session = Users\Session::get([
-                    ['user_id', $user->id],
-                    ['agent', filter_input(INPUT_SERVER, 'HTTP_USER_AGENT')],
-                    ['ip', filter_input(INPUT_SERVER, 'REMOTE_ADDR')]
+
+        $session = new Users\Session([
+            'user_id' => $user->id,
+            'agent' => filter_input(INPUT_SERVER, 'HTTP_USER_AGENT'),
+            'ip' => filter_input(INPUT_SERVER, 'REMOTE_ADDR')
         ]);
-        if (!$session) {
-            $session = new Users\Session([
-                'user_id' => $user->id,
-                'agent' => filter_input(INPUT_SERVER, 'HTTP_USER_AGENT'),
-                'ip' => filter_input(INPUT_SERVER, 'REMOTE_ADDR')
-            ]);
-        }
+
         $session->hash = $hash;
         $session->save();
+
         if (!headers_sent()) {
             setcookie("user_session_hash", $session->hash, time() + 360000, "/");
             setcookie("user_id", $session->user_id, time() + 360000, "/");

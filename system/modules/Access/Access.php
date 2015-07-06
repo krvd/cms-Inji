@@ -12,7 +12,7 @@ class Access extends Module {
         return '/';
     }
 
-    function checkAccess($element, $user) {
+    function checkAccess($element, $user = null) {
         $access = NULL;
         if ($element instanceof Controller) {
             $path = [
@@ -33,7 +33,14 @@ class Access extends Module {
         if (is_null($access)) {
             $access = [];
         }
-        if ((!Users\User::$cur->group_id && !empty($access)) || (Users\User::$cur->group_id && !empty($access) && !in_array(Users\User::$cur->user_group_id, $access)))
+        if (empty($access)) {
+            return true;
+        }
+        
+        if (is_null($user)) {
+            $user = Users\User::$cur;
+        }
+        if ((!$user->group_id && !empty($access)) || ($user->group_id && !empty($access) && !in_array($user->user_group_id, $access)))
             return false;
 
         return true;

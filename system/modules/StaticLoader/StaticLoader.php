@@ -95,7 +95,7 @@ class StaticLoader extends Module {
         if (!empty($_GET['resize'])) {
 
             $allow_resize = false;
-            if (App::$cur->db) {
+            if (App::$cur->db->connect) {
                 $type = Files\Type::get($fileinfo['extension'], 'ext');
                 $allow_resize = $type->allow_resize;
             }

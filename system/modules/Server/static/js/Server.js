@@ -29,7 +29,6 @@ Server.prototype.request = function (options, btn) {
         ajaxOptions.url = inji.options.appRoot + (options.url.replace(/^\//g, ''));
     }
     if (typeof btn != 'undefined') {
-        console.log(btn);
         $(btn).data('loading-text', 'подождите');
         var btn = $(btn).button().button('loading');
     }
@@ -38,13 +37,16 @@ Server.prototype.request = function (options, btn) {
         callback = options.success;
     }
     ajaxOptions.success = function (data, textStatus, jqXHR) {
+        if (typeof btn != 'undefined') {
+            btn.button('reset');
+        }
         if (data.success) {
             if (data.successMsg) {
                 noty({text: data.successMsg, type: 'success', timeout: 3500, layout: 'center'});
             }
             if (typeof data.scripts == 'object') {
                 inji.loaded = false;
-                if (callback != null) {
+                if (callback !== null) {
                     inji.onLoad(function () {
                         callback(data.content, textStatus, jqXHR)
                     });
@@ -52,7 +54,7 @@ Server.prototype.request = function (options, btn) {
                 inji.loadScripts(data.scripts, 0);
             }
             else {
-                if (callback != null) {
+                if (callback !== null) {
                     callback(data.content, textStatus, jqXHR);
                 }
             }
@@ -66,15 +68,13 @@ Server.prototype.request = function (options, btn) {
         errorCallback = options.error;
     }
     ajaxOptions.error = function (jqXHR, textStatus, errorThrown) {
+        if (typeof btn != 'undefined') {
+            btn.button('reset');
+        }
         if (errorCallback != null) {
             errorCallback(jqXHR, textStatus, errorThrown);
         } else {
             noty({text: 'Во время запроса произошла ошибка: ' + textStatus, type: 'warning', timeout: 3500, layout: 'center'});
-        }
-    }
-    ajaxOptions.complete = function () {
-        if (typeof btn != 'undefined') {
-            btn.button('reset');
         }
     }
     $.ajax(ajaxOptions);

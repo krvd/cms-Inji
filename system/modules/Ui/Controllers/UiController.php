@@ -29,7 +29,8 @@ class UiController extends Controller {
         } else {
             $params = [];
         }
-        $form = new Ui\ActiveForm($model, 'manager');
+        $formName = !empty($_GET['formName']) ? $_GET['formName'] : 'manager';
+        $form = new Ui\ActiveForm($model, $formName);
         $form->action = (App::$cur->system ? '/' . App::$cur->name : '') . '/ui/formPopUp/?' . http_build_query($_GET);
         if (!empty($_GET['_'])) {
             $return = new Server\Result();

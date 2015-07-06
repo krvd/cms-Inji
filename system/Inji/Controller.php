@@ -54,7 +54,7 @@ class Controller {
      * @return boolean
      */
     function checkAccess() {
-        return $this->module->app->access->checkAccess($this, Users\User::$cur);
+        return $this->module->app->access->checkAccess($this);
     }
 
 }
