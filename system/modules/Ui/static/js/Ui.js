@@ -353,6 +353,10 @@ DataManager.prototype.load = function (options) {
                 }
                 //sorted-desc
                 headTh.click(function () {
+                    $(this).addClass('clickedsort');
+                    $('.sortable').not('.clickedsort').removeClass('sorted-asc').removeClass('sorted-desc');
+                    $(this).removeClass('clickedsort');
+                    dataManager.sortered = {};
                     if (!$(this).hasClass('sorted-desc') && !$(this).hasClass('sorted-asc')) {
                         $(this).addClass('sorted-desc');
                         dataManager.sortered[$(this).index() - shift] = 'desc';
@@ -373,6 +377,10 @@ DataManager.prototype.load = function (options) {
                 })
             }
             if (!footTh.hasClass('sortable')) {
+                $(this).addClass('clickedsort');
+                $('.sortable').not('.clickedsort').removeClass('sorted-asc').removeClass('sorted-desc');
+                $(this).removeClass('clickedsort');
+                dataManager.sortered = {};
                 footTh.html('<a href = "#">' + footTh.html() + '</a>');
                 footTh.addClass('sortable');
                 footTh.click(function () {
