@@ -347,6 +347,7 @@ DataManager.prototype.load = function (options) {
                         this.sortered[sortableIndexes[key]] = 'asc';
                     }
                     else if (this.options.preSort[this.options.sortable[key]] == 'desc') {
+                        console.log(1);
                         headTh.addClass('sorted-desc');
                         this.sortered[sortableIndexes[key]] = 'desc';
                     }
@@ -377,13 +378,13 @@ DataManager.prototype.load = function (options) {
                 })
             }
             if (!footTh.hasClass('sortable')) {
+                footTh.html('<a href = "#">' + footTh.html() + '</a>');
+                footTh.addClass('sortable');
+                footTh.click(function () {
                 $(this).addClass('clickedsort');
                 $('.sortable').not('.clickedsort').removeClass('sorted-asc').removeClass('sorted-desc');
                 $(this).removeClass('clickedsort');
                 dataManager.sortered = {};
-                footTh.html('<a href = "#">' + footTh.html() + '</a>');
-                footTh.addClass('sortable');
-                footTh.click(function () {
                     if (!$(this).hasClass('sorted-desc') && !$(this).hasClass('sorted-asc')) {
                         $(this).addClass('sorted-desc');
                         dataManager.sortered[$(this).index() - shift] = 'desc';
