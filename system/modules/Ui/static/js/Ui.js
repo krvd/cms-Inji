@@ -467,7 +467,7 @@ Forms.prototype.popUp = function (item, params) {
         exist = true;
     }
     var modal = inji.Ui.modals.show('', '<div class = "text-center"><img src = "' + inji.options.appRoot + 'static/moduleAsset/Ui/images/ajax-loader.gif" /></div>', code, 'modal-lg');
-    if (!exist) {
+    //if (!exist) {
         inji.Server.request({
             url: 'ui/formPopUp/',
             data: {item: item, params: params},
@@ -476,7 +476,7 @@ Forms.prototype.popUp = function (item, params) {
                 inji.Ui.editors.loadIn(modal.find('.modal-body'), '.htmleditor');
             }
         });
-    }
+    //}
 }
 Forms.prototype.submitAjax = function (form) {
     inji.Ui.editors.beforeSubmit(form);

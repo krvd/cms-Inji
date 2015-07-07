@@ -25,7 +25,7 @@ Server.prototype.request = function (options, btn) {
     for (var key in options) {
         ajaxOptions[key] = options[key];
     }
-    if (options.url) {
+    if (options.url && options.url.indexOf(inji.options.appRoot) !== 0) {
         ajaxOptions.url = inji.options.appRoot + (options.url.replace(/^\//g, ''));
     }
     if (typeof btn != 'undefined') {
