@@ -164,7 +164,7 @@ class StaticLoader extends Module {
         header("Pragma: public");
         header("Content-Length: " . filesize($file));
         header('Last-Modified: ' . gmdate('D, d M Y H:i:s', filemtime($file)) . ' GMT');
-        header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 60 * 60 * 24) . ' GMT');
+        header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 60 * 60 * 24 * 256) . ' GMT');
         if (filemtime($file) <= $modifiedSince && (!isset($_SERVER['HTTP_CACHE_CONTROL']) || $_SERVER['HTTP_CACHE_CONTROL'] != 'no-cache')) {
             // Разгружаем канал передачи данных!
             header('HTTP/1.1 304 Not Modified');
