@@ -42,9 +42,9 @@ class UiController extends Controller {
             $return->send();
         } else {
             $form->checkRequest($params);
-            $this->view->setTitle($modelName::$objectName);
-            if ($model) {
-                //$this->view->setTitle($model->name());
+            $this->view->setTitle('Создать ' . $modelName::$objectName);
+            if ($model && $model->pk()) {
+                $this->view->setTitle('Изменить ' . $modelName::$objectName);
             }
             $this->view->page(['content' => 'form', 'data' => compact('form', 'params')]);
         }

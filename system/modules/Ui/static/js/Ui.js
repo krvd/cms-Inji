@@ -64,7 +64,6 @@ Editors.prototype.loadIn = function (selector, search) {
         $.each(instances, function () {
             if ($(this).closest('.modal').length == 0 || $(this).closest('.modal').hasClass('in')) {
                 var editor = $(this).ckeditor();
-                console.log(editor);
             }
             if ($(this).closest('.modal').length != 0) {
                 var _this = this;
@@ -159,6 +158,11 @@ function DataManagers() {
                 }
             });
             if (ids != '') {
+                if (instance.options.groupActions[$(this).data('action')].customJsChecker) {
+                    if (!window[instance.options.groupActions[$(this).data('action')].customJsChecker](instance,ids)) {
+                        //return;
+                    }
+                }
                 inji.Server.request({
                     url: 'ui/dataManager/groupAction',
                     data: {params: instance.params, modelName: instance.modelName, ids: ids, managerName: instance.managerName, action: $(this).data('action')},
@@ -307,7 +311,6 @@ DataManager.prototype.load = function (options) {
     }
     if (this.options.sortable) {
         sortableIndexes = [];
-        console.log(this.options.cols);
         for (key in this.options.sortable) {
             var colName = this.options.sortable[key];
             var i = 0;
@@ -326,9 +329,6 @@ DataManager.prototype.load = function (options) {
             }
 
         }
-        console.log(sortableIndexes);
-        console.log(this.options.sortable);
-        console.log(this.options.preSort);
         for (key in sortableIndexes) {
             var shift = 1;
             if (this.options.groupActions) {
@@ -341,13 +341,11 @@ DataManager.prototype.load = function (options) {
                 headTh.html('<a href = "#">' + headTh.html() + '</a>');
                 headTh.addClass('sortable');
                 if (this.options.preSort && this.options.preSort[this.options.sortable[key]]) {
-                    console.log(this.options.sortable[key]);
                     if (this.options.preSort[this.options.sortable[key]] == 'asc') {
                         headTh.addClass('sorted-asc');
                         this.sortered[sortableIndexes[key]] = 'asc';
                     }
                     else if (this.options.preSort[this.options.sortable[key]] == 'desc') {
-                        console.log(1);
                         headTh.addClass('sorted-desc');
                         this.sortered[sortableIndexes[key]] = 'desc';
                     }
@@ -381,10 +379,10 @@ DataManager.prototype.load = function (options) {
                 footTh.html('<a href = "#">' + footTh.html() + '</a>');
                 footTh.addClass('sortable');
                 footTh.click(function () {
-                $(this).addClass('clickedsort');
-                $('.sortable').not('.clickedsort').removeClass('sorted-asc').removeClass('sorted-desc');
-                $(this).removeClass('clickedsort');
-                dataManager.sortered = {};
+                    $(this).addClass('clickedsort');
+                    $('.sortable').not('.clickedsort').removeClass('sorted-asc').removeClass('sorted-desc');
+                    $(this).removeClass('clickedsort');
+                    dataManager.sortered = {};
                     if (!$(this).hasClass('sorted-desc') && !$(this).hasClass('sorted-asc')) {
                         $(this).addClass('sorted-desc');
                         dataManager.sortered[$(this).index() - shift] = 'desc';
@@ -468,14 +466,14 @@ Forms.prototype.popUp = function (item, params) {
     }
     var modal = inji.Ui.modals.show('', '<div class = "text-center"><img src = "' + inji.options.appRoot + 'static/moduleAsset/Ui/images/ajax-loader.gif" /></div>', code, 'modal-lg');
     //if (!exist) {
-        inji.Server.request({
-            url: 'ui/formPopUp/',
-            data: {item: item, params: params},
-            success: function (data) {
-                modal.find('.modal-body').html(data);
-                inji.Ui.editors.loadIn(modal.find('.modal-body'), '.htmleditor');
-            }
-        });
+    inji.Server.request({
+        url: 'ui/formPopUp/',
+        data: {item: item, params: params},
+        success: function (data) {
+            modal.find('.modal-body').html(data);
+            inji.Ui.editors.loadIn(modal.find('.modal-body'), '.htmleditor');
+        }
+    });
     //}
 }
 Forms.prototype.submitAjax = function (form) {

@@ -208,7 +208,9 @@ class Tools extends Model {
         $hours = substr($date, 11, 5);
 
         $month = array('января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря');
-
+        if(empty($month[$mm - 1])){
+            return 'Не указано';
+        }
         return ($dd > 0 ? $dd . " " : '') . $month[$mm - 1] . " " . $yy . " " . $hours;
     }
 

@@ -158,9 +158,10 @@ class DataManager extends \Object {
                 $colInfo = $modelName::getColInfo($col);
                 switch ($colInfo['colParams']['type']) {
                     case 'select':
-                        if (empty($params['filters'][$col]['value'])) {
+                        if (!isset($params['filters'][$col]['value']) || $params['filters'][$col]['value'] === '') {
                             continue;
                         }
+                        echo '"' . $params['filters'][$col]['value'] . '"';
                         $queryParams['where'][] = [$col, $params['filters'][$col]['value']];
                         break;
                     case 'bool':
@@ -288,7 +289,15 @@ class DataManager extends \Object {
                     }
             }
         } else {
-            if (!empty($modelName::$cols[$colName]['type'])) {
+            if (!empty($modelName::$cols[$colName]['view']['type'])) {
+                switch ($modelName::$cols[$colName]['view']['type']) {
+                    case 'moduleMethod':
+                        return \App::$cur->{$modelName::$cols[$colName]['view']['module']}->{$modelName::$cols[$colName]['view']['method']}($item, $colName, $modelName::$cols[$colName]);
+                        break;
+                    default:
+                        return $item->$colName;
+                }
+            } elseif (!empty($modelName::$cols[$colName]['type'])) {
                 switch ($modelName::$cols[$colName]['type']) {
                     case 'void':
                         if (!empty($modelName::$cols[$colName]['value']['type']) && $modelName::$cols[$colName]['value']['type'] == 'moduleMethod') {
@@ -357,7 +366,7 @@ class DataManager extends \Object {
                 $colInfo = $modelName::getColInfo($col);
                 switch ($colInfo['colParams']['type']) {
                     case 'select':
-                        if (empty($params['filters'][$col]['value'])) {
+                        if (!isset($params['filters'][$col]['value']) || $params['filters'][$col]['value'] === '') {
                             continue;
                         }
                         $queryParams['where'][] = [$col, $params['filters'][$col]['value']];
@@ -423,7 +432,8 @@ class DataManager extends \Object {
             'limit' => $this->limit,
             'page' => $this->page,
                 ], [
-            'count' => $count
+            'count' => $count,
+            'dataManager' => $this
         ]);
         return $pages;
     }

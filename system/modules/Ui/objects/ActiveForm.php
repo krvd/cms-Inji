@@ -174,6 +174,8 @@ class ActiveForm extends \Object {
                 }
                 if ($ajax) {
                     \Msg::show();
+                } elseif (!empty($_GET['redirectUrl'])) {
+                    \Tools::redirect($_GET['redirectUrl']);
                 }
             }
             if (!is_array($params) && is_callable($params)) {
