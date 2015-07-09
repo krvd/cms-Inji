@@ -86,6 +86,11 @@ class Form extends \Object {
                 $params['form'] = $this;
                 \App::$cur->view->widget('Ui\\' . $this->options['widgetsDir'] . '/file', $params);
                 break;
+            case 'files':
+                $params = compact('name', 'label', 'options');
+                $params['form'] = $this;
+                \App::$cur->view->widget('Ui\\' . $this->options['widgetsDir'] . '/files', $params);
+                break;
             case 'dateTime':
                 $params = compact('name', 'label', 'options');
                 $params['form'] = $this;

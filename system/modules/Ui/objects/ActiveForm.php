@@ -107,6 +107,23 @@ class ActiveForm extends \Object {
                         continue;
                     }
                     switch ($param['type']) {
+                        case 'files':
+                            if (!empty($_FILES[$this->requestFormName]['tmp_name'][$this->modelName][$col])) {
+                                $file_ids = !empty($request[$col]) ? $request[$col] : [];
+                                foreach ($_FILES[$this->requestFormName]['tmp_name'][$this->modelName][$col] as $key => $tmp_name) {
+                                    $file_ids[] = \App::$primary->files->upload([
+                                        'tmp_name' => $_FILES[$this->requestFormName]['tmp_name'][$this->modelName][$col][$key],
+                                        'name' => $_FILES[$this->requestFormName]['name'][$this->modelName][$col][$key],
+                                        'type' => $_FILES[$this->requestFormName]['type'][$this->modelName][$col][$key],
+                                        'size' => $_FILES[$this->requestFormName]['size'][$this->modelName][$col][$key],
+                                        'error' => $_FILES[$this->requestFormName]['error'][$this->modelName][$col][$key],
+                                            ], [
+                                        'upload_code' => 'activeForm:' . $modelName . ':' . $this->model->pk()
+                                    ]);
+                                }
+                                $this->model->$col = implode(',', array_filter($file_ids));
+                            }
+                            break;
                         case 'image':
                             if (!empty($_FILES[$this->requestFormName]['tmp_name'][$this->modelName][$col])) {
                                 $file_id = \App::$primary->files->upload([

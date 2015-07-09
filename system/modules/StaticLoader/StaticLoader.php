@@ -177,7 +177,7 @@ class StaticLoader extends Module {
         if (isset($this->mimes[strtolower($fileinfo['extension'])])) {
             header("Content-Type: " . $this->mimes[strtolower($fileinfo['extension'])]);
         }
-        if (isset($_GET['frustrate_dl']) || in_array($fileinfo['extension'], array('pptx'))) {
+        if (isset($_GET['frustrate_dl'])) {
             header('Content-Disposition: attachment; filename=' . basename($file));
         }
 
