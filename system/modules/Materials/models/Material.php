@@ -6,17 +6,15 @@ class Material extends \Model {
 
     static $objectName = 'Материал';
     static $categoryModel = 'Materials\Catalog';
-
-
     static $labels = [
-        'material_name' => 'Заголовок',
-        'material_catalog_id' => 'Раздел',
-        'material_preview' => 'Краткое превью',
-        'material_text' => 'Текст страницы',
-        'material_chpu' => 'Алиас страницы',
-        'material_template' => 'Шаблон сайта',
-        'material_viewer' => 'Тип страницы',
-        'material_image_file_id'=>'Фото материала'
+        'name' => 'Заголовок',
+        'catalog_id' => 'Раздел',
+        'preview' => 'Краткое превью',
+        'text' => 'Текст страницы',
+        'chpu' => 'Алиас страницы',
+        'template' => 'Шаблон сайта',
+        'viewer' => 'Тип страницы',
+        'image_file_id' => 'Фото материала'
     ];
     static $dataManagers = [
         'manager' => [
@@ -28,9 +26,9 @@ class Material extends \Model {
                 ]
             ],
             'cols' => [
-                'material_name',
-                'material_chpu',
-                'material_catalog_id',
+                'name',
+                'chpu',
+                'catalog_id',
             ],
             'categorys' => [
                 'model' => 'Materials\Catalog',
@@ -38,14 +36,14 @@ class Material extends \Model {
         ]
     ];
     static $cols = [
-        'material_name' => ['type' => 'text'],
-        'material_chpu' => ['type' => 'text'],
-        'material_viewer' => ['type' => 'select', 'source' => 'method', 'method' => 'viewsList', 'module' => 'Materials'],
-        'material_template' => ['type' => 'select', 'source' => 'method', 'method' => 'templatesList', 'module' => 'Materials'],
-        'material_preview' => ['type' => 'html'],
-        'material_text' => ['type' => 'html'],
-        'material_catalog_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'catalog', 'showCol' => 'catalog_name'],
-        'material_image_file_id' => ['type' => 'image'],
+        'name' => ['type' => 'text'],
+        'chpu' => ['type' => 'text'],
+        'viewer' => ['type' => 'select', 'source' => 'method', 'method' => 'viewsList', 'module' => 'Materials'],
+        'template' => ['type' => 'select', 'source' => 'method', 'method' => 'templatesList', 'module' => 'Materials'],
+        'preview' => ['type' => 'html'],
+        'text' => ['type' => 'html'],
+        'catalog_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'catalog', 'showCol' => 'catalog_name'],
+        'image_file_id' => ['type' => 'image'],
     ];
     static $forms = [
         'manager' => [
@@ -57,11 +55,11 @@ class Material extends \Model {
                 ]
             ],
             'map' => [
-                ['material_name', 'material_catalog_id'],
-                ['material_chpu','material_image_file_id'],
-                ['material_template', 'material_viewer'],
-                ['material_preview'],
-                ['material_text'],
+                ['name', 'catalog_id'],
+                ['chpu', 'image_file_id'],
+                ['template', 'viewer'],
+                ['preview'],
+                ['text'],
             ]
         ]
     ];
@@ -70,11 +68,11 @@ class Material extends \Model {
         return [
             'catalog' => [
                 'model' => '\Materials\Catalog',
-                'col' => 'material_catalog_id'
+                'col' => 'catalog_id'
             ],
             'image' => [
                 'model' => '\Files\File',
-                'col' => 'material_image_file_id'
+                'col' => 'image_file_id'
             ]
         ];
     }

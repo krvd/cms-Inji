@@ -90,26 +90,20 @@ class ActiveForm extends \Object {
         if (!empty($_POST[$this->requestFormName][$this->modelName])) {
             $request = $_POST[$this->requestFormName][$this->modelName];
             if ($this->model) {
+                $preset = !empty($this->form['userGroupPreset']) ? $this->form['userGroupPreset'] : [];
+                if (!empty($this->form['userGroupPreset'][\Users\User::$cur->group_id])) {
+                    $preset = array_merge($preset, $this->form['userGroupPreset'][\Users\User::$cur->group_id]);
+                }
                 $afterSave = [];
                 foreach ($this->form['inputs'] as $col => $param) {
+                    if (!empty($preset[$col])) {
+                        continue;
+                    }
                     if (is_object($param)) {
                         $afterSave[] = $param;
                         continue;
                     }
                     if (!empty($this->form['options']['readonly']) && in_array($col, $this->form['options']['readonly'])) {
-                        continue;
-                    }
-                    if (!empty($this->form['userGroupPreset'][\Users\User::$cur->group_id][$col])) {
-                        $preset = $this->form['userGroupPreset'][\Users\User::$cur->group_id][$col];
-                        if (!empty($preset['value'])) {
-                            $this->model->$col = $preset['value'];
-                        } elseif (!empty($preset['userCol'])) {
-                            if (strpos($preset['userCol'], ':')) {
-                                $rel = substr($preset['userCol'], 0, strpos($preset['userCol'], ':'));
-                                $param = substr($preset['userCol'], strpos($preset['userCol'], ':') + 1);
-                                $this->model->$col = \Users\User::$cur->$rel->$param;
-                            }
-                        }
                         continue;
                     }
                     switch ($param['type']) {
@@ -167,6 +161,17 @@ class ActiveForm extends \Object {
                     }
                 }
 
+                foreach ($preset as $col => $preset) {
+                    if (!empty($preset['value'])) {
+                        $this->model->$col = $preset['value'];
+                    } elseif (!empty($preset['userCol'])) {
+                        if (strpos($preset['userCol'], ':')) {
+                            $rel = substr($preset['userCol'], 0, strpos($preset['userCol'], ':'));
+                            $param = substr($preset['userCol'], strpos($preset['userCol'], ':') + 1);
+                            $this->model->$col = \Users\User::$cur->$rel->$param;
+                        }
+                    }
+                }
                 \Msg::add($this->model->pk() ? 'Изменнеия были успешно сохранены' : 'Новый элемент был успешно добавлен', 'success');
                 $this->model->save(!empty($params['dataManagerParams']) ? $params['dataManagerParams'] : []);
                 foreach ($afterSave as $form) {
@@ -189,24 +194,34 @@ class ActiveForm extends \Object {
             $this->drawError('you not have access to "' . $this->modelName . '" manager with name: "' . $this->formName . '"');
             return [];
         }
-        $form = new Form();
+        $form = new Form(!empty($this->form['formOptions']) ? $this->form['formOptions'] : []);
         if ($this->parent === null) {
             $form->action = $this->action;
             $form->begin($this->header, ['onsubmit' => $ajax ? 'inji.Ui.forms.submitAjax(this);return false;' : '']);
         } elseif ($this->header) {
             echo "<h3>{$this->header}</h3>";
         }
-        foreach ($this->form['map'] as $row) {
-            $colSize = 12 / count($row);
-            echo "<div class ='row'>";
-            foreach ($row as $col) {
-                echo "<div class = 'col-xs-{$colSize}'>";
-                if ($col) {
-                    $this->drawCol($col, $this->form['inputs'][$col], $form, $params);
+        if (empty($this->form['noMapCell'])) {
+            foreach ($this->form['map'] as $row) {
+                $colSize = 12 / count($row);
+                echo "<div class ='row'>";
+                foreach ($row as $col) {
+                    echo "<div class = 'col-xs-{$colSize}'>";
+                    if ($col) {
+                        $this->drawCol($col, $this->form['inputs'][$col], $form, $params);
+                    }
+                    echo '</div>';
                 }
                 echo '</div>';
             }
-            echo '</div>';
+        } else {
+            foreach ($this->form['map'] as $row) {
+                foreach ($row as $col) {
+                    if ($col) {
+                        $this->drawCol($col, $this->form['inputs'][$col], $form, $params);
+                    }
+                }
+            }
         }
         if ($this->parent === null) {
             $form->end($this->model ? ($this->model->pk() ? 'Сохранить' : 'Создать') : 'Отправить');
@@ -222,8 +237,11 @@ class ActiveForm extends \Object {
                 'value' => $value = isset($options['default']) ? $options['default'] : ''
             ];
             $inputOptions['value'] = ($this->model && isset($this->model->$colName)) ? $this->model->$colName : $inputOptions['value'];
+            $preset = !empty($this->form['userGroupPreset'][$colName]) ? $this->form['userGroupPreset'][$colName] : [];
             if (!empty($this->form['userGroupPreset'][\Users\User::$cur->group_id][$colName])) {
-                $preset = $this->form['userGroupPreset'][\Users\User::$cur->group_id][$colName];
+                $preset = array_merge($preset, $this->form['userGroupPreset'][\Users\User::$cur->group_id][$colName]);
+            }
+            if ($preset) {
                 $inputOptions['disabled'] = true;
                 if (!empty($preset['value'])) {
                     $inputOptions['value'] = $preset['value'];

@@ -20,8 +20,10 @@ class Form extends \Object {
     public $inputs = [];
     public $map = [];
     public $userDataTree = [];
+    public $options = ['widgetsDir' => 'Form'];
 
-    function __construct() {
+    function __construct($options = []) {
+        $this->options = array_merge($this->options, $options);
         $this->genUserDataTree($_POST);
     }
 
@@ -38,7 +40,7 @@ class Form extends \Object {
     function begin($header = '', $options = []) {
         $params = compact('header', 'options');
         $params['form'] = $this;
-        \App::$cur->view->widget('Ui\Form/begin', $params);
+        \App::$cur->view->widget('Ui\\' . $this->options['widgetsDir'] . '/begin', $params);
     }
 
     function input($type, $name, $label = '', $options = []) {
@@ -46,22 +48,22 @@ class Form extends \Object {
             case 'checkbox':
                 $params = compact('name', 'label', 'options');
                 $params['form'] = $this;
-                \App::$cur->view->widget('Ui\Form/checkbox', $params);
+                \App::$cur->view->widget('Ui\\' . $this->options['widgetsDir'] . '/checkbox', $params);
                 break;
             case 'password':
                 $params = compact('name', 'label', 'options');
                 $params['form'] = $this;
-                \App::$cur->view->widget('Ui\Form/password', $params);
+                \App::$cur->view->widget('Ui\\' . $this->options['widgetsDir'] . '/password', $params);
                 break;
             case 'dynamicList':
                 $params = compact('name', 'label', 'options');
                 $params['form'] = $this;
-                \App::$cur->view->widget('Ui\Form/dynamicList', $params);
+                \App::$cur->view->widget('Ui\\' . $this->options['widgetsDir'] . '/dynamicList', $params);
                 break;
             case 'textarea':
                 $params = compact('name', 'label', 'options');
                 $params['form'] = $this;
-                \App::$cur->view->widget('Ui\Form/textarea', $params);
+                \App::$cur->view->widget('Ui\\' . $this->options['widgetsDir'] . '/textarea', $params);
                 break;
             case 'html':
                 \App::$cur->libs->loadLib('ckeditor');
@@ -72,50 +74,50 @@ class Form extends \Object {
                 } else {
                     $params['options']['class'] .= ' htmleditor';
                 }
-                \App::$cur->view->widget('Ui\Form/textarea', $params);
+                \App::$cur->view->widget('Ui\\' . $this->options['widgetsDir'] . '/textarea', $params);
                 break;
             case 'image':
                 $params = compact('name', 'label', 'options');
                 $params['form'] = $this;
-                \App::$cur->view->widget('Ui\Form/image', $params);
+                \App::$cur->view->widget('Ui\\' . $this->options['widgetsDir'] . '/image', $params);
                 break;
             case 'file':
                 $params = compact('name', 'label', 'options');
                 $params['form'] = $this;
-                \App::$cur->view->widget('Ui\Form/file', $params);
+                \App::$cur->view->widget('Ui\\' . $this->options['widgetsDir'] . '/file', $params);
                 break;
             case 'dateTime':
                 $params = compact('name', 'label', 'options');
                 $params['form'] = $this;
-                \App::$cur->view->widget('Ui\Form/dateTime', $params);
+                \App::$cur->view->widget('Ui\\' . $this->options['widgetsDir'] . '/dateTime', $params);
                 break;
             case 'date':
                 $params = compact('name', 'label', 'options');
                 $params['form'] = $this;
-                \App::$cur->view->widget('Ui\Form/date', $params);
+                \App::$cur->view->widget('Ui\\' . $this->options['widgetsDir'] . '/date', $params);
                 break;
             case 'map':
                 $params = compact('name', 'label', 'options');
                 $params['form'] = $this;
                 \App::$cur->libs->loadLib('yandexMap');
-                \App::$cur->view->widget('Ui\Form/map', $params);
+                \App::$cur->view->widget('Ui\\' . $this->options['widgetsDir'] . '/map', $params);
                 break;
             case 'select':
                 $params = compact('name', 'label', 'options');
                 $params['form'] = $this;
-                \App::$cur->view->widget('Ui\Form/select', $params);
+                \App::$cur->view->widget('Ui\\' . $this->options['widgetsDir'] . '/select', $params);
                 break;
             default :
                 $params = compact('type', 'name', 'label', 'options');
                 $params['form'] = $this;
-                \App::$cur->view->widget('Ui\Form/input', $params);
+                \App::$cur->view->widget('Ui\\' . $this->options['widgetsDir'] . '/input', $params);
         }
     }
 
     function end($btnText = 'Отправить', $attributs = []) {
         $params = compact('btnText', 'attributs');
         $params['form'] = $this;
-        \App::$cur->view->widget('Ui\Form/end', $params);
+        \App::$cur->view->widget('Ui\\' . $this->options['widgetsDir'] . '/end', $params);
     }
 
 }
