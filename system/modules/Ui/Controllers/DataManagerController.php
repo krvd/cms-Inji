@@ -97,7 +97,6 @@ class DataManagerController extends Controller {
             $endRow = true;
         }
         $rows = $dataManager->getRows($params, $model);
-
         foreach ($rows as $row) {
             if (!empty($_GET['download'])) {
                 $row = array_slice($row, (!empty($dataManager->managerOptions['groupActions']) ? 1 : 0), -1);

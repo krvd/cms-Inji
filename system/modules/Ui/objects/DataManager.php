@@ -161,7 +161,6 @@ class DataManager extends \Object {
                         if (!isset($params['filters'][$col]['value']) || $params['filters'][$col]['value'] === '') {
                             continue;
                         }
-                        echo '"' . $params['filters'][$col]['value'] . '"';
                         $queryParams['where'][] = [$col, $params['filters'][$col]['value']];
                         break;
                     case 'bool':
@@ -195,6 +194,9 @@ class DataManager extends \Object {
                         }
                         break;
                     case'text':
+                    case 'text':
+                    case 'textarea':
+                    case 'html':
                         if (empty($params['filters'][$col]['value'])) {
                             continue;
                         }
