@@ -7,6 +7,9 @@ foreach ($options['values'] as $key => $value) {
 
     $primaryValue = isset($options['value']) ? $options['value'] : null;
     $primaryValue = is_array($primaryValue) ? $primaryValue['primary'] : $primaryValue;
+    if (is_numeric($key) && $primaryValue !== '') {
+        $primaryValue = (int) $primaryValue;
+    }
     if ($key === $primaryValue || (isset($form->userDataTree[$name]) && $form->userDataTree[$name] === $key)) {
         $selected = ' selected="selected"';
     }
