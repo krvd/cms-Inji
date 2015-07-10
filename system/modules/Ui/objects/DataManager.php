@@ -361,6 +361,8 @@ class DataManager extends \Object {
                         $param = substr($colOptions['userCol'], strpos($colOptions['userCol'], ':') + 1);
                         $queryParams['where'][] = [$colName, \Users\User::$cur->$rel->$param];
                     }
+                } elseif (!empty($colOptions['value'])) {
+                    $queryParams['where'][] = [$colName, $colOptions['value']];
                 }
             }
         }

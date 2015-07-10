@@ -40,7 +40,8 @@ class adminController extends Controller {
         }
         $fullModelName = $this->module->moduleName . '\\' . ucfirst($model);
         $dataManager = new Ui\DataManager($fullModelName, $dataManager);
-        $this->view->setTitle($fullModelName::$objectName);
+        $title = !empty($dataManager->managerOptions['name']) ? $dataManager->managerOptions['name'] : $fullModelName::objectName();
+        $this->view->setTitle($title);
         $this->view->page(['module' => 'Ui', 'content' => 'dataManager/manager', 'data' => compact('dataManager')]);
     }
 

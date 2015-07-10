@@ -79,6 +79,11 @@ class Model {
             case 'bool':
                 $value = $item->$colName ? 'Да' : 'Нет';
                 break;
+                    case 'void':
+                        if (!empty($colInfo['colParams']['value']['type']) && $colInfo['colParams']['value']['type'] == 'moduleMethod') {
+                            return \App::$cur->{$colInfo['colParams']['value']['module']}->{$colInfo['colParams']['value']['method']}($item, $colName, $colInfo['colParams']);
+                        }
+                        break;
             default:
                 $value = $item->$colName;
                 break;
@@ -255,7 +260,29 @@ class Model {
         if (is_array($param)) {
             static::fixPrefix($param, 'first');
         }
-
+        foreach (static::$relJoins as $join) {
+            App::$cur->db->join($join[0], $join[1]);
+        }
+        static::$relJoins = [];
+        foreach (static::$needJoin as $rel) {
+            $relations = static::relations();
+            if (isset($relations[$rel])) {
+                $type = empty($relations[$rel]['type']) ? 'to' : $relations[$rel]['type'];
+                switch ($type) {
+                    case 'to':
+                        $relCol = $relations[$rel]['col'];
+                        static::fixPrefix($relCol);
+                        App::$cur->db->join($relations[$rel]['model']::table(), $relations[$rel]['model']::index() . ' = ' . $relCol);
+                        break;
+                    case 'one':
+                        $col = $relations[$rel]['col'];
+                        $relations[$rel]['model']::fixPrefix($col);
+                        App::$cur->db->join($relations[$rel]['model']::table(), static::index() . ' = ' . $col);
+                        break;
+                }
+            }
+        }
+        static::$needJoin = [];
         if (is_array($param)) {
             App::$cur->db->where($param);
         } else {
