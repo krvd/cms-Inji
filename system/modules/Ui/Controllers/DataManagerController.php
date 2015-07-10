@@ -40,6 +40,8 @@ class DataManagerController extends Controller {
         ob_end_clean();
         $result->send();
     }
+    
+    //function 
 
     function loadRowsAction() {
         $result = new Server\Result();

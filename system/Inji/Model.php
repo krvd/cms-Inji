@@ -19,6 +19,10 @@ class Model {
         $this->setParams($params);
     }
 
+    static function objectName() {
+        return static::$objectName;
+    }
+
     static function getColValue($object, $valuePath, $convert = false) {
         if (strpos($valuePath, ':')) {
             $rel = substr($valuePath, 0, strpos($valuePath, ':'));

@@ -90,13 +90,13 @@ class ActiveForm extends \Object {
         if (!empty($_POST[$this->requestFormName][$this->modelName])) {
             $request = $_POST[$this->requestFormName][$this->modelName];
             if ($this->model) {
-                $preset = !empty($this->form['userGroupPreset']) ? $this->form['userGroupPreset'] : [];
+                $presets = !empty($this->form['preset']) ? $this->form['preset'] : [];
                 if (!empty($this->form['userGroupPreset'][\Users\User::$cur->group_id])) {
-                    $preset = array_merge($preset, $this->form['userGroupPreset'][\Users\User::$cur->group_id]);
+                    $presets = array_merge($presets, $this->form['userGroupPreset'][\Users\User::$cur->group_id]);
                 }
                 $afterSave = [];
                 foreach ($this->form['inputs'] as $col => $param) {
-                    if (!empty($preset[$col])) {
+                    if (!empty($presets[$col])) {
                         continue;
                     }
                     if (is_object($param)) {
@@ -178,7 +178,7 @@ class ActiveForm extends \Object {
                     }
                 }
 
-                foreach ($preset as $col => $preset) {
+                foreach ($presets as $col => $preset) {
                     if (!empty($preset['value'])) {
                         $this->model->$col = $preset['value'];
                     } elseif (!empty($preset['userCol'])) {
@@ -189,7 +189,7 @@ class ActiveForm extends \Object {
                         }
                     }
                 }
-                \Msg::add($this->model->pk() ? 'Изменнеия были успешно сохранены' : 'Новый элемент был успешно добавлен', 'success');
+                \Msg::add($this->model->pk() ? 'Изменения были успешно сохранены' : 'Новый элемент был успешно добавлен', 'success');
                 $this->model->save(!empty($params['dataManagerParams']) ? $params['dataManagerParams'] : []);
                 foreach ($afterSave as $form) {
                     $form->checkRequest();
@@ -254,7 +254,7 @@ class ActiveForm extends \Object {
                 'value' => $value = isset($options['default']) ? $options['default'] : ''
             ];
             $inputOptions['value'] = ($this->model && isset($this->model->$colName)) ? $this->model->$colName : $inputOptions['value'];
-            $preset = !empty($this->form['userGroupPreset'][$colName]) ? $this->form['userGroupPreset'][$colName] : [];
+            $preset = !empty($this->form['preset'][$colName]) ? $this->form['preset'][$colName] : [];
             if (!empty($this->form['userGroupPreset'][\Users\User::$cur->group_id][$colName])) {
                 $preset = array_merge($preset, $this->form['userGroupPreset'][\Users\User::$cur->group_id][$colName]);
             }
@@ -270,6 +270,8 @@ class ActiveForm extends \Object {
                         $inputOptions['value'] = \Users\User::$cur->$rel->$param;
                     }
                 }
+                $form->input('hidden', "{$this->requestFormName}[$this->modelName][{$colName}]", ($this->model && !empty($modelName::$labels[$colName])) ? $modelName::$labels[$colName] : $colName, $inputOptions);
+                return;
             }
 
             if ($options['type'] == 'image' && $inputOptions['value']) {

@@ -60,7 +60,9 @@ class DataManager extends \Object {
         if (!empty($this->managerOptions['options']['formOnPage'])) {
             $query = [
                 'item' => $modelName,
-                'params' => $formParams
+                'params' => $formParams,
+                'formName' => !empty($this->managerOptions['editForm']) ? $this->managerOptions['editForm'] : 'manager',
+                'redirectUrl'=>$_SERVER['REQUEST_URI']
             ];
             $buttons[] = [
                 'text' => 'Добавить элемент',

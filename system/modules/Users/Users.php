@@ -2,13 +2,18 @@
 
 class Users extends Module {
 
-    function init() {
-        \Users\User::$cur = new Users\User(array('group_id' => 1, 'role_id' => 1));
+    public $cookiePrefix = '';
 
+    function init() {
+
+        if (!empty($this->config['cookieSplit'])) {
+            $this->cookiePrefix = \App::$cur->type;
+        }
+
+        \Users\User::$cur = new Users\User(array('group_id' => 1, 'role_id' => 1));
         if (!App::$cur->db->connect) {
             return;
         }
-
         if (isset($_GET['logout'])) {
             return $this->logOut();
         }
@@ -21,14 +26,14 @@ class Users extends Module {
         if (!empty($_GET['passrecont']) && filter_input(INPUT_GET, 'hash')) {
             return $this->passrecont(filter_input(INPUT_GET, 'hash'));
         }
-        if (filter_input(INPUT_COOKIE, 'user_session_hash') && filter_input(INPUT_COOKIE, 'user_id')) {
-            return $this->cuntinueSession(filter_input(INPUT_COOKIE, 'user_session_hash'), filter_input(INPUT_COOKIE, 'user_id'));
+        if (filter_input(INPUT_COOKIE, $this->cookiePrefix . '_user_session_hash') && filter_input(INPUT_COOKIE, $this->cookiePrefix . '_user_id')) {
+            return $this->cuntinueSession(filter_input(INPUT_COOKIE, $this->cookiePrefix . '_user_session_hash'), filter_input(INPUT_COOKIE, $this->cookiePrefix . '_user_id'));
         }
     }
 
     function logOut() {
-        setcookie("user_session_hash", '', 0, "/");
-        setcookie("user_id", '', 0, "/");
+        setcookie($this->cookiePrefix . "_user_session_hash", '', 0, "/");
+        setcookie($this->cookiePrefix . "_user_id", '', 0, "/");
         Tools::redirect('/', 'Вы вышли из своего профиля', 'success');
     }
 
@@ -38,8 +43,8 @@ class Users extends Module {
                     ['hash', $hash]
         ]);
         if ($session && $session->user && $session->user->blocked) {
-            setcookie("user_session_hash", '', 0, "/");
-            setcookie("user_id", '', 0, "/");
+            setcookie($this->cookiePrefix . "_user_session_hash", '', 0, "/");
+            setcookie($this->cookiePrefix . "_user_id", '', 0, "/");
             Msg::add('Ваш аккаунт заблокирован', 'info');
             return;
         }
@@ -48,8 +53,8 @@ class Users extends Module {
             Users\User::$cur->last_activ = 'CURRENT_TIMESTAMP';
             Users\User::$cur->save();
         } else {
-            setcookie("user_session_hash", '', 0, "/");
-            setcookie("user_id", '', 0, "/");
+            setcookie($this->cookiePrefix . "_user_session_hash", '', 0, "/");
+            setcookie($this->cookiePrefix . "_user_id", '', 0, "/");
             Msg::add('Ваша сессия устарела или более недействительна, вам необходимо пройти <a href = "/users/login">авторазиацию</a> заново', 'info');
         }
     }
@@ -133,8 +138,8 @@ class Users extends Module {
         $session->save();
 
         if (!headers_sent()) {
-            setcookie("user_session_hash", $session->hash, time() + 360000, "/");
-            setcookie("user_id", $session->user_id, time() + 360000, "/");
+            setcookie($this->cookiePrefix . "_user_session_hash", $session->hash, time() + 360000, "/");
+            setcookie($this->cookiePrefix . "_user_id", $session->user_id, time() + 360000, "/");
         }
     }
 
