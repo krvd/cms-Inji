@@ -316,7 +316,9 @@ class ActiveForm extends \Object {
 
                 $relations = $modelName::relations();
                 $selectParams = !empty($params['dataManagerParams']) ? $params['dataManagerParams'] : [];
-                $items = $relations[$inputParams['relation']]['model']::getList();
+                $filters = $relations[$inputParams['relation']]['model']::managerFilters();
+                $items = $relations[$inputParams['relation']]['model']::getList(['where' => !empty($filters['getRows']['where']) ? $filters['getRows']['where'] : '']);
+                
                 $values = [0 => 'Не задано'];
                 foreach ($items as $key => $item) {
                     if (!empty($inputParams['showCol'])) {

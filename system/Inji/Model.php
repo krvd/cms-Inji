@@ -978,6 +978,9 @@ class Model {
         }
         return null;
     }
+    static function managerFilters() {
+        return [];
+    }
 
     function __set($name, $value) {
         static::fixPrefix($name);
