@@ -40,7 +40,7 @@ class DataManagerController extends Controller {
         ob_end_clean();
         $result->send();
     }
-    
+
     //function 
 
     function loadRowsAction() {
@@ -77,6 +77,7 @@ class DataManagerController extends Controller {
         $dataManager = new Ui\DataManager($modelName, $_GET['managerName']);
         if (!empty($_GET['download'])) {
             $params['all'] = true;
+            $params['download'] = true;
             set_time_limit(0);
             ob_end_clean();
             header('Content-Encoding: UTF-8');
@@ -107,7 +108,7 @@ class DataManagerController extends Controller {
                         echo ";";
                     }
                     $endRow = false;
-                    echo '"' . $col . '"';
+                    echo '"' . str_replace("\n",'',$col) . '"';
                 }
                 echo "\n";
                 $endRow = true;

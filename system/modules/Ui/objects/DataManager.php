@@ -62,7 +62,7 @@ class DataManager extends \Object {
                 'item' => $modelName,
                 'params' => $formParams,
                 'formName' => !empty($this->managerOptions['editForm']) ? $this->managerOptions['editForm'] : 'manager',
-                'redirectUrl'=>$_SERVER['REQUEST_URI']
+                'redirectUrl' => $_SERVER['REQUEST_URI']
             ];
             $buttons[] = [
                 'text' => 'Добавить элемент',
@@ -195,7 +195,7 @@ class DataManager extends \Object {
                             $queryParams['where'][] = [$col, $params['filters'][$col]['max'], '<='];
                         }
                         break;
-                    case'text':
+                    case 'email':
                     case 'text':
                     case 'textarea':
                     case 'html':
@@ -250,7 +250,11 @@ class DataManager extends \Object {
             }
             $row[] = $item->pk();
             foreach ($this->managerOptions['cols'] as $key => $colName) {
-                $row[] = DataManager::drawCol($item, is_array($colName) ? $key : $colName, $params);
+                if (!empty($params['download'])) {
+                    $row[] = \Model::getColValue($item, is_array($colName) ? $key : $colName, true, false);
+                } else {
+                    $row[] = DataManager::drawCol($item, is_array($colName) ? $key : $colName, $params);
+                }
             }
             $row[] = $this->rowButtons($item, $params);
             $rows[] = $row;
@@ -407,7 +411,10 @@ class DataManager extends \Object {
                             $queryParams['where'][] = [$col, $params['filters'][$col]['max'], '<='];
                         }
                         break;
-                    case'text':
+                    case 'email':
+                    case 'text':
+                    case 'textarea':
+                    case 'html':
                         if (empty($params['filters'][$col]['value'])) {
                             continue;
                         }

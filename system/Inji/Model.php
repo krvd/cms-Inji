@@ -23,7 +23,7 @@ class Model {
         return static::$objectName;
     }
 
-    static function getColValue($object, $valuePath, $convert = false) {
+    static function getColValue($object, $valuePath, $convert = false, $manageHref = false) {
         if (strpos($valuePath, ':')) {
             $rel = substr($valuePath, 0, strpos($valuePath, ':'));
             $param = substr($valuePath, strpos($valuePath, ':') + 1);
@@ -36,16 +36,16 @@ class Model {
                 return 0;
             }
             if (strpos($valuePath, ':')) {
-                return self::getColValue($object->$rel, $param, $convert);
+                return self::getColValue($object->$rel, $param, $convert, $manageHref);
             } else {
-                return $convert ? Model::resloveTypeValue($object->$rel, $param) : $object->$rel->$param;
+                return $convert ? Model::resloveTypeValue($object->$rel, $param, $manageHref) : $object->$rel->$param;
             }
         } else {
-            return $convert ? Model::resloveTypeValue($object, $valuePath) : $object->$valuePath;
+            return $convert ? Model::resloveTypeValue($object, $valuePath, $manageHref) : $object->$valuePath;
         }
     }
 
-    static function resloveTypeValue($item, $colName) {
+    static function resloveTypeValue($item, $colName, $manageHref = false) {
         $modelName = get_class($item);
         $colInfo = $modelName::getColInfo($colName);
         $type = !empty($colInfo['colParams']['type']) ? $colInfo['colParams']['type'] : 'string';
@@ -64,7 +64,11 @@ class Model {
                         $relValue = $relations[$colInfo['colParams']['relation']]['model']::get($item->$colName);
                         $relModel = $relations[$colInfo['colParams']['relation']]['model'];
                         $relModel = strpos($relModel, '\\') === 0 ? substr($relModel, 1) : $relModel;
-                        $value = $relValue ? "<a href='/admin/" . str_replace('\\', '/view/', $relModel) . "/" . $relValue->pk() . "'>" . $relValue->name() . "</a>" : 'Не задано';
+                        if ($manageHref) {
+                            $value = $relValue ? "<a href='/admin/" . str_replace('\\', '/view/', $relModel) . "/" . $relValue->pk() . "'>" . $relValue->name() . "</a>" : 'Не задано';
+                        } else {
+                            $value = $relValue ? $relValue->name() : 'Не задано';
+                        }
                         break;
                 }
                 break;
@@ -79,11 +83,11 @@ class Model {
             case 'bool':
                 $value = $item->$colName ? 'Да' : 'Нет';
                 break;
-                    case 'void':
-                        if (!empty($colInfo['colParams']['value']['type']) && $colInfo['colParams']['value']['type'] == 'moduleMethod') {
-                            return \App::$cur->{$colInfo['colParams']['value']['module']}->{$colInfo['colParams']['value']['method']}($item, $colName, $colInfo['colParams']);
-                        }
-                        break;
+            case 'void':
+                if (!empty($colInfo['colParams']['value']['type']) && $colInfo['colParams']['value']['type'] == 'moduleMethod') {
+                    return \App::$cur->{$colInfo['colParams']['value']['module']}->{$colInfo['colParams']['value']['method']}($item, $colName, $colInfo['colParams']);
+                }
+                break;
             default:
                 $value = $item->$colName;
                 break;
@@ -978,6 +982,7 @@ class Model {
         }
         return null;
     }
+
     static function managerFilters() {
         return [];
     }
