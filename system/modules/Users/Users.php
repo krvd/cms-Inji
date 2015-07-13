@@ -130,8 +130,8 @@ class Users extends Module {
 
         $session = new Users\Session([
             'user_id' => $user->id,
-            'agent' => filter_input(INPUT_SERVER, 'HTTP_USER_AGENT'),
-            'ip' => filter_input(INPUT_SERVER, 'REMOTE_ADDR')
+            'agent' => $_SERVER['HTTP_USER_AGENT'],
+            'ip' =>  $_SERVER['REMOTE_ADDR']
         ]);
 
         $session->hash = $hash;
