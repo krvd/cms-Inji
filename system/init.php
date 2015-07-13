@@ -10,7 +10,7 @@
  */
 session_start();
 
-define('INJI_DOMAIN_NAME', filter_input(INPUT_SERVER, 'SERVER_NAME'));
+define('INJI_DOMAIN_NAME', $_SERVER['SERVER_NAME']);
 
 spl_autoload_register(function($class_name) {
     if (file_exists(INJI_SYSTEM_DIR . '/Inji/' . $class_name . '.php')) {
