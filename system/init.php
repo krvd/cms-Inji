@@ -44,7 +44,7 @@ if (!$finalApp) {
 }
 App::$cur = new App($finalApp);
 
-$params = Tools::uriParse(filter_input(INPUT_SERVER, 'REQUEST_URI'));
+$params = Tools::uriParse($_SERVER['REQUEST_URI']);
 
 App::$cur->type = 'app';
 App::$cur->path = INJI_PROGRAM_DIR . '/' . App::$cur->dir;
