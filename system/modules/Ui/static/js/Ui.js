@@ -224,7 +224,7 @@ function DataManager(element) {
     this.modelName = element.data('modelname');
     this.managerName = element.data('managername');
     this.options = element.data('options');
-    this.limit = 10;
+    this.limit = 30;
     this.page = 1;
     this.sortered = {};
     this.categoryPath = '/';

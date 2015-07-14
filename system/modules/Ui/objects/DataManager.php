@@ -18,7 +18,7 @@ class DataManager extends \Object {
     public $managerOptions = [];
     public $managerName = 'noNameManager';
     public $name = 'Менеджер данных';
-    public $limit = 10;
+    public $limit = 30;
     public $page = 1;
     public $table = null;
     public $joins = [];
