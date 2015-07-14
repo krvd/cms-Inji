@@ -151,25 +151,58 @@ function DataManagers() {
         });
         $('.batch_action').click(function () {
             var ids = '';
+            var rows = {};
             var instance = inji.Ui.dataManagers.get($(this).closest('#main_content').find('.dataManager'));
             $(instance.element).find('tbody tr').each(function () {
                 if ($($(this).find('td').get(0)).find('[type="checkbox"]')[0].checked) {
                     ids += ',' + $($(this).find('td').get(0)).find('[type="checkbox"]').val();
+                    rows[$($(this).find('td').get(0)).find('[type="checkbox"]').val()] = $(this);
                 }
             });
+            var actionName = $(this).data('action');
+            var action = instance.options.groupActions[actionName];
             if (ids != '') {
-                if (instance.options.groupActions[$(this).data('action')].customJsChecker) {
-                    if (!window[instance.options.groupActions[$(this).data('action')].customJsChecker](instance,ids)) {
-                        //return;
+                if (action.customJsChecker) {
+                    if (!window[action.customJsChecker](instance, rows)) {
+                        return;
                     }
                 }
-                inji.Server.request({
-                    url: 'ui/dataManager/groupAction',
-                    data: {params: instance.params, modelName: instance.modelName, ids: ids, managerName: instance.managerName, action: $(this).data('action')},
-                    success: function () {
-                        inji.Ui.dataManagers.reloadAll();
+                if (action.aditionalInfo) {
+                    var id = inji.randomString();
+                    html = '<form id ="' + id + '"><h3>Для этой груповой операции требуется дополнительная информация</h3>';
+                    for (key in action.aditionalInfo) {
+                        var input = action.aditionalInfo[key];
+                        html += '<div class = "form-group"><label>' + input.label + '</label><input type="' + input.type + '" name ="' + key + '" class = "form-control" value = "" /></div>';
                     }
-                });
+                    html += '<div class = "form-group"><button class="btn btn-primary" >' + action.name + '</button></div></form>';
+                    inji.Ui.modals.show('Дополнительная информация', html, 'modal' + id);
+                    $('#' + id).submit(function () {
+                        $(this).closest('.modal').modal('hide');
+                        var adInfo = {};
+                        if ($(this).find('input').length > 0) {
+                            $.each($(this).find('input'), function () {
+                                adInfo[$(this).attr('name')] = $(this).val();
+                            });
+                        }
+                        inji.Server.request({
+                            url: 'ui/dataManager/groupAction',
+                            data: {params: instance.params, modelName: instance.modelName, ids: ids, managerName: instance.managerName, action: actionName, adInfo: adInfo},
+                            success: function () {
+                                inji.Ui.dataManagers.reloadAll();
+                            }
+                        });
+                        return false;
+                    });
+                }
+                else {
+                    inji.Server.request({
+                        url: 'ui/dataManager/groupAction',
+                        data: {params: instance.params, modelName: instance.modelName, ids: ids, managerName: instance.managerName, action: actionName},
+                        success: function () {
+                            inji.Ui.dataManagers.reloadAll();
+                        }
+                    });
+                }
             }
             $(this).closest('.dropdown_menu_list_wrapper').slideToggle();
         });

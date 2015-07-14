@@ -108,7 +108,7 @@ class DataManagerController extends Controller {
                         echo ";";
                     }
                     $endRow = false;
-                    echo '"' . str_replace("\n",'',$col) . '"';
+                    echo '"' . str_replace("\n", '', $col) . '"';
                 }
                 echo "\n";
                 $endRow = true;
@@ -223,7 +223,8 @@ class DataManagerController extends Controller {
         $dataManager = new Ui\DataManager($modelName, $_GET['managerName']);
         if ($dataManager->checkAccess()) {
             if (!empty($_GET['action']) && !empty($dataManager->managerOptions['groupActions'][$_GET['action']]) && !empty($_GET['ids'])) {
-                switch ($dataManager->managerOptions['groupActions'][$_GET['action']]['action']) {
+                $action = $dataManager->managerOptions['groupActions'][$_GET['action']];
+                switch ($action['action']) {
                     case'delete':
                         $ids = filter_input(INPUT_GET, 'ids', FILTER_SANITIZE_STRING);
                         if ($ids) {
@@ -240,9 +241,15 @@ class DataManagerController extends Controller {
                             $ids = trim($ids, ',');
                             $models = $modelName::getList(['where' => [[$modelName::index(), $ids, 'IN']]]);
                             foreach ($models as $model) {
-                                $model->{$dataManager->managerOptions['groupActions'][$_GET['action']]['col']} = $dataManager->managerOptions['groupActions'][$_GET['action']]['value'];
+                                $model->{$action['col']} = $action['value'];
                                 $model->save();
                             }
+                        }
+                        break;
+                    case 'moduleMethod':
+                        $ids = filter_input(INPUT_GET, 'ids', FILTER_SANITIZE_STRING);
+                        if ($ids) {
+                            App::$cur->$action['module']->$action['method']($dataManager, trim($ids, ','), $_GET['adInfo']);
                         }
                         break;
                 }
