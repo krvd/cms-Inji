@@ -283,6 +283,9 @@ class ActiveForm extends \Object {
             if (!empty($this->form['options']['readonly']) && in_array($colName, $this->form['options']['readonly'])) {
                 $inputOptions['disabled'] = true;
             }
+            if (!empty($options['minDate'])) {
+                $inputOptions['minDate'] = $options['minDate'];
+            }
             switch ($options['type']) {
                 case 'bool';
                     $type = 'checkbox';
@@ -318,7 +321,7 @@ class ActiveForm extends \Object {
                 $selectParams = !empty($params['dataManagerParams']) ? $params['dataManagerParams'] : [];
                 $filters = $relations[$inputParams['relation']]['model']::managerFilters();
                 $items = $relations[$inputParams['relation']]['model']::getList(['where' => !empty($filters['getRows']['where']) ? $filters['getRows']['where'] : '']);
-                
+
                 $values = [0 => 'Не задано'];
                 foreach ($items as $key => $item) {
                     if (!empty($inputParams['showCol'])) {
