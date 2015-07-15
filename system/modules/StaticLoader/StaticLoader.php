@@ -184,11 +184,11 @@ class StaticLoader extends Module {
             if (App::$cur->db->connect) {
                 $fileObj = Files\File::get([ 'path', '%/' . $fileinfo['filename'] . '.' . $fileinfo['extension'], 'LIKE']);
                 if ($fileObj) {
-                    $fileName = $fileObj->original_name. '.' . $fileinfo['extension'];
+                    $fileName = $fileObj->original_name;
                                 
                 }
             }
-            header('Content-Disposition: attachment; filename=' . $fileName);
+            header('Content-Disposition: attachment; filename="' . $fileName.'"');
         }
 
         header('Content-Transfer-Encoding: binary');
