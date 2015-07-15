@@ -184,7 +184,7 @@ class StaticLoader extends Module {
             if (App::$cur->db->connect) {
                 $fileObj = Files\File::get([ 'path', '%/' . $fileinfo['filename'] . '.' . $fileinfo['extension'], 'LIKE']);
                 if ($fileObj) {
-                    $fileName = $fileObj->original_name;
+                    $fileName = $fileObj->original_name. '.' . $fileinfo['extension'];
                                 
                 }
             }
