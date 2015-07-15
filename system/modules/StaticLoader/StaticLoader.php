@@ -177,14 +177,22 @@ class StaticLoader extends Module {
         if (isset($this->mimes[strtolower($fileinfo['extension'])])) {
             header("Content-Type: " . $this->mimes[strtolower($fileinfo['extension'])]);
         }
-        if (isset($_GET['frustrate_dl'])) {
-            header('Content-Disposition: attachment; filename=' . basename($file));
+        
+        if (isset($_GET['frustrate_dl']) || in_array($fileinfo['extension'], array('doc', 'docx', 'xls', 'xlsx'))) {
+
+            $fileName = $fileinfo['filename'] . '.' . $fileinfo['extension'];
+            if (App::$cur->db->connect) {
+                $fileObj = Files\File::get([ 'path', '%/' . $fileinfo['filename'] . '.' . $fileinfo['extension'], 'LIKE']);
+                if ($fileObj) {
+                    $fileName = $fileObj->original_name;
+                                
+                }
+            }
+            header('Content-Disposition: attachment; filename=' . $fileName);
         }
 
         header('Content-Transfer-Encoding: binary');
         //}
-        if (in_array($fileinfo['extension'], array('doc', 'docx', 'xls', 'xlsx')))
-            header("Content-Disposition: attachment; filename=" . $file);
 
 
 
