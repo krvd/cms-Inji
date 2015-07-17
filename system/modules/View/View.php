@@ -6,6 +6,7 @@ class View extends Module {
     public $template = ['name' => 'default'];
     public $libAssets = array('css' => array(), 'js' => array());
     public $dynAssets = array('css' => array(), 'js' => array());
+    public $dynMetas = [];
     public $viewedContent = '';
     public $contentData = [];
     public $templatesPath = '';
@@ -154,16 +155,19 @@ class View extends Module {
         }
     }
 
-    function parentContent() {
+    function parentContent($contentName = '') {
+        if (!$contentName) {
+            $contentName = $this->tmp_data['content'];
+        }
         $paths = $this->getContentPaths();
         $data = [];
         foreach ($paths as $type => $path) {
-            if (file_exists($path . '/' . $this->tmp_data['content'] . '.php')) {
+            if (file_exists($path . '/' . $contentName . '.php')) {
                 if ($path == $this->tmp_data['contentPath']) {
                     continue;
                 }
                 $data['contentPath'] = $path;
-                $data['content'] = $this->tmp_data['content'];
+                $data['content'] = $contentName;
                 break;
             }
         }
@@ -259,17 +263,10 @@ class View extends Module {
         elseif (file_exists(App::$cur->path . '/static/images/favicon.ico'))
             echo "        <link rel='shortcut icon' href='/static/images/favicon.ico' />";
 
+        foreach ($this->getMetaTags() as $meta) {
+            echo "\n        " . Html::el('meta', $meta, '', null);
+        }
 
-        if (!empty(App::$cur->Config->app['site']['keywords'])) {
-            echo "\n        <meta name='keywords' content='" . App::$cur->Config->site['site']['keywords'] . "' />";
-        }
-        if (!empty(App::$cur->Config->app['site']['description'])) {
-            echo "\n        <meta name='description' content='" . App::$cur->Config->site['site']['description'] . "' />";
-        }
-        if (!empty(App::$cur->Config->app['site']['metatags'])) {
-            foreach (App::$cur->Config->app['site']['metatags'] as $meta)
-                echo "\n        <meta name='{$meta['name']}' content='{$meta['content']}' />";
-        }
         if (!empty(Inji::$config['assets']['js'])) {
             foreach (Inji::$config['assets']['js'] as $js) {
                 $this->customAsset('js', $js);
@@ -278,59 +275,124 @@ class View extends Module {
 
         $this->checkNeedLibs();
 
-        if (!empty($this->libAssets['css'])) {
-            $this->renderCss($this->libAssets['css'], 'libs');
+        $css = $this->getCss();
+        $nativeUrl = [];
+        $urls = [];
+        $timeStr = '';
+        $cssAll = '';
+        foreach ($css as $href) {
+            $nativeUrl[$href] = $href;
+            $urls[$href] = $path = App::$cur->staticLoader->parsePath($href);
+            $timeStr.=filemtime($path);
         }
-        if (!empty($this->template['css'])) {
-            $this->renderCss($this->template['css'], 'template');
+
+        $timeMd5 = md5($timeStr);
+        if (!file_exists(App::$primary->path . '/static/cache/all' . $timeMd5 . '.css')) {
+            foreach ($urls as $primaryUrl => $url) {
+                $source = file_get_contents($url);
+                $matches = [];
+                $rootPath = substr($primaryUrl, 0, strrpos($primaryUrl, '/'));
+                $levelUpPath = substr($rootPath, 0, strrpos($rootPath, '/'));
+
+                $source = preg_replace('!url\((\'?"?)[\.]{2}!isU', 'url($1' . $levelUpPath, $source);
+                $source = preg_replace('!url\((\'?"?)[\.]{1}!isU', 'url($1' . $rootPath, $source);
+                $source = preg_replace('!url\(([^/]\'?"?)([^/]){1}!isU', 'url($1' . $rootPath . '/$2', $source);
+                $cssAll .= $source;
+            }
+            Tools::createDir(App::$primary->path . '/static/cache/');
+            file_put_contents(App::$primary->path . '/static/cache/all' . $timeMd5 . '.css', $cssAll);
         }
-        if (!empty($this->dynAssets['css'])) {
-            $this->renderCss($this->dynAssets['css'], 'custom');
-        }
+        echo "\n        <link href='/static/cache/all{$timeMd5}.css' rel='stylesheet' type='text/css' />";
         echo "\n        <script src='" . (App::$cur->type != 'app' ? '/' . App::$cur->name : '' ) . "/static/system/js/Inji.js'></script>";
     }
 
-    function renderCss($cssArray, $type = 'custom') {
+    function getCss() {
+        $css = [];
+        if (!empty($this->libAssets['css'])) {
+            $this->ResolveCssHref($this->libAssets['css'], 'libs', $css);
+        }
+        if (!empty($this->template['css'])) {
+            $this->ResolveCssHref($this->template['css'], 'template', $css);
+        }
+        if (!empty($this->dynAssets['css'])) {
+            $this->ResolveCssHref($this->dynAssets['css'], 'custom', $css);
+        }
+        return $css;
+    }
+
+    function ResolveCssHref($cssArray, $type = 'custom', &$hrefs) {
         switch ($type) {
             case'libs':
                 foreach ($cssArray as $css) {
                     if (is_array($css)) {
-                        $this->renderCss($css, $type);
+                        $this->ResolveCssHref($css, $type, $hrefs);
                         continue;
                     }
                     if (strpos($css, '//') !== false)
                         $href = $css;
                     else
                         $href = (App::$cur->type != 'app' ? '/' . App::$cur->name : '' ) . $css;
-                    echo "\n        <link href='{$href}' rel='stylesheet' type='text/css' />";
+                    $hrefs[$href] = $href;
                 }
                 break;
             case'template':
                 foreach ($cssArray as $css) {
                     if (is_array($css)) {
-                        $this->renderCss($css, $type);
+                        $this->ResolveCssHref($css, $type, $hrefs);
                         continue;
                     }
                     if (strpos($css, '://') !== false)
                         $href = $css;
                     else
                         $href = App::$cur->templatesPath . "/{$this->template['name']}/css/{$css}";
-                    echo "\n        <link href='{$href}' rel='stylesheet' type='text/css' />";
+                    $hrefs[$href] = $href;
                 }
                 break;
             case 'custom':
                 foreach ($cssArray as $css) {
                     if (is_array($css)) {
-                        $this->renderCss($css, $type);
+                        $this->ResolveCssHref($css, $type, $hrefs);
                         continue;
                     }
                     if (strpos($css, '//') !== false)
                         $href = $css;
                     else
                         $href = (App::$cur->type != 'app' ? '/' . App::$cur->name : '' ) . $css;
-                    echo "\n        <link href='{$href}' rel='stylesheet' type='text/css' />";
+                    $hrefs[$href] = $href;
                 }
                 break;
+        }
+    }
+
+    function getMetaTags() {
+        $metas = [];
+
+        if (!empty(App::$cur->Config->app['site']['keywords'])) {
+            $metas['metaName:keywords'] = ['name' => 'keywords', 'content' => App::$cur->Config->site['site']['keywords']];
+        }
+        if (!empty(App::$cur->Config->app['site']['description'])) {
+            $metas['metaName:description'] = ['name' => 'description', 'content' => App::$cur->Config->site['site']['description']];
+        }
+        if (!empty(App::$cur->Config->app['site']['metatags'])) {
+            foreach (App::$cur->Config->app['site']['metatags'] as $meta) {
+                if (!empty($meta['name'])) {
+                    $metas['metaName:' . $meta['name']] = $meta;
+                } elseif (!empty($meta['property'])) {
+                    $metas['metaProperty:' . $meta['property']] = $meta;
+                }
+            }
+        }
+        if ($this->dynMetas) {
+            $metas = array_merge($metas, $this->dynMetas);
+        }
+        return $metas;
+    }
+
+    function addMetaTag($meta) {
+        if (!empty($meta['name'])) {
+            $this->dynMetas['metaName:' . $meta['name']] = $meta;
+        } elseif (!empty($meta['property'])) {
+            $this->dynMetas['metaProperty:' . $meta['property']] = $meta;
         }
     }
 
@@ -467,15 +529,33 @@ class View extends Module {
     function widget($_widgetName, $_params = []) {
 
         $_paths = $this->getWidgetPaths($_widgetName);
+        $find = false;
         foreach ($_paths as $_path) {
             if (file_exists($_path)) {
-                if ($_params && is_array($_params)) {
-                    extract($_params);
-                }
-                include $_path;
+                $find = true;
                 break;
             }
         }
+        $lineParams = '';
+        if ($_params) {
+            $paramArray = false;
+            foreach ($_params as $param) {
+                if (is_array($param) || is_object($param)) {
+                    $paramArray = true;
+                }
+            }
+            if (!$paramArray)
+                $lineParams = ':' . implode(':', $_params);
+        }
+
+        echo "<!--start:{WIDGET:{$_widgetName}{$lineParams}}-->\n";
+        if ($find) {
+            if ($_params && is_array($_params)) {
+                extract($_params);
+            }
+            include $_path;
+        }
+        echo "<!--end:{WIDGET:{$_widgetName}{$lineParams}}-->\n";
     }
 
     function getWidgetPaths($widgetName) {

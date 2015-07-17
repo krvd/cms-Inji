@@ -25,7 +25,7 @@ class Menu extends \Model {
     static $cols = [
         'name' => ['type' => 'text'],
         'code' => ['type' => 'text'],
-        'items' => ['type' => 'select', 'relation' => 'items']
+        'items' => ['type' => 'select', 'source' => 'relation', 'relation' => 'items']
     ];
     static $dataManagers = [
         'manager' => [

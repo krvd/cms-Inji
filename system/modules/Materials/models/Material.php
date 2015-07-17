@@ -5,44 +5,41 @@ namespace Materials;
 class Material extends \Model {
 
     static $objectName = 'Материал';
-    static $categoryModel = 'Materials\Catalog';
+    static $categoryModel = 'Materials\Category';
     static $labels = [
         'name' => 'Заголовок',
-        'catalog_id' => 'Раздел',
+        'category_id' => 'Раздел',
         'preview' => 'Краткое превью',
         'text' => 'Текст страницы',
-        'chpu' => 'Алиас страницы',
+        'alias' => 'Алиас страницы',
         'template' => 'Шаблон сайта',
         'viewer' => 'Тип страницы',
-        'image_file_id' => 'Фото материала'
+        'image_file_id' => 'Фото материала',
+        'description' => 'Описание для поисковиков',
+        'keywords' => 'Ключевые слова'
     ];
     static $dataManagers = [
         'manager' => [
-            'options' => [
-                'access' => [
-                    'groups' => [
-                        3
-                    ]
-                ]
-            ],
             'cols' => [
                 'name',
-                'chpu',
-                'catalog_id',
+                'alias',
+                'category_id',
             ],
             'categorys' => [
-                'model' => 'Materials\Catalog',
+                'model' => 'Materials\Category',
             ]
         ]
     ];
     static $cols = [
         'name' => ['type' => 'text'],
-        'chpu' => ['type' => 'text'],
+        'alias' => ['type' => 'text'],
+        'description' => ['type' => 'text'],
+        'keywords' => ['type' => 'text'],
         'viewer' => ['type' => 'select', 'source' => 'method', 'method' => 'viewsList', 'module' => 'Materials'],
         'template' => ['type' => 'select', 'source' => 'method', 'method' => 'templatesList', 'module' => 'Materials'],
         'preview' => ['type' => 'html'],
         'text' => ['type' => 'html'],
-        'catalog_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'catalog', 'showCol' => 'catalog_name'],
+        'category_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'category', 'showCol' => 'category_name'],
         'image_file_id' => ['type' => 'image'],
     ];
     static $forms = [
@@ -55,9 +52,10 @@ class Material extends \Model {
                 ]
             ],
             'map' => [
-                ['name', 'catalog_id'],
-                ['chpu', 'image_file_id'],
+                ['name', 'category_id'],
+                ['alias', 'image_file_id'],
                 ['template', 'viewer'],
+                ['keywords', 'description'],
                 ['preview'],
                 ['text'],
             ]
@@ -66,9 +64,9 @@ class Material extends \Model {
 
     static function relations() {
         return [
-            'catalog' => [
-                'model' => '\Materials\Catalog',
-                'col' => 'catalog_id'
+            'category' => [
+                'model' => '\Materials\Category',
+                'col' => 'category_id'
             ],
             'image' => [
                 'model' => '\Files\File',

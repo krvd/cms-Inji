@@ -16,7 +16,7 @@ class DataManager extends \Object {
 
     public $modelName = '';
     public $managerOptions = [];
-    public $managerName = 'noNameManager';
+    public $managerName = 'manager';
     public $name = 'Менеджер данных';
     public $limit = 30;
     public $page = 1;
@@ -33,10 +33,13 @@ class DataManager extends \Object {
         }
         $this->managerOptions = $dataManager;
 
-        if (!empty($modelName::$objectName)) {
-            $this->name = 'Менеджер данных: ' . $modelName::$objectName;
+        if (!empty($this->managerOptions['name'])) {
+            $this->name = $this->managerOptions['name'];
+        }
+        elseif (!empty($modelName::$objectName)) {
+            $this->name = $modelName::$objectName;
         } else {
-            $this->name = 'Менеджер данных: ' . $modelName;
+            $this->name = $modelName;
         }
     }
 

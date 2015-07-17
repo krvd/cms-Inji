@@ -2,7 +2,7 @@
 
 namespace Materials;
 
-class Catalog extends \Model {
+class Category extends \Model {
 
     static $objectModel = 'Категория';
     static $treeCategory = 'Materials\Material';
@@ -62,12 +62,12 @@ class Catalog extends \Model {
     static function relations() {
         return [
             'parent' => [
-                'model' => 'Materials\Catalog',
+                'model' => 'Materials\Category',
                 'col' => 'parent_id'
             ],
             'childs' => [
                 'type' => 'many',
-                'model' => 'Materials\Catalog',
+                'model' => 'Materials\Category',
                 'col' => 'parent_id'
             ]
         ];

@@ -16,7 +16,7 @@ class StaticLoaderController extends Controller {
         $path = $this->module->parsePath(implode('/', func_get_args()));
         if (!file_exists($path)) {
             
-            $this->module->header(404, true);
+            Tools::header(404, true);
         } else {
             $this->module->giveFile($path);
         }

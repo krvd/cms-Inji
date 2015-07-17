@@ -1,4 +1,4 @@
-<div class = 'fastEdit' data-model='Material' data-col='material_text' data-key='<?= $material->material_id; ?>'>
+<div class = 'fastEdit' data-model='Materials\Material' data-col='text' data-key='<?= $material->material_id; ?>'>
     <?php
     $this->parseSource($material->material_text);
     ?>

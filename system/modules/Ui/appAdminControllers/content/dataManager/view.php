@@ -46,12 +46,16 @@ foreach ($modelName::$cols as $colName => $options) {
 $table->draw();
 ?>
 <div>
-    <h3>Комментарии</h3>
+    <h3>Комментарии (<?=
+        \Dashboard\Comment::getCount(['where' => [
+                ['item_id', $item->id],
+                ['model', $modelName],
+        ]]);
+        ?>)</h3>
     <?php
     foreach (\Dashboard\Comment::getList([ 'where' => [
             ['item_id', $item->id],
             ['model', $modelName],
-            ['module', $moduleName]
         ], 'order' => ['date', 'desc']]) as $comment) {
         ?>
         <div class="row">

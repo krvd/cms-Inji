@@ -24,14 +24,22 @@ class Files extends Module {
         $type = Files\Type::get($fileinfo['extension'], 'ext');
         if (!$type)
             return 0;
-        
+
         if (!empty($options['accept_group']) && $options['accept_group'] != $type->group) {
             return 0;
         }
 
         $fileObject = new Files\File();
         if (!empty($options['file_code'])) {
-            $fileObject = Files\File::get($options['file_code'], 'file_code');
+            $fileObject = Files\File::get($options['file_code'], 'code');
+            if (!$fileObject) {
+                $fileObject = new Files\File();
+                $fileObject->code = $options['file_code'];
+                $fileObject->name = microtime(true);
+            }
+            elseif(!$fileObject->name){
+                $fileObject->name = microtime(true);
+            }
         } else {
             $fileObject->name = microtime(true);
         }

@@ -67,22 +67,12 @@ class StaticLoader extends Module {
         }
     }
 
-    function header($code, $exit = false) {
-        switch ($code) {
-            case '404':
-                header('HTTP/1.1 404 Not Found');
-                break;
-            default :
-                header($code);
-        }
-        if ($exit) {
-            exit;
-        }
-    }
+
 
     function giveFile($file) {
         if (!file_exists($file)) {
-            $this->header(404, true);
+            header('HTTP/1.1 404 Not Found');
+            exit();
         }
 
 
@@ -177,7 +167,7 @@ class StaticLoader extends Module {
         if (isset($this->mimes[strtolower($fileinfo['extension'])])) {
             header("Content-Type: " . $this->mimes[strtolower($fileinfo['extension'])]);
         }
-        
+
         if (isset($_GET['frustrate_dl']) || in_array($fileinfo['extension'], array('doc', 'docx', 'xls', 'xlsx'))) {
 
             $fileName = $fileinfo['filename'] . '.' . $fileinfo['extension'];
@@ -185,10 +175,9 @@ class StaticLoader extends Module {
                 $fileObj = Files\File::get([ 'path', '%/' . $fileinfo['filename'] . '.' . $fileinfo['extension'], 'LIKE']);
                 if ($fileObj) {
                     $fileName = $fileObj->original_name;
-                                
                 }
             }
-            header('Content-Disposition: attachment; filename="' . $fileName.'"');
+            header('Content-Disposition: attachment; filename="' . $fileName . '"');
         }
 
         header('Content-Transfer-Encoding: binary');
