@@ -91,7 +91,6 @@ class Template extends \Object {
      * @param array $params
      */
     function __construct($params = []) {
-
         $this->setParams($params);
         if (!$this->path) {
             $this->path = $this->app->view->templatesPath . '/' . $this->name;
@@ -186,10 +185,10 @@ class Template extends \Object {
         if (!$this->content) {
             $this->content = \Controller::$cur ? \Controller::$cur->method : 'index';
         }
+        
         if (!$this->contentPath && \Module::$cur) {
             $this->contentPath = \Module::$cur->path . '/' . \Module::$cur->app->type . "Controllers/content/{$this->content}.php";
         }
-
         $this->contentPath = \Tools::pathsResolve($this->getContentPaths(), $this->contentPath);
     }
 
@@ -208,7 +207,7 @@ class Template extends \Object {
             $paths['templateModule'] = $this->path . "/modules/{$this->module->moduleName}/{$content}.php";
         }
         if (\Controller::$cur) {
-            $paths['appControllerContent'] = \Controller::$cur->app->path . '/modules/' . \Controller::$cur->module->moduleName . '/' . \Controller::$cur->app->type . "Controllers/content/{$content}.php";
+            $paths['appControllerContent'] = \Controller::$cur->module->app->path . '/modules/' . \Controller::$cur->module->moduleName . '/' . \Controller::$cur->module->app->type . "Controllers/content/{$content}.php";
             $paths['controllerContent'] = \Controller::$cur->path . "/content/{$content}.php";
             $paths['moduleControllerContent'] = \Controller::$cur->module->path . '/' . \Controller::$cur->module->app->type . "Controllers/content/{$content}.php";
         }

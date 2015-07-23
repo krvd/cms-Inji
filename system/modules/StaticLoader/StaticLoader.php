@@ -22,20 +22,25 @@ class StaticLoader extends Module {
         if (strpos($path, '/') === 0) {
             $path = substr($path, 1);
         }
-        $scriptApp = \App::$cur;
         $app = substr($path, 0, strpos($path, '/'));
         if (file_exists(INJI_SYSTEM_DIR . '/program/' . $app)) {
             $path = substr($path, strpos($path, '/') + 1);
-            $scriptApp = new App();
-            $scriptApp->name = $app;
-            $scriptApp->system = true;
-            $scriptApp->staticPath = "/" . $scriptApp->name . "/static";
-            $scriptApp->templatesPath = "/" . $scriptApp->name . "/static/templates";
-            $scriptApp->path = INJI_SYSTEM_DIR . '/program/' . $scriptApp->name;
-            $scriptApp->type = 'app' . ucfirst(strtolower($scriptApp->name));
-            $scriptApp->installed = true;
-            $scriptApp->params = [];
-            $scriptApp->config = Config::app($scriptApp);
+            if (\App::$cur->name != $app) {
+                $scriptApp = new App();
+                $scriptApp->name = $app;
+                $scriptApp->system = true;
+                $scriptApp->staticPath = "/" . $scriptApp->name . "/static";
+                $scriptApp->templatesPath = "/" . $scriptApp->name . "/static/templates";
+                $scriptApp->path = INJI_SYSTEM_DIR . '/program/' . $scriptApp->name;
+                $scriptApp->type = 'app' . ucfirst(strtolower($scriptApp->name));
+                $scriptApp->installed = true;
+                $scriptApp->params = [];
+                $scriptApp->config = Config::app($scriptApp);
+            } else {
+                $scriptApp = \App::$cur;
+            }
+        } else {
+            $scriptApp = \App::$cur;
         }
 
         if (strpos($path, 'static/') !== false && strpos($path, 'static/') <= 1) {
@@ -66,8 +71,6 @@ class StaticLoader extends Module {
                 return $scriptApp->path . '/static/' . $path;
         }
     }
-
-
 
     function giveFile($file) {
         if (!file_exists($file)) {

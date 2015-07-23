@@ -6,8 +6,5 @@ return [
     ],
     'defaultModule' => 'Dashboard',
     'autoloadModules' => [
-        'Libs',
-        'Users',
-        'Ui',
     ]
 ];

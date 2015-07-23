@@ -50,13 +50,13 @@ class App {
      * @param string $className
      * @return object
      */
-    function getObject($className,$params=[]) {
+    function getObject($className, $params = []) {
         $paramsStr = serialize($params);
         $className = ucfirst($className);
         if (isset($this->_objects[$className][$paramsStr])) {
             return $this->_objects[$className][$paramsStr];
         }
-        return $this->loadObject($className,$params);
+        return $this->loadObject($className, $params);
     }
 
     /**
@@ -100,7 +100,7 @@ class App {
      * @param string $className
      * @return mixed
      */
-    function loadObject($className,$params=[]) {
+    function loadObject($className, $params = []) {
         $paramsStr = serialize($params);
         $moduleClassName = $this->findModuleClass($className);
         if (!is_bool($moduleClassName) && $moduleClassName != $className) {
@@ -108,10 +108,9 @@ class App {
         } elseif (class_exists($className)) {
             $this->_objects[$className][$paramsStr] = new $className($this);
         }
-
         if (isset($this->_objects[$className][$paramsStr])) {
             if (method_exists($this->_objects[$className][$paramsStr], 'init')) {
-                call_user_func_array([$this->_objects[$className][$paramsStr],'init'],$params);
+                call_user_func_array([$this->_objects[$className][$paramsStr], 'init'], $params);
             }
             return $this->_objects[$className][$paramsStr];
         }
@@ -121,8 +120,9 @@ class App {
     function __get($className) {
         return $this->getObject($className);
     }
-    function __call($className,$params) {
-        return $this->getObject($className,$params);
+
+    function __call($className, $params) {
+        return $this->getObject($className, $params);
     }
 
 }

@@ -10,7 +10,7 @@
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
-class View extends Module {
+class View extends \Module {
 
     public $title = 'No title';
     public $template = null;
@@ -22,24 +22,23 @@ class View extends Module {
     public $templatesPath = '';
 
     function init() {
-        if (!empty(App::$cur->config['site']['name'])) {
-            $this->title = App::$cur->config['site']['name'];
+        if (!empty($this->app->config['site']['name'])) {
+            $this->title = $this->app->config['site']['name'];
         }
         $this->resolveTemplate();
     }
 
     function resolveTemplate() {
         $templateName = 'default';
-        if (!empty($this->config[App::$cur->type]['current'])) {
-            $templateName = $this->config[App::$cur->type]['current'];
-            if (!empty($this->config[App::$cur->type]['installed'][$templateName]['location'])) {
+        if (!empty($this->config[$this->app->type]['current'])) {
+            $templateName = $this->config[$this->app->type]['current'];
+            if (!empty($this->config[$this->app->type]['installed'][$templateName]['location'])) {
                 $this->templatesPath = App::$primary->path . "/templates";
             }
         }
         if (!$this->templatesPath) {
             $this->templatesPath = $this->app->path . "/templates";
         }
-
         $this->template = \View\Template::get($templateName, $this->app, $this->templatesPath);
         if (!$this->template) {
             $this->template = new \View\Template([
@@ -182,11 +181,11 @@ class View extends Module {
     function getHref($type, $params) {
         $href = '';
         if (is_string($params)) {
-            $href = (App::$cur->type != 'app' ? '/' . App::$cur->name : '' ) . $params;
+            $href = ($this->app->type != 'app' ? '/' . $this->app->name : '' ) . $params;
         } elseif (empty($params['template']) && !empty($params['file'])) {
-            $href = (App::$cur->type != 'app' ? '/' . App::$cur->name : '' ) . $params['file'];
+            $href = ($this->app->type != 'app' ? '/' . $this->app->name : '' ) . $params['file'];
         } elseif (!empty($params['template']) && !empty($params['file'])) {
-            $href = App::$cur->templatesPath . "/{$this->template->name}/{$type}/{$js['file']}";
+            $href = $this->app->templatesPath . "/{$this->template->name}/{$type}/{$js['file']}";
         }
         return $href;
     }
@@ -194,13 +193,13 @@ class View extends Module {
     function checkNeedLibs() {
         if (!empty($this->template->config['libs'])) {
             foreach ($this->template->config['libs'] as $libName) {
-                App::$cur->libs->loadLib($libName);
+                $this->app->libs->loadLib($libName);
             }
         }
         foreach ($this->dynAssets['js'] as $asset) {
             if (is_array($asset) && !empty($asset['libs'])) {
                 foreach ($asset['libs'] as $libName) {
-                    App::$cur->libs->loadLib($libName);
+                    $this->app->libs->loadLib($libName);
                 }
             }
         }
@@ -212,7 +211,7 @@ class View extends Module {
 
         if (!empty($this->template->config['favicon']) && file_exists($this->template->path . "/{$this->template->config['favicon']}"))
             echo "        <link rel='shortcut icon' href='/templates/{$this->template->name}/{$this->template->config['favicon']}' />";
-        elseif (file_exists(App::$cur->path . '/static/images/favicon.ico'))
+        elseif (file_exists($this->app->path . '/static/images/favicon.ico'))
             echo "        <link rel='shortcut icon' href='/static/images/favicon.ico' />";
 
         foreach ($this->getMetaTags() as $meta) {
@@ -234,7 +233,7 @@ class View extends Module {
         $cssAll = '';
         foreach ($css as $href) {
             $nativeUrl[$href] = $href;
-            $urls[$href] = $path = App::$cur->staticLoader->parsePath($href);
+            $urls[$href] = $path = $this->app->staticLoader->parsePath($href);
             $timeStr.=filemtime($path);
         }
 
@@ -255,7 +254,7 @@ class View extends Module {
             file_put_contents(App::$primary->path . '/static/cache/all' . $timeMd5 . '.css', $cssAll);
         }
         echo "\n        <link href='/static/cache/all{$timeMd5}.css' rel='stylesheet' type='text/css' />";
-        echo "\n        <script src='" . (App::$cur->type != 'app' ? '/' . App::$cur->name : '' ) . "/static/system/js/Inji.js'></script>";
+        echo "\n        <script src='" . ($this->app->type != 'app' ? '/' . $this->app->name : '' ) . "/static/system/js/Inji.js'></script>";
     }
 
     function getCss() {
@@ -283,7 +282,7 @@ class View extends Module {
                     if (strpos($css, '//') !== false)
                         $href = $css;
                     else
-                        $href = (App::$cur->type != 'app' ? '/' . App::$cur->name : '' ) . $css;
+                        $href = ($this->app->type != 'app' ? '/' . $this->app->name : '' ) . $css;
                     $hrefs[$href] = $href;
                 }
                 break;
@@ -296,7 +295,7 @@ class View extends Module {
                     if (strpos($css, '://') !== false)
                         $href = $css;
                     else
-                        $href = App::$cur->templatesPath . "/{$this->template->name}/css/{$css}";
+                        $href = $this->app->templatesPath . "/{$this->template->name}/css/{$css}";
                     $hrefs[$href] = $href;
                 }
                 break;
@@ -309,7 +308,7 @@ class View extends Module {
                     if (strpos($css, '//') !== false)
                         $href = $css;
                     else
-                        $href = (App::$cur->type != 'app' ? '/' . App::$cur->name : '' ) . $css;
+                        $href = ($this->app->type != 'app' ? '/' . $this->app->name : '' ) . $css;
                     $hrefs[$href] = $href;
                 }
                 break;
@@ -319,14 +318,14 @@ class View extends Module {
     function getMetaTags() {
         $metas = [];
 
-        if (!empty(App::$cur->Config->app['site']['keywords'])) {
-            $metas['metaName:keywords'] = ['name' => 'keywords', 'content' => App::$cur->Config->site['site']['keywords']];
+        if (!empty($this->app->Config->app['site']['keywords'])) {
+            $metas['metaName:keywords'] = ['name' => 'keywords', 'content' => $this->app->Config->site['site']['keywords']];
         }
-        if (!empty(App::$cur->Config->app['site']['description'])) {
-            $metas['metaName:description'] = ['name' => 'description', 'content' => App::$cur->Config->site['site']['description']];
+        if (!empty($this->app->Config->app['site']['description'])) {
+            $metas['metaName:description'] = ['name' => 'description', 'content' => $this->app->Config->site['site']['description']];
         }
-        if (!empty(App::$cur->Config->app['site']['metatags'])) {
-            foreach (App::$cur->Config->app['site']['metatags'] as $meta) {
+        if (!empty($this->app->Config->app['site']['metatags'])) {
+            foreach ($this->app->Config->app['site']['metatags'] as $meta) {
                 if (!empty($meta['name'])) {
                     $metas['metaName:' . $meta['name']] = $meta;
                 } elseif (!empty($meta['property'])) {
@@ -360,13 +359,13 @@ class View extends Module {
                 if (!empty($urls[$script]))
                     continue;
                 $nativeUrl[$script] = $script;
-                $urls[$script] = $path = App::$cur->staticLoader->parsePath($script);
+                $urls[$script] = $path = $this->app->staticLoader->parsePath($script);
                 $timeStr.=filemtime($path);
             } elseif (!empty($script['file'])) {
                 if (!empty($urls[$script['file']]))
                     continue;
                 $nativeUrl[$script['file']] = $script['file'];
-                $urls[$script['file']] = $path = App::$cur->staticLoader->parsePath($script['file']);
+                $urls[$script['file']] = $path = $this->app->staticLoader->parsePath($script['file']);
                 if (!empty($script['name'])) {
                     $onLoadModules[$script['name']] = $script['name'];
                 }
@@ -386,7 +385,7 @@ class View extends Module {
             'scripts' => ['/static/cache/all' . $timeMd5 . '.js'],
             'compresedScripts' => $nativeUrl,
             'styles' => [],
-            'appRoot' => App::$cur->type == 'app' ? '/' : '/' . App::$cur->name . '/',
+            'appRoot' => $this->app->type == 'app' ? '/' : '/' . $this->app->name . '/',
             'onLoadModules' => $onLoadModules
         ];
         $this->widget('View\bodyEnd', compact('options'));
@@ -433,7 +432,7 @@ class View extends Module {
                     if (strpos($js, '//') !== false)
                         $href = $js;
                     else
-                        $href = App::$cur->templatesPath . "/{$this->template->name}/js/{$js}";
+                        $href = $this->app->templatesPath . "/{$this->template->name}/js/{$js}";
                     $resultArray[] = $href;
                 }
                 break;
@@ -471,8 +470,8 @@ class View extends Module {
     }
 
     function setTitle($title, $add = true) {
-        if ($add && !empty(App::$cur->Config->app['site']['name'])) {
-            $this->title = $title . ' - ' . App::$cur->Config->app['site']['name'];
+        if ($add && !empty($this->app->Config->app['site']['name'])) {
+            $this->title = $title . ' - ' . $this->app->Config->app['site']['name'];
         } else {
             $this->title = $title;
         }
@@ -528,8 +527,8 @@ class View extends Module {
             $paths['templatePath_widgetDir'] = $this->templatesPath . '/' . $this->template->name . '/widgets/' . $widgetName . '/' . $widgetName . '.php';
             $paths['templatePath'] = $this->templatesPath . '/' . $this->template->name . '/widgets/' . $widgetName . '.php';
 
-            $paths['curAppPath_widgetDir'] = App::$cur->path . '/widgets/' . $widgetName . '/' . $widgetName . '.php';
-            $paths['curAppPath'] = App::$cur->path . '/widgets/' . $widgetName . '.php';
+            $paths['curAppPath_widgetDir'] = $this->app->path . '/widgets/' . $widgetName . '/' . $widgetName . '.php';
+            $paths['curAppPath'] = $this->app->path . '/widgets/' . $widgetName . '.php';
 
             $paths['systemPath_widgetDir'] = INJI_SYSTEM_DIR . '/widgets/' . $widgetName . '/' . $widgetName . '.php';
             $paths['systemPath'] = INJI_SYSTEM_DIR . '/widgets/' . $widgetName . '.php';
