@@ -15,6 +15,13 @@ class ModulesController extends Controller {
         $this->view->page();
     }
 
+    function setDefaultAction($module) {
+        $config = App::$primary->config;
+        $config['defaultModule'] = $module;
+        Config::save('app', $config);
+        Tools::redirect('/admin/modules', 'Модулем по умолчанию установлен: ' . $module, 'success');
+    }
+
     function installAction() {
         if (!empty($_GET['modules'])) {
             foreach ($_GET['modules'] as $module) {
@@ -109,7 +116,7 @@ class ModulesController extends Controller {
     }
 
     function editControllerMethodAction($module, $type, $controller, $method) {
-        $this->view->page(['data' => compact('module', 'type', 'controller','method')]);
+        $this->view->page(['data' => compact('module', 'type', 'controller', 'method')]);
     }
 
 }

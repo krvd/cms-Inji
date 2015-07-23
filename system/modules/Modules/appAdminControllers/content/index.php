@@ -8,15 +8,18 @@ $table->setCols([
     'Модуль',
     'Панель администратора',
     'Публичная часть',
-    'Управление'
+    'Управление',
+    'По умолчанию'
 ]);
+$default = !empty(App::$primary->config['defaultModule']) ? App::$primary->config['defaultModule'] : '';
 foreach (App::$primary->config['modules'] as $module) {
     $info = Module::getInfo($module);
     $table->addRow([
         $info['name'],
         '',
         '',
-        "<a class = 'btn btn-primary btn-xs' href = '/admin/modules/editor/{$module}'>Редактировать</a>"
+        "<a class = 'btn btn-primary btn-xs' href = '/admin/modules/editor/{$module}'>Редактировать</a>",
+        $default == $module ? 'По умолчанию' : "<a class = 'btn btn-primary btn-xs' href = '/admin/modules/setDefault/{$module}'>Установить по умолчанию</a>"
     ]);
 }
 

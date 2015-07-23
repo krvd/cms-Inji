@@ -68,7 +68,7 @@ if (!empty($params[0]) && file_exists(INJI_SYSTEM_DIR . '/program/' . $params[0]
     App::$cur->config = Config::app(App::$cur);
 }
 $shareConfig = Config::share();
-if (App::$cur->name != 'install' && empty($shareConfig['installed'])) {
+if (App::$cur->name != 'install' && empty($shareConfig['installed']) && (empty(App::$cur->params[0]) || App::$cur->params[0]!='static')) {
     Tools::redirect('/install');
 }
 

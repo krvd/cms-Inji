@@ -1,85 +1,60 @@
 <?php
 
+/**
+ * View module
+ *
+ * Rendering pages, contents and widgets
+ *
+ * @author Alexey Krupskiy <admin@inji.ru>
+ * @link http://inji.ru/
+ * @copyright 2015 Alexey Krupskiy
+ * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
+ */
 class View extends Module {
 
-    public $title = 'Title';
-    public $template = ['name' => 'default'];
-    public $libAssets = array('css' => array(), 'js' => array());
-    public $dynAssets = array('css' => array(), 'js' => array());
+    public $title = 'No title';
+    public $template = null;
+    public $libAssets = ['css' => [], 'js' => []];
+    public $dynAssets = ['css' => [], 'js' => []];
     public $dynMetas = [];
     public $viewedContent = '';
     public $contentData = [];
     public $templatesPath = '';
-    private $tmp_data = array();
 
     function init() {
         if (!empty(App::$cur->config['site']['name'])) {
             $this->title = App::$cur->config['site']['name'];
         }
+        $this->resolveTemplate();
+    }
+
+    function resolveTemplate() {
+        $templateName = 'default';
         if (!empty($this->config[App::$cur->type]['current'])) {
-            $this->template['name'] = $this->config[App::$cur->type]['current'];
-            if (!empty($this->config[App::$cur->type]['installed'][$this->template['name']]['location'])) {
+            $templateName = $this->config[App::$cur->type]['current'];
+            if (!empty($this->config[App::$cur->type]['installed'][$templateName]['location'])) {
                 $this->templatesPath = App::$primary->path . "/templates";
             }
         }
         if (!$this->templatesPath) {
-            $this->templatesPath = App::$cur->path . "/templates";
+            $this->templatesPath = $this->app->path . "/templates";
         }
-        $template = $this->getConfig($this->template['name']);
-        if ($template) {
-            $this->template = $template;
-            $this->template['path'] = $this->templatesPath . '/' . $this->template['name'];
-        } else {
-            $this->template = [
+
+        $this->template = \View\Template::get($templateName, $this->app, $this->templatesPath);
+        if (!$this->template) {
+            $this->template = new \View\Template([
                 'name' => 'default',
-                'file' => 'index.html',
-                'path' => $this->templatesPath . '/default'
-            ];
+                'path' => $this->templatesPath . '/default',
+                'app' => $this->app
+            ]);
         }
-
-        $this->tmp_data = array(
-            'path' => $this->templatesPath . "/{$this->template['name']}/{$this->template['file']}",
-            'name' => $this->template['name'],
-            'module' => Module::$cur,
-        );
-    }
-
-    function getConfig($templateName = '') {
-        if (!$templateName) {
-            $templateName = $this->template['name'];
-        }
-        return Config::custom($this->templatesPath . "/{$templateName}/config.php");
-    }
-
-    function getParentConfig($templateName = '') {
-        if (!$templateName) {
-            $templateName = !empty($this->config[App::$primary->type]['current']) ? $this->config[App::$primary->type]['current'] : 'default';
-        }
-        return Config::custom(App::$primary->path . "/templates/{$templateName}/config.php");
     }
 
     function page($params = []) {
-        if (empty($this->tmp_data['module'])) {
-            $this->tmp_data['module'] = Module::$cur;
-        }
-        if (empty($this->tmp_data['content'])) {
-            $this->tmp_data['content'] = Controller::$cur->method;
-            $paths = $this->getContentPaths();
-            foreach ($paths as $type => $path) {
-                if (file_exists($path . '/' . $this->tmp_data['content'] . '.php')) {
-                    $this->tmp_data['contentPath'] = $path;
-                    $this->tmp_data['content'] = $this->tmp_data['content'];
-                    break;
-                }
-            }
-        }
-        if (empty($this->tmp_data['contentPath'])) {
-            $this->tmp_data['contentPath'] = Controller::$cur->path . '/content';
-        }
-        $data = $this->paramsParse($params);
 
-        if (file_exists($data['path'])) {
-            $source = file_get_contents($data['path']);
+        $this->paramsParse($params);
+        if (file_exists($this->template->pagePath)) {
+            $source = file_get_contents($this->template->pagePath);
             if (strpos($source, 'BODYEND') === false) {
                 $source = str_replace('</body>', '{BODYEND}</body>', $source);
             }
@@ -90,82 +65,59 @@ class View extends Module {
     }
 
     function paramsParse($params) {
-        if (!$this->tmp_data['module']) {
-            $this->tmp_data['module'] = Module::$cur;
-        }
-        $data = $this->tmp_data;
         // set template
-        if (!empty($params['template'])) {
-            if (file_exists($this->template['path'] . "/{$params['template']}.html")) {
-                $data['file'] = $params['template'] . '.html';
-                $data['path'] = $this->template['path'] . '/' . $data['file'];
-            } elseif ($template = $this->getConfig($params['template'])) {
-                $this->template = $template;
-                $data['path'] = $this->template['path'] = $this->templatesPath . '/' . $this->template['name'] . '/' . $this->template['file'];
-                $data['name'] = $this->template['name'];
-                $data['file'] = $this->template['file'];
-            }
+        if (!empty($params['template']) && $params['template'] != 'current') {
+            $this->template = \View\Template::get($params['template']);
+        }
+        //set page
+        if (!empty($params['page']) && $params['page'] != 'current') {
+            $this->template->setPage($params['page']);
         }
         //set module
         if (!empty($params['module'])) {
-            $this->tmp_data['module'] = $data['module'] = App::$cur->$params['module'];
+            $this->template->setModule($params['module']);
         }
         //set content
         if (!empty($params['content'])) {
-            $paths = $this->getContentPaths();
-            foreach ($paths as $type => $path) {
-                if (file_exists($path . '/' . $params['content'] . '.php')) {
-                    $data['contentPath'] = $path;
-                    $data['content'] = $params['content'];
-                    break;
-                }
-            }
+            $this->template->setContent($params['content']);
+        } elseif (!$this->template->contentPath) {
+            $this->template->setContent();
         }
+        //set data
         if (!empty($params['data'])) {
             $this->contentData = array_merge($this->contentData, $params['data']);
         }
-        $this->tmp_data = $data;
-        return $data;
-    }
-
-    function getContentPaths() {
-        $paths = [
-            'template' => $this->templatesPath . '/' . $this->template['name'] . "/modules/{$this->tmp_data['module']->moduleName}",
-            'appControllerContent' => Controller::$cur->app->path . '/modules/' . Controller::$cur->module->moduleName . '/' . Controller::$cur->app->type . 'Controllers/content',
-            'controllerContent' => Controller::$cur->path . '/content',
-            'moduleControllerContent' => Controller::$cur->module->path . '/' . Controller::$cur->module->app->type . 'Controllers/content',
-            'customModuleTemplateControllerContent' => $this->templatesPath . '/' . $this->template['name'] . "/modules/" . $this->tmp_data['module']->moduleName,
-            'customModuleControllerContent' => $this->tmp_data['module']->path . '/' . Controller::$cur->module->app->type . 'Controllers/content',
-        ];
-        return $paths;
     }
 
     function content($params = []) {
 
-        if (empty($this->template['noSysMsgAutoShow'])) {
+        $this->paramsParse($params);
+
+        if (empty($this->template->config['noSysMsgAutoShow'])) {
             Msg::show(true);
         }
-
-        $_params = $this->paramsParse($params);
-        if (!file_exists($_params['contentPath'] . '/' . $_params['content'] . '.php')) {
+        if (!file_exists($this->template->contentPath)) {
             echo 'Content not found';
         } else {
             extract($this->contentData);
-            include $_params['contentPath'] . '/' . $_params['content'] . '.php';
+            include $this->template->contentPath;
         }
     }
 
     function parentContent($contentName = '') {
         if (!$contentName) {
-            $contentName = $this->tmp_data['content'];
+            $contentName = $this->template->content;
         }
-        $paths = $this->getContentPaths();
+
+        $paths = $this->template->getContentPaths($contentName);
+
         $data = [];
         foreach ($paths as $type => $path) {
-            if (file_exists($path . '/' . $contentName . '.php')) {
-                if ($path == $this->tmp_data['contentPath']) {
+            if (file_exists($path)) {
+                if ($path == $this->template->contentPath) {
                     continue;
                 }
+
                 $data['contentPath'] = $path;
                 $data['content'] = $contentName;
                 break;
@@ -175,7 +127,7 @@ class View extends Module {
             echo 'Content not found';
         } else {
             extract($this->contentData);
-            include $data['contentPath'] . '/' . $data['content'] . '.php';
+            include $data['contentPath'];
         }
     }
 
@@ -210,7 +162,7 @@ class View extends Module {
                     break;
                 case 'PAGE':
                     $source = $this->cutTag($source, $rawTag);
-                    $this->page(['template' => $tag[1]]);
+                    $this->page(['page' => $tag[1]]);
                     break;
                 case 'BODYEND':
                     $source = $this->cutTag($source, $rawTag);
@@ -234,14 +186,14 @@ class View extends Module {
         } elseif (empty($params['template']) && !empty($params['file'])) {
             $href = (App::$cur->type != 'app' ? '/' . App::$cur->name : '' ) . $params['file'];
         } elseif (!empty($params['template']) && !empty($params['file'])) {
-            $href = App::$cur->templatesPath . "/{$this->template['name']}/{$type}/{$js['file']}";
+            $href = App::$cur->templatesPath . "/{$this->template->name}/{$type}/{$js['file']}";
         }
         return $href;
     }
 
     function checkNeedLibs() {
-        if (!empty($this->template['libs'])) {
-            foreach ($this->template['libs'] as $libName) {
+        if (!empty($this->template->config['libs'])) {
+            foreach ($this->template->config['libs'] as $libName) {
                 App::$cur->libs->loadLib($libName);
             }
         }
@@ -258,8 +210,8 @@ class View extends Module {
 
         echo "<title>{$this->title}</title>\n";
 
-        if (!empty($this->template['favicon']) && file_exists($this->template['path'] . "/{$this->template['favicon']}"))
-            echo "        <link rel='shortcut icon' href='/templates/{$this->template['name']}/{$this->template['favicon']}' />";
+        if (!empty($this->template->config['favicon']) && file_exists($this->template->path . "/{$this->template->config['favicon']}"))
+            echo "        <link rel='shortcut icon' href='/templates/{$this->template->name}/{$this->template->config['favicon']}' />";
         elseif (file_exists(App::$cur->path . '/static/images/favicon.ico'))
             echo "        <link rel='shortcut icon' href='/static/images/favicon.ico' />";
 
@@ -311,8 +263,8 @@ class View extends Module {
         if (!empty($this->libAssets['css'])) {
             $this->ResolveCssHref($this->libAssets['css'], 'libs', $css);
         }
-        if (!empty($this->template['css'])) {
-            $this->ResolveCssHref($this->template['css'], 'template', $css);
+        if (!empty($this->template->config['css'])) {
+            $this->ResolveCssHref($this->template->config['css'], 'template', $css);
         }
         if (!empty($this->dynAssets['css'])) {
             $this->ResolveCssHref($this->dynAssets['css'], 'custom', $css);
@@ -344,7 +296,7 @@ class View extends Module {
                     if (strpos($css, '://') !== false)
                         $href = $css;
                     else
-                        $href = App::$cur->templatesPath . "/{$this->template['name']}/css/{$css}";
+                        $href = App::$cur->templatesPath . "/{$this->template->name}/css/{$css}";
                     $hrefs[$href] = $href;
                 }
                 break;
@@ -448,8 +400,8 @@ class View extends Module {
         if (!empty($this->dynAssets['js'])) {
             $this->genScriptArray($this->dynAssets['js'], 'custom', $scripts);
         }
-        if (!empty($this->template['js'])) {
-            $this->genScriptArray($this->template['js'], 'template', $scripts);
+        if (!empty($this->template->config['js'])) {
+            $this->genScriptArray($this->template->config['js'], 'template', $scripts);
         }
         return $scripts;
     }
@@ -481,7 +433,7 @@ class View extends Module {
                     if (strpos($js, '//') !== false)
                         $href = $js;
                     else
-                        $href = App::$cur->templatesPath . "/{$this->template['name']}/js/{$js}";
+                        $href = App::$cur->templatesPath . "/{$this->template->name}/js/{$js}";
                     $resultArray[] = $href;
                 }
                 break;
@@ -563,8 +515,8 @@ class View extends Module {
         if (strpos($widgetName, '\\')) {
             $widgetName = explode('\\', $widgetName);
 
-            $paths['templatePath_widgetDir'] = $this->templatesPath . '/' . $this->template['name'] . '/widgets/' . $widgetName[0] . '/' . $widgetName[1] . '/' . $widgetName[1] . '.php';
-            $paths['templatePath'] = $this->templatesPath . '/' . $this->template['name'] . '/widgets/' . $widgetName[0] . '/' . $widgetName[1] . '.php';
+            $paths['templatePath_widgetDir'] = $this->templatesPath . '/' . $this->template->name . '/widgets/' . $widgetName[0] . '/' . $widgetName[1] . '/' . $widgetName[1] . '.php';
+            $paths['templatePath'] = $this->templatesPath . '/' . $this->template->name . '/widgets/' . $widgetName[0] . '/' . $widgetName[1] . '.php';
 
             $modulePaths = Module::getModulePaths(ucfirst($widgetName[0]));
             foreach ($modulePaths as $pathName => $path) {
@@ -573,8 +525,8 @@ class View extends Module {
             }
             return $paths;
         } else {
-            $paths['templatePath_widgetDir'] = $this->templatesPath . '/' . $this->template['name'] . '/widgets/' . $widgetName . '/' . $widgetName . '.php';
-            $paths['templatePath'] = $this->templatesPath . '/' . $this->template['name'] . '/widgets/' . $widgetName . '.php';
+            $paths['templatePath_widgetDir'] = $this->templatesPath . '/' . $this->template->name . '/widgets/' . $widgetName . '/' . $widgetName . '.php';
+            $paths['templatePath'] = $this->templatesPath . '/' . $this->template->name . '/widgets/' . $widgetName . '.php';
 
             $paths['curAppPath_widgetDir'] = App::$cur->path . '/widgets/' . $widgetName . '/' . $widgetName . '.php';
             $paths['curAppPath'] = App::$cur->path . '/widgets/' . $widgetName . '.php';

@@ -1,7 +1,9 @@
 <?php
 
 /**
- * Toolkit
+ * Tools object
+ * 
+ * Toolkit with most needed functions
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/
@@ -225,6 +227,15 @@ class Tools extends Model {
         if ($exit) {
             exit;
         }
+    }
+
+    static function pathsResolve($paths = [], $default = false) {
+        foreach ($paths as $path) {
+            if (file_exists($path)){
+                return $path;
+            }
+        }
+        return $default;
     }
 
 }

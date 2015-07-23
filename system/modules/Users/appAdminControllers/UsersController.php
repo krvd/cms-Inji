@@ -4,7 +4,7 @@ class UsersController extends adminController {
 
     function loginAction() {
         if (!Users\User::$cur->user_id) {
-            $this->view->page(['template' => 'login', 'content' => 'login']);
+            $this->view->page(['page' => 'login', 'content' => 'login']);
         } else {
             $this->view->page(['content' => 'profile']);
         }

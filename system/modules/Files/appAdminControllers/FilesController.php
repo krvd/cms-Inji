@@ -19,7 +19,7 @@
 class FilesController extends adminController {
 
     function managerForEditorAction() {
-        $this->view->page(['template' => 'blank']);
+        $this->view->page(['page' => 'blank']);
     }
 
 }

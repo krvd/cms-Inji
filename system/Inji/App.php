@@ -112,7 +112,6 @@ class App {
         if (isset($this->_objects[$className][$paramsStr])) {
             if (method_exists($this->_objects[$className][$paramsStr], 'init')) {
                 call_user_func_array([$this->_objects[$className][$paramsStr],'init'],$params);
-                //$this->_objects[$className][$paramsStr]->init();
             }
             return $this->_objects[$className][$paramsStr];
         }

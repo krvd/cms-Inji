@@ -103,7 +103,7 @@ class ActiveForm extends \Object {
                         $afterSave[] = $param;
                         continue;
                     }
-                    if (!empty($this->form['options']['readonly']) && in_array($col, $this->form['options']['readonly'])) {
+                    if (!empty($this->form['userGroupReadonly'][\Users\User::$cur->group_id]) && in_array($col, $this->form['userGroupReadonly'][\Users\User::$cur->group_id])) {
                         continue;
                     }
                     switch ($param['type']) {
@@ -280,7 +280,7 @@ class ActiveForm extends \Object {
             if ($options['type'] == 'select') {
                 $inputOptions['values'] = $this->getOptionsList($options, $params);
             }
-            if (!empty($this->form['options']['readonly']) && in_array($colName, $this->form['options']['readonly'])) {
+            if (!empty($this->form['userGroupReadonly'][\Users\User::$cur->group_id]) && in_array($colName, $this->form['userGroupReadonly'][\Users\User::$cur->group_id])) {
                 $inputOptions['disabled'] = true;
             }
             if (!empty($options['minDate'])) {

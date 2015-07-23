@@ -41,7 +41,7 @@ class MaterialsController extends Controller {
             }
             $this->view->setTitle($material->name . ' ' . $material->keywords);
             $this->view->page([
-                'template' => $material->template,
+                'page' => $material->template,
                 'content' => $material->viewer,
                 'data' => compact('material')
             ]);

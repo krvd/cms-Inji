@@ -61,7 +61,7 @@ class adminController extends Controller {
         $moduleName = $this->module->moduleName;
         $pageParam = ['module' => 'Ui', 'content' => 'dataManager/view', 'data' => compact('item', 'moduleName')];
         if (isset($_GET['print'])) {
-            $pageParam['template'] = 'print';
+            $pageParam['page'] = 'print';
         }
         $this->view->page($pageParam);
     }
