@@ -15,6 +15,7 @@ return function ($step = NULL, $params = array()) {
     App::$cur->db->createTable('materials_material', [
         'material_id' => 'pk',
         'material_category_id' => 'INT(11) NOT NULL',
+        'material_user_id' => 'INT(11) NOT NULL',
         'material_name' => 'varchar(255) NOT NULL',
         'material_alias' => 'varchar(255) NOT NULL',
         'material_text' => 'LONGTEXT NOT NULL',

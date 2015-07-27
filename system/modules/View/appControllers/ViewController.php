@@ -14,10 +14,9 @@ class ViewController extends Controller {
 
     function editorcssAction() {
         ///view/current/css/editor.css
-        if (file_exists($this->view->templatesPath . '/' . $this->view->template['name'] . '/css/editor.css')) {
+        if (file_exists($this->view->template->path . '/css/editor.css')) {
             Tools::redirect('/static/templates/' . $this->view->template['name'] . '/css/editor.css');
-        }
-        else {
+        } else {
             header("Content-type: text/css");
             exit();
         }

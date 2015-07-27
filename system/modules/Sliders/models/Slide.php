@@ -12,7 +12,7 @@ class Slide extends \Model {
         'description' => [
             'type' => 'textarea'
         ],
-        'image_id' => [
+        'image_file_id' => [
             'type' => 'image'
         ],
         'date_create' => [
@@ -26,15 +26,25 @@ class Slide extends \Model {
             'source' => 'relation',
             'relation' => 'slider',
             'showCol' => 'name'
-        ]
+        ],
+        'user_id' => [
+            'type' => 'select',
+            'source' => 'relation',
+            'relation' => 'user'
+        ],
+        'weight' => [
+            'type' => 'number'
+        ],
     ];
     public static $labels = [
         'name' => 'Имя',
         'description' => 'Описание',
-        'image_id' => 'Изображение',
         'date_create' => 'Дата создания',
         'sort' => 'Сортировка',
-        'slider_id' => 'Слайдер'
+        'slider_id' => 'Слайдер',
+        'user_id' => 'Создатель',
+        'weight' => 'Вес',
+        'image_file_id' => 'Изображение',
     ];
     static $dataManagers = [
         'manager' => [
@@ -64,6 +74,10 @@ class Slide extends \Model {
             'image' => [
                 'model' => 'Files\File',
                 'col' => 'image_id'
+            ],
+            'user' => [
+                'model' => 'Users\User',
+                'col' => 'user_id'
             ]
         ];
     }

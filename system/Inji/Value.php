@@ -11,7 +11,7 @@ class Value {
         $this->valueKey = $key;
     }
 
-    function forView() {
+    function forView($options = []) {
         $modelName = get_class($this->model);
         $colInfo = $modelName::getColInfo($this->valueKey);
         $type = !empty($colInfo['colParams']['type']) ? $colInfo['colParams']['type'] : 'string';
@@ -25,8 +25,8 @@ class Value {
                 $hours = substr($this->model->{$this->valueKey}, 11, 5);
 
                 $month = array('января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря');
-
-                return ($dd > 0 ? $dd . " " : '') . $month[$mm - 1] . " " . $yy . " г. " . $hours;
+                $yearPosrfix = isset($options['yearPostfix']) ? $options['yearPostfix'] : " г.";
+                return ($dd > 0 ? $dd . " " : '') . $month[$mm - 1] . " " . $yy . $yearPosrfix . (empty($options['notime']) ? " " . $hours : '');
                 break;
             case'select':
                 switch ($colInfo['colParams']['source']) {

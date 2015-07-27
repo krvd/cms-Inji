@@ -17,7 +17,7 @@ return function ($step = NULL, $params = array()) {
         'user_last_activ' => 'timestamp',
     ));
     if (!empty($params['user'])) {
-        App::$cur->db->insert('users_user', array(
+        $userId = App::$cur->db->insert('users_user', array(
             'user_login' => $params['user']['user_login'],
             'user_mail' => $params['user']['user_mail'],
             'user_pass' => App::$cur->Users->hashpass($params['user']['user_pass']),
@@ -25,7 +25,7 @@ return function ($step = NULL, $params = array()) {
             'user_role_id' => '3',
         ));
     } else {
-        App::$cur->db->insert('users_user', array(
+        $userId = App::$cur->db->insert('users_user', array(
             'user_login' => 'admin',
             'user_mail' => 'admin@' . INJI_DOMAIN_NAME,
             'user_pass' => App::$cur->Users->hashpass('admin'),
@@ -33,6 +33,10 @@ return function ($step = NULL, $params = array()) {
             'user_role_id' => '3',
         ));
     }
+    App::$cur->db->insert('users_info', array(
+        'info_first_name' => 'Администратор',
+        'info_user_id' => $userId,
+    ));
     //users session
     App::$cur->db->createTable('users_session', array(
         'session_id' => 'pk',

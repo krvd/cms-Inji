@@ -163,9 +163,9 @@ class Query extends \Object {
             }
 
             if (substr($this->whereString, -1, 1) == '(' || substr($this->whereString, -2, 2) == 'E ')
-                $this->whereString .= " `{$where}` {$operation} {$value} ";
+                $this->whereString .= " {$where} {$operation} {$value} ";
             else
-                $this->whereString .= "{$concatenation} `{$where}` {$operation} {$value} ";
+                $this->whereString .= "{$concatenation} {$where} {$operation} {$value} ";
         }
         else {
             $i = -1;
@@ -264,7 +264,7 @@ class Query extends \Object {
                 break;
         }
         if ($this->group) {
-            $query .= ' GROUP BY ' . implode(',', $this->group) ;
+            $query .= ' GROUP BY ' . implode(',', $this->group);
         }
         if ($this->order) {
             $query .= ' ORDER BY ' . implode(',', $this->order);

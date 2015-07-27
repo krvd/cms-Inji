@@ -35,8 +35,7 @@ class DataManager extends \Object {
 
         if (!empty($this->managerOptions['name'])) {
             $this->name = $this->managerOptions['name'];
-        }
-        elseif (!empty($modelName::$objectName)) {
+        } elseif (!empty($modelName::$objectName)) {
             $this->name = $modelName::$objectName;
         } else {
             $this->name = $modelName;
@@ -332,7 +331,8 @@ class DataManager extends \Object {
 
     function rowButtons($item, $params) {
         ob_start();
-        \App::$cur->view->widget('Ui\DataManager/rowButtons', [
+        $widgetName = !empty($this->managerOptions['rowButtonsWidget']) ? $this->managerOptions['rowButtonsWidget'] : 'Ui\DataManager/rowButtons';
+        \App::$cur->view->widget($widgetName, [
             'dataManager' => $this,
             'item' => $item,
             'params' => $params

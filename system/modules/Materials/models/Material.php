@@ -16,14 +16,18 @@ class Material extends \Model {
         'viewer' => 'Тип страницы',
         'image_file_id' => 'Фото материала',
         'description' => 'Описание для поисковиков',
-        'keywords' => 'Ключевые слова'
+        'keywords' => 'Ключевые слова',
+        'user_id' => 'Создатель',
+        'date_create' => 'Дата создания'
     ];
     static $dataManagers = [
         'manager' => [
             'cols' => [
                 'name',
                 'alias',
+                'user_id',
                 'category_id',
+                'date_create'
             ],
             'categorys' => [
                 'model' => 'Materials\Category',
@@ -41,6 +45,8 @@ class Material extends \Model {
         'text' => ['type' => 'html'],
         'category_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'category', 'showCol' => 'category_name'],
         'image_file_id' => ['type' => 'image'],
+        'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
+        'date_create' => ['type' => 'dateTime'],
     ];
     static $forms = [
         'manager' => [
@@ -71,6 +77,10 @@ class Material extends \Model {
             'image' => [
                 'model' => '\Files\File',
                 'col' => 'image_file_id'
+            ],
+            'user' => [
+                'model' => '\Users\User',
+                'col' => 'user_id'
             ]
         ];
     }
