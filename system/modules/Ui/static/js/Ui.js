@@ -54,31 +54,36 @@ Editors.prototype.loadAll = function () {
 }
 Editors.prototype.loadIn = function (selector, search) {
     if (this.ckeditor) {
-        var instances;
-        if (typeof search != 'undefined') {
-            instances = $(selector).find(search);
-        }
-        else {
-            instances = $(selector);
-        }
-        $.each(instances, function () {
-            if ($(this).closest('.modal').length == 0 || $(this).closest('.modal').hasClass('in')) {
-                var editor = $(this).ckeditor();
+        setTimeout(function () {
+            var instances;
+            if (typeof search != 'undefined') {
+                instances = $(selector).find(search);
             }
-            if ($(this).closest('.modal').length != 0) {
-                var _this = this;
-                $(this).closest('.modal').on('shown.bs.modal', function () {
-                    $(_this).ckeditor();
-                })
-                $(this).closest('.modal').on('hide.bs.modal', function () {
-                    if ($(_this).next().hasClass('cke')) {
-                        var instance = $(_this).next().attr('id').replace('cke_', '');
-                        CKEDITOR.instances[instance].updateElement();
-                        CKEDITOR.instances[instance].destroy();
-                    }
-                })
+            else {
+                instances = $(selector);
             }
-        })
+            $.each(instances, function () {
+                if ($(this).closest('.modal').length == 0 || $(this).closest('.modal').hasClass('in')) {
+                    var editor = $(this).ckeditor();
+                }
+                if ($(this).closest('.modal').length != 0) {
+                    var _this = this;
+                    $(this).closest('.modal').on('shown.bs.modal', function () {
+                        $(_this).ckeditor();
+                    })
+                    $(this).closest('.modal').on('hide.bs.modal', function () {
+                        if ($(_this).next().hasClass('cke')) {
+                            var instance = $(_this).next().attr('id').replace('cke_', '');
+                            if (CKEDITOR.instances[instance]) {
+                                CKEDITOR.instances[instance].updateElement();
+                                CKEDITOR.instances[instance].destroy();
+                            }
+
+                        }
+                    })
+                }
+            })
+        }, 500);
     }
 }
 Editors.prototype.beforeSubmit = function (form) {

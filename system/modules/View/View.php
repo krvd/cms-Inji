@@ -111,15 +111,19 @@ class View extends \Module {
         $paths = $this->template->getContentPaths($contentName);
 
         $data = [];
+        $exist = false;
+        
         foreach ($paths as $type => $path) {
             if (file_exists($path)) {
-                if ($path == $this->template->contentPath) {
+                if (substr($path, 0, strrpos($path, '/')) == substr($this->template->contentPath, 0, strrpos($this->template->contentPath, '/'))) {
+                    $exist = true;
                     continue;
                 }
-
-                $data['contentPath'] = $path;
-                $data['content'] = $contentName;
-                break;
+                if ($exist) {
+                    $data['contentPath'] = $path;
+                    $data['content'] = $contentName;
+                    break;
+                }
             }
         }
         if (!$data) {

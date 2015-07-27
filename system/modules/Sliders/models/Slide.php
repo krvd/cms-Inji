@@ -10,7 +10,7 @@ class Slide extends \Model {
             'type' => 'text'
         ],
         'description' => [
-            'type' => 'textarea'
+            'type' => 'html'
         ],
         'image_file_id' => [
             'type' => 'image'
@@ -59,7 +59,7 @@ class Slide extends \Model {
         'manager' => [
             'map' => [
                 ['name'],
-                ['image_id'],
+                ['image_file_id'],
                 ['description'],
             ],
         ],
@@ -73,7 +73,7 @@ class Slide extends \Model {
             ],
             'image' => [
                 'model' => 'Files\File',
-                'col' => 'image_id'
+                'col' => 'image_file_id'
             ],
             'user' => [
                 'model' => 'Users\User',
