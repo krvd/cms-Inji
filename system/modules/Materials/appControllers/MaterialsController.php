@@ -6,23 +6,56 @@ class MaterialsController extends Controller {
         $args = func_get_args();
         $category = null;
         $material = null;
-
         $alias = trim(implode('/', $args));
         if ($alias) {
             $material = Materials\Material::get($alias, 'alias');
             if (!$material) {
                 $category = Materials\Category::get($alias, 'alias');
                 if ($category) {
-                    $this->categoryAction($alias);
+                    $this->categoryAction($category->id);
                 }
             }
         } else {
             $material = Materials\Material::get(1, 'default');
         }
-
-
-
         if (!$category && $material) {
+            $this->viewAction($material->id);
+        } elseif (!$category && !$material) {
+            Tools::header('404');
+            $this->view->page([
+                'content' => '404',
+                'data' => ['text' => 'Такой страницы не найдено']
+            ]);
+        }
+    }
+
+    function categoryAction($category_id = 0) {
+        $category = Materials\Category::get((int) $category_id);
+        if (!$category) {
+            Tools::header('404');
+            $this->view->page([
+                'content' => '404',
+                'data' => ['text' => 'Такой страницы не найдено']
+            ]);
+        } else {
+            $this->view->setTitle($category->name);
+
+            $pages = new Ui\Pages($_GET, ['count' => Materials\Material::getCount(['where' => ['category_id', $category->id]]), 'limit' => 20]);
+            $materials = Materials\Material::getList(['where' => ['category_id', $category->id], 'order' => ['date_create', 'desc'], 'start' => $pages->params['start'], 'limit' => $pages->params['limit']]);
+
+            $this->view->page(['content' => 'category', 'data' => compact('materials', 'pages', 'category')]);
+        }
+    }
+
+    function viewAction($material_id = 0) {
+        $material = \Materials\Material::get((int) $material_id);
+        if (!$material) {
+            Tools::header('404');
+            $this->view->page([
+                'content' => '404',
+                'data' => ['text' => 'Такой страницы не найдено']
+            ]);
+        } else {
             if ($material->keywords) {
                 $this->view->addMetaTag(['name' => 'keywords', 'content' => $material->keywords]);
             }
@@ -45,29 +78,7 @@ class MaterialsController extends Controller {
                 'content' => $material->viewer,
                 'data' => compact('material')
             ]);
-        } elseif (!$category && !$material) {
-            Tools::header('404');
-            $this->view->page([
-                'content' => '404',
-                'data' => ['text' => 'Такой страницы не найдено']
-            ]);
         }
-    }
-
-    function categoryAction() {
-        $args = func_get_args();
-        $category = null;
-        $chpu = trim(implode('/', $args));
-        $category = Materials\Category::get($chpu, 'alias');
-        if (!$category) {
-            Msg::add('Не найдено страницы для отображения', 'danger');
-        }
-        $this->view->setTitle($category->name);
-
-        $pages = new Ui\Pages($_GET, ['count' => Materials\Material::getCount(['where' => ['category_id', $category->id]]), 'limit' => 20]);
-        $materials = Materials\Material::get_list(['where' => ['category_id', $category->id], 'order' => ['date_create', 'desc'], 'start' => $pages->params['start'], 'limit' => $pages->params['limit']]);
-
-        App::$cur->view->page(['content' => 'category', 'data' => compact('materials', 'pages', 'category')]);
     }
 
 }

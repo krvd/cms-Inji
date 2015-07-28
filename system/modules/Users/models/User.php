@@ -10,13 +10,25 @@ class User extends \Model {
         'mail' => 'E-Mail',
         'group_id' => 'Группа пользователя',
         'role_id' => 'Роль пользователя',
-        'parent_id' => 'Спонсор',
+        'parent_id' => 'Пригласивший',
+        'reg_date' => 'Дата регистрации',
+        'blocked' => 'Заблокирован',
+        'pass' => 'Пароль',
     ];
     static $cols = [
         'mail' => ['type' => 'email'],
+        'pass' => ['type' => 'password'],
         'login' => ['type' => 'text'],
-        'group_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'group', 'showCol' => 'group_name'],
-        'role_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'role', 'showCol' => 'role_name'],
+        'group_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'group'],
+        'role_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'role'],
+        'parent_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'parent'],
+        'pass' => ['type' => 'password'],
+        'blocked' => [
+            'type' => 'bool',
+        ],
+        'reg_date' => [
+            'type' => 'dateTime',
+        ]
     ];
     static $dataManagers = [
         'manager' => [
@@ -47,6 +59,8 @@ class User extends \Model {
             'map' => [
                 ['login', 'mail',],
                 ['group_id', 'role_id'],
+                ['parent_id', 'blocked'],
+                ['pass'],
                 ['form:info:manager']
             ]
         ]
@@ -66,12 +80,20 @@ class User extends \Model {
                 'type' => 'one',
                 'model' => 'Users\Info',
                 'col' => 'user_id'
+            ],
+            'parent' => [
+                'model' => 'Users\User',
+                'col' => 'parent_id'
             ]
         ];
     }
 
     function name() {
-        return $this->info->name();
+        if ($this->info) {
+            return $this->info->name();
+        } else {
+            $this->id;
+        }
     }
 
     function isAdmin() {

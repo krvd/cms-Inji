@@ -14,11 +14,6 @@ class Callback extends \Model {
         ],
         'date_create' => [
             'type' => 'dateTime',
-            'view' => [
-                'type' => 'moduleMethod',
-                'module' => 'Offers',
-                'method' => 'toRusDate'
-            ]
         ]
     ];
     public static $labels = [

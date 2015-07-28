@@ -21,7 +21,6 @@ class Controller {
      * Run controller
      */
     function run() {
-
         if (!empty($this->params[0]) && method_exists($this, $this->params[0] . 'Action')) {
             $this->method = $this->params[0];
             $this->params = array_slice($this->params, 1);

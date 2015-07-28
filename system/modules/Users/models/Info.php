@@ -81,7 +81,7 @@ class Info extends \Model {
         'last_name' => 'Фамилия',
         'middle_name' => 'Отчество',
         'sex' => 'Пол',
-        'photo' => 'Фото',
+        'photo_file_id' => 'Фото',
         'bday' => 'Дата рождения',
         'phone' => 'Мобильный телефон',
         'city' => 'Город',
@@ -102,7 +102,11 @@ class Info extends \Model {
     }
 
     function name() {
-        return $this->first_name . ' ' . $this->last_name . ' ' . $this->middle_name;
+        if ($this->first_name . $this->last_name . $this->middle_name) {
+            return $this->first_name . ' ' . $this->last_name . ' ' . $this->middle_name;
+        } else {
+            return $this->user_id;
+        }
     }
 
 }

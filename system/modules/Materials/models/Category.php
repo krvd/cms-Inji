@@ -69,7 +69,13 @@ class Category extends \Model {
                 'type' => 'many',
                 'model' => 'Materials\Category',
                 'col' => 'parent_id'
-            ]
+            ],
+            'items' => [
+                'type' => 'many',
+                'model' => 'Materials\Material',
+                'col' => 'category_id'
+            ],
+            
         ];
     }
 
