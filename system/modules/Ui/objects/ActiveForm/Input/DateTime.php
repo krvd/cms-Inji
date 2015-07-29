@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Numeric input
+ * Html input
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/
@@ -11,6 +11,6 @@
 
 namespace Ui\ActiveForm\Input;
 
-class Numeric extends \Ui\ActiveForm\Input {
+class DateTime extends \Ui\ActiveForm\Input {
     
 }

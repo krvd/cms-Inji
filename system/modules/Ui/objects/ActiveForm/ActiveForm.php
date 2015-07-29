@@ -45,7 +45,9 @@ class ActiveForm extends \Object {
         $this->requestFormName = "ActiveForm_{$this->formName}";
         $modeName = $this->modelName;
 
-        if (!empty($modeName::$objectName)) {
+        if (!empty($this->form['name'])) {
+            $this->header = $this->form['name'];
+        } elseif (!empty($modeName::$objectName)) {
             $this->header = $modeName::$objectName;
         } else {
             $this->header = $this->modelName;

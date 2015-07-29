@@ -45,26 +45,7 @@ class UiController extends Controller {
             $form->checkRequest($params);
             $_GET['item'] = get_class($form->model) . ($model->pk() ? ':' . $model->pk() : '');
             $form->action = (App::$cur->system ? '/' . App::$cur->name : '') . '/ui/formPopUp/?' . http_build_query($_GET);
-            if ($model && $model->pk()) {
-                $this->view->setTitle('Изменить ' . $modelName::objectName($model));
-            } else {
-                $presets = !empty($form->form['preset']) ? $form->form['preset'] : [];
-                if (!empty($form->form['userGroupPreset'][\Users\User::$cur->group_id])) {
-                    $presets = array_merge($presets, $form->form['userGroupPreset'][\Users\User::$cur->group_id]);
-                }
-                foreach ($presets as $col => $preset) {
-                    if (!empty($preset['value'])) {
-                        $model->$col = $preset['value'];
-                    } elseif (!empty($preset['userCol'])) {
-                        if (strpos($preset['userCol'], ':')) {
-                            $rel = substr($preset['userCol'], 0, strpos($preset['userCol'], ':'));
-                            $param = substr($preset['userCol'], strpos($preset['userCol'], ':') + 1);
-                            $model->$col = \Users\User::$cur->$rel->$param;
-                        }
-                    }
-                }
-                $this->view->setTitle('Создать ' . $modelName::objectName($model));
-            }
+            $this->view->setTitle(($model && $model->pk() ? 'Изменить ' : 'Создать ') . $form->header);
             $this->view->page(['content' => 'form', 'data' => compact('form', 'params')]);
         }
     }

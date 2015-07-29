@@ -13,7 +13,7 @@ class Option extends \Model {
         'default_val' => ['type' => 'text'],
         'view' => ['type' => 'bool'],
         'searchable' => ['type' => 'bool'],
-        'weight' => ['type' => 'numeric'],
+        'weight' => ['type' => 'Number'],
         'advance' => ['type' => 'text'],
         'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
         'date_create' => ['type' => 'dateTime']

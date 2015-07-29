@@ -7,10 +7,10 @@ class Price extends \Model {
     static $objectName = 'Цена';
     static $cols = [
         'name' => ['type' => 'text'],
-        'price' => ['type' => 'numeric'],
-        'delivery_weight' => ['type' => 'numeric'],
+        'price' => ['type' => 'Number'],
+        'delivery_weight' => ['type' => 'Number'],
         'article' => ['type' => 'text'],
-        'inpack' => ['type' => 'numeric'],
+        'inpack' => ['type' => 'Number'],
         'image_file_id' => ['type' => 'image'],
         'item_price_type_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'type'],
         'unit_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'unit'],
