@@ -9,6 +9,8 @@
         <li role="presentation"><a href="#payType" aria-controls="payType" role="tab" data-toggle="tab">Способы оплаты</a></li>
         <li role="presentation"><a href="#warehouse" aria-controls="warehouse" role="tab" data-toggle="tab">Склады</a></li>
         <li role="presentation"><a href="#unit" aria-controls="unit" role="tab" data-toggle="tab">Единицы измерения</a></li>
+        <li role="presentation"><a href="#priceType" aria-controls="priceType" role="tab" data-toggle="tab">Типы цен</a></li>
+        <li role="presentation"><a href="#itemType" aria-controls="itemType" role="tab" data-toggle="tab">Типы товаров</a></li>
         <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Операции</a></li>
     </ul>
     <div class="tab-content">
@@ -47,6 +49,18 @@
         <div role="tabpanel" class="tab-pane fade" id="unit">
             <?php
             $dataManager = new Ui\DataManager('Ecommerce\Unit');
+            $dataManager->draw();
+            ?>
+        </div>
+        <div role="tabpanel" class="tab-pane fade" id="priceType">
+            <?php
+            $dataManager = new Ui\DataManager('Ecommerce\Item\Price\Type');
+            $dataManager->draw();
+            ?>
+        </div>
+        <div role="tabpanel" class="tab-pane fade" id="itemType">
+            <?php
+            $dataManager = new Ui\DataManager('Ecommerce\Item\Type');
             $dataManager->draw();
             ?>
         </div>

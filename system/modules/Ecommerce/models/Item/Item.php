@@ -18,6 +18,10 @@ class Item extends \Model {
     static $cols = [
         'name' => ['type' => 'text'],
         'category_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'category'],
+        'description' => ['type' => 'html'],
+        'item_type_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'type'],
+        'image_file_id' => ['type' => 'image'],
+        'best' => ['type' => 'bool'],
         'options' => ['type' => 'dataManager', 'relation' => 'options'],
         'prices' => ['type' => 'dataManager', 'relation' => 'prices'],
     ];
@@ -41,6 +45,8 @@ class Item extends \Model {
         'manager' => [
             'map' => [
                 ['name', 'category_id'],
+                ['item_type_id', 'best', 'image_file_id'],
+                ['description'],
                 ['options'],
                 ['prices'],
             ]
@@ -165,13 +171,9 @@ SELECT COALESCE(sum(ewb_count) ,0) as `sum`
                 'model' => 'Ecommerce\Item\Price',
                 'col' => 'item_id',
             ],
-            'unit' => [
-                'model' => 'ItemUnit',
-                'col' => 'unit',
-            ],
             'type' => [
-                'model' => 'ItemType',
-                'col' => 'cit_id',
+                'model' => 'Ecommerce\Item\Type',
+                'col' => 'item_type_id',
             ],
         ];
     }

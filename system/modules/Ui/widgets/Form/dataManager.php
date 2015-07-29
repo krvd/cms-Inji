@@ -1,6 +1,6 @@
 <?php
 if ($options['input']->activeForm->model && $options['input']->activeForm->model->pk()) {
-    
+    $dataManager = new \Ui\DataManager($options['relation']['model'], 'manager');
     $dataManager->draw(['relation' => $options['input']->colParams['relation']], $options['input']->activeForm->model);
     ?>
     <script>

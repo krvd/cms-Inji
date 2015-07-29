@@ -13,5 +13,20 @@ class Type extends \Model {
         'name' => 'Название',
         'curency' => 'Валюта',
     ];
+    static $dataManagers = [
+        'manager' => [
+            'cols' => [
+                'name',
+                'curency'
+            ]
+        ]
+    ];
+    static $forms = [
+        'manager' => [
+            'map' => [
+                ['name', 'curency']
+            ]
+        ]
+    ];
 
 }
