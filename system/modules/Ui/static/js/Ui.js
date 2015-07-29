@@ -234,10 +234,11 @@ DataManagers.prototype.get = function (element) {
 }
 DataManagers.prototype.popUp = function (item, params) {
     var code = item;
+    
     if (typeof (params.relation) != 'undefined') {
         code += params.relation;
     }
-    code = code.replace(':', '_').replace('\\', '_');
+    code = code.replace(/\:/g, '_').replace(/\\/g, '_');
     var modal = inji.Ui.modals.show('', '<div class = "text-center"><img src = "' + inji.options.appRoot + 'static/moduleAsset/Ui/images/ajax-loader.gif" /></div>', code, 'modal-lg');
     inji.Server.request({
         url: 'ui/dataManager/',
@@ -555,7 +556,6 @@ Forms.prototype.checkAditionals = function (select) {
     i = 0;
     if ($(select).data('aditionalEnabled') == 1) {
         $(select).data('aditionalEnabled', 0);
-        $(select).attr('name', $(select).attr('name').replace(/\[primary\]$/g, ''));
     }
     while (nextSelect.length) {
         if (i != selectedInputAd) {
@@ -565,7 +565,6 @@ Forms.prototype.checkAditionals = function (select) {
         else {
             if ($(select).data('aditionalEnabled') != 1) {
                 $(select).data('aditionalEnabled', 1);
-                $(select).attr('name', $(select).attr('name') + '[primary]');
             }
             nextSelect[0].disabled = false;
             nextSelect.removeClass('hidden');

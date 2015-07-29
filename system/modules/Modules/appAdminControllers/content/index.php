@@ -15,7 +15,7 @@ $default = !empty(App::$primary->config['defaultModule']) ? App::$primary->confi
 foreach (App::$primary->config['modules'] as $module) {
     $info = Module::getInfo($module);
     $table->addRow([
-        $info['name'],
+        empty($info['name']) ? $module : $info['name'],
         '',
         '',
         "<a class = 'btn btn-primary btn-xs' href = '/admin/modules/editor/{$module}'>Редактировать</a>",

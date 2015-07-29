@@ -17,7 +17,7 @@ foreach ($options['values'] as $key => $value) {
         $aditionalInputs[] = $value['input'];
         if ($selected) {
             $showedInput = count($aditionalInputs) - 1;
-            $aditionValue = $options['value']['aditional'];
+            $aditionValue = !empty($options['aditionalValue']) ? $options['aditionalValue'] : '';
         }
         $optionsHtml .= "<option data-aditionalInput='" . ( count($aditionalInputs) - 1) . "' value ='{$key}'{$selected}>{$value['text']}</option>";
     } else {
@@ -27,7 +27,7 @@ foreach ($options['values'] as $key => $value) {
 ?>
 <?= empty($options['noContainer']) ? '<div class="form-group">' : ''; ?>
 <?= $label !== false ? "<label>{$label}</label>" : ''; ?>
-<select <?= ($showedInput !== false) ? 'data-aditionalEnabled="1"' : ''; ?> <?= !empty($options['disabled']) ? 'disabled="disabled"' : ''; ?> onchange="inji.Ui.forms.checkAditionals(this);" class="form-control <?= !empty($options['class']) ? $options['class'] : ''; ?>" name = '<?= $name; ?><?= ($showedInput !== false) ? '[primary]' : ''; ?>'>
+<select <?= ($showedInput !== false) ? 'data-aditionalEnabled="1"' : ''; ?> <?= !empty($options['disabled']) ? 'disabled="disabled"' : ''; ?> onchange="inji.Ui.forms.checkAditionals(this);" class="form-control <?= !empty($options['class']) ? $options['class'] : ''; ?>" name = '<?= $name; ?>'>
     <?= $optionsHtml; ?>
 </select>
 <?php
@@ -40,7 +40,8 @@ foreach ($aditionalInputs as $key => $input) {
     } else {
         $input['options']['value'] = $aditionValue;
     }
-    $form->input($input['type'], $name . '[aditional]', false, $input['options']);
+    $input['options']['values'] = \Ui\ActiveForm::getOptionsList($input);
+    $form->input($input['type'], empty($input['formInputName']) ? $name . '[aditional]' : $input['formInputName'], false, $input['options']);
 }
 ?>
 <?= empty($options['noContainer']) ? '</div>' : ''; ?>

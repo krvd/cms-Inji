@@ -105,7 +105,7 @@ class App {
         $moduleClassName = $this->findModuleClass($className);
         if (!is_bool($moduleClassName) && $moduleClassName != $className) {
             return $this->_objects[$moduleClassName][$paramsStr] = $this->_objects[$className][$paramsStr] = $this->getObject($moduleClassName);
-        } elseif (class_exists($className)) {
+        } elseif (class_exists($className) && (in_array($className, $this->config['modules']) || in_array($className, App::$primary->config['modules']))) {
             $this->_objects[$className][$paramsStr] = new $className($this);
         }
         if (isset($this->_objects[$className][$paramsStr])) {

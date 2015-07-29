@@ -40,10 +40,10 @@ class MaterialsController extends Controller {
         } else {
             $this->view->setTitle($category->name);
 
-            $pages = new Ui\Pages($_GET, ['count' => Materials\Material::getCount(['where' => ['category_id', $category->id]]), 'limit' => 20]);
+            $pages = new Ui\Pages($_GET, ['count' => Materials\Material::getCount(['where' => ['category_id', $category->id]]), 'limit' => 10]);
             $materials = Materials\Material::getList(['where' => ['category_id', $category->id], 'order' => ['date_create', 'desc'], 'start' => $pages->params['start'], 'limit' => $pages->params['limit']]);
 
-            $this->view->page(['content' => 'category', 'data' => compact('materials', 'pages', 'category')]);
+            $this->view->page(['page' => $category->resolveTemplate(),'content' => $category->resolveViewer(), 'data' => compact('materials', 'pages', 'category')]);
         }
     }
 
@@ -74,8 +74,8 @@ class MaterialsController extends Controller {
             }
             $this->view->setTitle($material->name . ' ' . $material->keywords);
             $this->view->page([
-                'page' => $material->template,
-                'content' => $material->viewer,
+                'page' => $material->resolveTemplate(),
+                'content' => $material->resolveViewer(),
                 'data' => compact('material')
             ]);
         }

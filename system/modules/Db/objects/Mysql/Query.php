@@ -82,7 +82,11 @@ class Query extends \Object {
     }
 
     public function join($table, $where = false, $type = 'LEFT', $alias = '') {
-        $this->join[] = [$table, $where, $type, $alias];
+        if (is_array($table)) {
+            call_user_func_array([$this, 'join'], $table);
+        } else {
+            $this->join[] = [$table, $where, $type, $alias];
+        }
     }
 
     function where($where = '', $value = '', $operation = false, $concatenation = 'AND') {
@@ -236,12 +240,14 @@ class Query extends \Object {
                 $query .= " (";
                 foreach ($this->cols as $col_name => $param) {
                     if ($param == 'pk') {
-                        $param = "int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (`{$col_name}`)";
+                        $param = "int(11) UNSIGNED NOT NULL AUTO_INCREMENT, PRIMARY KEY (`{$col_name}`)";
                     }
                     $query .= " `{$col_name}` {$param},";
                 }
                 $query = rtrim($query, ',');
-                $query .= ' ' . implode(',', $this->indexes);
+                if ($this->indexes) {
+                    $query .= ', ' . implode(',', $this->indexes);
+                }
                 $query .= ") ENGINE = INNODB CHARACTER SET utf8 COLLATE utf8_general_ci";
                 break;
             case 'UPDATE':

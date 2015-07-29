@@ -51,14 +51,14 @@ class Template extends \Object {
     public $config = '';
 
     /**
-     * Curent template page for rendering
+     * Current template page for rendering
      * 
      * @var string
      */
     public $page = 'index';
 
     /**
-     * Curent template page path for rendering
+     * Current template page path for rendering
      *
      * @var string
      */
@@ -72,14 +72,14 @@ class Template extends \Object {
     public $module = null;
 
     /**
-     * Curent content file for rendering
+     * Current content file for rendering
      * 
      * @var string
      */
     public $content = '';
 
     /**
-     * Curent content file path for rendering
+     * Current content file path for rendering
      * 
      * @var string
      */
@@ -183,7 +183,7 @@ class Template extends \Object {
             $this->content = $content;
         }
         if (!$this->content) {
-            $this->content = \Controller::$cur ? \Controller::$cur->method : 'index';
+            $this->content = \Controller::$cur ? \Controller::$cur->method : '';
         }
         
         if (!$this->contentPath && \Module::$cur) {

@@ -8,6 +8,8 @@ return function ($step = NULL, $params = array()) {
         'category_alias' => 'varchar(255) NOT NULL',
         'category_description' => 'text NOT NULL',
         'category_user_id' => 'int(11) NOT NULL',
+        'category_material_viewer' => 'varchar(255) NOT NULL DEFAULT \'default\'',
+        'category_material_template' => 'varchar(255) NOT NULL DEFAULT \'current\'',
         'category_image' => 'int(11) NOT NULL',
         'category_date' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
         'category_tree_path' => 'text NOT NULL',

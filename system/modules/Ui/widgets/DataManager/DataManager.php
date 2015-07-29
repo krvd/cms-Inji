@@ -1,13 +1,13 @@
 <?php
 echo Html::el('div', [
-    'id' => 'dataManager_' . $dataManager->modelName . '_' . $dataManager->managerName . '_' . \Tools::randomString(),
+    'id' => $dataManager->managerId,
     'class' => 'dataManager',
     'data-params' => json_encode($params),
     'data-modelname' => ($model ? get_class($model) : $dataManager->modelName) . ($model && $model->pk() ? ':' . $model->pk() : ''),
     'data-managername' => $dataManager->managerName,
     'data-cols' => json_encode($dataManager->cols),
     'data-options' => json_encode($dataManager->managerOptions)
-        ], '',true);
+        ], '', true);
 if (!empty($dataManager->managerOptions['categorys'])) {
     ?>
     <div class ="col-lg-2" style = 'overflow-x: auto;max-height:400px;'>

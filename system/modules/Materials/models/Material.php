@@ -85,4 +85,24 @@ class Material extends \Model {
         ];
     }
 
+    function resolveTemplate() {
+        if ($this->template !== 'inherit') {
+            return $this->template;
+        } elseif ($this->template == 'inherit' && $this->category) {
+            return $this->category->resolveTemplate(true);
+        } else {
+            return 'current';
+        }
+    }
+
+    function resolveViewer() {
+        if ($this->viewer !== 'inherit') {
+            return $this->viewer;
+        } elseif ($this->viewer == 'inherit' && $this->category) {
+            return $this->category->resolveViewer(true);
+        } else {
+            return 'default';
+        }
+    }
+
 }

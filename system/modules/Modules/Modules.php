@@ -133,11 +133,30 @@ class Modules extends Module {
         if (!empty($info['autoload'])) {
             $config['autoloadModules'][] = $module;
         }
+        if (!empty($info['menu'])) {
+            foreach ($info['menu'] as $appType => $items) {
+                $this->addInMenu($items, $appType);
+            }
+        }
         if (file_exists($path . $module . '/install_script.php')) {
             $installFunction = include $path . $module . '/install_script.php';
             $installFunction(1, $params);
         }
         Config::save('app', $config, null, App::$primary ? App::$primary : App::$cur);
+    }
+
+    function addInMenu($items, $appType, $parent = 0) {
+        foreach ($items as $item) {
+            $menuItem = new \Menu\Item();
+            $menuItem->name = $item['name'];
+            $menuItem->href = $item['href'];
+            $menuItem->Menu_id = 1;
+            $menuItem->parent_id = $parent;
+            $menuItem->save(['appType' => $appType]);
+            if (!empty($item['childs'])) {
+                $this->addInMenu($item['childs'], $appType, $menuItem->pk());
+            }
+        }
     }
 
     function getSelectListModels($module = false) {

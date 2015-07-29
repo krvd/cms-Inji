@@ -52,12 +52,29 @@ class Model {
         switch ($type) {
             case'select':
                 switch ($colInfo['colParams']['source']) {
+                    case 'model':
+                        if ($item->$colName) {
+                            $sourceValue = $colInfo['colParams']['model']::get($item->$colName);
+                        }
+                        $value = $sourceValue ? $sourceValue->name() : 'Не задано';
+                        break;
                     case 'array':
                         $value = !empty($colInfo['colParams']['sourceArray'][$item->$colName]) ? $colInfo['colParams']['sourceArray'][$item->$colName] : 'Не задано';
+                        if (is_array($value) && $value['text']) {
+                            $value = $value['text'];
+                        }
+                        break;
+                    case 'bool':
+                        return $item->$colName ? 'Да' : 'Нет';
                         break;
                     case 'method':
                         $values = $colInfo['colParams']['module']->$colInfo['colParams']['method']();
                         $value = !empty($values[$item->$colName]) ? $values[$item->$colName] : 'Не задано';
+                        break;
+                    case 'void':
+                        if (!empty($modelName::$cols[$colName]['value']['type']) && $modelName::$cols[$colName]['value']['type'] == 'moduleMethod') {
+                            return \App::$cur->{$modelName::$cols[$colName]['value']['module']}->{$modelName::$cols[$colName]['value']['method']}($item, $colName, $modelName::$cols[$colName]);
+                        }
                         break;
                     case 'relation':
                         $relations = $colInfo['modelName']::relations();
@@ -238,7 +255,8 @@ class Model {
 
     static function colPrefix() {
         $classPath = explode('\\', get_called_class());
-        return strtolower($classPath[1]) . '_';
+        $classPath = array_slice($classPath, 1);
+        return strtolower(implode('_', $classPath)) . '_';
     }
 
     static function relations() {
@@ -512,8 +530,26 @@ class Model {
     }
 
     static function checkWhere($item = [], $where = '', $value = '', $operation = '=', $concatenation = 'AND') {
+
         if (is_array($where)) {
-            return forward_static_call_array(['Model', 'checkWhere'], array_merge([$item], $where));
+            if (is_array($where[0])) {
+                foreach ($where as $whereItem) {
+                    $result = forward_static_call_array(['Model', 'checkWhere'], array_merge([$item], $whereItem));
+                    if (!$result) {
+                        return false;
+                    }
+                }
+                return true;
+            } else {
+                return forward_static_call_array(['Model', 'checkWhere'], array_merge([$item], $where));
+            }
+        }
+
+        if (!isset($item[$where]) && !$value) {
+            return true;
+        }
+        if (!isset($item[$where]) && $value) {
+            return false;
         }
         if ($item[$where] == $value) {
             return true;
@@ -843,30 +879,33 @@ class Model {
         $this->_params = array_merge($this->_params, $params);
     }
 
-    static function getRelationOptions($relName) {
+    static function getRelation($relName) {
         $relations = static::relations();
-        return $relations[$relName];
+        return !empty($relations[$relName]) ? $relations[$relName] : false;
     }
 
     function loadRelation($name, $params = []) {
-        $relations = $this->relations();
-        if (isset($relations[$name])) {
-            $relation = $relations[$name];
+        $relation = static::getRelation($name);
+        if ($relation) {
             if (!isset($relation['type']))
                 $type = 'to';
             else
                 $type = $relation['type'];
 
             switch ($type) {
-                case 'relTable':
-                    if (!$this->{$this->index()}) {
+                case 'relModel':
+                    if (!$this->pk()) {
                         return [];
                     }
-                    App::$cur->db->where($relation['relTablePrefix'] . $this->index(), $this->{$this->index()});
-                    $ids = App::$cur->db->result_array(App::$cur->db->select($relation['relTable']), $relation['relTablePrefix'] . $relation['model']::index());
-                    $getType = 'get_list';
+                    $fixedCol = $relation['model']::index();
+                    $relation['relModel']::fixPrefix($fixedCol);
+                    $ids = array_keys($relation['relModel']::getList(['where' => [$this->index(), $this->pk()], 'array' => true, 'key' => $fixedCol]));
+                    if (!$ids) {
+                        return [];
+                    }
+                    $getType = 'getList';
                     $options = [
-                        'where' => [$relation['model']::index(), implode(',', array_keys($ids)), 'IN'],
+                        'where' => [$relation['model']::index(), implode(',', $ids), 'IN'],
                         'array' => (!empty($params['array'])) ? true : false,
                         'key' => (isset($params['key'])) ? $params['key'] : ((isset($relation['resultKey'])) ? $relation['resultKey'] : null),
                         'start' => (isset($params['start'])) ? $params['start'] : ((isset($relation['start'])) ? $relation['start'] : null),

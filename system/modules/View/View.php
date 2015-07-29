@@ -50,7 +50,6 @@ class View extends \Module {
     }
 
     function page($params = []) {
-
         $this->paramsParse($params);
         if (file_exists($this->template->pagePath)) {
             $source = file_get_contents($this->template->pagePath);
@@ -112,18 +111,15 @@ class View extends \Module {
 
         $data = [];
         $exist = false;
-        
         foreach ($paths as $type => $path) {
-            if (file_exists($path)) {
-                if (substr($path, 0, strrpos($path, '/')) == substr($this->template->contentPath, 0, strrpos($this->template->contentPath, '/'))) {
-                    $exist = true;
-                    continue;
-                }
-                if ($exist) {
-                    $data['contentPath'] = $path;
-                    $data['content'] = $contentName;
-                    break;
-                }
+            if (substr($path, 0, strrpos($path, '/')) == substr($this->template->contentPath, 0, strrpos($this->template->contentPath, '/'))) {
+                $exist = true;
+                continue;
+            }
+            if (file_exists($path) && $exist) {
+                $data['contentPath'] = $path;
+                $data['content'] = $contentName;
+                break;
             }
         }
         if (!$data) {
@@ -201,6 +197,13 @@ class View extends \Module {
             }
         }
         foreach ($this->dynAssets['js'] as $asset) {
+            if (is_array($asset) && !empty($asset['libs'])) {
+                foreach ($asset['libs'] as $libName) {
+                    $this->app->libs->loadLib($libName);
+                }
+            }
+        }
+        foreach ($this->libAssets['js'] as $asset) {
             if (is_array($asset) && !empty($asset['libs'])) {
                 foreach ($asset['libs'] as $libName) {
                     $this->app->libs->loadLib($libName);
@@ -352,6 +355,7 @@ class View extends \Module {
     }
 
     function bodyEnd() {
+        $this->checkNeedLibs();
         $scripts = $this->getScripts();
         $onLoadModules = [];
         $scriptAll = '';

@@ -30,6 +30,12 @@ class Value {
                 break;
             case'select':
                 switch ($colInfo['colParams']['source']) {
+                    case 'model':
+                        if ($item->$colName) {
+                            $sourceValue = $colInfo['colParams']['model']::get($item->$colName);
+                        }
+                        $value = $sourceValue ? $sourceValue->name() : 'Не задано';
+                        break;
                     case 'array':
                         return !empty($colInfo['colParams']['sourceArray'][$this->model->{$this->valueKey}]) ? $colInfo['colParams']['sourceArray'][$this->model->{$this->valueKey}] : 'Не задано';
                     case 'method':

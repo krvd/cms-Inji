@@ -24,6 +24,7 @@ class DataManager extends \Object {
     public $joins = [];
     public $predraw = false;
     public $cols = [];
+    public $managerId = '';
 
     function __construct($modelName, $dataManager = 'manager', $options = []) {
         $this->modelName = $modelName;
@@ -308,21 +309,7 @@ class DataManager extends \Object {
                         return $item->$colName;
                 }
             } elseif (!empty($modelName::$cols[$colName]['type'])) {
-                switch ($modelName::$cols[$colName]['type']) {
-                    case 'void':
-                        if (!empty($modelName::$cols[$colName]['value']['type']) && $modelName::$cols[$colName]['value']['type'] == 'moduleMethod') {
-                            return \App::$cur->{$modelName::$cols[$colName]['value']['module']}->{$modelName::$cols[$colName]['value']['method']}($item, $colName, $modelName::$cols[$colName]);
-                        }
-                        break;
-                    case'bool':
-                        return $item->$colName ? 'Да' : 'Нет';
-                        break;
-                    case'select':
-                        return !empty($modelName::$cols[$colName]['sourceArray'][$item->$colName]) ? $modelName::$cols[$colName]['sourceArray'][$item->$colName] : $item->$colName;
-                        break;
-                    default:
-                        return $item->$colName;
-                }
+                return \Model::resloveTypeValue($item, $colName);
             } else {
                 return $item->$colName;
             }
@@ -455,6 +442,7 @@ class DataManager extends \Object {
     }
 
     function preDraw($params = [], $model = null) {
+        $this->managerId = str_replace('\\','_','dataManager_' . $this->modelName . '_' . $this->managerName . '_' . \Tools::randomString());
         $this->predraw = true;
         $modelName = $this->modelName;
 

@@ -65,7 +65,7 @@ class ActiveForm extends \Object {
                     if ($this->model->{$colPath[1]}) {
                         $inputs[$col] = new ActiveForm($this->model->{$colPath[1]}, $colPath[2]);
                     } else {
-                        $relOptions = $modelName::getRelationOptions($colPath[1]);
+                        $relOptions = $modelName::getRelation($colPath[1]);
                         if (!isset($this->model->_params[$modelName::index()])) {
                             $this->model->_params[$modelName::index()] = 0;
                         }
@@ -106,76 +106,14 @@ class ActiveForm extends \Object {
                     if (!empty($this->form['userGroupReadonly'][\Users\User::$cur->group_id]) && in_array($col, $this->form['userGroupReadonly'][\Users\User::$cur->group_id])) {
                         continue;
                     }
-                    switch ($param['type']) {
-                        case 'files':
-                            if (!empty($_FILES[$this->requestFormName]['tmp_name'][$this->modelName][$col])) {
-                                $file_ids = !empty($request[$col]) ? $request[$col] : [];
-                                foreach ($_FILES[$this->requestFormName]['tmp_name'][$this->modelName][$col] as $key => $tmp_name) {
-                                    $file_ids[] = \App::$primary->files->upload([
-                                        'tmp_name' => $_FILES[$this->requestFormName]['tmp_name'][$this->modelName][$col][$key],
-                                        'name' => $_FILES[$this->requestFormName]['name'][$this->modelName][$col][$key],
-                                        'type' => $_FILES[$this->requestFormName]['type'][$this->modelName][$col][$key],
-                                        'size' => $_FILES[$this->requestFormName]['size'][$this->modelName][$col][$key],
-                                        'error' => $_FILES[$this->requestFormName]['error'][$this->modelName][$col][$key],
-                                            ], [
-                                        'upload_code' => 'activeForm:' . $modelName . ':' . $this->model->pk()
-                                    ]);
-                                }
-                                $this->model->$col = implode(',', array_filter($file_ids));
-                            }
-                            break;
-                        case 'image':
-                            if (!empty($_FILES[$this->requestFormName]['tmp_name'][$this->modelName][$col])) {
-                                $file_id = \App::$primary->files->upload([
-                                    'tmp_name' => $_FILES[$this->requestFormName]['tmp_name'][$this->modelName][$col],
-                                    'name' => $_FILES[$this->requestFormName]['name'][$this->modelName][$col],
-                                    'type' => $_FILES[$this->requestFormName]['type'][$this->modelName][$col],
-                                    'size' => $_FILES[$this->requestFormName]['size'][$this->modelName][$col],
-                                    'error' => $_FILES[$this->requestFormName]['error'][$this->modelName][$col],
-                                        ], [
-                                    'upload_code' => 'activeForm:' . $modelName . ':' . $this->model->pk(),
-                                    'accept_group' => 'image'
-                                ]);
-                                if ($file_id) {
-                                    $this->model->$col = $file_id;
-                                }
-                            }
-                            break;
-                        case 'password':
-                            if (!empty($request[$col]['pass']) && !empty($request[$col]['pass'])) {
-                                if (empty($request[$col]['pass'])) {
-                                    \Msg::add('Вы не ввели пароль в первое поле', 'danger');
-                                    continue;
-                                }
-                                if (empty($request[$col]['repeat'])) {
-                                    \Msg::add('Вы не ввели пароль во второе поле', 'danger');
-                                    continue;
-                                }
-                                if ($request[$col]['pass'] != $request[$col]['repeat']) {
-                                    \Msg::add('Введенные пароли не совадают', 'danger');
-                                    continue;
-                                }
-                                $this->model->$col = \App::$cur->users->hashpass($request[$col]['pass']);
-                            }
-                            break;
-                        case 'list':
-                            $relations = $modelName::relations();
-                            break;
-                        default:
-                            if (isset($request[$col])) {
-                                $this->model->$col = $request[$col];
-                            } else {
-                                switch ($param['type']) {
-                                    case 'checkbox':
-                                    case 'number':
-                                        $this->model->$col = 0;
-                                        break;
-                                    default :
-                                        $this->model->$col = '';
-                                }
-                            }
-                            break;
-                    }
+                    $inputClassName = '\Ui\ActiveForm\Input\\' . ucfirst($param['type']);
+                    $input = new $inputClassName();
+                    $input->activeForm = $this;
+                    $input->activeFormParams = $params;
+                    $input->modelName = $this->modelName;
+                    $input->colName = $col;
+                    $input->colParams = $param;
+                    $input->parseRequest($request);
                 }
 
                 foreach ($presets as $col => $preset) {
@@ -250,48 +188,18 @@ class ActiveForm extends \Object {
         if (is_object($options)) {
             $options->draw();
         } else {
-            $inputOptions = [
-                'value' => $value = isset($options['default']) ? $options['default'] : ''
-            ];
-            $inputOptions['value'] = ($this->model && isset($this->model->$colName)) ? $this->model->$colName : $inputOptions['value'];
-            $preset = !empty($this->form['preset'][$colName]) ? $this->form['preset'][$colName] : [];
-            if (!empty($this->form['userGroupPreset'][\Users\User::$cur->group_id][$colName])) {
-                $preset = array_merge($preset, $this->form['userGroupPreset'][\Users\User::$cur->group_id][$colName]);
-            }
-            if ($preset) {
-                $inputOptions['disabled'] = true;
-                if (!empty($preset['value'])) {
-                    $inputOptions['value'] = $preset['value'];
-                } elseif (!empty($preset['userCol'])) {
-                    if (strpos($preset['userCol'], ':')) {
-                        $rel = substr($preset['userCol'], 0, strpos($preset['userCol'], ':'));
-                        $param = substr($preset['userCol'], strpos($preset['userCol'], ':') + 1);
-
-                        $inputOptions['value'] = \Users\User::$cur->$rel->$param;
-                    }
-                }
-                $form->input('hidden', "{$this->requestFormName}[$this->modelName][{$colName}]", ($this->model && !empty($modelName::$labels[$colName])) ? $modelName::$labels[$colName] : $colName, $inputOptions);
-                return;
-            }
-
-            if ($options['type'] == 'image' && $inputOptions['value']) {
-                $inputOptions['value'] = \Files\File::get($inputOptions['value'])->path;
-            }
-            if ($options['type'] == 'select') {
-                $inputOptions['values'] = $this->getOptionsList($options, $params);
-            }
-            if (!empty($this->form['userGroupReadonly'][\Users\User::$cur->group_id]) && in_array($colName, $this->form['userGroupReadonly'][\Users\User::$cur->group_id])) {
-                $inputOptions['disabled'] = true;
-            }
+            $inputClassName = '\Ui\ActiveForm\Input\\' . ucfirst($options['type']);
+            $input = new $inputClassName();
+            $input->form = $form;
+            $input->activeForm = $this;
+            $input->activeFormParams = $params;
+            $input->modelName = $this->modelName;
+            $input->colName = $colName;
+            $input->colParams = $options;
+            $input->draw();
+            return true;
             if (!empty($options['minDate'])) {
                 $inputOptions['minDate'] = $options['minDate'];
-            }
-            switch ($options['type']) {
-                case 'bool';
-                    $type = 'checkbox';
-                    break;
-                default :
-                    $type = $options['type'];
             }
             if ($type == 'map') {
                 $inputOptions['value'] = [
@@ -299,28 +207,29 @@ class ActiveForm extends \Object {
                     'lng' => $this->model ? $this->model->{$colName . '_lng'} : 0,
                 ];
             }
-
-            $form->input($type, "{$this->requestFormName}[$this->modelName][{$colName}]", ($this->model && !empty($modelName::$labels[$colName])) ? $modelName::$labels[$colName] : $colName, $inputOptions);
         }
     }
 
-    function getOptionsList($inputParams, $params, $modelName = false) {
-        if (!$modelName) {
-            $modelName = $this->modelName;
-        }
+    static function getOptionsList($inputParams, $params = [], $modelName = false, $aditionalInputNamePrefix = 'aditional') {
+        $values = [];
         switch ($inputParams['source']) {
+            case 'model':
+                $values = $inputParams['model']::getList(['forSelect' => true]);
+                break;
             case 'array':
-                return $inputParams['sourceArray'];
+                $values = $inputParams['sourceArray'];
                 break;
             case 'method':
-                return \App::$cur->$inputParams['module']->$inputParams['method']();
+                $values = \App::$cur->$inputParams['module']->$inputParams['method']();
                 break;
             case 'relation':
-
-                $relations = $modelName::relations();
+                if (!$modelName) {
+                    return [];
+                }
+                $relation = $modelName::getRelation($inputParams['relation']);
                 $selectParams = !empty($params['dataManagerParams']) ? $params['dataManagerParams'] : [];
-                $filters = $relations[$inputParams['relation']]['model']::managerFilters();
-                $items = $relations[$inputParams['relation']]['model']::getList(['where' => !empty($filters['getRows']['where']) ? $filters['getRows']['where'] : '']);
+                $filters = $relation['model']::managerFilters();
+                $items = $relation['model']::getList(['where' => !empty($filters['getRows']['where']) ? $filters['getRows']['where'] : '']);
 
                 $values = [0 => 'Не задано'];
                 foreach ($items as $key => $item) {
@@ -330,10 +239,15 @@ class ActiveForm extends \Object {
                         $values[$key] = $item->name();
                     }
                 }
-                return $values;
+                $values = $values;
                 break;
         }
-        return [];
+        foreach ($values as $key => $value) {
+            if (is_array($value) && !empty($value['input'])) {
+                $values[$key]['input']['formInputName'] = $aditionalInputNamePrefix . "[{$value['input']['name']}]";
+            }
+        }
+        return $values;
     }
 
     /**

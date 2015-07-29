@@ -9,10 +9,19 @@
             <a href="/admin">Панель управления</a>
         </li>
         <?php
-            $menu = Menu\Menu::get('sidebarMenu','code');
-            foreach ($menu->items as $item){
-                echo "<li><a href = '{$item->href}'>{$item->name}</a></li>";
+        $menu = Menu\Menu::get('sidebarMenu', 'code');
+        foreach ($menu->items(['where' => ['parent_id', 0]]) as $item) {
+            echo "<li><a href = '{$item->href}'>{$item->name}</a>";
+            $childItems = Menu\Item::getList(['where' => ['parent_id', $item->id]]);
+            if ($childItems) {
+                echo "<ul>";
+                foreach ($childItems as $item) {
+                    echo "<li><a href = '{$item->href}'>{$item->name}</a>";
+                }
+                echo "</ul>";
             }
+            echo "</li>";
+        }
         ?>
     </ul>
 </div>

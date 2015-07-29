@@ -31,17 +31,20 @@ class UiController extends Controller {
         }
         $formName = !empty($_GET['formName']) ? $_GET['formName'] : 'manager';
         $form = new Ui\ActiveForm($model, $formName);
-        $form->action = (App::$cur->system ? '/' . App::$cur->name : '') . '/ui/formPopUp/?' . http_build_query($_GET);
         if (!empty($_GET['_']) || !empty($_POST['_'])) {
             $return = new Server\Result();
             ob_start();
             $form->checkRequest($params, true);
+            $_GET['item'] = get_class($form->model) . ($model->pk() ? ':' . $model->pk() : '');
+            $form->action = (App::$cur->system ? '/' . App::$cur->name : '') . '/ui/formPopUp/?' . http_build_query($_GET);
             $form->draw($params, true);
             $return->content = ob_get_contents();
             ob_end_clean();
             $return->send();
         } else {
             $form->checkRequest($params);
+            $_GET['item'] = get_class($form->model) . ($model->pk() ? ':' . $model->pk() : '');
+            $form->action = (App::$cur->system ? '/' . App::$cur->name : '') . '/ui/formPopUp/?' . http_build_query($_GET);
             if ($model && $model->pk()) {
                 $this->view->setTitle('Изменить ' . $modelName::objectName($model));
             } else {
