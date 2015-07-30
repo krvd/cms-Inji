@@ -33,13 +33,14 @@ class Access extends Module {
         if (is_null($access)) {
             $access = [];
         }
+        if (is_null($user)) {
+            $user = Users\User::$cur;
+        }
         if (empty($access)) {
             return true;
         }
         
-        if (is_null($user)) {
-            $user = Users\User::$cur;
-        }
+
         if ((!$user->group_id && !empty($access)) || ($user->group_id && !empty($access) && !in_array($user->user_group_id, $access)))
             return false;
 

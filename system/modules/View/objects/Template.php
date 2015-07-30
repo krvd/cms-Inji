@@ -185,7 +185,6 @@ class Template extends \Object {
         if (!$this->content) {
             $this->content = \Controller::$cur ? \Controller::$cur->method : '';
         }
-        
         if (!$this->contentPath && \Module::$cur) {
             $this->contentPath = \Module::$cur->path . '/' . \Module::$cur->app->type . "Controllers/content/{$this->content}.php";
         }
@@ -205,6 +204,9 @@ class Template extends \Object {
         $paths = [];
         if ($this->module) {
             $paths['templateModule'] = $this->path . "/modules/{$this->module->moduleName}/{$content}.php";
+        }
+        if (\Module::$cur) {
+            $paths['templateCurModule'] = $this->path . "/modules/".\Module::$cur->moduleName."/{$content}.php";
         }
         if (\Controller::$cur) {
             $paths['appControllerContent'] = \Controller::$cur->module->app->path . '/modules/' . \Controller::$cur->module->moduleName . '/' . \Controller::$cur->module->app->type . "Controllers/content/{$content}.php";

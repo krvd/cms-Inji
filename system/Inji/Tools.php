@@ -147,8 +147,9 @@ class Tools extends Model {
         if ($text !== false) {
             Msg::add($text, $status);
         }
-
-        header("Location: {$href}");
+        if (!headers_sent()) {
+            header("Location: {$href}");
+        }
         exit("Перенаправление на: <a href = '{$href}'>{$href}</a>");
     }
 
@@ -231,7 +232,7 @@ class Tools extends Model {
 
     static function pathsResolve($paths = [], $default = false) {
         foreach ($paths as $path) {
-            if (file_exists($path)){
+            if (file_exists($path)) {
                 return $path;
             }
         }

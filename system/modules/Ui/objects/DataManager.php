@@ -170,10 +170,10 @@ class DataManager extends \Object {
                         break;
                     case 'bool':
 
-                        if (empty($params['filters'][$col]['value'])) {
+                        if (!isset($params['filters'][$col]['value']) || $params['filters'][$col]['value'] === '') {
                             continue;
                         }
-                        $queryParams['where'][] = [$col, '1'];
+                        $queryParams['where'][] = [$col, $params['filters'][$col]['value']];
                         break;
                     case 'dateTime':
                     case 'date':
@@ -256,7 +256,7 @@ class DataManager extends \Object {
                 if (!empty($params['download'])) {
                     $row[] = \Model::getColValue($item, is_array($colName) ? $key : $colName, true, false);
                 } else {
-                    $row[] = DataManager::drawCol($item, is_array($colName) ? $key : $colName, $params);
+                    $row[] = DataManager::drawCol($item, is_array($colName) ? $key : $colName, $params, $this);
                 }
             }
             $row[] = $this->rowButtons($item, $params);
@@ -265,14 +265,20 @@ class DataManager extends \Object {
         return $rows;
     }
 
-    static function drawCol($item, $colName, $params = []) {
+    static function drawCol($item, $colName, $params = [], $dataManager = null, $originalCol = '', $originalItem=null) {
+        if (!$originalCol) {
+            $originalCol = $colName;
+        }
+        if(!$originalItem){
+            $originalItem = $item;
+        }
         $modelName = get_class($item);
         $relations = $modelName::relations();
         if (strpos($colName, ':') !== false && !empty($relations[substr($colName, 0, strpos($colName, ':'))])) {
             $rel = substr($colName, 0, strpos($colName, ':'));
             $col = substr($colName, strpos($colName, ':') + 1);
             if ($item->$rel) {
-                return DataManager::drawCol($item->$rel, $col);
+                return DataManager::drawCol($item->$rel, $col, $params, $dataManager, $originalCol,$originalItem);
             } else {
                 return 'Не указано';
             }
@@ -309,7 +315,13 @@ class DataManager extends \Object {
                         return $item->$colName;
                 }
             } elseif (!empty($modelName::$cols[$colName]['type'])) {
-                return \Model::resloveTypeValue($item, $colName);
+                if ($originalCol == 'name' || ( $dataManager && !empty($dataManager->managerOptions['colToView']) && $dataManager->managerOptions['colToView'] == $originalCol)) {
+                    $formName = $dataManager && !empty($dataManager->managerOptions['editForm']) ? $dataManager->managerOptions['editForm'] : 'manager';
+                    $redirectUrl = !empty($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/admin/' . str_replace('\\', '/', get_class($originalItem));
+                    return "<a href ='/admin/" . str_replace('\\', '/view/', get_class($originalItem)) . "/{$originalItem->id}?formName={$formName}&redirectUrl={$redirectUrl}'>{$item->$colName}</a>";
+                } else {
+                    return \Model::resloveTypeValue($item, $colName);
+                }
             } else {
                 return $item->$colName;
             }
@@ -442,7 +454,7 @@ class DataManager extends \Object {
     }
 
     function preDraw($params = [], $model = null) {
-        $this->managerId = str_replace('\\','_','dataManager_' . $this->modelName . '_' . $this->managerName . '_' . \Tools::randomString());
+        $this->managerId = str_replace('\\', '_', 'dataManager_' . $this->modelName . '_' . $this->managerName . '_' . \Tools::randomString());
         $this->predraw = true;
         $modelName = $this->modelName;
 

@@ -103,4 +103,18 @@ class User extends \Model {
         return false;
     }
 
+    function beforeDelete() {
+        if ($this->info) {
+            $this->info->delete();
+        }
+        $sessions = Session::getList(['where' => ['user_id' => $this->id]]);
+        foreach ($sessions as $session) {
+            $session->delete();
+        }
+        /*$socials = Social::getList(['where' => ['user_id' => $this->id]]);
+        foreach ($socials as $social) {
+            $social->delete();
+        }*/
+    }
+
 }

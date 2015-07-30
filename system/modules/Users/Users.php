@@ -17,8 +17,12 @@ class Users extends Module {
         if (isset($_GET['logout'])) {
             return $this->logOut();
         }
+        if (filter_input(INPUT_COOKIE, $this->cookiePrefix . '_user_session_hash') && filter_input(INPUT_COOKIE, $this->cookiePrefix . '_user_id')) {
+            return $this->cuntinueSession(filter_input(INPUT_COOKIE, $this->cookiePrefix . '_user_session_hash'), filter_input(INPUT_COOKIE, $this->cookiePrefix . '_user_id'));
+        }
         if (isset($_POST['autorization']) && filter_input(INPUT_POST, 'user_login') && filter_input(INPUT_POST, 'user_pass')) {
-            return $this->autorization(filter_input(INPUT_POST, 'user_login'), filter_input(INPUT_POST, 'user_pass'), strpos(filter_input(INPUT_POST, 'user_login'), '@') ? 'mail' : 'login');
+            unset($_POST['autorization']);
+            return $this->autorization(filter_input(INPUT_POST, 'user_login'), filter_input(INPUT_POST, 'user_pass'), strpos(filter_input(INPUT_POST, 'user_login'), '@') ? 'mail' : 'login',false);
         }
         if (isset($_GET['passre']) && filter_input(INPUT_GET, 'user_mail')) {
             return $this->passre(filter_input(INPUT_GET, 'user_mail'));
@@ -26,14 +30,13 @@ class Users extends Module {
         if (!empty($_GET['passrecont']) && filter_input(INPUT_GET, 'hash')) {
             return $this->passrecont(filter_input(INPUT_GET, 'hash'));
         }
-        if (filter_input(INPUT_COOKIE, $this->cookiePrefix . '_user_session_hash') && filter_input(INPUT_COOKIE, $this->cookiePrefix . '_user_id')) {
-            return $this->cuntinueSession(filter_input(INPUT_COOKIE, $this->cookiePrefix . '_user_session_hash'), filter_input(INPUT_COOKIE, $this->cookiePrefix . '_user_id'));
-        }
     }
 
     function logOut() {
-        setcookie($this->cookiePrefix . "_user_session_hash", '', 0, "/");
-        setcookie($this->cookiePrefix . "_user_id", '', 0, "/");
+        if (!headers_sent()) {
+            setcookie($this->cookiePrefix . "_user_session_hash", '', 0, "/");
+            setcookie($this->cookiePrefix . "_user_id", '', 0, "/");
+        }
         Tools::redirect('/', 'Вы вышли из своего профиля', 'success');
     }
 
@@ -43,8 +46,10 @@ class Users extends Module {
                     ['hash', $hash]
         ]);
         if ($session && $session->user && $session->user->blocked) {
-            setcookie($this->cookiePrefix . "_user_session_hash", '', 0, "/");
-            setcookie($this->cookiePrefix . "_user_id", '', 0, "/");
+            if (!headers_sent()) {
+                setcookie($this->cookiePrefix . "_user_session_hash", '', 0, "/");
+                setcookie($this->cookiePrefix . "_user_id", '', 0, "/");
+            }
             Msg::add('Ваш аккаунт заблокирован', 'info');
             return;
         }
@@ -53,8 +58,10 @@ class Users extends Module {
             Users\User::$cur->last_activ = 'CURRENT_TIMESTAMP';
             Users\User::$cur->save();
         } else {
-            setcookie($this->cookiePrefix . "_user_session_hash", '', 0, "/");
-            setcookie($this->cookiePrefix . "_user_id", '', 0, "/");
+            if (!headers_sent()) {
+                setcookie($this->cookiePrefix . "_user_session_hash", '', 0, "/");
+                setcookie($this->cookiePrefix . "_user_id", '', 0, "/");
+            }
             Msg::add('Ваша сессия устарела или более недействительна, вам необходимо пройти <a href = "/users/login">авторазиацию</a> заново', 'info');
         }
     }
@@ -95,7 +102,7 @@ class Users extends Module {
         }
     }
 
-    function autorization($login, $pass, $ltype = 'login') {
+    function autorization($login, $pass, $ltype = 'login',$noMsg = true) {
 
         $user = $this->get($login, $ltype);
         if ($user && $this->verifypass($pass, $user->pass) && !$user->blocked) {
@@ -107,12 +114,12 @@ class Users extends Module {
             Users\User::$cur = $user;
             Users\User::$cur->last_activ = 'CURRENT_TIMESTAMP';
             Users\User::$cur->save();
-            if (isset($_POST['autorization']) && !empty($this->config['loginUrl'][$this->app->type])) {
+            if (!$noMsg && !empty($this->config['loginUrl'][$this->app->type])) {
                 Tools::redirect($this->config['loginUrl'][$this->app->type]);
             }
             return true;
         }
-        if (isset($_POST['autorization'])) {
+        if (!$noMsg) {
             if ($user && $user->blocked) {
                 Msg::add('Вы заблокированы', 'danger');
             } elseif ($user) {
@@ -131,7 +138,7 @@ class Users extends Module {
         $session = new Users\Session([
             'user_id' => $user->id,
             'agent' => $_SERVER['HTTP_USER_AGENT'],
-            'ip' =>  $_SERVER['REMOTE_ADDR']
+            'ip' => $_SERVER['REMOTE_ADDR']
         ]);
 
         $session->hash = $hash;
@@ -140,6 +147,8 @@ class Users extends Module {
         if (!headers_sent()) {
             setcookie($this->cookiePrefix . "_user_session_hash", $session->hash, time() + 360000, "/");
             setcookie($this->cookiePrefix . "_user_id", $session->user_id, time() + 360000, "/");
+        } else {
+            Msg::add('Не удалось провести авторизацию. Попробуйте позже', 'info');
         }
     }
 

@@ -249,13 +249,17 @@ class DataManagerController extends Controller {
                     case 'moduleMethod':
                         $ids = filter_input(INPUT_GET, 'ids', FILTER_SANITIZE_STRING);
                         if ($ids) {
-                            App::$cur->$action['module']->$action['method']($dataManager, trim($ids, ','), $_GET['adInfo']);
+                            $comandResult = App::$cur->$action['module']->$action['method']($dataManager, trim($ids, ','), !empty($_GET['adInfo']) ? $_GET['adInfo'] : []);
                         }
                         break;
                 }
             }
         }
         $result = new Server\Result();
+        if (!empty($comandResult)) {
+            $result->success = $comandResult['success'];
+            $result->content = $comandResult['content'];
+        }
         $result->successMsg = 'Операция выполнена';
         $result->send();
     }
