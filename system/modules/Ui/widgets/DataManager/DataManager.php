@@ -128,8 +128,12 @@ if (false) {
                                                   <?php
                                                   $form = new Ui\Form();
                                                   foreach ($dataManager->managerOptions['filters'] as $col) {
-                                                      $modelName = $dataManager->modelName;
-                                                      $colInfo = $modelName::getColInfo($col);
+                                                      if ($modelName) {
+                                                          $modelName = $dataManager->modelName;
+                                                          $colInfo = $modelName::getColInfo($col);
+                                                      } else {
+                                                          $colInfo = $dataManager->managerOptions['cols'][$col];
+                                                      }
                                                       $values = [];
                                                       $inputOptions = [];
                                                       if (!empty($dataManager->managerOptions['userGroupFilter'][\Users\User::$cur->group_id]['getRows'][$col])) {

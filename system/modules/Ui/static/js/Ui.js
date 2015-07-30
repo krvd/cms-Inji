@@ -234,7 +234,7 @@ DataManagers.prototype.get = function (element) {
 }
 DataManagers.prototype.popUp = function (item, params) {
     var code = item;
-    
+
     if (typeof (params.relation) != 'undefined') {
         code += params.relation;
     }
@@ -267,6 +267,10 @@ function DataManager(element) {
     this.page = 1;
     this.sortered = {};
     this.categoryPath = '/';
+    this.ajaxUrl = 'ui/dataManager/loadRows';
+    if (this.options.ajaxUrl) {
+        this.ajaxUrl = this.options.ajaxUrl;
+    }
     var instance = this;
     $(this.element).find('thead [type="checkbox"],tfoot [type="checkbox"]').click(function () {
         var index = $(this).closest('th').index();
@@ -446,14 +450,18 @@ DataManager.prototype.load = function (options) {
     var data = {params: params, modelName: this.modelName, managerName: this.managerName, filters: filters, sortered: this.sortered};
     if (options && options.download) {
         data.download = true;
-        window.location = inji.options.appRoot + 'ui/dataManager/loadRows?' + $.param(data);
+        var url = this.ajaxUrl;
+        if (url.indexOf(inji.options.appRoot) !== 0) {
+            url = inji.options.appRoot + url;
+        }
+        window.location = url + '?' + $.param(data);
         return;
     }
     dataManager.element.find('tbody').html('<tr><td colspan="' + dataManager.element.find('thead tr th').length + '"><div class = "text-center"><img src = "' + inji.options.appRoot + 'static/moduleAsset/Ui/images/ajax-loader.gif" /></div></td></tr>');
     var instance = this;
 
     inji.Server.request({
-        url: 'ui/dataManager/loadRows',
+        url: this.ajaxUrl,
         data: data,
         success: function (data) {
             dataManager.element.find('tbody').html(data.rows);

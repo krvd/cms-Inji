@@ -36,7 +36,7 @@ class DataManager extends \Object {
 
         if (!empty($this->managerOptions['name'])) {
             $this->name = $this->managerOptions['name'];
-        } elseif (!empty($modelName::$objectName)) {
+        } elseif ($modelName && isset($modelName::$objectName)) {
             $this->name = $modelName::$objectName;
         } else {
             $this->name = $modelName;
@@ -100,7 +100,10 @@ class DataManager extends \Object {
                 $colName = $col;
                 $colOptions = [];
             }
-            $colInfo = $modelName::getColInfo($colName);
+            $colInfo = [];
+            if ($modelName) {
+                $colInfo = $modelName::getColInfo($colName);
+            }
             if (empty($colOptions['label']) && !empty($colInfo['label'])) {
                 $colOptions['label'] = $colInfo['label'];
             } elseif (empty($colOptions['label'])) {
@@ -265,11 +268,11 @@ class DataManager extends \Object {
         return $rows;
     }
 
-    static function drawCol($item, $colName, $params = [], $dataManager = null, $originalCol = '', $originalItem=null) {
+    static function drawCol($item, $colName, $params = [], $dataManager = null, $originalCol = '', $originalItem = null) {
         if (!$originalCol) {
             $originalCol = $colName;
         }
-        if(!$originalItem){
+        if (!$originalItem) {
             $originalItem = $item;
         }
         $modelName = get_class($item);
@@ -278,7 +281,7 @@ class DataManager extends \Object {
             $rel = substr($colName, 0, strpos($colName, ':'));
             $col = substr($colName, strpos($colName, ':') + 1);
             if ($item->$rel) {
-                return DataManager::drawCol($item->$rel, $col, $params, $dataManager, $originalCol,$originalItem);
+                return DataManager::drawCol($item->$rel, $col, $params, $dataManager, $originalCol, $originalItem);
             } else {
                 return 'Не указано';
             }
