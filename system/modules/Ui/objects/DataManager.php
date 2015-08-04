@@ -187,7 +187,13 @@ class DataManager extends \Object {
                             $queryParams['where'][] = [$col, $params['filters'][$col]['min'], '>='];
                         }
                         if (!empty($params['filters'][$col]['max'])) {
-                            $queryParams['where'][] = [$col, $params['filters'][$col]['max'], '<='];
+                            if ($colInfo['colParams']['type'] == 'dateTime' && !strpos($params['filters'][$col]['max'], ' ')) {
+                                
+                                $date = $params['filters'][$col]['max'] . ' 23:59:59';
+                            } else {
+                                $date = $params['filters'][$col]['max'];
+                            }
+                            $queryParams['where'][] = [$col, $date, '<='];
                         }
                         break;
                     case 'number':
@@ -402,7 +408,13 @@ class DataManager extends \Object {
                             $queryParams['where'][] = [$col, $params['filters'][$col]['min'], '>='];
                         }
                         if (!empty($params['filters'][$col]['max'])) {
-                            $queryParams['where'][] = [$col, $params['filters'][$col]['max'], '<='];
+                            if ($colInfo['colParams']['type'] == 'dateTime' && !strpos($params['filters'][$col]['max'], ' ')) {
+                                
+                                $date = $params['filters'][$col]['max'] . ' 23:59:59';
+                            } else {
+                                $date = $params['filters'][$col]['max'];
+                            }
+                            $queryParams['where'][] = [$col, $date, '<='];
                         }
                         break;
                     case 'number':
