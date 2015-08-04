@@ -22,7 +22,7 @@ class Users extends Module {
         }
         if (isset($_POST['autorization']) && filter_input(INPUT_POST, 'user_login') && filter_input(INPUT_POST, 'user_pass')) {
             unset($_POST['autorization']);
-            return $this->autorization(filter_input(INPUT_POST, 'user_login'), filter_input(INPUT_POST, 'user_pass'), strpos(filter_input(INPUT_POST, 'user_login'), '@') ? 'mail' : 'login',false);
+            return $this->autorization(filter_input(INPUT_POST, 'user_login'), filter_input(INPUT_POST, 'user_pass'), strpos(filter_input(INPUT_POST, 'user_login'), '@') ? 'mail' : 'login', false);
         }
         if (isset($_GET['passre']) && filter_input(INPUT_GET, 'user_mail')) {
             return $this->passre(filter_input(INPUT_GET, 'user_mail'));
@@ -32,12 +32,14 @@ class Users extends Module {
         }
     }
 
-    function logOut() {
+    function logOut($redirect = true) {
         if (!headers_sent()) {
             setcookie($this->cookiePrefix . "_user_session_hash", '', 0, "/");
             setcookie($this->cookiePrefix . "_user_id", '', 0, "/");
         }
-        Tools::redirect('/', 'Вы вышли из своего профиля', 'success');
+        if ($redirect) {
+            Tools::redirect('/', 'Вы вышли из своего профиля', 'success');
+        }
     }
 
     function cuntinueSession($hash, $userId) {
@@ -102,7 +104,7 @@ class Users extends Module {
         }
     }
 
-    function autorization($login, $pass, $ltype = 'login',$noMsg = true) {
+    function autorization($login, $pass, $ltype = 'login', $noMsg = true) {
 
         $user = $this->get($login, $ltype);
         if ($user && $this->verifypass($pass, $user->pass) && !$user->blocked) {
