@@ -36,7 +36,7 @@ class Input extends \Object {
             return true;
         }
         $classPath = explode('\\', get_called_class());
-        $inputType = strtolower(array_pop($classPath));
+        $inputType = lcfirst(array_pop($classPath));
         $this->form->input($inputType, $inputName, $inputLabel, $inputOptions);
         return true;
     }

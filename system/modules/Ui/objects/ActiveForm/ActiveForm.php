@@ -245,8 +245,8 @@ class ActiveForm extends \Object {
                 break;
         }
         foreach ($values as $key => $value) {
-            if (is_array($value) && !empty($value['input'])) {
-                $values[$key]['input']['formInputName'] = $aditionalInputNamePrefix . "[{$value['input']['name']}]";
+            if (is_array($value) && !empty($value['input']) && empty($value['input']['noprefix'])) {
+                $values[$key]['input']['name'] = $aditionalInputNamePrefix . "[{$value['input']['name']}]";
             }
         }
         return $values;
