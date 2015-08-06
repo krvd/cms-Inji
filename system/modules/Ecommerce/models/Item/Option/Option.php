@@ -54,12 +54,17 @@ class Option extends \Model {
             'user' => [
                 'model' => 'Users\User',
                 'col' => 'user_id'
+            ],
+            'items' => [
+                'type' => 'many',
+                'model' => 'Ecommerce\Item\Option\Item',
+                'col' => 'item_option_id'
             ]
         ];
     }
-    
+
     function beforeSave() {
-        if(!isset($this->id)){
+        if (!isset($this->id)) {
             $this->user_id = \Users\User::$cur->id;
         }
     }

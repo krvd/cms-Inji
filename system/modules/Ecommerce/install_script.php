@@ -79,14 +79,24 @@ return function ($step = NULL, $params = array()) {
         'INDEX ' . App::$cur->db->table_prefix . '_ecommerce_paramOptionIndex (item_param_item_option_id)'
     ]);
     //связи опций с каталогами
-    App::$cur->db->createTable('ecommerce_item_optionrelation', array(
-        'item_optionrelation_id' => 'pk',
+    App::$cur->db->createTable('ecommerce_item_option_relation', array(
+        'item_option_relation_id' => 'pk',
         //Основные параметры
-        'item_optionrelation_category_id' => 'int(11) UNSIGNED NOT NULL',
-        'item_optionrelation_item_option_id' => 'int(11) UNSIGNED NOT NULL',
+        'item_option_relation_category_id' => 'int(11) UNSIGNED NOT NULL',
+        'item_option_relation_item_option_id' => 'int(11) UNSIGNED NOT NULL',
         //Системные
-        'item_optionrelation_weight' => 'int(11) UNSIGNED NOT NULL',
-        'item_optionrelation_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
+        'item_option_relation_weight' => 'int(11) UNSIGNED NOT NULL',
+        'item_option_relation_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
+    ));
+    //Элементы коллекций опций
+    App::$cur->db->createTable('ecommerce_item_option_item', array(
+        'item_option_item_id' => 'pk',
+        //Основные параметры
+        'item_option_item_item_option_id' => 'int(11) UNSIGNED NOT NULL',
+        'item_option_item_value' => 'int(11) UNSIGNED NOT NULL',
+        //Системные
+        'item_option_item_weight' => 'int(11) UNSIGNED NOT NULL',
+        'item_option_item_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
     ));
     //Типы цен
     App::$cur->db->createTable('ecommerce_item_price_type', array(
@@ -222,7 +232,7 @@ return function ($step = NULL, $params = array()) {
         'cart_complete_data' => 'timestamp DEFAULT 0',
         'cart_date_last_activ' => 'timestamp DEFAULT 0',
         'cart_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
-            ) , [
+            ), [
         'INDEX ' . App::$cur->db->table_prefix . '_ecommerce_cartStatusBlock (cart_cart_status_id, cart_warehouse_block)',
         'INDEX ' . App::$cur->db->table_prefix . '_ecommerce_cartStats (cart_cart_status_id)',
         'INDEX ' . App::$cur->db->table_prefix . '_ecommerce_cartBlock (cart_warehouse_block)'

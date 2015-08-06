@@ -19,10 +19,23 @@ class Param extends \Model {
     static $cols = [
         'item_option_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'option'],
         'item_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'item'],
-        'value' => ['type' => 'text'],
+        'value' => ['type' => 'dynamicType', 'typeSource' => 'selfMethod', 'selfMethod' => 'realType'],
     ];
+
+    function realType() {
+        $type = $this->option->type;
+        if ($type == 'select') {
+            return [
+                'type' => 'select',
+                'source' => 'relation',
+                'relation' => 'option:items',
+            ];
+        }
+        return $type;
+    }
+
     static $dataManagers = [
-        
+
         'manager' => [
             'name' => 'Параметры товара',
             'cols' => [

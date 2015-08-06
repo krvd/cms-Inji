@@ -234,7 +234,12 @@ class Query extends \Object {
         switch ($this->operation) {
             case 'INSERT':
                 $this->params = array_merge($this->params, array_values($this->cols));
-                $query .= ' (`' . implode('`,`', array_keys($this->cols)) . '`) VALUES (' . rtrim(str_repeat('?,', count($this->cols)), ',') . ')';
+                $colsStr = '`' . implode('`,`', array_keys($this->cols)) . '`';
+                $colsStr = '';
+                if ($this->cols) {
+                    $colsStr = '`' . implode('`,`', array_keys($this->cols)) . '`';
+                }
+                $query .= ' (' . $colsStr . ') VALUES (' . rtrim(str_repeat('?,', count($this->cols)), ',') . ')';
                 break;
             case 'CREATE TABLE':
                 $query .= " (";

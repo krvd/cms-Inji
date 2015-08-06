@@ -1,27 +1,8 @@
 <?php
 
-/**
- * Cart model
- *
- * @author Alexey Krupskiy <admin@inji.ru>
- */
-class Cart extends Model
+namespace Ecommerce;
+class Cart extends \Model
 {
-
-    static function colPrefix()
-    {
-        return 'cc_';
-    }
-
-    static function table()
-    {
-        return 'catalog_carts';
-    }
-
-    static function index()
-    {
-        return 'cc_id';
-    }
 
     static function relations()
     {

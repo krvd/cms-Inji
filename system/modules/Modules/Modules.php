@@ -176,7 +176,6 @@ class Modules extends Module {
                 continue;
             }
             $modelsNames = $this->getModelsList($configModule);
-
             $info = Modules::getInfo($configModule);
             $moduleName = !empty($info['name']) ? $info['name'] : $configModule;
             foreach ($modelsNames as $modelName) {
@@ -188,15 +187,18 @@ class Modules extends Module {
         return $models;
     }
 
-    function getModelsList($module) {
-        $path = Module::getModulePath($module) . '/models';
+    function getModelsList($module, $dir = '') {
+        $modulePath = Module::getModulePath($module);
+        $path = rtrim($modulePath . '/models/' . $dir, '/');
         $models = [];
         if (file_exists($path)) {
             foreach (array_slice(scandir($path), 2) as $file) {
-                if (is_dir($file)) {
-                    continue;
+                $modelLastName = pathinfo($file, PATHINFO_FILENAME);
+                if (is_dir($path . '/' . $file)) {
+                    $models = array_merge($models, $this->getModelsList($module, $dir . '/' . $modelLastName));
                 }
-                $models[] = pathinfo($file, PATHINFO_FILENAME);
+                $nameSpace = trim(preg_replace('!/' . $modelLastName.'$!', '', $dir),'/');
+                $models[] = trim(str_replace('/', '\\', $nameSpace) . '\\' . $modelLastName,'\\');
             }
         }
         return $models;

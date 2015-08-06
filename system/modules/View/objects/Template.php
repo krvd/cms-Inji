@@ -203,20 +203,27 @@ class Template extends \Object {
         }
         $paths = [];
         if ($this->module) {
+            $paths['templateModuleController'] = $this->path . "/modules/{$this->module->moduleName}/" . \Controller::$cur->name . "/{$content}.php";
             $paths['templateModule'] = $this->path . "/modules/{$this->module->moduleName}/{$content}.php";
         }
         if (\Module::$cur) {
-            $paths['templateCurModule'] = $this->path . "/modules/".\Module::$cur->moduleName."/{$content}.php";
+            $paths['templateCurModuleController'] = $this->path . "/modules/" . \Module::$cur->moduleName . "/" . \Controller::$cur->name . "/{$content}.php";
+            $paths['templateCurModule'] = $this->path . "/modules/" . \Module::$cur->moduleName . "/{$content}.php";
         }
         if (\Controller::$cur) {
+            $paths['appControllerContentController'] = \Controller::$cur->module->app->path . '/modules/' . \Controller::$cur->module->moduleName . '/' . \Controller::$cur->module->app->type . "Controllers/content/" . \Controller::$cur->name . "/{$content}.php";
             $paths['appControllerContent'] = \Controller::$cur->module->app->path . '/modules/' . \Controller::$cur->module->moduleName . '/' . \Controller::$cur->module->app->type . "Controllers/content/{$content}.php";
+            $paths['controllerContentController'] = \Controller::$cur->path . "/content/" . \Controller::$cur->name . "/{$content}.php";
             $paths['controllerContent'] = \Controller::$cur->path . "/content/{$content}.php";
+            $paths['moduleControllerContentController'] = \Controller::$cur->module->path . '/' . \Controller::$cur->module->app->type . "Controllers/content/" . \Controller::$cur->name . "/{$content}.php";
             $paths['moduleControllerContent'] = \Controller::$cur->module->path . '/' . \Controller::$cur->module->app->type . "Controllers/content/{$content}.php";
         }
         if ($this->module) {
+            $paths['customModuleTemplateControllerContentController'] = $this->path . "/modules/" . $this->module->moduleName . "/" . \Controller::$cur->name . "/{$content}.php";
             $paths['customModuleTemplateControllerContent'] = $this->path . "/modules/" . $this->module->moduleName . "/{$content}.php";
         }
         if ($this->module && \Controller::$cur) {
+            $paths['customModuleControllerContentController'] = $this->module->path . '/' . \Controller::$cur->module->app->type . "Controllers/content/" . \Controller::$cur->name . "/{$content}.php";
             $paths['customModuleControllerContent'] = $this->module->path . '/' . \Controller::$cur->module->app->type . "Controllers/content/{$content}.php";
         }
         return $paths;

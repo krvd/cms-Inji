@@ -46,7 +46,7 @@ class Category extends \Model {
             'options' => [
                 'type' => 'relModel',
                 'model' => 'Ecommerce\Item\Option',
-                'relModel' => 'Ecommerce\Item\OptionRelation',
+                'relModel' => 'Ecommerce\Item\Option\Relation',
             ],
             'image' => [
                 'model' => 'Files\File',

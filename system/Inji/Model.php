@@ -770,7 +770,7 @@ class Model {
             if (isset($this->_params[$col]))
                 $values[$col] = $this->_params[$col];
         }
-        if (!$values)
+        if (!$values && empty($options['empty']))
             return false;
 
         if (!empty($this->_params[$this->index()])) {

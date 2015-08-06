@@ -1,11 +1,7 @@
 <?php
 
-/**
- * Cart Item model
- *
- * @author Alexey Krupskiy <admin@inji.ru>
- */
-class CartItem extends Model {
+namespace Ecommerce\Cart;
+class Item extends \Model {
 
     static $names = ['Товар в корзине', 'Товары в корзине'];
 

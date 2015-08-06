@@ -1,7 +1,9 @@
 <?php
 
 /**
- * Option to catalog relation
+ * Item name
+ *
+ * Info
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/
@@ -9,7 +11,8 @@
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
 
-namespace Ecommerce\Item;
-class OptionRelation extends \Model {
-    static $objectName = 'Связь каталога и опций';
+namespace Migrations\Migration\Object\Param;
+
+class Value extends \Model {
+    //put your code here
 }
