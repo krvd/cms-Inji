@@ -51,7 +51,7 @@ class Input extends \Object {
     }
 
     function value() {
-        $value = isset($this->colParams['default']) ? $colParams['default'] : '';
+        $value = isset($this->colParams['default']) ? $this->colParams['default'] : '';
         if ($this->activeForm) {
             $value = ($this->activeForm && $this->activeForm->model && isset($this->activeForm->model->{$this->colName})) ? $this->activeForm->model->{$this->colName} : $value;
         }

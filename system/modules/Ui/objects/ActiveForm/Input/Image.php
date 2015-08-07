@@ -38,11 +38,11 @@ class Image extends \Ui\ActiveForm\Input {
             $file_id = \App::$primary->files->upload([
                 'tmp_name' => $_FILES[$this->activeForm->requestFormName]['tmp_name'][$this->modelName][$this->colName],
                 'name' => $_FILES[$this->activeForm->requestFormName]['name'][$this->modelName][$this->colName],
-                'type' => $_FILES[$this->activeForm->activeForm->requestFormName]['type'][$this->modelName][$this->colName],
+                'type' => $_FILES[$this->activeForm->requestFormName]['type'][$this->modelName][$this->colName],
                 'size' => $_FILES[$this->activeForm->requestFormName]['size'][$this->modelName][$this->colName],
                 'error' => $_FILES[$this->activeForm->requestFormName]['error'][$this->modelName][$this->colName],
                     ], [
-                'upload_code' => 'activeForm:' . $modelName . ':' . $this->activeForm->model->pk(),
+                'upload_code' => 'activeForm:' . $this->activeForm->modelName . ':' . $this->activeForm->model->pk(),
                 'accept_group' => 'image'
             ]);
             if ($file_id) {
