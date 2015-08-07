@@ -1,10 +1,20 @@
 <?php
 
+/**
+ * Ecommerce item model
+ *
+ * @author Alexey Krupskiy <admin@inji.ru>
+ * @link http://inji.ru/
+ * @copyright 2015 Alexey Krupskiy
+ * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
+ */
+
 namespace Ecommerce;
 
 class Item extends \Model {
 
     static $categoryModel = 'Ecommerce\Category';
+    static $objectName = 'Товар';
     static $labels = [
         'name' => 'Название',
         'category_id' => 'Раздел',
@@ -13,7 +23,7 @@ class Item extends \Model {
         'image_file_id' => 'Изображение',
         'best' => 'Лучшее предложение',
         'options' => 'Параметры',
-        'prices' => 'Цены',
+        'offers' => 'Торговые предложения',
     ];
     static $cols = [
         'name' => ['type' => 'text'],
@@ -23,7 +33,7 @@ class Item extends \Model {
         'image_file_id' => ['type' => 'image'],
         'best' => ['type' => 'bool'],
         'options' => ['type' => 'dataManager', 'relation' => 'options'],
-        'prices' => ['type' => 'dataManager', 'relation' => 'prices'],
+        'offers' => ['type' => 'dataManager', 'relation' => 'offers'],
     ];
     static $dataManagers = [
         'manager' => [
@@ -34,7 +44,7 @@ class Item extends \Model {
                 'item_type_id',
                 'best',
                 'options',
-                'prices',
+                'offers',
             ],
             'categorys' => [
                 'model' => 'Ecommerce\Category',
@@ -48,7 +58,7 @@ class Item extends \Model {
                 ['item_type_id', 'best', 'image_file_id'],
                 ['description'],
                 ['options'],
-                ['prices'],
+                ['offers'],
             ]
     ]];
 
@@ -166,9 +176,9 @@ SELECT COALESCE(sum(ewb_count) ,0) as `sum`
                     'join' => [Item\Option::table(), Item\Option::index() . ' = ' . Item\Param::colPrefix() . Item\Option::index()]
                 ]
             ],
-            'prices' => [
+            'offers' => [
                 'type' => 'many',
-                'model' => 'Ecommerce\Item\Price',
+                'model' => 'Ecommerce\Item\Offer',
                 'col' => 'item_id',
             ],
             'type' => [

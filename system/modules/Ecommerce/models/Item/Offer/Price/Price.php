@@ -1,6 +1,6 @@
 <?php
 
-namespace Ecommerce\Item;
+namespace Ecommerce\Item\Offer;
 
 class Price extends \Model {
 
@@ -15,19 +15,17 @@ class Price extends \Model {
         'item_price_type_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'type'],
         'unit_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'unit'],
         'item_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'item'],
-        'warehouses' => ['type' => 'select', 'source' => 'relation', 'relation' => 'warehouses'],
     ];
     static $labels = [
         'name' => 'Название',
         'price' => 'Цена',
         'delivery_weight' => 'Вес',
-        'article' => 'Артикль',
+        'article' => 'Артикул',
         'inpack' => 'В упаковке',
         'image_file_id' => 'Изображение',
         'item_price_type_id' => 'Тип цены',
         'unit_id' => 'Единица измерения',
         'item_id' => 'Товар',
-        'warehouses' => 'Склад',
     ];
     static $dataManagers = [
         'manager' => [
@@ -38,7 +36,6 @@ class Price extends \Model {
                 'price',
                 'inpack',
                 'unit_id',
-                'warehouses',
             ]
         ],
     ];
@@ -65,22 +62,17 @@ class Price extends \Model {
 
     static function relations() {
         return [
-            'item' => [
-                'model' => 'Ecommerce\Item',
-                'col' => 'item_id'
+            'offer' => [
+                'model' => 'Ecommerce\Item\Offer',
+                'col' => 'item_offer_id'
             ],
             'unit' => [
                 'model' => 'Ecommerce\Unit',
                 'col' => 'unit_id'
             ],
             'type' => [
-                'model' => 'Ecommerce\Item\Price\Type',
-                'col' => 'item_price_type_id'
-            ],
-            'warehouses' => [
-                'type' => 'many',
-                'model' => 'Ecommerce\Item\Price\Warehouse',
-                'col' => 'item_price_id'
+                'model' => 'Ecommerce\Item\Offer\Price\Type',
+                'col' => 'item_offer_price_type_id'
             ],
         ];
     }

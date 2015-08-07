@@ -76,6 +76,7 @@ class Object extends \Object {
                 if (!$this->reader->__isset($code)) {
                     return;
                 }
+
                 switch ($param->type) {
                     case 'objectLink':
                         $object = \Migrations\Migration\Object::get($param->value);
@@ -86,6 +87,17 @@ class Object extends \Object {
                         $modelName = $object->model;
                         $model = $modelName::get($objectId->object_id);
                         $where[] = [$model->index(), $model->pk()];
+                        break;
+                    case 'relation':
+                        $modelName = $this->object->model;
+                        $relation = $modelName::getRelation($param->value);
+                        $objectId = \Migrations\Id::get([['parse_id', (string) $this->reader->$code], ['type', $relation['model']]]);
+                        if (!$objectId) {
+                            return;
+                        }
+                        $modelName = $relation['model'];
+                        $model = $modelName::get($objectId->object_id);
+                        $where[] = [$relation['col'], $model->pk()];
                         break;
                 }
             }

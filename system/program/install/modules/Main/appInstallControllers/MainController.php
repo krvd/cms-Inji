@@ -11,6 +11,7 @@
 class MainController extends Controller {
 
     function indexAction() {
+        $this->view->setTitle('Настройка подключения');
         $this->view->page();
     }
 
@@ -21,6 +22,7 @@ class MainController extends Controller {
             }
             Tools::redirect('/install/main/modules', 'Моудли ' . implode(',', $_GET['modules']) . ' установлены');
         }
+        $this->view->setTitle('');
         $this->view->page();
     }
 

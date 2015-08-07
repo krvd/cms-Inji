@@ -1,6 +1,6 @@
 <?php
 
-namespace Ecommerce\Item\Price;
+namespace Ecommerce\Item\Offer\Price;
 
 class Type extends \Model {
 

@@ -47,6 +47,29 @@ class Module {
         }
     }
 
+    static function installed($moduleName, $app) {
+        
+        $systemModules = !empty(Inji::$config['modules']) ? Inji::$config['modules'] : [];
+        if (in_array($moduleName, $systemModules)) {
+            return true;
+        }
+
+        $primaryModules = !empty(App::$primary->config['modules']) ? App::$primary->config['modules'] : [];
+        if (in_array($moduleName, $primaryModules)) {
+            return true;
+        }
+        
+        if ($app !== \App::$primary) {
+            $appModules = !empty($app->config['modules']) ? $app->config['modules'] : [];
+            if (in_array($moduleName, $appModules)) {
+                return true;
+            }
+        }
+        
+
+        return FALSE;
+    }
+
     static function resolveModule($app) {
         $moduleName = false;
         if (!empty($app->params[0]) && $app->{$app->params[0]}) {

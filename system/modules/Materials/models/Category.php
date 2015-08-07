@@ -9,7 +9,7 @@ class Category extends \Model {
     static $labels = [
         'name' => 'Название',
         'description' => 'Описание',
-        'image' => 'Изображение',
+        'image_file_id' => 'Изображение',
         'parent_id' => 'Родитель',
         'alias' => 'Алиас',
         'viewer' => 'Тип категории по умолчанию',
@@ -21,7 +21,7 @@ class Category extends \Model {
         'name' => ['type' => 'text'],
         'description' => ['type' => 'html'],
         'alias' => ['type' => 'text'],
-        'image' => ['type' => 'image'],
+        'image_file_id' => ['type' => 'image'],
         'parent_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'parent', 'showCol' => 'name'],
         'viewer' => ['type' => 'select', 'source' => 'method', 'method' => 'viewsCategoryList', 'module' => 'Materials'],
         'template' => ['type' => 'select', 'source' => 'method', 'method' => 'templatesCategoryList', 'module' => 'Materials'],
@@ -55,7 +55,7 @@ class Category extends \Model {
             ],
             'map' => [
                 ['name', 'parent_id'],
-                ['alias', 'image'],
+                ['alias', 'image_file_id'],
                 ['viewer', 'template'],
                 ['material_viewer', 'material_template'],
                 ['description'],
@@ -85,6 +85,10 @@ class Category extends \Model {
                 'model' => 'Materials\Material',
                 'col' => 'category_id'
             ],
+            'image' => [
+                'model' => 'Files\File',
+                'col' => 'image_file_id'
+            ]
         ];
     }
 

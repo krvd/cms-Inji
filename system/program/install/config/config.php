@@ -3,7 +3,14 @@
 return [
     'name' => 'Установка системы',
     'modules' => [
-        'Main'
+        'Main',
+        'Modules',
+        'Users',
+        
+        'Db',
+        'View',
+        'Libs',
+        'Server'
     ],
     'defaultModule' => 'Main',
     'autoloadModules' => [

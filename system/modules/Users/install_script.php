@@ -33,10 +33,6 @@ return function ($step = NULL, $params = array()) {
             'user_role_id' => '3',
         ));
     }
-    App::$cur->db->insert('users_info', array(
-        'info_first_name' => 'Администратор',
-        'info_user_id' => $userId,
-    ));
     //users session
     App::$cur->db->createTable('users_session', array(
         'session_id' => 'pk',
@@ -66,6 +62,10 @@ return function ($step = NULL, $params = array()) {
         'info_sex' => 'int(11) NOT NULL',
         'info_photo_file_id' => 'int(11) NOT NULL',
         'info_bday' => 'date NOT NULL',
+    ));
+    App::$cur->db->insert('users_info', array(
+        'info_first_name' => 'Администратор',
+        'info_user_id' => $userId,
     ));
     //users group
     App::$cur->db->createTable('users_group', array(

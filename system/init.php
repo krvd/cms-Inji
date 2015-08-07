@@ -23,7 +23,14 @@ Inji::$inst = new Inji();
 Inji::$config = Config::system();
 
 $apps = Config::custom(INJI_PROGRAM_DIR . '/apps.php');
-$finalApp = NULL;
+//Make default app params
+$finalApp = [
+    'name' => INJI_DOMAIN_NAME,
+    'dir' => INJI_DOMAIN_NAME,
+    'installed' => false,
+    'default' => true,
+    'route' => INJI_DOMAIN_NAME,
+];
 foreach ($apps as $app) {
     if ($app['default'] && !$finalApp) {
         $finalApp = $app;
@@ -32,15 +39,6 @@ foreach ($apps as $app) {
         $finalApp = $app;
         break;
     }
-}
-if (!$finalApp) {
-    $finalApp = [
-        'name' => INJI_DOMAIN_NAME,
-        'dir' => INJI_DOMAIN_NAME,
-        'installed' => false,
-        'default' => true,
-        'route' => INJI_DOMAIN_NAME,
-    ];
 }
 App::$cur = new App($finalApp);
 
@@ -68,7 +66,7 @@ if (!empty($params[0]) && file_exists(INJI_SYSTEM_DIR . '/program/' . $params[0]
     App::$cur->config = Config::app(App::$cur);
 }
 $shareConfig = Config::share();
-if (App::$cur->name != 'install' && empty($shareConfig['installed']) && (empty(App::$cur->params[0]) || App::$cur->params[0]!='static')) {
+if (App::$cur->name != 'install' && empty($shareConfig['installed']) && (empty(App::$cur->params[0]) || App::$cur->params[0] != 'static')) {
     Tools::redirect('/install');
 }
 

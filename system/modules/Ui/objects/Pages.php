@@ -33,7 +33,7 @@ class Pages extends \Object {
         }
     }
 
-    function draw($class = 'pagination pagination-centered margin-none') {
+    function draw($class = 'pagination pagination-centered margin-none pagination-sm') {
         $getArr = $this->data;
         $getArr['limit'] = $this->params['limit'];
         \App::$cur->view->widget('Ui\Pages/pages', ['class' => $class, 'pagesInstance' => $this, 'getArr' => $getArr]);

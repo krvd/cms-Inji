@@ -2,6 +2,11 @@
 
 return [
     'autoloadModules' => [],
+    'modules' => [
+        'StaticLoader',
+        'Ui',
+        'Access'
+    ],
     'moduleRouter' => [
         'static' => 'StaticLoader'
     ],

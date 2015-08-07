@@ -48,6 +48,7 @@ class Options extends \Model {
     
     static $dataManagers = [
         'manager' => [
+            'name'=>'Настройки соединения с БД',
             'options' => [
                 'access' => [
                     'groups' => [
@@ -64,6 +65,7 @@ class Options extends \Model {
     ];
     static $forms = [
         'manager' => [
+            'name'=>'Соединение с БД',
             'map' => [
                 ['connect_name', 'connect_alias','driver'],
                 ['host', 'user'],

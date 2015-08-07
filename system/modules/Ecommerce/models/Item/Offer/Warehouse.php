@@ -1,6 +1,6 @@
 <?php
 
-namespace Ecommerce\Item\Price;
+namespace Ecommerce\Item\Offer;
 
 class Warehouse extends \Model {
 
@@ -8,12 +8,12 @@ class Warehouse extends \Model {
     static $labels = [
         'count' => 'Количество',
         'warehouse_id' => 'Склад',
-        'item_price_id' => 'Торговое предложение',
+        'item_offer_id' => 'Торговое предложение',
     ];
     static $cols = [
         'count' => ['type' => 'text'],
         'warehouse_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'warehouse'],
-        'item_price_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'price'],
+        'item_offer_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'offer'],
     ];
     static $dataManagers = [
         'manager' => [
@@ -38,9 +38,9 @@ class Warehouse extends \Model {
                 'model' => 'Ecommerce\Warehouse',
                 'col' => 'warehouse_id'
             ],
-            'price' => [
-                'model' => 'Ecommerce\Item\Price',
-                'col' => 'item_price_id'
+            'offer' => [
+                'model' => 'Ecommerce\Item\Offer',
+                'col' => 'item_offer_id'
             ],
         ];
     }

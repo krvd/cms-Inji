@@ -27,6 +27,7 @@ class Query extends \Object {
     public $operation = '';
     public $indexes = [];
     public $params = [];
+    public $distinct = false;
 
     function __construct($instance = null) {
         if (!$instance) {
@@ -218,7 +219,7 @@ class Query extends \Object {
 
         switch ($this->operation) {
             case 'SELECT':
-
+                $query .= ' ' . ($this->distinct ? 'DISTINCT' : '');
                 $query .= ' ' . (!$this->cols ? '*' : ((is_array($this->cols) ? implode(',', $this->cols) : $this->cols)));
             case 'DELETE':
                 $query .= ' FROM';

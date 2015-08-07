@@ -1,5 +1,4 @@
 AddDefaultCharset UTF-8
-php_flag magic_quotes_gpc Off
 
 RewriteEngine on
 #RewriteCond %{REQUEST_URI} !^/file.html

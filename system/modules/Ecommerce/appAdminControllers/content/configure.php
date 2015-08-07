@@ -54,7 +54,7 @@
         </div>
         <div role="tabpanel" class="tab-pane fade" id="priceType">
             <?php
-            $dataManager = new Ui\DataManager('Ecommerce\Item\Price\Type');
+            $dataManager = new Ui\DataManager('Ecommerce\Item\Offer\Price\Type');
             $dataManager->draw();
             ?>
         </div>

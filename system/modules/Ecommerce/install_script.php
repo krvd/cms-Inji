@@ -26,7 +26,7 @@ return function ($step = NULL, $params = array()) {
         'item_type_electronic' => 'tinyint(1) NOT NULL',
     ));
     //Товары
-    App::$cur->db->createTable('ecommerce_item', array(
+    App::$cur->db->createTable('ecommerce_item', [
         'item_id' => 'pk',
         //Основные параметры
         'item_category_id' => 'int(11) UNSIGNED NOT NULL',
@@ -44,7 +44,11 @@ return function ($step = NULL, $params = array()) {
         'item_tree_path' => 'TEXT NOT NULL',
         'item_search_index' => 'TEXT NOT NULL',
         'item_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
-    ));
+            ], [
+        'INDEX ' . App::$cur->db->table_prefix . '_ecommerce_itemOptionRelation (item_param_item_id, item_param_item_option_id)',
+        'INDEX ' . App::$cur->db->table_prefix . '_ecommerce_paramItemIndex (item_param_item_id)',
+        'INDEX ' . App::$cur->db->table_prefix . '_ecommerce_paramOptionIndex (item_param_item_option_id)'
+    ]);
 
     //Опции товаров
     App::$cur->db->createTable('ecommerce_item_option', array(
@@ -93,20 +97,20 @@ return function ($step = NULL, $params = array()) {
         'item_option_item_id' => 'pk',
         //Основные параметры
         'item_option_item_item_option_id' => 'int(11) UNSIGNED NOT NULL',
-        'item_option_item_value' => 'int(11) UNSIGNED NOT NULL',
+        'item_option_item_value' => 'VARCHAR(255) NOT NULL',
         //Системные
         'item_option_item_weight' => 'int(11) UNSIGNED NOT NULL',
         'item_option_item_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
     ));
     //Типы цен
-    App::$cur->db->createTable('ecommerce_item_price_type', array(
-        'item_price_type_id' => 'pk',
+    App::$cur->db->createTable('ecommerce_item_offer_price_type', array(
+        'item_offer_price_type_id' => 'pk',
         //Основные параметры
-        'item_price_type_name' => 'varchar(255) NOT NULL',
-        'item_price_type_curency' => 'varchar(255) NOT NULL',
-        'item_price_type_roles' => 'varchar(255) NOT NULL',
+        'item_offer_price_type_name' => 'varchar(255) NOT NULL',
+        'item_offer_price_type_curency' => 'varchar(255) NOT NULL',
+        'item_offer_price_type_roles' => 'varchar(255) NOT NULL',
         //Системные
-        'item_price_type_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
+        'item_offer_price_type_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
     ));
     //Единицы измерения
     App::$cur->db->createTable('ecommerce_unit', [
@@ -117,22 +121,33 @@ return function ($step = NULL, $params = array()) {
         //Системные
         'unit_international' => 'VARCHAR(255) NOT NULL',
     ]);
-    //Цены
-    App::$cur->db->createTable('ecommerce_item_price', array(
-        'item_price_id' => 'pk',
+    //Торговые предложения
+    App::$cur->db->createTable('ecommerce_item_offer', array(
+        'item_offer_id' => 'pk',
         //Основные параметры
-        'item_price_item_id' => 'int(11) UNSIGNED NOT NULL',
-        'item_price_unit_id' => 'int(11) UNSIGNED NOT NULL',
-        'item_price_item_price_type_id' => 'int(11) UNSIGNED NOT NULL',
-        'item_price_name' => 'text NOT NULL',
-        'item_price_price' => 'decimal(10, 2) NOT NULL',
-        'item_price_delivery_weight' => 'int(11) UNSIGNED NOT NULL',
-        'item_price_article' => 'varchar(255) NOT NULL',
-        'item_price_inpack' => 'int(11) UNSIGNED NOT NULL',
-        'item_price_image_file_id' => 'int(11) UNSIGNED NOT NULL',
+        'item_offer_item_id' => 'int(11) UNSIGNED NOT NULL',
+        'item_offer_name' => 'varchar(255) NOT NULL',
+        'item_offer_article' => 'varchar(255) NOT NULL',
         //Системные
-        'item_price_weight' => 'int(11) UNSIGNED NOT NULL',
-        'item_price_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
+        'item_offer_weight' => 'int(11) UNSIGNED NOT NULL',
+        'item_offer_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
+    ));
+    //Цены
+    App::$cur->db->createTable('ecommerce_item_offer_price', array(
+        'item_offer_price_id' => 'pk',
+        //Основные параметры
+        'item_offer_price_item_offer_id' => 'int(11) UNSIGNED NOT NULL',
+        'item_offer_price_unit_id' => 'int(11) UNSIGNED NOT NULL',
+        'item_offer_price_item_offer_price_type_id' => 'int(11) UNSIGNED NOT NULL',
+        'item_offer_price_name' => 'text NOT NULL',
+        'item_offer_price_price' => 'decimal(10, 2) NOT NULL',
+        'item_offer_price_delivery_weight' => 'int(11) UNSIGNED NOT NULL',
+        'item_offer_price_article' => 'varchar(255) NOT NULL',
+        'item_offer_price_inpack' => 'int(11) UNSIGNED NOT NULL',
+        'item_offer_price_image_file_id' => 'int(11) UNSIGNED NOT NULL',
+        //Системные
+        'item_offer_price_weight' => 'int(11) UNSIGNED NOT NULL',
+        'item_offer_price_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
     ));
     //Склады
     App::$cur->db->createTable('ecommerce_warehouse', array(
@@ -143,16 +158,16 @@ return function ($step = NULL, $params = array()) {
         'warehouse_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
     ));
     //Количество на складах торговых предложений 
-    App::$cur->db->createTable('ecommerce_item_price_warehouse', array(
-        'item_price_warehouse_id' => 'pk',
+    App::$cur->db->createTable('ecommerce_item_offer_warehouse', array(
+        'item_offer_warehouse_id' => 'pk',
         //Основные параметры
-        'item_price_warehouse_warehouse_id' => 'int(11) UNSIGNED NOT NULL',
-        'item_price_warehouse_item_price_id' => 'int(11) UNSIGNED NOT NULL',
-        'item_price_warehouse_count' => 'int(11) NOT NULL',
+        'item_offer_warehouse_warehouse_id' => 'int(11) UNSIGNED NOT NULL',
+        'item_offer_warehouse_item_offer_price_id' => 'int(11) UNSIGNED NOT NULL',
+        'item_offer_warehouse_count' => 'int(11) NOT NULL',
         //Системные
-        'item_price_warehouse_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
+        'item_offer_warehouse_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
             ), [
-        'INDEX ' . App::$cur->db->table_prefix . '_ecommerce_warehousePriceIndex (item_price_warehouse_item_price_id)'
+        'INDEX ' . App::$cur->db->table_prefix . '_ecommerce_warehousePriceIndex (item_offer_price_warehouse_item_offer_price_id)'
     ]);
     //Типы статусов корзин
     App::$cur->db->createTable('ecommerce_cart_status', array(
@@ -206,10 +221,10 @@ return function ($step = NULL, $params = array()) {
         'delivery_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
     ));
     //Способы оплат
-    App::$cur->db->createTable('ecommerce_pay_type', [
-        'pay_type_id' => 'pk',
-        'pay_type_name' => 'VARCHAR(255) NOT NULL',
-        'pay_type_icon_file_id' => 'VARCHAR(255) NOT NULL',
+    App::$cur->db->createTable('ecommerce_paytype', [
+        'paytype_id' => 'pk',
+        'paytype_name' => 'VARCHAR(255) NOT NULL',
+        'paytype_icon_file_id' => 'VARCHAR(255) NOT NULL',
     ]);
     //Корзины
     App::$cur->db->createTable('ecommerce_cart', array(
@@ -219,7 +234,7 @@ return function ($step = NULL, $params = array()) {
         'cart_useradds_id' => 'int(11) UNSIGNED NOT NULL',
         'cart_cart_status_id' => 'int(11) UNSIGNED NOT NULL',
         'cart_delivery_id' => 'int(11) UNSIGNED NOT NULL',
-        'cart_pay_type_id' => 'int(11) UNSIGNED NOT NULL',
+        'cart_paytype_id' => 'int(11) UNSIGNED NOT NULL',
         //Системные
         'cart_sum' => 'decimal(10,2) NOT NULL',
         'cart_payid' => 'int(11) UNSIGNED NOT NULL',
@@ -243,7 +258,7 @@ return function ($step = NULL, $params = array()) {
         //Основные параметры
         'cart_item_cart_id' => 'int(11) UNSIGNED NOT NULL',
         'cart_item_count' => 'int(11) UNSIGNED NOT NULL',
-        'cart_item_item_price_id' => 'int(11) UNSIGNED NOT NULL',
+        'cart_item_item_offer_price_id' => 'int(11) UNSIGNED NOT NULL',
         'cart_item_item_id' => 'int(11) UNSIGNED NOT NULL',
         'cart_item_final_price' => 'decimal(10,2) NOT NULL',
         //Системные
