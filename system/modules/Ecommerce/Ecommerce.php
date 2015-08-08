@@ -237,7 +237,8 @@ class Ecommerce extends Module {
                 return [];
             $selectOptions['where'][] = ['id', implode(',', $ids), 'IN'];
         }
-        $selectOptions['join'] = [Ecommerce\Item\Price::table(), Ecommerce\Item::index() . ' = ' . Ecommerce\Item\Price::colPrefix() . Ecommerce\Item::index() . ' and ' . Ecommerce\Item\Price::colPrefix() . 'price>0', 'inner'];
+        $selectOptions['join'][] = [Ecommerce\Item\Offer::table(), Ecommerce\Item::index() . ' = ' . Ecommerce\Item\Offer::colPrefix() . Ecommerce\Item::index(), 'inner'];
+        $selectOptions['join'][] = [Ecommerce\Item\Offer\Price::table(), Ecommerce\Item\Offer::index() . ' = ' . Ecommerce\Item\Offer\Price::colPrefix() . Ecommerce\Item\Offer::index() . ' and ' . Ecommerce\Item\Offer\Price::colPrefix() . 'price>0', 'inner'];
 
         $selectOptions['distinct'] = true;
         //\App::$cur->db->cols = 'DISTINCT `' . \App::$cur->db->table_prefix . 'catalog_items`. *';
@@ -263,45 +264,44 @@ class Ecommerce extends Module {
 
           //\App::$cur->db->join('catalog_carts', '`cc_warehouse_block` = 1 and `cc_status` in(2,3)');
           //\App::$cur->db->join('catalog_cart_items', '`cci_cc_id` = `cc_id` and `cci_ci_id`= `ci_id`');
-          } 
+          }
 
-//best,asc,desc,hit,priceasc,pricedesc
-        switch ($sort) {
-            case 'best':
-                \App::$cur->db->where('ci_best', 1);
-                \App::$cur->db->order = 'ORDER BY RAND()';
-                break;
-            case 'asc':
-                \App::$cur->db->order('ci_name', 'ASC');
-                break;
-            case 'desc':
-                \App::$cur->db->order('ci_name', 'DESC');
-                break;
-            case 'rand':
-                \App::$cur->db->order = 'ORDER BY RAND()';
-                break;
-            case 'hit':
-                \App::$cur->db->order('ci_sales', 'DESC');
-                break;
-            case 'promo':
-                \App::$cur->db->cols = '*';
-                \App::$cur->db->order = 'ORDER BY RAND()';
-                if (\App::$cur->db->where)
-                    \App::$cur->db->where .= ' AND (select `cip_value` from `' . \App::$cur->db->table_prefix . 'catalog_items_params` where `cip_ci_id` = `ci_id` and `cip_cio_id` = 50 limit 1) = 1 ';
-                else
-                    \App::$cur->db->where = 'WHERE (select `cip_value` from `' . \App::$cur->db->table_prefix . 'catalog_items_params` where `cip_ci_id` = `ci_id` and `cip_cio_id` = 50 limit 1) = 1 ';
-                break;
-            case 'priceasc':
-                \App::$cur->db->order('price', 'ASC');
-                \App::$cur->db->cols = '*,(select `ciprice_price` from `' . \App::$cur->db->table_prefix . 'catalog_items_prices` where `ciprice_ci_id` = `ci_id` order by `ciprice_price` asc limit 1) as `price`';
-                break;
-            case 'pricedesc':
-                \App::$cur->db->order('price', 'DESC');
-                \App::$cur->db->cols = '*,(select `ciprice_price` from `' . \App::$cur->db->table_prefix . 'catalog_items_prices` where `ciprice_ci_id` = `ci_id` order by `ciprice_price` asc limit 1) as `price`';
-                break;
-        }*/
+          //best,asc,desc,hit,priceasc,pricedesc
+          switch ($sort) {
+          case 'best':
+          \App::$cur->db->where('ci_best', 1);
+          \App::$cur->db->order = 'ORDER BY RAND()';
+          break;
+          case 'asc':
+          \App::$cur->db->order('ci_name', 'ASC');
+          break;
+          case 'desc':
+          \App::$cur->db->order('ci_name', 'DESC');
+          break;
+          case 'rand':
+          \App::$cur->db->order = 'ORDER BY RAND()';
+          break;
+          case 'hit':
+          \App::$cur->db->order('ci_sales', 'DESC');
+          break;
+          case 'promo':
+          \App::$cur->db->cols = '*';
+          \App::$cur->db->order = 'ORDER BY RAND()';
+          if (\App::$cur->db->where)
+          \App::$cur->db->where .= ' AND (select `cip_value` from `' . \App::$cur->db->table_prefix . 'catalog_items_params` where `cip_ci_id` = `ci_id` and `cip_cio_id` = 50 limit 1) = 1 ';
+          else
+          \App::$cur->db->where = 'WHERE (select `cip_value` from `' . \App::$cur->db->table_prefix . 'catalog_items_params` where `cip_ci_id` = `ci_id` and `cip_cio_id` = 50 limit 1) = 1 ';
+          break;
+          case 'priceasc':
+          \App::$cur->db->order('price', 'ASC');
+          \App::$cur->db->cols = '*,(select `ciprice_price` from `' . \App::$cur->db->table_prefix . 'catalog_items_prices` where `ciprice_ci_id` = `ci_id` order by `ciprice_price` asc limit 1) as `price`';
+          break;
+          case 'pricedesc':
+          \App::$cur->db->order('price', 'DESC');
+          \App::$cur->db->cols = '*,(select `ciprice_price` from `' . \App::$cur->db->table_prefix . 'catalog_items_prices` where `ciprice_ci_id` = `ci_id` order by `ciprice_price` asc limit 1) as `price`';
+          break;
+          } */
         $items = Ecommerce\Item::getList($selectOptions);
-        //var_dump(App::$cur->db->lastQuery);
         return $items;
     }
 
@@ -313,220 +313,49 @@ class Ecommerce extends Module {
      * @return int
      */
     function getItemsCount($parent = '', $search = '') {
+        if (is_array($parent)) {
+            extract($parent);
+        }
+        if (is_array($parent)) {
+            $parent = '';
+        }
+        $selectOptions = [
+            'where' => [],
+            'distinct' => false,
+            'join' => [],
+        ];
         if (strpos($parent, ',') !== false) {
-            $where = [];
+
             $ids = explode(',', $parent);
             $first = true;
             foreach ($ids as $id) {
-                $catalog = Catalog::get((int) $id);
-                if ($catalog) {
-                    $where[] = ['ci_tree_path', $catalog->catalog_tree_path . $catalog->catalog_id . '/%', 'LIKE', $first ? 'AND' : 'OR'];
+                $category = Ecommerce\Category::get((int) $id);
+                if ($category) {
+                    $selectOptions['where'][] = ['tree_path', $category->tree_path . $category->id . '/%', 'LIKE', $first ? 'AND' : 'OR'];
                     $first = false;
                 }
             }
-            if ($where) {
-                \App::$cur->db->where($where);
-            }
         } elseif ($parent !== '') {
-            $catalog = Catalog::get((int) $parent);
-            if ($catalog) {
-                \App::$cur->db->where('ci_tree_path', $catalog->catalog_tree_path . $catalog->catalog_id . '/%', 'LIKE');
+            $category = Ecommerce\Category::get((int) $parent);
+            if ($category) {
+                $selectOptions['where'][] = ['tree_path', $category->tree_path . $category->id . '/%', 'LIKE'];
             }
         }
-
         if (!empty($search)) {
             $search = str_replace(' ', '%', $search);
-            \App::$cur->db->where('ci_search_index', '%' . \App::$cur->db->mysqli->real_escape_string($search) . '%', 'LIKE');
-            $ids = array_keys(\App::$cur->db->result_array(\App::$cur->db->select('catalog_items'), 'ci_id'));
+            $ids = Ecommerce\Item::getList(['where' => ['search_index', '%' . $search . '%', 'LIKE'], 'array' => true]);
+            $ids = array_keys($ids);
             if (!$ids)
-                return 0;
-            \App::$cur->db->where('ci_id', implode(',', $ids), 'IN');
+                return [];
+            $selectOptions['where'][] = ['id', implode(',', $ids), 'IN'];
         }
-        \App::$cur->db->join('catalog_items_prices', '`ci_id` = `ciprice_ci_id` and `ciprice_price`>0', 'inner');
+        $selectOptions['join'][] = [Ecommerce\Item\Offer::table(), Ecommerce\Item::index() . ' = ' . Ecommerce\Item\Offer::colPrefix() . Ecommerce\Item::index(), 'inner'];
+        $selectOptions['join'][] = [Ecommerce\Item\Offer\Price::table(), Ecommerce\Item\Offer::index() . ' = ' . Ecommerce\Item\Offer\Price::colPrefix() . Ecommerce\Item\Offer::index() . ' and ' . Ecommerce\Item\Offer\Price::colPrefix() . 'price>0', 'inner'];
 
-
-        if (empty($this->modConf['view_empty_warehouse'])) {
-            \App::$cur->db->join('catalog_items_options', '`cio_code` = "itemImage"', 'inner');
-            \App::$cur->db->join('catalog_items_params', '`ci_id` = `cip_ci_id` and cip_cio_id = cio_id and `cip_value`!=""', 'inner');
-
-            if (\App::$cur->db->where) {
-                \App::$cur->db->where .= ' AND ';
-            } else {
-                \App::$cur->db->where = 'WHERE ';
-            }
-            \App::$cur->db->where .= '  
-  ((SELECT COALESCE(sum(`ciw_count`),0) FROM inji_catalog_item_warehouses iciw WHERE iciw.ciw_ci_id = ci_id)-
-  (SELECT COALESCE(sum(ewb_count) ,0)
-  FROM inji_ecommerce_warehouses_block iewb 
-  inner JOIN inji_catalog_carts icc ON icc.cc_id = iewb.ewb_cc_id AND (
-  (`cc_warehouse_block` = 1 and `cc_status` in(2,3,6)) || 
-  (`cc_status` in(0,1) and `cc_date_last_activ` >=subdate(now(),INTERVAL 30 MINUTE))
-  )
-  WHERE iewb.ewb_ci_id = ci_id))>0 ';
-        }
-
-        \App::$cur->db->cols = 'count(DISTINCT ci_id) as `count`';
-
-        $count = \App::$cur->db->select('catalog_items')->fetch_assoc();
-        return $count['count'];
-    }
-
-    function update_item_params($ci_id, $params = array()) {
-        if ($params) {
-            $cio_ids = implode(',', array_keys($params));
-            //var_dump($params);
-            \App::$cur->db->where('cip_ci_id', $ci_id);
-            \App::$cur->db->where('cip_cio_id', $cio_ids, 'IN');
-            \App::$cur->db->delete('catalog_items_params');
-
-            foreach ($params as $cio_id => $value) {
-                \App::$cur->db->insert('catalog_items_params', array('cip_cio_id' => $cio_id, 'cip_ci_id' => $ci_id, 'cip_value' => $value));
-            }
-        }
-        //$item = $this->get_item( $ci_id );
-    }
-
-    function get_item($ci_id = '') {
-        \App::$cur->db->where('ci_id', $ci_id);
-        return \App::$cur->db->select('catalog_items')->fetch_assoc();
-    }
-
-    function del_item($ci_id = '') {
-        \App::$cur->db->where('ci_id', $ci_id);
-        return \App::$cur->db->delete('catalog_items');
-    }
-
-    function get_item_params($ci_id = '', $key = 'cio_code') {
-        //$item = $this->get_item($ci_id);
-        //\App::$cur->db->cols('`' . \App::$cur->db->table_prefix . 'catalog_items_options`.*, `' . \App::$cur->db->table_prefix . 'catalog_items_params`.*');
-        // \App::$cur->db->where('cor_catalog_id', $item['ci_catalog_id']);
-        \App::$cur->db->join('catalog_items_options', '`cio_id` = `cip_cio_id`');
-        \App::$cur->db->where('cip_ci_id', $ci_id);
-        return \App::$cur->db->result_array(\App::$cur->db->select('catalog_items_params'), $key);
-    }
-
-    function get_item_search_list($parent = '', $start = 0, $count = 20, $s) {
-        if ($parent !== '')
-            \App::$cur->db->where('ci_cc_id', $parent, 'IN');
-        \App::$cur->db->group('ci_product');
-        \App::$cur->db->join('catalog_item_types', '`cit_id` = `ci_type`');
-        \App::$cur->db->where('cit_name', '%' . $s . '%', 'LIKE');
-        \App::$cur->db->where('ci_name', '%' . $s . '%', 'LIKE', 'OR');
-        \App::$cur->db->limit($start, $count);
-        $items = \App::$cur->db->result_array(\App::$cur->db->select('catalog_items'), 'ci_id');
-        //echo \App::$cur->db->last_query;
-        foreach ($items as $key => $item) {
-            $items[$key]['ci_images'] = json_decode($item['ci_images'], true);
-            $items[$key]['ci_prices'] = json_decode($item['ci_prices'], true);
-        }
+        $selectOptions['distinct'] = true;
+        $items = Ecommerce\Item::getCount($selectOptions);
+        //var_dump(App::$cur->db->lastQuery,$items);
         return $items;
-    }
-
-    function get_item_by_id($ci_id = '') {
-        \App::$cur->db->where('ci_id', $ci_id);
-        $item = \App::$cur->db->select('catalog_items')->fetch_assoc();
-        $item['type'] = $this->Ecommerce->get_item_type($item['ci_type']);
-        $item['ci_images'] = json_decode($item['ci_images'], true);
-        $item['ci_prices'] = json_decode($item['ci_prices'], true);
-        if ($item['ci_metricPackageInfo'])
-            $item['ci_metricPackageInfo'] = json_decode($item['ci_metricPackageInfo'], true);
-        if ($item['ci_attachments'])
-            $item['ci_attachments'] = json_decode($item['ci_attachments'], true);
-        return $item;
-    }
-
-    function get_item_types() {
-        return \App::$cur->db->result_array(\App::$cur->db->select('catalog_item_types'), 'cit_id');
-    }
-
-    function get_item_type($cit_id) {
-        \App::$cur->db->where('cit_id', $cit_id);
-        return \App::$cur->db->select('catalog_item_types')->fetch_assoc();
-    }
-
-    function get_prices($ci_id, $col = 'ciprice_id') {
-        \App::$cur->db->where('ciprice_ci_id', $ci_id);
-        \App::$cur->db->order('ciprice_weight');
-        return \App::$cur->db->result_array(\App::$cur->db->select('catalog_items_prices'), $col);
-    }
-
-    function get_price($ciprice_id, $ci_id = NULL) {
-        \App::$cur->db->where('ciprice_id', $ciprice_id);
-        if (!empty($ci_id))
-            \App::$cur->db->where('ciprice_ci_id', $ci_id);
-        return \App::$cur->db->select('catalog_items_prices')->fetch_assoc();
-    }
-
-    function add_item_price($data) {
-        return \App::$cur->db->insert('catalog_items_prices', $data);
-    }
-
-    function update_item_price($ciprice_id, $data) {
-        \App::$cur->db->where('ciprice_id', $ciprice_id);
-        return \App::$cur->db->update('catalog_items_prices', $data);
-    }
-
-    function create_cart($data = array()) {
-        if (empty($data['cc_status']))
-            $data['cc_status'] = 1;
-        return \App::$cur->db->insert('catalog_carts', $data);
-    }
-
-    function update_cart($cc_id, $data) {
-        \App::$cur->db->where('cc_id', $cc_id);
-        return \App::$cur->db->update('catalog_carts', $data);
-    }
-
-    function get_cart($cc_id) {
-        \App::$cur->db->where('cc_id', $cc_id);
-        return \App::$cur->db->select('catalog_carts')->fetch_assoc();
-    }
-
-    function get_carts($user_id = 0) {
-        if ($user_id)
-            \App::$cur->db->where('cc_user_id', $user_id);
-        \App::$cur->db->cols = '*,(select count(*) from `' . \App::$cur->db->table_prefix . 'catalog_cart_items` where `cci_cc_id` = `cc_id` ) as `items_count`';
-        \App::$cur->db->order('cc_id', 'DESC');
-        return \App::$cur->db->result_array(\App::$cur->db->select('catalog_carts'), 'cc_id');
-    }
-
-    function add_to_cart($data) {
-        return \App::$cur->db->insert('catalog_cart_items', $data);
-    }
-
-    function get_cart_items($cc_id, $col = 'cci_id') {
-        \App::$cur->db->where('cci_cc_id', $cc_id);
-        return \App::$cur->db->result_array(\App::$cur->db->select('catalog_cart_items'), $col);
-    }
-
-    function get_cart_item($cci_id) {
-        \App::$cur->db->where('cci_id', $cci_id);
-        return \App::$cur->db->select('catalog_cart_items')->fetch_assoc();
-    }
-
-    function update_cart_item($cci_id, $data) {
-        \App::$cur->db->where('cci_id', $cci_id);
-        return \App::$cur->db->update('catalog_cart_items', $data);
-    }
-
-    function delete_cart_item($cci_id) {
-        \App::$cur->db->where('cci_id', $cci_id);
-        return \App::$cur->db->delete('catalog_cart_items');
-    }
-
-    function get_user_info($cui_user_id) {
-        \App::$cur->db->where('cui_user_id', $cui_user_id);
-        return \App::$cur->db->select('catalogUsers_info')->fetch_assoc();
-    }
-
-    function update_user_info($cui_user_id, $data) {
-        if ($this->get_user_info($cui_user_id)) {
-            \App::$cur->db->where('cui_user_id', $cui_user_id);
-            return \App::$cur->db->update('catalogUsers_info', $data);
-        } else {
-            $data['cui_user_id'] = $cui_user_id;
-            return \App::$cur->db->insert('catalogUsers_info', $data);
-        }
     }
 
     function cart_recount($cc_id) {
@@ -547,10 +376,10 @@ class Ecommerce extends Module {
     }
 
     function getCatalogParents($catalog_id, $ids = []) {
-        $catalog = Catalog::get($catalog_id);
+        $catalog = Ecommerce\Category::get($catalog_id);
         $ids[] = $catalog_id;
-        if ($catalog->catalog_parent_id) {
-            $ids = $this->getCatalogParents($catalog->catalog_parent_id, $ids);
+        if ($catalog->parent_id) {
+            $ids = $this->getCatalogParents($catalog->parent_id, $ids);
         }
         return $ids;
     }

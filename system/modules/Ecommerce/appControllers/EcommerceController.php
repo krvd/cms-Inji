@@ -2,25 +2,25 @@
 
 class ecommerceController extends Controller {
 
-    function quickViewAction($ci_id = 0) {
-        $item = Item::get((int) $ci_id);
+    function quickViewAction($id = 0) {
+        $item = \Ecommerce\Item::get((int) $id);
         if (!$item) {
             $this->url->redirect('/ecommerce/', 'Такой товар не найден');
         }
-        $active = $item->ci_catalog_id;
-        $catalog = $item->catalog;
+        $active = $item->category_id;
+        $catalog = $item->category;
 
-        if (!empty($_POST['message']) && $this->users->cur->user_id) {
-            $this->_COMMENTS->add_comment(array('comment_user_id' => $this->users->cur->user_id, 'comment_text' => $_POST['message'], 'comment_page' => 'item/' . $ci_id));
-            $this->url->redirect('/ecommerce/view/' . $ci_id . '?' . time());
+        $bread[] = array('text' => 'Каталог', 'href' => '/ecommerce');
+
+        $catalogIds = $this->ecommerce->getCatalogParents($item->category_id);
+        $catalogIds = array_reverse($catalogIds);
+        foreach ($catalogIds as $id) {
+            $cat = Ecommerce\Category::get($id);
+            $bread[] = array('text' => $cat->name, 'href' => '/ecommerce/itemList/' . $cat->id);
         }
-
-        $this->db->where('ciw_ci_id', $item->ci_id);
-        $this->db->cols = 'sum(ciw_count) as `sum` ';
-        $warehouse = $this->db->select('catalog_item_warehouses')->fetch_assoc();
-
-        $this->view->set_title((empty($item->options['3ec57698-662b-11e4-9462-80c16e818121'])) ? $item->ci_name : $item->options['3ec57698-662b-11e4-9462-80c16e818121']->cip_value);
-        $this->view->page('blank', compact('item', 'warehouse', 'active', 'catalog'));
+        $bread[] = array('text' => $item->name());
+        $this->view->setTitle($item->name());
+        $this->view->page(['page' => 'blank', 'content' => 'view', 'data' => compact('item', 'active', 'catalog', 'bread')]);
     }
 
     function cabinetAction() {
@@ -93,11 +93,10 @@ class ecommerceController extends Controller {
     }
 
     function autoCompleteAction() {
-        $this->db->cols(['ci_name', 'ci_search_index']);
-        $items = $this->db->result_array($this->db->select('catalog_items'));
+        $items = \Ecommerce\Item::getList(['cols' => ['name', 'search_index']]);
         $return = [];
         foreach ($items as $item) {
-            $return[] = ['name' => $item['ci_name'], 'search' => $item['ci_search_index'] . ' ' . $this->tools->translit($item['ci_search_index'])];
+            $return[] = ['name' => $item->name(), 'search' => $item->search_index];
         }
         echo json_encode($return);
     }
@@ -128,7 +127,7 @@ class ecommerceController extends Controller {
             else
                 $sort = 'asc';
 
-            $pages = new Pages($_GET, ['count' => $this->ecommerce->getItemsCount($catalog_id, trim($search)), 'limit' => 16]);
+            $pages = new \Ui\Pages($_GET, ['count' => $this->ecommerce->getItemsCount($catalog_id, trim($search)), 'limit' => 16]);
         }
         else {
             $query = [];
@@ -153,7 +152,7 @@ class ecommerceController extends Controller {
             else
                 $sort = 'asc';
 
-            $pages = new Pages($query, ['count' => $this->ecommerce->getItemsCount(!empty($catalog_ids) ? $catalog_ids : $catalog_id, trim($search)), 'limit' => 16]);
+            $pages = new \Ui\Pages($query, ['count' => $this->ecommerce->getItemsCount(!empty($catalog_ids) ? $catalog_ids : $catalog_id, trim($search)), 'limit' => 16]);
         }
         $catalog_id = (int) $catalog_id;
 
@@ -161,83 +160,50 @@ class ecommerceController extends Controller {
             $catalog_id = '';
 
         $active = $catalog_id;
+        $catalog = null;
         if ($catalog_id)
-            $catalog = Catalog::get($catalog_id);
+            $catalog = Ecommerce\Category::get($catalog_id);
 
         $bread = [];
-        if (!$catalog || !$catalog->catalog_name) {
+        if (!$catalog || !$catalog->name) {
             $bread[] = array('text' => 'Каталог');
-            $this->view->set_title('Каталог');
+            $this->view->setTitle('Каталог');
         } else {
             $bread[] = array('text' => 'Каталог', 'href' => '/ecommerce');
-            $catalogIds = $this->ecommerce->getCatalogParents($catalog->catalog_id);
+            $catalogIds = $this->ecommerce->getCatalogParents($catalog->id);
             $catalogIds = array_reverse($catalogIds);
             foreach ($catalogIds as $id) {
-                $cat = Catalog::get($id);
-                $bread[] = array('text' => $cat->catalog_name, 'href' => '/ecommerce/itemList/' . $cat->catalog_id);
+                $cat = Ecommerce\Category::get($id);
+                $bread[] = array('text' => $cat->name, 'href' => '/ecommerce/itemList/' . $cat->id);
             }
-            $this->view->set_title($catalog->catalog_name);
+            $this->view->setTitle($catalog->name);
         }
 
 
-        $items = $this->ecommerce->getItems(!empty($catalog_ids) ? $catalog_ids : $catalog_id, $pages->params['start'], $pages->params['limit'], 'ci_id', trim($search), $sort);
-        $catalogs = Catalog::get_list();
-        $this->view->page(compact('active', 'catalog', 'sort', 'search', 'pages', 'items', 'catalogs', 'bread'));
+        $items = $this->ecommerce->getItems(!empty($catalog_ids) ? $catalog_ids : $catalog_id, $pages->params['start'], $pages->params['limit'], 'id', trim($search), $sort);
+        $catalogs = Ecommerce\Category::get_list();
+        $this->view->page(['data' => compact('active', 'catalog', 'sort', 'search', 'pages', 'items', 'catalogs', 'bread')]);
     }
 
-    function bonusesAction() {
-        $this->view->set_title('Начисления');
-
-        $this->view->page(compact('cart'));
-    }
-
-    function viewAction($ci_id = '') {
-        $item = Item::get((int) $ci_id);
+    function viewAction($id = '') {
+        $item = \Ecommerce\Item::get((int) $id);
         if (!$item) {
             $this->url->redirect('/ecommerce/', 'Такой товар не найден');
         }
-        $active = $item->ci_catalog_id;
-        $catalog = $item->catalog;
+        $active = $item->category_id;
+        $catalog = $item->category;
 
         $bread[] = array('text' => 'Каталог', 'href' => '/ecommerce');
 
-        $catalogIds = $this->ecommerce->getCatalogParents($item->ci_catalog_id);
+        $catalogIds = $this->ecommerce->getCatalogParents($item->category_id);
         $catalogIds = array_reverse($catalogIds);
         foreach ($catalogIds as $id) {
-            $cat = Catalog::get($id);
-            $bread[] = array('text' => $cat->catalog_name, 'href' => '/ecommerce/itemList/' . $cat->catalog_id);
+            $cat = Ecommerce\Category::get($id);
+            $bread[] = array('text' => $cat->name, 'href' => '/ecommerce/itemList/' . $cat->id);
         }
-        $bread[] = array('text' => $item->ci_name);
-
-        if (!empty($_POST['message']) && $this->users->cur->user_id) {
-            $this->_COMMENTS->add_comment(array('comment_user_id' => $this->users->cur->user_id, 'comment_text' => $_POST['message'], 'comment_page' => 'item/' . $ci_id));
-            $this->url->redirect('/ecommerce/view/' . $ci_id . '?' . time());
-        }
-
-        $this->db->where('ciw_ci_id', $item->ci_id);
-        $this->db->cols = 'sum(ciw_count) as `sum` ';
-        $warehouse = $this->db->select('catalog_item_warehouses')->fetch_assoc();
-
-        $this->view->set_title((empty($item->options['3ec57698-662b-11e4-9462-80c16e818121'])) ? $item->ci_name : $item->options['3ec57698-662b-11e4-9462-80c16e818121']->cip_value);
-        $this->view->page(compact('item', 'warehouse', 'active', 'catalog', 'bread'));
-    }
-
-    function loadIconsAction($catalogId) {
-        if (!empty($_GET['search'])) {
-            if (!empty($_GET['inCatalog'])) {
-                $catalog_id = (int) $_GET['inCatalog'];
-            }
-            $search = $_GET['search'];
-        } else
-            $search = '';
-        $catalog = Catalog::get((int) $catalogId);
-        if (!$catalog) {
-            exit();
-        }
-        $itemsCount = $this->ecommerce->getItemsCount($catalog->catalog_id, '');
-        $pages = new Pages($_GET, ['count' => $this->ecommerce->getItemsCount($catalog->catalog_id, $search), 'limit' => 24, 'url' => '/ecommerce/loadIcons/' . $catalog->catalog_id]);
-        $items = $this->ecommerce->getItems($catalog->catalog_id, $pages->params['start'], $pages->params['limit'], 'ci_id', $search, 'asc');
-        $this->view->widget('vitrin', ['items' => $items, 'catalog' => $catalog, 'itemsCount' => $itemsCount, 'pages' => $pages]);
+        $bread[] = array('text' => $item->name());
+        $this->view->setTitle($item->name());
+        $this->view->page(['data' => compact('item', 'active', 'catalog', 'bread')]);
     }
 
 }

@@ -28,7 +28,11 @@ class Object extends \Object {
         foreach ($this->reader->readPath() as $code => $objectParam) {
             $param = $this->getParam($code);
             if ($this->model && $param->type && $param->type != 'item_key') {
-                $parserName = '\Migrations\Parser\Object\\' . ucfirst($param->type);
+                if ($param->type == 'custom') {
+                    $parserName = $param->value;
+                } else {
+                    $parserName = '\Migrations\Parser\Object\\' . ucfirst($param->type);
+                }
                 $parser = new $parserName;
                 $parser->reader = $objectParam;
                 $parser->param = $param;

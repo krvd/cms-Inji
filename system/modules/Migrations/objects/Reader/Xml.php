@@ -21,6 +21,11 @@ class Xml extends \Migrations\Reader {
     }
 
     function readPath($path='/') {
+        foreach ($this->data->attributes() as $code=>$item){
+            $reader = new Xml();
+            $reader->data = $item;
+            yield $code => $reader;
+        }
         foreach ($this->data as $code => $item) {
             $reader = new Xml();
             $reader->data = $item;

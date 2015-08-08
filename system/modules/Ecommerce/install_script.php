@@ -300,12 +300,12 @@ return function ($step = NULL, $params = array()) {
         'INDEX ' . App::$cur->db->table_prefix . '_ecommerce_cartEventDate (cart_event_date_create)'
     ]);
     //Блокировки товара
-    App::$cur->db->createTable('ecommerce_warehouses_block', [
-        'warehouses_block_id' => 'pk',
+    App::$cur->db->createTable('ecommerce_warehouse_block', [
+        'warehouse_block_id' => 'pk',
         //Основные параметры
-        'warehouses_block_cart_id' => 'int(11) UNSIGNED NOT NULL',
-        'warehouses_block_item_id' => 'int(11) UNSIGNED NOT NULL',
-        'warehouses_block_count' => 'DECIMAL(10, 3) NOT NULL',
+        'warehouse_block_cart_id' => 'int(11) UNSIGNED NOT NULL',
+        'warehouse_block_item_offer_id' => 'int(11) UNSIGNED NOT NULL',
+        'warehouse_block_count' => 'DECIMAL(10, 3) NOT NULL',
             ], [
         'INDEX ' . App::$cur->db->table_prefix . '_ecommerce_warehousesBlockCart (warehouses_block_cart_id)',
         'INDEX ' . App::$cur->db->table_prefix . '_ecommerce_warehousesBlockItem (warehouses_block_item_id)'

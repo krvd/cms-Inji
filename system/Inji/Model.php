@@ -350,6 +350,8 @@ class Model {
             App::$cur->db->order($options['order']);
         if (!empty($options['join']))
             App::$cur->db->join($options['join']);
+        if (!empty($options['distinct']))
+            App::$cur->db->distinct = $options['distinct'];
 
         foreach (static::$relJoins as $join) {
             App::$cur->db->join($join[0], $join[1]);
@@ -612,11 +614,11 @@ class Model {
         static::$needJoin = [];
         if (!empty($options['group'])) {
             App::$cur->db->group($options['group']);
-            App::$cur->db->cols = 'COUNT(*) as `count`' . (!empty($options['cols']) ? ',' . $options['cols'] : '');
+            App::$cur->db->cols = 'COUNT('.(!empty($options['distinct'])?'DISTINCT '.static::index():'*').') as `count`' . (!empty($options['cols']) ? ',' . $options['cols'] : '');
             $count = App::$cur->db->select(static::table())->getArray();
             return $count;
         } else {
-            App::$cur->db->cols = 'COUNT(*) as `count`';
+            App::$cur->db->cols = 'COUNT('.(!empty($options['distinct'])?'DISTINCT '.static::index():'*').') as `count`';
             $count = App::$cur->db->select(static::table())->fetch();
             return $count['count'];
         }

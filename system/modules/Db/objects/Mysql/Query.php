@@ -84,7 +84,14 @@ class Query extends \Object {
 
     public function join($table, $where = false, $type = 'LEFT', $alias = '') {
         if (is_array($table)) {
-            call_user_func_array([$this, 'join'], $table);
+            foreach ($table as $item) {
+                if (!is_array($item)) {
+                    call_user_func_array(array($this, 'join'), $table);
+                    break;
+                } else {
+                    $this->join($item);
+                }
+            }
         } else {
             $this->join[] = [$table, $where, $type, $alias];
         }

@@ -77,7 +77,7 @@ class Item extends \Model {
           LEFT JOIN `inji_category_item_warehouses` ON `ciw_id` = ici.id
           GROUP BY ici.id
          */
-        Inji::app()->db->cols = '*,COALESCE(sum(ciw_count),0) AS warehouse,(
+        \App::$cur->db->cols = '*,COALESCE(sum(ciw_count),0) AS warehouse,(
 
 SELECT COALESCE(sum(ewb_count) ,0) as `sum` 
   FROM `inji_ecommerce_warehouses_block` 
@@ -86,10 +86,10 @@ SELECT COALESCE(sum(ewb_count) ,0) as `sum`
   WHERE `ewb_id` = id
   
   ) as `blocked`, cip_value';
-        Inji::app()->db->join('category_item_warehouses', '`ciw_id` = id');
-        Inji::app()->db->join('category_items_params', '`cip_id` = id and cip_cio_id = 1');
-        Inji::app()->db->group('id');
-        Inji::app()->db->order('name');
+        \App::$cur->db->join('category_item_warehouses', '`ciw_id` = id');
+        \App::$cur->db->join('category_items_params', '`cip_id` = id and cip_cio_id = 1');
+        \App::$cur->db->group('id');
+        \App::$cur->db->order('name');
         $items = Item::get_list();
         foreach ($items as $key => $item) {
             $item->combined = ($item->cip_value ? $item->cip_value : $item->name) . ' (' . ($item->warehouse - $item->blocked) . ' на складе)';
@@ -98,9 +98,9 @@ SELECT COALESCE(sum(ewb_count) ,0) as `sum`
     }
 
     function itemNameCount() {
-        Inji::app()->db->where('cip_id', $this->id);
-        Inji::app()->db->where('cip_cio_id', 1);
-        $param = Inji::app()->db->select('category_items_params')->fetch_assoc();
+        \App::$cur->db->where('cip_id', $this->id);
+        \App::$cur->db->where('cip_cio_id', 1);
+        $param = \App::$cur->db->select('category_items_params')->fetch_assoc();
         if (!empty($param['cip_value'])) {
             $itemName = $param['cip_value'];
         } else {
@@ -132,23 +132,25 @@ SELECT COALESCE(sum(ewb_count) ,0) as `sum`
     }
 
     function warehouseCount($cc_id = 0) {
-        Inji::app()->db->where('ciw_id', $this->id);
-        Inji::app()->db->cols = 'COALESCE(sum(ciw_count),0) as `sum` ';
-        $warehouse = Inji::app()->db->select('category_item_warehouses')->fetch_assoc();
-        Inji::app()->db->cols = 'COALESCE(sum(ewb_count) ,0) as `sum` ';
-        Inji::app()->db->where('ewb_id', $this->id);
+        $ids = array_keys($this->offers);
+        \App::$cur->db->where(Item\Offer\Warehouse::colPrefix() . Item\Offer::index(), implode(',', $ids), 'IN');
+        \App::$cur->db->cols = 'COALESCE(sum(' . Item\Offer\Warehouse::colPrefix() . 'count),0) as `sum` ';
+        $warehouse = \App::$cur->db->select(Item\Offer\Warehouse::table())->fetch();
+
+        \App::$cur->db->cols = 'COALESCE(sum(' . Warehouse\Block::colPrefix() . 'count) ,0) as `sum` ';
+        \App::$cur->db->where(Warehouse\Block::colPrefix() . Item\Offer::index(), implode(',', $ids), 'IN');
         if ($cc_id) {
-            Inji::app()->db->where('cc_id', (int) $cc_id, '!=');
+            \App::$cur->db->where(Warehouse\Block::colPrefix() . Cart::index(), (int) $cc_id, '!=');
         }
         $on = '
-            cc_id = ewb_cc_id AND (
-            (`cc_warehouse_block` = 1 and `cc_status` in(2,3,6)) || 
-            (`cc_status` in(0,1) and `cc_date_last_activ` >=subdate(now(),INTERVAL 30 MINUTE))
+            ' . Cart::index() . ' = ' . Warehouse\Block::colPrefix() . Cart::index() . ' AND (
+            (`'.Cart::colPrefix().'warehouse_block` = 1 and `'.Cart::colPrefix().'cart_status_id` in(2,3,6)) || 
+            (`'.Cart::colPrefix().'cart_status_id` in(0,1) and `'.Cart::colPrefix().'date_last_activ` >=subdate(now(),INTERVAL 30 MINUTE))
             )
         ';
-        Inji::app()->db->join('category_carts', $on, 'inner');
+        \App::$cur->db->join(Cart::table(), $on, 'inner');
 
-        $blocked = Inji::app()->db->select('ecommerce_warehouses_block')->fetch_assoc();
+        $blocked = \App::$cur->db->select(Warehouse\Block::table())->fetch();
         return (float) $warehouse['sum'] - (float) $blocked['sum'];
     }
 
