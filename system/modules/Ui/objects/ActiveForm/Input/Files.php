@@ -24,7 +24,7 @@ class Files extends \Ui\ActiveForm\Input {
                     'size' => $_FILES[$this->activeForm->requestFormName]['size'][$this->modelName][$this->colName][$key],
                     'error' => $_FILES[$this->activeForm->requestFormName]['error'][$this->modelName][$this->colName][$key],
                         ], [
-                    'upload_code' => 'activeForm:' . $modelName . ':' . $this->activeForm->model->pk()
+                    'upload_code' => 'activeForm:' . $this->activeForm->modelName . ':' . $this->activeForm->model->pk()
                 ]);
             }
             $this->activeForm->model->{$this->colName} = implode(',', array_filter($file_ids));
