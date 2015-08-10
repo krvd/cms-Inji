@@ -131,16 +131,16 @@ SELECT COALESCE(sum(ewb_count) ,0) as `sum`
         }
     }
 
-    function warehouseCount($cc_id = 0) {
+    function warehouseCount($cart_id = 0) {
         $ids = array_keys($this->offers);
         \App::$cur->db->where(Item\Offer\Warehouse::colPrefix() . Item\Offer::index(), implode(',', $ids), 'IN');
         \App::$cur->db->cols = 'COALESCE(sum(' . Item\Offer\Warehouse::colPrefix() . 'count),0) as `sum` ';
         $warehouse = \App::$cur->db->select(Item\Offer\Warehouse::table())->fetch();
-
+        
         \App::$cur->db->cols = 'COALESCE(sum(' . Warehouse\Block::colPrefix() . 'count) ,0) as `sum` ';
         \App::$cur->db->where(Warehouse\Block::colPrefix() . Item\Offer::index(), implode(',', $ids), 'IN');
-        if ($cc_id) {
-            \App::$cur->db->where(Warehouse\Block::colPrefix() . Cart::index(), (int) $cc_id, '!=');
+        if ($cart_id) {
+            \App::$cur->db->where(Warehouse\Block::colPrefix() . Cart::index(), (int) $cart_id, '!=');
         }
         $on = '
             ' . Cart::index() . ' = ' . Warehouse\Block::colPrefix() . Cart::index() . ' AND (

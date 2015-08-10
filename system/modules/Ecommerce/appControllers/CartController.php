@@ -122,7 +122,7 @@ class CartController extends Controller {
                         }
                         $cart->save();
                         if (!empty($_POST['packs'])) {
-                            $cart->addPacks(ceil($cart->cc_summ / 1000));
+                            $cart->addPacks(ceil($cart->sum / 1000));
                         }
                         CartEvent::update(['ece_user_id' => $user->user_id], ['ece_cc_id', $cart->cc_id]);
                         if (!$user->user_phone && $cart->cc_tel) {
@@ -186,10 +186,10 @@ class CartController extends Controller {
         ];
         $bread[] = [
             'text' => 'Заказ: №' . $cart->cc_id,
-            'href' => '/ecommerce/cart/orderDetail/'. $cart->cc_id
+            'href' => '/ecommerce/cart/orderDetail/' . $cart->cc_id
         ];
-        $this->view->set_title('Заказ №'.$cart->cc_id);
-        $this->view->page(compact('cart','bread'));
+        $this->view->set_title('Заказ №' . $cart->cc_id);
+        $this->view->page(compact('cart', 'bread'));
     }
 
     function continueAction($cc_id = 0) {
@@ -257,36 +257,44 @@ class CartController extends Controller {
     }
 
     function addAction() {
-        if (empty($_GET['ci_id']))
-            exit('0');
+        if (empty($_GET['item_id'])) {
+            $result = [
+                'image' => '/static/system/images/denied.png',
+                'success' => 'Такого товара не существует',
+                    //'total' => 'Товаров ' . count($cart->cartItems) . ' (' . $cart->sum . 'р.)'
+            ];
+            echo json_encode($result);
+            exit();
+        }
 
-        $item = Item::get((int) $_GET['ci_id']);
+        $item = \Ecommerce\Item::get((int) $_GET['item_id']);
 
-        if (!$item)
-            exit('0');
+        if (!$item) {
+            $result = [
+                'image' => '/static/system/images/denied.png',
+                'success' => 'Такого товара не существует',
+                    //'total' => 'Товаров ' . count($cart->cartItems) . ' (' . $cart->sum . 'р.)'
+            ];
+            echo json_encode($result);
+            exit();
+        }
 
-        $item->ci_sales ++;
+        $item->sales ++;
         $item->save();
 
-        $prices = $item->prices;
-        $default = key($prices);
-        $rolePrice = 0;
-        foreach ($item->prices as $priceId => $itemPrice) {
-            if (!$itemPrice->type) {
-                continue;
-            }
-            if (!$itemPrice->type->cipt_roles) {
-                $default = $priceId;
-                continue;
-            }
-            if ($itemPrice->type->cipt_roles && $this->users->cur->user_role_id && false !== strpos($itemPrice->type->cipt_roles, "|{$this->users->cur->user_role_id}|")) {
-                $rolePrice = $priceId;
-            }
-        }
-        $price = $item->prices[($rolePrice) ? $rolePrice : $default];
+        $offers = $item->offers(['key' => false]);
+        $prices = $offers[0]->prices(['key' => false]);
+        $price = $prices[0];
 
-        if (!$price)
-            exit('0');
+        if (!$price) {
+            $result = [
+                'image' => '/static/system/images/denied.png',
+                'success' => 'Такой цены не найдено',
+                    //'total' => 'Товаров ' . count($cart->cartItems) . ' (' . $cart->sum . 'р.)'
+            ];
+            echo json_encode($result);
+            exit();
+        }
 
         if (empty($_GET['count']))
             $count = 1;
@@ -296,30 +304,31 @@ class CartController extends Controller {
         $cart = $this->ecommerce->getCurCart();
         if ($item->warehouseCount() < $count) {
             $result = [
-                'image' => '/static/images/denied.png',
+                'image' => '/static/system/images/denied.png',
                 'success' => 'На складе недостаточно товара! Доступно: ' . $item->warehouseCount(),
-                'total' => 'Товаров ' . count($cart->cartItems) . ' (' . $cart->cc_summ . 'р.)'
+                'total' => 'Товаров ' . count($cart->cartItems) . ' (' . $cart->sum . 'р.)'
             ];
             echo json_encode($result);
             exit();
         }
         $isset = false;
         foreach ($cart->cartItems as $cartItem) {
-            if ($cartItem->cci_ci_id == $item->ci_id && $cartItem->cci_ciprice_id == $price->ciprice_id) {
-                $cartItem->cci_count += $count;
+            if ($cartItem->item_id == $item->id && $cartItem->item_offer_price_id == $price->id) {
+                $cartItem->count += $count;
                 $cartItem->save();
                 $isset = true;
                 break;
             }
         }
         if (!$isset) {
-            $cart->addItem($item->ci_id, $price->ciprice_id, $count);
+            $cart->addItem($item->id, $price->id, $count);
         }
         $cart->calc();
+        $cart = Ecommerce\Cart::get($cart->id);
         $result = [
-            'image' => 'http://opencart.test/image/cache/no_image-47x47.png',
+            'image' => $item->image ? $item->image->path : '/static/system/images/no-image.png',
             'success' => '<a href="/ecommerce/view/' . $item->ci_id . '">' . $item->ci_name . '</a> добавлен <a href="/ecommerce/cart">в корзину покупок</a>!',
-            'total' => 'Товаров ' . count($cart->cartItems) . ' (' . $cart->cc_summ . '.)'
+            'total' => 'Товаров ' . count($cart->cartItems) . ' (' . $cart->sum . '.)'
         ];
         echo json_encode($result);
         //$this->getcartAction();

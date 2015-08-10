@@ -4,7 +4,7 @@ if (!$cart || !$cart->cartItems)
     echo "<h1>Ваша корзина пуста</h1>";
 else {
     $i = 0;
-    $summ = 0;
+    $sum = 0;
     foreach ($cart->cartItems as $cartItem) {
 
         if (!empty($cartItem->item->options['itemImage']) && $cartItem->item->options['itemImage']->file) {
@@ -14,8 +14,8 @@ else {
         } else {
             $path = '/static/images/no-image.png';
         }
-        $summ += $cartItem->price->ciprice_price * $cartItem->cci_count;
-        $asum = $summ + (($summ >= $deliverys[key($deliverys)]->cd_max_cart_price) ? '0' : $deliverys[key($deliverys)]->cd_price);
+        $sum += $cartItem->price->ciprice_price * $cartItem->cci_count;
+        $asum = $sum + (($sum >= $deliverys[key($deliverys)]->cd_max_cart_price) ? '0' : $deliverys[key($deliverys)]->cd_price);
     }
     ?>
     <form method = 'POST'>
@@ -123,7 +123,7 @@ else {
                                         <div class ='form-group'>
                                             <div class = "checkbox">
                                                 <label>
-                                                    <input type = "checkbox" name = "packs" <?= $packchecked; ?> value ='<?= $packItem->price->ciprice_price; ?>' onchange ='calcsumm()' /> Добавить в заказ пакеты
+                                                    <input type = "checkbox" name = "packs" <?= $packchecked; ?> value ='<?= $packItem->price->ciprice_price; ?>' onchange ='calcsum()' /> Добавить в заказ пакеты
                                                 </label>
                                             </div>
                                             <div class="help-block">
@@ -215,7 +215,7 @@ else {
                                 <tbody class="cartitems">
                                     <?php
                                     $i = 0;
-                                    $summ = 0;
+                                    $sum = 0;
                                     foreach ($cart->cartItems as $cartItem) {
 
                                         if (!empty($cartItem->item->options['itemImage']) && $cartItem->item->options['itemImage']->file) {
@@ -225,7 +225,7 @@ else {
                                         } else {
                                             $path = '/static/images/no-image.png';
                                         }
-                                        $summ += $cartItem->price->ciprice_price * $cartItem->cci_count;
+                                        $sum += $cartItem->price->ciprice_price * $cartItem->cci_count;
                                         $itemName = (empty($cartItem->item->options['3ec57698-662b-11e4-9462-80c16e818121']->cip_value)) ? $cartItem->item->ci_name : $cartItem->item->options['3ec57698-662b-11e4-9462-80c16e818121']->cip_value;
                                         ?>
                                         <tr class="cci_id<?= $cartItem->cci_id; ?> item" data-cci_id = '<?php echo $cartItem->cci_id; ?>' data-priceam = '<?php echo $cartItem->price->ciprice_price; ?>' data-price = '<?php echo $cartItem->price->ciprice_id; ?>'>
@@ -269,7 +269,7 @@ else {
                                                 ?>
                                                 <div class="input-group btn-block" style="max-width: 200px;">
                                                     <span class="input-group-btn">
-                                                        <button onclick="calcsumm()" type="button" data-toggle="tooltip" title="Обновить" class="btn btn-primary btn-update"><i class="fa fa-refresh"></i></button>
+                                                        <button onclick="calcsum()" type="button" data-toggle="tooltip" title="Обновить" class="btn btn-primary btn-update"><i class="fa fa-refresh"></i></button>
                                                         <button type="button" data-toggle="tooltip" title="Удалить" class="btn btn-danger  btn-delete" onclick="cartdel(<?php echo $cartItem->cci_id; ?>);
                                                                         return
                                                                         false;"><i class="fa fa-times-circle"></i></button>
@@ -285,13 +285,13 @@ else {
                                     </tr>
                                 </tbody>
                                 <tfoot>
-                                    <tr class="cartsumms">
+                                    <tr class="cartsums">
                                         <td colspan="4" class="text-right">Сумма:</td>
-                                        <td class="text-right"><?= $summ; ?> руб.</td>
+                                        <td class="text-right"><?= $sum; ?> руб.</td>
                                     </tr>
                                     <tr class="deliverysum">
                                         <td colspan="4" class="text-right"><?= $first->cd_name; ?>:</td>
-                                        <td class="text-right"><?= ($summ >= $first->cd_max_cart_price) ? '0' : $first->cd_price; ?> руб.</td>
+                                        <td class="text-right"><?= ($sum >= $first->cd_max_cart_price) ? '0' : $first->cd_price; ?> руб.</td>
                                     </tr>
                                     <?php
                                     if ($packchecked) {

@@ -31,7 +31,7 @@
                             echo count($cart->cartItems);
                         }
                         ?></td>
-                    <td class="text-right"><?= $cart->cc_summ; ?>р.</td>
+                    <td class="text-right"><?= $cart->sum; ?>р.</td>
                     <td class="text-right">
                         <a data-original-title="Просмотр" href="/ecommerce/cart/orderDetail/<?=$cart->cc_id;?>" data-toggle="tooltip" title="" class="btn btn-info btn-primary"><i class="fa fa-eye"></i></a>
                         <?php

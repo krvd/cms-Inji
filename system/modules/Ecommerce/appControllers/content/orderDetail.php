@@ -71,11 +71,11 @@
         </thead>
         <tbody>
             <?php
-            $summ = 0;
+            $sum = 0;
             foreach ($cart->cartItems as $cartItem) {
                 $item = $cartItem->item;
                 $itemName = (empty($cartItem->item->options['3ec57698-662b-11e4-9462-80c16e818121']->cip_value)) ? $cartItem->item->ci_name : $item->options['3ec57698-662b-11e4-9462-80c16e818121']->cip_value;
-                $summ +=$cartItem->price->ciprice_price * $cartItem->cci_count;
+                $sum +=$cartItem->price->ciprice_price * $cartItem->cci_count;
                 ?>
                 <tr>
                     <td class="text-left"><?= $itemName; ?></td>
@@ -94,19 +94,19 @@
             <tr>
                 <td colspan="2"></td>
                 <td class="text-right"><b>Сумма</b></td>
-                <td class="text-right"><?= $summ; ?>р.</td>
+                <td class="text-right"><?= $sum; ?>р.</td>
                 <td></td>
             </tr>
             <tr>
                 <td colspan="2"></td>
                 <td class="text-right"><b>Доставка с фиксированной стоимостью доставки</b></td>
-                <td class="text-right"><?= (!$cart->delivery || $summ >= $cart->delivery->cd_max_cart_price) ? '0' : $cart->delivery->cd_price; ?>р.</td>
+                <td class="text-right"><?= (!$cart->delivery || $sum >= $cart->delivery->cd_max_cart_price) ? '0' : $cart->delivery->cd_price; ?>р.</td>
                 <td></td>
             </tr>
             <tr>
                 <td colspan="2"></td>
                 <td class="text-right"><b>Итого</b></td>
-                <td class="text-right"><?= $cart->cc_summ; ?>р.</td>
+                <td class="text-right"><?= $cart->sum; ?>р.</td>
                 <td></td>
             </tr>
         </tfoot>

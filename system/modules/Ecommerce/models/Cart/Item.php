@@ -1,38 +1,27 @@
 <?php
 
 namespace Ecommerce\Cart;
+
 class Item extends \Model {
 
-    static $names = ['Товар в корзине', 'Товары в корзине'];
-
-    static function table() {
-        return 'catalog_cart_items';
-    }
-
-    static function index() {
-        return 'cci_id';
-    }
-
     function beforeSave() {
-        if (!$this->cci_id) {
-            $event = new CartEvent(['ece_cc_id' => $this->cart->cc_id, 'ece_user_id' => Inji::app()->users->cur->user_id, 'ece_ecet_id' => 1, 'ece_info' => $this->cci_ciprice_id]);
+        if (!$this->id) {
+            $event = new Event(['cart_id' => $this->cart_id, 'user_id' => \Users\User::$cur->id, 'cart_event_type_id' => 1, 'info' => $this->item_offer_price_id]);
             $event->save();
         } else {
-            $cur = CartItem::get($this->cci_id);
-            //var_dump($this->cci_id,Inji::app()->db->last_error,Inji::app()->db->last_query);
-            if ($cur->cci_ci_id != $this->cci_ci_id) {
-                $event = new CartEvent(['ece_cc_id' => $this->cart->cc_id, 'ece_user_id' => Inji::app()->users->cur->user_id, 'ece_ecet_id' => 2, 'ece_info' => $cur->cci_ciprice_id]);
+            $cur = Item::get($this->id);
+            if ($cur->item_id != $this->item_id) {
+                $event = new Event(['cart_id' => $this->cart->cart_id, 'user_id' => \Users\User::$cur->id, 'cart_event_type_id' => 2, 'info' => $cur->item_offer_price_id]);
                 $event->save();
-                $event = new CartEvent(['ece_cc_id' => $this->cart->cc_id, 'ece_user_id' => Inji::app()->users->cur->user_id, 'ece_ecet_id' => 1, 'ece_info' => $this->cci_ciprice_id]);
+                $event = new Event(['cart_id' => $this->cart->cart_id, 'user_id' => \Users\User::$cur->id, 'cart_event_type_id' => 1, 'info' => $this->item_offer_price_id]);
                 $event->save();
             } else {
-                if ($cur->cci_ciprice_id != $this->cci_ciprice_id) {
-
-                    $event = new CartEvent(['ece_cc_id' => $this->cart->cc_id, 'ece_user_id' => Inji::app()->users->cur->user_id, 'ece_ecet_id' => 3, 'ece_info' => $this->cci_ciprice_id]);
+                if ($cur->item_offer_price_id != $this->item_offer_price_id) {
+                    $event = new Event(['cart_id' => $this->cart->cart_id, 'user_id' => \Users\User::$cur->id, 'cart_event_type_id' => 3, 'info' => $this->item_offer_price_id]);
                     $event->save();
                 }
-                if ($cur->cci_count != $this->cci_count) {
-                    $event = new CartEvent(['ece_cc_id' => $this->cart->cc_id, 'ece_user_id' => Inji::app()->users->cur->user_id, 'ece_ecet_id' => 4, 'ece_info' => $this->cci_ciprice_id . "|" . ($this->cci_count - $cur->cci_count)]);
+                if ($cur->count != $this->count) {
+                    $event = new Event(['cart_id' => $this->cart->cart_id, 'user_id' => \Users\User::$cur->id, 'cart_event_type_id' => 4, 'info' => $this->item_offer_price_id . "|" . ($this->count - $cur->count)]);
                     $event->save();
                 }
             }
@@ -80,7 +69,7 @@ class Item extends \Model {
     static $forms = [
         'inlineEdit' => [
             'options' => [
-                'cci_ci_id' => ['relation' => 'item', 'showCol' => ['type' => 'method', 'method' => 'itemNameCount'],'listGetter'=>['method'=>'itemsList','showCol'=>'combined']],
+                'cci_ci_id' => ['relation' => 'item', 'showCol' => ['type' => 'method', 'method' => 'itemNameCount'], 'listGetter' => ['method' => 'itemsList', 'showCol' => 'combined']],
                 'cci_ciprice_id' => ['relation' => 'price', 'showCol' => 'ciprice_price'],
                 'cci_count' => [],
             ],
@@ -113,23 +102,19 @@ class Item extends \Model {
         ]
     ];
 
-    static function colPrefix() {
-        return 'cci_';
-    }
-
     static function relations() {
         return [
             'item' => [
-                'model' => 'Item',
-                'col' => 'cci_ci_id'
+                'model' => 'Ecommerce\Item',
+                'col' => 'item_id'
             ],
             'price' => [
-                'model' => 'ItemPrice',
-                'col' => 'cci_ciprice_id'
+                'model' => 'Ecommerce\Item\Offer\Price',
+                'col' => 'item_offer_price_id'
             ],
             'cart' => [
-                'model' => 'Cart',
-                'col' => 'cci_cc_id'
+                'model' => 'Ecommerce\Cart',
+                'col' => 'cart_id'
             ]
         ];
     }

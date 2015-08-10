@@ -9,14 +9,14 @@ class Ecommerce extends Module {
     function getCurCart() {
         $cart = false;
         if (!empty($_SESSION['cart']['cart_id'])) {
-            $cart = Cart::get((int) $_SESSION['cart']['cart_id']);
+            $cart = Ecommerce\Cart::get((int) $_SESSION['cart']['cart_id']);
         }
         if (!$cart) {
-            $cart = new Cart();
-            $cart->cc_status = 1;
-            $cart->cc_user_id = $this->users->cur->user_id;
+            $cart = new Ecommerce\Cart();
+            $cart->cart_status_id = 1;
+            $cart->user_id = Users\User::$cur->id;
             $cart->save();
-            $_SESSION['cart']['cart_id'] = $cart->cc_id;
+            $_SESSION['cart']['cart_id'] = $cart->id;
         }
         return $cart;
     }
@@ -356,23 +356,6 @@ class Ecommerce extends Module {
         $items = Ecommerce\Item::getCount($selectOptions);
         //var_dump(App::$cur->db->lastQuery,$items);
         return $items;
-    }
-
-    function cart_recount($cc_id) {
-        \App::$cur->db->where('cc_id', $cc_id);
-        $cart = \App::$cur->db->select('catalog_carts')->fetch_assoc();
-        if (!$cart)
-            return false;
-        $items = $this->get_cart_items($cc_id);
-        if (!$items)
-            return false;
-        $pricesumm = 0;
-        foreach ($items as $cartitem) {
-            $item = Inji::app()->ecommerce->get_item($cartitem['cci_ci_id']);
-            $price = Inji::app()->ecommerce->get_prices($item['ci_id']);
-            $pricesumm += $price[$cartitem['cci_ciprice_id']]['ciprice_price'] * $cartitem['cci_count'];
-        }
-        $this->update_cart($cc_id, array('cc_summ' => $pricesumm));
     }
 
     function getCatalogParents($catalog_id, $ids = []) {

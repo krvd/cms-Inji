@@ -192,8 +192,12 @@ class View extends \Module {
 
     function checkNeedLibs() {
         if (!empty($this->template->config['libs'])) {
-            foreach ($this->template->config['libs'] as $libName) {
-                $this->app->libs->loadLib($libName);
+            foreach ($this->template->config['libs'] as $libName=>$libOptions) {
+                if(!is_array($libOptions)){
+                    $libName = $libOptions;
+                    $libOptions = [];
+                }
+                $this->app->libs->loadLib($libName,$libOptions);
             }
         }
         foreach ($this->dynAssets['js'] as $asset) {
