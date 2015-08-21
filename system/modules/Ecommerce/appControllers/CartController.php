@@ -2,140 +2,105 @@
 
 class CartController extends Controller {
 
-    public $need = array('cc_city' => 'Город', 'cc_street' => 'Улица', 'cc_index' => 'Индекс', 'cc_fio' => 'ФИО', 'cc_tel' => 'Телефон');
-
     function indexAction() {
         $cart = '';
-        $deliverys = Delivery::get_list();
-        $payTypes = CartPayType::get_list();
-        if (empty(Inji::app()->ecommerce->modConf['packItem']['ci_id']) || !$packItem = Item::get(Inji::app()->ecommerce->modConf['packItem']['ci_id'])) {
+        $deliverys = \Ecommerce\Delivery::getList();
+        $payTypes = \Ecommerce\PayType::getList();
+        if (empty($this->module->config['packItem']['item_id']) || !$packItem = Ecommerce\Item::get($this->module->config['packItem']['item_id'])) {
             $packItem = false;
         } else {
-            $packItem->price = ItemPrice::get(Inji::app()->ecommerce->modConf['packItem']['ciprice_id']);
+            $packItem->price = \Ecommerce\Item\Offer\Price::get($this->module->config['packItem']['item_offer_price_id']);
         }
-
         if (!empty($_SESSION['cart']['cart_id'])) {
-            $cart = Cart::get($_SESSION['cart']['cart_id']);
+            $cart = Ecommerce\Cart::get($_SESSION['cart']['cart_id']);
             if (!empty($_POST)) {
                 $error = false;
-                if ((empty($_POST['user_phone'])) && (!$this->users->cur->user_id || !$this->users->cur->user_phone)) {
-                    $this->msg->add('Укажите ваш номер');
+                if ((empty($_POST['user_phone'])) && (!Users\User::$cur->id || !Users\User::$cur->info->phone)) {
+                    Msg::add('Укажите ваш номер');
                     $error = true;
                 }
                 if (!$error) {
-                    if (!$this->users->cur->user_id) {
+                    if (!Users\User::$cur->id) {
                         $user_id = $this->Users->registration($_POST);
                         if (!$user_id) {
                             $error = true;
                         } else {
-                            $user = User::get($user_id);
+                            $user = Users\User::get($user_id);
                         }
                     } else {
-                        $user = $this->users->cur;
+                        $user = Users\User::$cur;
                     }
 
 
                     foreach ($cart->cartItems as $cartitem) {
-
-                        $prices = $cartitem->item->prices;
-                        $default = key($prices);
-                        $rolePrice = 0;
-                        foreach ($prices as $priceId => $itemPrice) {
-                            if (!$itemPrice->type)
-                                continue;
-                            if (!$itemPrice->type->cipt_roles) {
-                                $default = $priceId;
-                                continue;
-                            }
-                            if ($itemPrice->type->cipt_roles && $this->users->cur->user_role_id && false !== strpos($itemPrice->type->cipt_roles, "|{$this->users->cur->user_role_id}|")) {
-                                $rolePrice = $priceId;
-                            }
-                        }
-                        $price = $prices[($rolePrice) ? $rolePrice : $default];
-
-                        if ($price->ciprice_id != $cartitem->cci_ciprice_id) {
-                            $cartitem->cci_ciprice_id = $price->ciprice_id;
-                            $cartitem->save();
-                            if (!$error) {
-                                $this->msg->add('Один или несколько товаров были добавлены в корзину по неверной цене. Цены были пересчитаны, проверьте свой заказ', 'danger');
-                            }
+                        $warecount = $cartitem->item->warehouseCount($cart->id);
+                        if ($cartitem->count > $warecount) {
                             $error = true;
-                        }
-                        $warecount = $cartitem->item->warehouseCount((!empty($_SESSION['cart']['cart_id']) ? $_SESSION['cart']['cart_id'] : 0));
-                        if ($cartitem->cci_count > $warecount) {
-                            $error = true;
-                            $this->msg->add('Вы заказали <b>' . $cartitem->item->ci_name . '</b> больше чем есть на складе. на складе: <b>' . $warecount . '</b>', 'danger');
+                            Msg::add('Вы заказали <b>' . $cartitem->item->name . '</b> больше чем есть на складе. на складе: <b>' . $warecount . '</b>', 'danger');
                         }
                     }
 
 
                     if (empty($deliverys[$_POST['delivery']])) {
                         $error = 1;
-                        $this->msg->add('Ошибка при выборе способа доставки');
+                        Msg::add('Ошибка при выборе способа доставки');
                     }
                     if (empty($payTypes[$_POST['payType']])) {
                         $error = 1;
-                        $this->msg->add('Ошибка при выборе способа оплаты');
+                        Msg::add('Ошибка при выборе способа оплаты');
                     }
-                    if ($this->users->cur->user_id) {
-                        $this->db->where('cub_user_id', $this->users->cur->user_id);
-                        $this->db->where('cub_proof', 1);
-                        $this->db->group('cub_curency');
-                        $this->db->cols = '`cub_curency`, SUM(cub_sum)as `count`';
-                        $cubs = $this->db->result_array($this->db->select('catalog_user_bonuses'), 'cub_curency');
-                        if (!empty($cubs['ВР']['count'])) {
-                            $this->db->cols = 'SUM(cc_bonus_used)as `sum`';
-                            $this->db->where('cc_user_id', $this->users->cur->user_id);
-                            $this->db->where('cc_status', '2,3,5', 'IN');
-                            $sum = $this->db->select('catalog_carts')->fetch_assoc();
-                            $vrsum = (float) ($cubs['ВР']['count'] - $sum['sum']);
-                            if ($vrsum) {
-                                if (round((float) $_POST['cc_bonus_used'], 2) > round($vrsum, 2)) {
-                                    $error = 1;
-                                    $this->msg->add('Вам недоступно такое количество выгодных рублей');
-                                }
+                    $fields = \Ecommerce\UserAdds\Field::getList();
+                    if ($user && empty($_POST['userAdds_id'])) {
+                        $userAdds = New Ecommerce\UserAdds();
+                        $userAdds->user_id = $user->id;
+                        $userAdds->name = '';
+                        foreach ($fields as $field) {
+                            if (empty($_POST['userAdds']['inputs'][$field->id]) && $field->required) {
+                                $error = 1;
+                                Msg::add('Вы не указали: ' . $field->name);
+                            }
+                            if (!empty($_POST['userAdds']['inputs'][$field->id])) {
+                                $userAdds->name .= htmlspecialchars($_POST['userAdds']['inputs'][$field->id]);
                             }
                         }
                     }
                     if (!$error) {
-                        $cart->cc_user_id = $user->user_id;
-                        $cart->cc_status = 2;
+
+                        $cart->user_id = $user->user_id;
+                        $cart->cart_status_id = 2;
                         if (!empty($_POST['user_phone'])) {
-                            $cart->cc_tel = htmlspecialchars($_POST['user_phone']);
+                            $cart->tel = htmlspecialchars($_POST['user_phone']);
                         } else {
-                            $cart->cc_tel = $user->user_phone;
+                            $cart->tel = $user->user_phone;
                         }
-                        $cart->cc_fio = $user->user_name;
-                        $cart->cc_email = $user->user_mail;
-                        $cart->cc_city = htmlspecialchars($_POST['city']);
-                        $cart->cc_street = htmlspecialchars($_POST['street']);
-                        $cart->cc_day = htmlspecialchars($_POST['cc_day']);
-                        $cart->cc_time = htmlspecialchars($_POST['cc_time']);
-                        $cart->cc_comment = htmlspecialchars($_POST['cc_comment']);
-                        $cart->cc_date_status = date('Y-m-d H:i:s');
-                        $cart->cc_complete_data = date('Y-m-d H:i:s');
-                        $cart->cc_pay_type = $_POST['payType'];
-                        $cart->cc_delivery = $_POST['delivery'];
-                        $cart->cc_warehouse_block = 1;
-                        if (!empty($_POST['cc_bonus_used'])) {
-                            $cart->cc_bonus_used = (float) $_POST['cc_bonus_used'];
-                        }
+                        $cart->fio = $_POST['user_name'];
+                        $cart->email = $user->mail;
+                        $cart->city = htmlspecialchars($_POST['city']);
+                        $cart->street = htmlspecialchars($_POST['street']);
+                        $cart->day = htmlspecialchars($_POST['day']);
+                        $cart->time = htmlspecialchars($_POST['time']);
+                        $cart->comment = htmlspecialchars($_POST['cc_comment']);
+                        $cart->date_status = date('Y-m-d H:i:s');
+                        $cart->complete_data = date('Y-m-d H:i:s');
+                        $cart->paytype_id = $_POST['payType'];
+                        $cart->delivery_id = $_POST['delivery'];
+                        $cart->warehouse_block = 1;
                         $cart->save();
                         if (!empty($_POST['packs'])) {
                             $cart->addPacks(ceil($cart->sum / 1000));
                         }
-                        CartEvent::update(['ece_user_id' => $user->user_id], ['ece_cc_id', $cart->cc_id]);
-                        if (!$user->user_phone && $cart->cc_tel) {
-                            $user->user_phone = $cart->cc_tel;
-                            $user->save();
+                        \Ecommerce\Cart\Event::update(['user_id' => $user->id], ['cart_id', $cart->id]);
+                        if (!$user->info->phone && $cart->tel) {
+                            $user->info->phone = $cart->tel;
+                            $user->info->save();
                         }
-                        unset($_SESSION['cart']['cart_id']);
-                        $this->url->redirect('/ecommerce/cart/success');
+                        //unset($_SESSION['cart']['cart_id']);
+                        //$this->url->redirect('/ecommerce/cart/success');
                     }
                 }
             }
         }
-        $this->view->set_title('Корзина');
+        $this->view->setTitle('Корзина');
         $bread = [];
         $bread[] = [
             'text' => 'Каталог',
@@ -145,16 +110,16 @@ class CartController extends Controller {
             'text' => 'Корзина',
             'href' => '/ecommerce/cart'
         ];
-        $this->view->page('cart', compact('cart', 'items', 'deliverys', 'payTypes', 'packItem', 'bread'));
+        $this->view->page(['data' => compact('cart', 'items', 'deliverys', 'payTypes', 'packItem', 'bread')]);
     }
 
     function historyAction() {
         $this->view->set_title('История');
-        if (!$this->users->cur->user_id)
+        if (!Users\User::$cur->id)
             $this->url->redirect('/', 'Вы должны войти или зарегистрироваться');
 
-        $pages = new Pages($_GET, ['count' => Cart::getCount(['where' => ['cc_user_id', $this->users->cur->user_id]]), 'limit' => 10]);
-        $carts = Cart::get_list(['where' => ['cc_user_id', $this->users->cur->user_id], 'order' => ['cc_date', 'desc'], 'start' => $pages->params['start'], 'limit' => $pages->params['limit']]);
+        $pages = new Pages($_GET, ['count' => Cart::getCount(['where' => ['user_id', Users\User::$cur->id]]), 'limit' => 10]);
+        $carts = Cart::get_list(['where' => ['user_id', Users\User::$cur->id], 'order' => ['date', 'desc'], 'start' => $pages->params['start'], 'limit' => $pages->params['limit']]);
         $bread = [];
         $bread[] = [
             'text' => 'Каталог',
@@ -171,9 +136,9 @@ class CartController extends Controller {
         $this->view->page(compact('carts', 'pages', 'bread'));
     }
 
-    function orderDetailAction($cc_id = 0) {
-        $cart = Cart::get((int) $cc_id);
-        if ($cart->cc_user_id != $this->users->cur->user_id) {
+    function orderDetailAction($id = 0) {
+        $cart = Cart::get((int) $id);
+        if ($cart->user_id != Users\User::$cur->id) {
             $this->url->redirect('/', 'Это не ваша корзина');
         }
         $bread[] = [
@@ -185,55 +150,55 @@ class CartController extends Controller {
             'href' => '/ecommerce/cart'
         ];
         $bread[] = [
-            'text' => 'Заказ: №' . $cart->cc_id,
-            'href' => '/ecommerce/cart/orderDetail/' . $cart->cc_id
+            'text' => 'Заказ: №' . $cart->id,
+            'href' => '/ecommerce/cart/orderDetail/' . $cart->id
         ];
-        $this->view->set_title('Заказ №' . $cart->cc_id);
+        $this->view->set_title('Заказ №' . $cart->id);
         $this->view->page(compact('cart', 'bread'));
     }
 
-    function continueAction($cc_id = 0) {
-        $cart = Cart::get((int) $cc_id);
-        if ($cart->cc_user_id != $this->users->cur->user_id) {
+    function continueAction($id = 0) {
+        $cart = Cart::get((int) $id);
+        if ($cart->user_id != Users\User::$cur->id) {
             $this->url->redirect('/', 'Это не ваша корзина');
         }
-        if ($cart->cc_status > 1) {
+        if ($cart->status > 1) {
             $this->url->redirect('/', 'Корзина уже оформлена');
         }
-        $_SESSION['cart']['cart_id'] = $cart->cc_id;
+        $_SESSION['cart']['cart_id'] = $cart->id;
         $this->url->redirect('/ecommerce/cart');
     }
 
-    function deleteAction($cc_id = 0) {
-        $cart = Cart::get((int) $cc_id);
-        if ($cart->cc_user_id != $this->users->cur->user_id) {
+    function deleteAction($id = 0) {
+        $cart = Cart::get((int) $id);
+        if ($cart->user_id != Users\User::$cur->id) {
             $this->url->redirect('/', 'Это не ваша корзина');
         }
-        if ($cart->cc_status > 1 && $cart->cc_status != 4) {
+        if ($cart->status > 1 && $cart->status != 4) {
             $this->url->redirect('/', 'Корзина уже оформлена');
         }
         $cart->delete();
         $this->url->redirect('/ecommerce/cart/history', 'Корзина была удалена', 'success');
     }
 
-    function refillAction($cc_id = 0) {
-        $cart = Cart::get((int) $cc_id);
-        if ($cart->cc_user_id != $this->users->cur->user_id) {
+    function refillAction($id = 0) {
+        $cart = Cart::get((int) $id);
+        if ($cart->user_id != Users\User::$cur->id) {
             $this->url->redirect('/', 'Это не ваша корзина');
         }
-        if ($cart->cc_status <= 1) {
+        if ($cart->status <= 1) {
             $this->url->redirect('/', 'Корзина ещё не оформлена');
         }
         $newCart = new Cart();
-        $newCart->cc_user_id = $this->users->cur->user_id;
-        $newCart->cc_status = 1;
+        $newCart->user_id = Users\User::$cur->id;
+        $newCart->status = 1;
         $newCart->save();
         foreach ($cart->cartItems as $cartitem) {
             $newCart->addItem($cartitem->cci_ci_id, $cartitem->cci_ciprice_id, $cartitem->cci_count);
         }
 
         $newCart->save();
-        $_SESSION['cart']['cart_id'] = $newCart->cc_id;
+        $_SESSION['cart']['cart_id'] = $newCart->id;
 
         $this->url->redirect('/ecommerce/cart/');
     }
@@ -252,8 +217,8 @@ class CartController extends Controller {
             'text' => 'Заказ принят',
             'href' => '/ecommerce/cart/success'
         ];
-        $this->view->set_title('Заказ принят');
-        $this->view->page(compact('bread'));
+        $this->view->setTitle('Заказ принят');
+        $this->view->page(['data' => compact('bread')]);
     }
 
     function addAction() {
@@ -327,72 +292,63 @@ class CartController extends Controller {
         $cart = Ecommerce\Cart::get($cart->id);
         $result = [
             'image' => $item->image ? $item->image->path : '/static/system/images/no-image.png',
-            'success' => '<a href="/ecommerce/view/' . $item->ci_id . '">' . $item->ci_name . '</a> добавлен <a href="/ecommerce/cart">в корзину покупок</a>!',
+            'success' => '<a href="/ecommerce/view/' . $item->id . '">' . $item->name() . '</a> добавлен <a href="/ecommerce/cart">в корзину покупок</a>!',
             'total' => 'Товаров ' . count($cart->cartItems) . ' (' . $cart->sum . '.)'
         ];
         echo json_encode($result);
-        //$this->getcartAction();
     }
 
     function updatecartitemAction() {
         if (empty($_SESSION['cart']['cart_id']))
-            exit('1');
+            exit('У вас нет корзины');
 
-        if (empty($_GET['cci_id']))
-            exit('2');
+        if (empty($_GET['cart_item_id']))
+            exit('Не передан ид элемента корзины');
 
-        $cartItem = CartItem::get((int) $_GET['cci_id']);
+        if (empty($_GET['item_offer_price_id']))
+            exit('не передан ид цены элемента корзины');
+
+        $cartItem = \Ecommerce\Cart\Item::get((int) $_GET['cart_item_id']);
 
         if (!$cartItem) {
-            exit('3');
+            exit('Нет такого элемента корзины');
         }
 
-        if ($cartItem->cart->cc_id != $_SESSION['cart']['cart_id']) {
-            exit('3');
+        if ($cartItem->cart_id != $_SESSION['cart']['cart_id']) {
+            exit('Этот элемент корзины не относится к вашей корзине');
         }
         $count = (float) $_GET['count'];
         if ($count < 0.001)
             $count = 1;
 
         $item = $cartItem->item;
-        $prices = $item->prices;
-        $default = key($prices);
-        $rolePrice = 0;
-        foreach ($item->prices as $priceId => $itemPrice) {
-            if (!$itemPrice->type) {
-                continue;
-            }
-            if (!$itemPrice->type->cipt_roles) {
-                $default = $priceId;
-                continue;
-            }
-            if ($itemPrice->type->cipt_roles && $this->users->cur->user_role_id && false !== strpos($itemPrice->type->cipt_roles, "|{$this->users->cur->user_role_id}|")) {
-                $rolePrice = $priceId;
+        $price = false;
+        foreach ($item->offers as $offer) {
+            if (!empty($offer->prices[(int) $_GET['item_offer_price_id']])) {
+                $price = $offer->prices[(int) $_GET['item_offer_price_id']];
+                break;
             }
         }
-        $price = $item->prices[($rolePrice) ? $rolePrice : $default];
-
-        $cartItem->cci_ciprice_id = $price->ciprice_id;
-        $cartItem->cci_count = $count;
+        $cartItem->count = $count;
 
         $cartItem->save();
-        $cartItem->cart->calc();
 
         $this->getcartAction();
     }
 
     function getcartAction() {
-        $cart = $this->ecommerce->getCurCart();
         $this->view->widget('cart');
     }
 
     function delcartitemAction($cci_id = 0) {
-        if (!empty($_SESSION['cart']['cart_id'])) {
-            $cart = Cart::get((int) $_SESSION['cart']['cart_id']);
+        if (empty($_SESSION['cart']['cart_id']))
+            exit('У вас нет корзины');
+        $cartItem = \Ecommerce\Cart\Item::get((int) $cci_id);
+        if (!$cartItem || $cartItem->cart_id != $_SESSION['cart']['cart_id']) {
+            exit('Этот элемент корзины не относится к вашей корзине');
         }
-        if (!empty($cart->cartItems[(int) $cci_id])) {
-            $cart->cartItems[(int) $cci_id]->delete();
-        }
+        $cart = $cartItem->cart;
+        $cartItem->delete();
         $cart->calc();
         $this->getcartAction();
     }

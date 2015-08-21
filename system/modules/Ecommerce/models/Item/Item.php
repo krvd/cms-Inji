@@ -136,7 +136,7 @@ SELECT COALESCE(sum(ewb_count) ,0) as `sum`
         \App::$cur->db->where(Item\Offer\Warehouse::colPrefix() . Item\Offer::index(), implode(',', $ids), 'IN');
         \App::$cur->db->cols = 'COALESCE(sum(' . Item\Offer\Warehouse::colPrefix() . 'count),0) as `sum` ';
         $warehouse = \App::$cur->db->select(Item\Offer\Warehouse::table())->fetch();
-        
+
         \App::$cur->db->cols = 'COALESCE(sum(' . Warehouse\Block::colPrefix() . 'count) ,0) as `sum` ';
         \App::$cur->db->where(Warehouse\Block::colPrefix() . Item\Offer::index(), implode(',', $ids), 'IN');
         if ($cart_id) {
@@ -144,8 +144,8 @@ SELECT COALESCE(sum(ewb_count) ,0) as `sum`
         }
         $on = '
             ' . Cart::index() . ' = ' . Warehouse\Block::colPrefix() . Cart::index() . ' AND (
-            (`'.Cart::colPrefix().'warehouse_block` = 1 and `'.Cart::colPrefix().'cart_status_id` in(2,3,6)) || 
-            (`'.Cart::colPrefix().'cart_status_id` in(0,1) and `'.Cart::colPrefix().'date_last_activ` >=subdate(now(),INTERVAL 30 MINUTE))
+            (`' . Cart::colPrefix() . 'warehouse_block` = 1 and `' . Cart::colPrefix() . 'cart_status_id` in(2,3,6)) || 
+            (`' . Cart::colPrefix() . 'cart_status_id` in(0,1) and `' . Cart::colPrefix() . 'date_last_activ` >=subdate(now(),INTERVAL 30 MINUTE))
             )
         ';
         \App::$cur->db->join(Cart::table(), $on, 'inner');
@@ -190,9 +190,10 @@ SELECT COALESCE(sum(ewb_count) ,0) as `sum`
         ];
     }
 
-    function price() {
-        $prices = $this->prices;
-        return $prices[key($prices)];
+    function getPrice() {
+        $offers = $this->offers(['key' => false]);
+        $prices = $offers[0]->prices(['key' => false]);
+        return $prices[0];
     }
 
 }

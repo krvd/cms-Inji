@@ -27,7 +27,7 @@ function calcsum() {
 }
 function calcsumProc() {
     console.log('calc');
-    sum = 0;
+    var sum = 0;
     $('.cartitems .item').each(function () {
         count = parseFloat($(this).find('.cart-couner').val());
         if (isNaN(count))
@@ -39,9 +39,9 @@ function calcsumProc() {
         sum += parseFloat($(this).data('priceam')) * count;
         data = {};
         data.data = {};
-        data.data.cci_id = $(this).data('cci_id');
+        data.data.cart_item_id = $(this).data('cart_item_id');
         data.data.count = count;
-        data.data.price = $(this).data('price');
+        data.data.item_offer_price_id = $(this).data('item_offer_price_id');
         data.url = '/ecommerce/cart/updatecartitem';
         data.success = function (data) {
             $('#cart').html(data);
@@ -51,16 +51,23 @@ function calcsumProc() {
         console.log(price);
         $(this).find('.total').html(price * count + ' руб.');
     });
-    delevery = deliverys[$('[name="delivery"]').val()];
-    if (sum >= parseFloat(delevery.cd_max_cart_price)) {
-        $($('.deliverysum td').get(1)).html('0 руб.');
-        asum = sum;
+    asum = sum;
+    if (typeof (deliverys) != 'undefined') {
+        delivery = deliverys[$('[name="delivery"]').val()];
+        if (sum >= parseFloat(delivery.delivery_max_cart_price)) {
+            $($('.deliverysum td').get(1)).html('0 руб.');
+            asum = sum;
+        }
+        else {
+            $($('.deliverysum td').get(1)).html(parseFloat(delivery.delivery_price) + ' руб.');
+            asum = sum + parseFloat(delivery.delivery_price);
+        }
+        $($('.deliverysum td').get(0)).html(delivery.delivery_name + ':');
     }
     else {
-        $($('.deliverysum td').get(1)).html(parseFloat(delevery.cd_price) + ' руб.');
-        asum = sum + parseFloat(delevery.cd_price);
+        $($('.deliverysum td').get(0)).html('Без доставки');
+        $($('.deliverysum td').get(1)).html('0 руб.');
     }
-    $($('.deliverysum td').get(0)).html(delevery.cd_name + ':');
     $($('.cartsums td').get(1)).html(sum.toFixed(2) + ' руб.');
     var packsCkeckbox = $('[name="packs"]');
     var packSums = 0;
@@ -113,18 +120,14 @@ function addToCart(btn, ci_id, ciprice_id, count, countInputSelector, tokg) {
     $.ajax(data);
     return false;
 }
-function cartdel(cci_id) {
+function cartdel(cart_item_id) {
     data = {};
     data.data = {};
-    data.url = '/ecommerce/cart/delcartitem/' + cci_id;
+    data.url = '/ecommerce/cart/delcartitem/' + cart_item_id;
+    $('.cart_item_id' + cart_item_id).remove();
     data.success = function (data) {
-        $('.cart-dropdown').html(data);
+        $('#cart').html(data);
         calcsum();
     }
     $.ajax(data);
-    $('.cci_id' + cci_id).remove();
-
 }
-$(function () {
-    $('.cartitems .item input,[name="cc_bonus_used"]').keyup(calcsum);
-})

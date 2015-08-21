@@ -227,6 +227,8 @@ class Users extends Module {
             Msg::add('Не удалось зарегистрировать', 'danger');
             return false;
         }
+        $info = new \Users\Info(['user_id' => $user->id]);
+        $info->save();
         $this->autorization($user_mail, $pass, 'mail');
 
         $from = 'noreply@' . INJI_DOMAIN_NAME;

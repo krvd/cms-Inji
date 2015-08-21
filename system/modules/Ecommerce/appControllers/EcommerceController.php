@@ -111,13 +111,10 @@ class ecommerceController extends Controller {
         $this->view->page('main', compact('hitItems', 'bestItems'));
     }
 
-    function itemListAction($catalog_id = 0) {
-        //filters=%2Fsort%3Dp.sort_order%2Forder%3DASC%2Flimit%3D15%2Fpage%3D2&route=product%2Fcategory&path=1&manufacturer_id=&search=&tag=
-
-
+    function itemListAction($category_id = 0) {
         if (!empty($_GET['search'])) {
             if (!empty($_GET['inCatalog'])) {
-                $catalog_id = (int) $_GET['inCatalog'];
+                $category_id = (int) $_GET['inCatalog'];
             }
             $search = $_GET['search'];
         } else
@@ -129,37 +126,36 @@ class ecommerceController extends Controller {
             $sort = 'asc';
         }
 
-        $pages = new \Ui\Pages($_GET, ['count' => $this->ecommerce->getItemsCount($catalog_id, trim($search)), 'limit' => 16]);
+        $pages = new \Ui\Pages($_GET, ['count' => $this->ecommerce->getItemsCount($category_id, trim($search)), 'limit' => 18]);
 
-        $catalog_id = (int) $catalog_id;
+        $category_id = (int) $category_id;
 
-        if ($catalog_id < 1)
-            $catalog_id = '';
+        if ($category_id < 1)
+            $category_id = '';
 
-        $active = $catalog_id;
-        $catalog = null;
-        if ($catalog_id)
-            $catalog = Ecommerce\Category::get($catalog_id);
+        $active = $category_id;
+        $category = null;
+        if ($category_id)
+            $category = Ecommerce\Category::get($category_id);
 
         $bread = [];
-        if (!$catalog || !$catalog->name) {
+        if (!$category || !$category->name) {
             $bread[] = array('text' => 'Каталог');
             $this->view->setTitle('Каталог');
         } else {
             $bread[] = array('text' => 'Каталог', 'href' => '/ecommerce');
-            $catalogIds = $this->ecommerce->getCatalogParents($catalog->id);
-            $catalogIds = array_reverse($catalogIds);
-            foreach ($catalogIds as $id) {
+            $categoryIds = $this->ecommerce->getCatalogParents($category->id);
+            $categoryIds = array_reverse($categoryIds);
+            foreach ($categoryIds as $id) {
                 $cat = Ecommerce\Category::get($id);
                 $bread[] = array('text' => $cat->name, 'href' => '/ecommerce/itemList/' . $cat->id);
             }
-            $this->view->setTitle($catalog->name);
+            $this->view->setTitle($category->name);
         }
 
-
-        $items = $this->ecommerce->getItems(!empty($catalog_ids) ? $catalog_ids : $catalog_id, $pages->params['start'], $pages->params['limit'], 'id', trim($search), $sort);
-        $catalogs = Ecommerce\Category::getList();
-        $this->view->page(['data' => compact('active', 'catalog', 'sort', 'search', 'pages', 'items', 'catalogs', 'bread')]);
+        $items = $this->ecommerce->getItems(!empty($category_ids) ? $category_ids : $category_id, $pages->params['start'], $pages->params['limit'], 'id', trim($search), $sort);
+        $categorys = Ecommerce\Category::getList();
+        $this->view->page(['data' => compact('active', 'category', 'sort', 'search', 'pages', 'items', 'categorys', 'bread')]);
     }
 
     function viewAction($id = '') {

@@ -59,7 +59,7 @@ class Mysql extends \Object {
     }
 
     function getTableCols($table_name) {
-        $query = new Mysql\Query();
+        $query = new Mysql\Query($this);
         $old_db = $this->db_name;
         $old_prefix = $this->table_prefix;
         $this->db_name = 'information_schema';
@@ -74,7 +74,7 @@ class Mysql extends \Object {
     }
 
     function tableExist($tableName) {
-        $query = new Mysql\Query();
+        $query = new Mysql\Query($this);
         return (bool) $query->query("SHOW TABLES FROM `{$this->db_name}` LIKE '{$this->table_prefix}{$tableName}'")->getArray();
     }
 
@@ -85,7 +85,7 @@ class Mysql extends \Object {
         if ($param == 'pk') {
             $param = "int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (`{$name}`)";
         }
-        $query = new Mysql\Query();
+        $query = new Mysql\Query($this);
         return $query->query("ALTER TABLE `{$this->db_name}`.`{$this->table_prefix}{$table}` ADD `{$name}` {$param}");
     }
 
@@ -95,6 +95,11 @@ class Mysql extends \Object {
         }
 
         return $this->query("ALTER TABLE `{$this->db_name}`.`{$this->table_prefix}{$table}` DROP `{$name}`");
+    }
+    
+    function getTables(){
+        $query = new Mysql\Query($this);
+        return $query->query("SHOW TABLES")->getArray();
     }
 
 }

@@ -11,6 +11,7 @@
         <li role="presentation"><a href="#unit" aria-controls="unit" role="tab" data-toggle="tab">Единицы измерения</a></li>
         <li role="presentation"><a href="#priceType" aria-controls="priceType" role="tab" data-toggle="tab">Типы цен</a></li>
         <li role="presentation"><a href="#itemType" aria-controls="itemType" role="tab" data-toggle="tab">Типы товаров</a></li>
+        <li role="presentation"><a href="#UserAddsField" aria-controls="UserAddsField" role="tab" data-toggle="tab">Поля корзины</a></li>
         <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Операции</a></li>
     </ul>
     <div class="tab-content">
@@ -61,6 +62,12 @@
         <div role="tabpanel" class="tab-pane fade" id="itemType">
             <?php
             $dataManager = new Ui\DataManager('Ecommerce\Item\Type');
+            $dataManager->draw();
+            ?>
+        </div>
+        <div role="tabpanel" class="tab-pane fade" id="UserAddsField">
+            <?php
+            $dataManager = new Ui\DataManager('Ecommerce\UserAdds\Field');
             $dataManager->draw();
             ?>
         </div>

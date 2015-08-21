@@ -240,7 +240,7 @@ class Ecommerce extends Module {
         $selectOptions['join'][] = [Ecommerce\Item\Offer::table(), Ecommerce\Item::index() . ' = ' . Ecommerce\Item\Offer::colPrefix() . Ecommerce\Item::index(), 'inner'];
         $selectOptions['join'][] = [Ecommerce\Item\Offer\Price::table(), Ecommerce\Item\Offer::index() . ' = ' . Ecommerce\Item\Offer\Price::colPrefix() . Ecommerce\Item\Offer::index() . ' and ' . Ecommerce\Item\Offer\Price::colPrefix() . 'price>0', 'inner'];
 
-        $selectOptions['distinct'] = true;
+        $selectOptions['group'] = Ecommerce\Item::index();
         //\App::$cur->db->cols = 'DISTINCT `' . \App::$cur->db->table_prefix . 'catalog_items`. *';
 
         /* if (empty($this->modConf['view_empty_warehouse'])) {

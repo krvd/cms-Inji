@@ -301,11 +301,9 @@ class Cart extends \Model {
         }
         $cart = Cart::get($this->id);
         foreach ($cart->cartItems as $cartItem) {
-
             if (!$cartItem->price) {
                 continue;
             }
-
             $pricesum += (float) $cartItem->price->price * (float) $cartItem->count;
             if (in_array($this->cart_status_id, [0, 1, 2, 3, 6])) {
                 if (in_array($this->cart_status_id, [0, 1])) {
@@ -315,7 +313,7 @@ class Cart extends \Model {
                         continue;
                     }
                 }
-                
+
                 $block = new Warehouse\Block();
                 $block->item_offer_id = $cartItem->price->item_offer_id;
                 $block->cart_id = $this->id;
@@ -324,8 +322,9 @@ class Cart extends \Model {
             }
         }
         $cart->sum = $pricesum;
-        if ($save)
+        if ($save) {
             $cart->save();
+        }
     }
 
     function beforeSave() {
@@ -345,8 +344,8 @@ class Cart extends \Model {
                 //$event = $events[0];
             }
         }
-       // if ($event)
-            //$this->date_last_activ = $event->date_create;
+        // if ($event)
+        //$this->date_last_activ = $event->date_create;
         $this->calc(false);
     }
 

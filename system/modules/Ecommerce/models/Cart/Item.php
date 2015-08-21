@@ -33,7 +33,7 @@ class Item extends \Model {
     }
 
     function afterDelete() {
-        $event = new CartEvent(['ece_cc_id' => $this->cart->cc_id, 'ece_user_id' => Inji::app()->users->cur->user_id, 'ece_ecet_id' => 2, 'ece_info' => $this->cci_ciprice_id]);
+        $event = new Event(['cart_id' => $this->cart_id, 'user_id' => \Users\User::$cur->id, 'cart_event_type_id' => 2, 'info' => $this->item_offer_price_id]);
         $event->save();
         $this->cart->calc();
     }
@@ -117,13 +117,6 @@ class Item extends \Model {
                 'col' => 'cart_id'
             ]
         ];
-    }
-
-    function checkFormAccess($formName) {
-        if ($formName == 'manage' && !in_array(Inji::app()->users->cur->user_group_id, array(3, 4))) {
-            return false;
-        }
-        return true;
     }
 
 }

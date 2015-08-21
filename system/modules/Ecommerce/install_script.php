@@ -194,6 +194,7 @@ return function ($step = NULL, $params = array()) {
         //Основные параметры
         'useradds_field_name' => 'varchar(255) NOT NULL',
         'useradds_field_type' => 'varchar(255) NOT NULL',
+        'useradds_field_required' => 'bool NOT NULL',
         //Системные
         'useradds_field_weight' => 'int(11) UNSIGNED NOT NULL',
         'useradds_field_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
@@ -235,6 +236,9 @@ return function ($step = NULL, $params = array()) {
         'cart_cart_status_id' => 'int(11) UNSIGNED NOT NULL',
         'cart_delivery_id' => 'int(11) UNSIGNED NOT NULL',
         'cart_paytype_id' => 'int(11) UNSIGNED NOT NULL',
+        'cart_comment' => 'text NOT NULL',
+        'cart_day' => 'VARCHAR(255) NOT NULL',
+        'cart_time' => 'VARCHAR(255) NOT NULL',
         //Системные
         'cart_sum' => 'decimal(10,2) NOT NULL',
         'cart_payid' => 'int(11) UNSIGNED NOT NULL',
