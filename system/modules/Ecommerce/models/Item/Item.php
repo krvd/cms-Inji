@@ -155,11 +155,11 @@ SELECT COALESCE(sum(ewb_count) ,0) as `sum`
     }
 
     function changeWarehouse($count) {
-        $warehouse = ItemWarehouses::get([['ciw_count', '0', '>'], ['ciw_id', $this->id]]);
+        /*$warehouse = ItemWarehouses::get([['count', '0', '>'], ['id', $this->id]]);
         if ($warehouse) {
             $warehouse->ciw_count +=(float) $count;
             $warehouse->save();
-        }
+        }*/
     }
 
     static function relations() {

@@ -2,21 +2,21 @@
 
 return [
     'storage' => [
-        'appTypeSplit'=>true,
+        'appTypeSplit' => true,
         'appAdmin' => [
-            'scheme'=>[
-                'Menu'=>[
-                    'ai'=>2
+            'scheme' => [
+                'Menu' => [
+                    'ai' => 2
                 ],
-                'Item'=>[
-                    'ai'=>3
+                'Item' => [
+                    'ai' => 3
                 ]
             ],
             'Menu' => [
                 '0' => [
                     'id' => 1,
                     'name' => 'Меню боковой панели',
-                    'code'=>'sidebarMenu'
+                    'code' => 'sidebarMenu'
                 ]
             ],
             'Item' => [
@@ -26,8 +26,16 @@ return [
                     'name' => 'Меню',
                     'href' => '/admin/menu',
                     'Menu_id' => 1
-                ], [
+                ],
+                [
                     'id' => 2,
+                    'type' => 'href',
+                    'name' => 'Модули',
+                    'href' => '/admin/modules',
+                    'Menu_id' => 1
+                ],
+                [
+                    'id' => 3,
                     'type' => 'href',
                     'name' => 'Темы оформления',
                     'href' => '/admin/view',

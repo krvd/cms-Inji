@@ -57,6 +57,10 @@ class Offer extends \Model {
                 'model' => 'Ecommerce\Item\Offer\Price',
                 'col' => 'item_offer_id',
             ],
+            'item' => [
+                'model' => 'Ecommerce\Item',
+                'col' => 'item_id'
+            ]
         ];
     }
 

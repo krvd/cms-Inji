@@ -6,19 +6,10 @@ class CartController extends Controller {
         $cart = '';
         $deliverys = \Ecommerce\Delivery::getList();
         $payTypes = \Ecommerce\PayType::getList();
-        if (empty($this->module->config['packItem']['item_id']) || !$packItem = Ecommerce\Item::get($this->module->config['packItem']['item_id'])) {
-            $packItem = false;
-        } else {
-            $packItem->price = \Ecommerce\Item\Offer\Price::get($this->module->config['packItem']['item_offer_price_id']);
-        }
         if (!empty($_SESSION['cart']['cart_id'])) {
             $cart = Ecommerce\Cart::get($_SESSION['cart']['cart_id']);
             if (!empty($_POST)) {
                 $error = false;
-                if ((empty($_POST['user_phone'])) && (!Users\User::$cur->id || !Users\User::$cur->info->phone)) {
-                    Msg::add('Укажите ваш номер');
-                    $error = true;
-                }
                 if (!$error) {
                     if (!Users\User::$cur->id) {
                         $user_id = $this->Users->registration($_POST);
@@ -31,12 +22,13 @@ class CartController extends Controller {
                         $user = Users\User::$cur;
                     }
 
-
-                    foreach ($cart->cartItems as $cartitem) {
-                        $warecount = $cartitem->item->warehouseCount($cart->id);
-                        if ($cartitem->count > $warecount) {
-                            $error = true;
-                            Msg::add('Вы заказали <b>' . $cartitem->item->name . '</b> больше чем есть на складе. на складе: <b>' . $warecount . '</b>', 'danger');
+                    if (empty($this->module->config['sell_over_warehouse'])) {
+                        foreach ($cart->cartItems as $cartitem) {
+                            $warecount = $cartitem->item->warehouseCount($cart->id);
+                            if ($cartitem->count > $warecount) {
+                                $error = true;
+                                Msg::add('Вы заказали <b>' . $cartitem->item->name . '</b> больше чем есть на складе. на складе: <b>' . $warecount . '</b>', 'danger');
+                            }
                         }
                     }
 
@@ -50,52 +42,41 @@ class CartController extends Controller {
                         Msg::add('Ошибка при выборе способа оплаты');
                     }
                     $fields = \Ecommerce\UserAdds\Field::getList();
-                    if ($user && empty($_POST['userAdds_id'])) {
-                        $userAdds = New Ecommerce\UserAdds();
-                        $userAdds->user_id = $user->id;
-                        $userAdds->name = '';
-                        foreach ($fields as $field) {
-                            if (empty($_POST['userAdds']['inputs'][$field->id]) && $field->required) {
-                                $error = 1;
-                                Msg::add('Вы не указали: ' . $field->name);
-                            }
-                            if (!empty($_POST['userAdds']['inputs'][$field->id])) {
-                                $userAdds->name .= htmlspecialchars($_POST['userAdds']['inputs'][$field->id]);
-                            }
+
+                    foreach ($fields as $field) {
+                        if (empty($_POST['userAdds']['fields'][$field->id]) && $field->required) {
+                            $error = 1;
+                            Msg::add('Вы не указали: ' . $field->name);
                         }
                     }
                     if (!$error) {
-
-                        $cart->user_id = $user->user_id;
-                        $cart->cart_status_id = 2;
-                        if (!empty($_POST['user_phone'])) {
-                            $cart->tel = htmlspecialchars($_POST['user_phone']);
-                        } else {
-                            $cart->tel = $user->user_phone;
+                        $userAdds = new Ecommerce\UserAdds();
+                        $userAdds->user_id = $user->id;
+                        $userAdds->save();
+                        foreach ($fields as $field) {
+                            if (!empty($_POST['userAdds']['fields'][$field->id])) {
+                                $userAdds->name .= htmlspecialchars($_POST['userAdds']['fields'][$field->id]);
+                            }
+                            $userAddsValue = new Ecommerce\UserAdds\Value();
+                            $userAddsValue->value = htmlspecialchars($_POST['userAdds']['fields'][$field->id]);
+                            $userAddsValue->useradds_field_id = $field->id;
+                            $userAddsValue->useradds_id = $userAdds->id;
+                            $userAddsValue->save();
                         }
-                        $cart->fio = $_POST['user_name'];
-                        $cart->email = $user->mail;
-                        $cart->city = htmlspecialchars($_POST['city']);
-                        $cart->street = htmlspecialchars($_POST['street']);
-                        $cart->day = htmlspecialchars($_POST['day']);
-                        $cart->time = htmlspecialchars($_POST['time']);
-                        $cart->comment = htmlspecialchars($_POST['cc_comment']);
+                        $userAdds->save();
+                        $cart->user_id = $user->user_id;
+                        $cart->useradds_id = $userAdds;
+                        $cart->cart_status_id = 2;
+                        $cart->comment = htmlspecialchars($_POST['comment']);
                         $cart->date_status = date('Y-m-d H:i:s');
                         $cart->complete_data = date('Y-m-d H:i:s');
-                        $cart->paytype_id = $_POST['payType'];
-                        $cart->delivery_id = $_POST['delivery'];
+                        $cart->paytype_id = (int) $_POST['payType'];
+                        $cart->delivery_id = (int) $_POST['delivery'];
                         $cart->warehouse_block = 1;
                         $cart->save();
-                        if (!empty($_POST['packs'])) {
-                            $cart->addPacks(ceil($cart->sum / 1000));
-                        }
-                        \Ecommerce\Cart\Event::update(['user_id' => $user->id], ['cart_id', $cart->id]);
-                        if (!$user->info->phone && $cart->tel) {
-                            $user->info->phone = $cart->tel;
-                            $user->info->save();
-                        }
-                        //unset($_SESSION['cart']['cart_id']);
-                        //$this->url->redirect('/ecommerce/cart/success');
+                        \Ecommerce\Cart\Event::update(['user_id' => $user->id, 'cart_id' => 0], ['cart_id', $cart->id]);
+                        unset($_SESSION['cart']['cart_id']);
+                        Tools::redirect('/ecommerce/cart/success');
                     }
                 }
             }
@@ -222,44 +203,28 @@ class CartController extends Controller {
     }
 
     function addAction() {
-        if (empty($_GET['item_id'])) {
-            $result = [
-                'image' => '/static/system/images/denied.png',
-                'success' => 'Такого товара не существует',
-                    //'total' => 'Товаров ' . count($cart->cartItems) . ' (' . $cart->sum . 'р.)'
-            ];
-            echo json_encode($result);
-            exit();
+        $result = new Server\Result();
+        if (empty($_GET['itemOfferPriceId'])) {
+            $result->success = false;
+            $result->content = 'Произошла непредвиденная ошибка при добавлении товара';
+            $result->send();
         }
-
-        $item = \Ecommerce\Item::get((int) $_GET['item_id']);
+        $price = \Ecommerce\Item\Offer\Price::get((int) $_GET['itemOfferPriceId']);
+        if (!$price) {
+            $result->success = false;
+            $result->content = 'Такой цены не найдено';
+            $result->send();
+        }
+        $item = $price->offer->item;
 
         if (!$item) {
-            $result = [
-                'image' => '/static/system/images/denied.png',
-                'success' => 'Такого товара не существует',
-                    //'total' => 'Товаров ' . count($cart->cartItems) . ' (' . $cart->sum . 'р.)'
-            ];
-            echo json_encode($result);
-            exit();
+            $result->success = false;
+            $result->content = 'Такого товара не существует';
+            $result->send();
         }
 
         $item->sales ++;
         $item->save();
-
-        $offers = $item->offers(['key' => false]);
-        $prices = $offers[0]->prices(['key' => false]);
-        $price = $prices[0];
-
-        if (!$price) {
-            $result = [
-                'image' => '/static/system/images/denied.png',
-                'success' => 'Такой цены не найдено',
-                    //'total' => 'Товаров ' . count($cart->cartItems) . ' (' . $cart->sum . 'р.)'
-            ];
-            echo json_encode($result);
-            exit();
-        }
 
         if (empty($_GET['count']))
             $count = 1;
@@ -267,15 +232,13 @@ class CartController extends Controller {
             $count = (float) $_GET['count'];
 
         $cart = $this->ecommerce->getCurCart();
-        if ($item->warehouseCount() < $count) {
-            $result = [
-                'image' => '/static/system/images/denied.png',
-                'success' => 'На складе недостаточно товара! Доступно: ' . $item->warehouseCount(),
-                'total' => 'Товаров ' . count($cart->cartItems) . ' (' . $cart->sum . 'р.)'
-            ];
-            echo json_encode($result);
-            exit();
+
+        if (empty($this->module->config['sell_over_warehouse']) && $item->warehouseCount() < $count) {
+            $result->success = false;
+            $result->content = 'На складе недостаточно товара! Доступно: ' . $item->warehouseCount();
+            $result->send();
         }
+
         $isset = false;
         foreach ($cart->cartItems as $cartItem) {
             if ($cartItem->item_id == $item->id && $cartItem->item_offer_price_id == $price->id) {
@@ -289,13 +252,8 @@ class CartController extends Controller {
             $cart->addItem($item->id, $price->id, $count);
         }
         $cart->calc();
-        $cart = Ecommerce\Cart::get($cart->id);
-        $result = [
-            'image' => $item->image ? $item->image->path : '/static/system/images/no-image.png',
-            'success' => '<a href="/ecommerce/view/' . $item->id . '">' . $item->name() . '</a> добавлен <a href="/ecommerce/cart">в корзину покупок</a>!',
-            'total' => 'Товаров ' . count($cart->cartItems) . ' (' . $cart->sum . '.)'
-        ];
-        echo json_encode($result);
+        $result->successMsg = '<a href="/ecommerce/view/' . $item->id . '">' . $item->name() . '</a> добавлен <a href="/ecommerce/cart">в корзину покупок</a>!';
+        $result->send();
     }
 
     function updatecartitemAction() {

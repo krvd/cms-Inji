@@ -33,6 +33,11 @@ class File extends \Exchange1c\Mode {
             $status = 'failure';
             $text = 'Fail on save file: ' . $_GET['filename'];
         }
+        if (strpos($_GET['filename'], '1cbitrix') !== false) {
+            $data = new \SimpleXMLElement(file_get_contents($dir . '/' . $_GET['filename']));
+            $orders = new \Exchange1c\Parser\Orders($data);
+            $orders->process();
+        }
         \App::$cur->exchange1c->response($status, $text, false);
         $this->end($status);
     }

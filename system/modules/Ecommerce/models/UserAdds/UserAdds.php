@@ -12,6 +12,24 @@
  */
 
 namespace Ecommerce;
-class UserAdds extends \Model{
-    //put your code here
+
+class UserAdds extends \Model {
+
+    static $labels = [
+        'values' => 'Информация'
+    ];
+    static $cols = [
+        'values' => ['type' => 'select', 'source' => 'relation', 'relation' => 'values'],
+    ];
+
+    static function relations() {
+        return [
+            'values' => [
+                'type' => 'many',
+                'model' => 'Ecommerce\UserAdds\Value',
+                'col' => 'useradds_id',
+            ]
+        ];
+    }
+
 }

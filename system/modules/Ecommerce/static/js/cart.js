@@ -1,133 +1,161 @@
-/* 
- * The MIT License
- *
- * Copyright 2015 Alexey Krupskiy <admin@inji.ru>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+/**
+ * Ecommerce Classes
  */
-var procTimeot = null;
-function calcsum() {
-    calcsumProc();
-}
-function calcsumProc() {
-    console.log('calc');
-    var sum = 0;
-    $('.cartitems .item').each(function () {
-        count = parseFloat($(this).find('.cart-couner').val());
-        if (isNaN(count))
-            count = 1;
-        if ($(this).find('.cart-couner').hasClass('rangerCount')) {
-            count = count / 1000;
+inji.Ecommerce = {
+    Cart: new function () {
+        this.addItem = function (itemOfferPriceId, count) {
+            inji.Server.request({
+                url: 'ecommerce/cart/add',
+                data: {
+                    itemOfferPriceId: itemOfferPriceId,
+                    count: count,
+                }
+            });
         }
-        console.log(count);
-        sum += parseFloat($(this).data('priceam')) * count;
-        data = {};
-        data.data = {};
-        data.data.cart_item_id = $(this).data('cart_item_id');
-        data.data.count = count;
-        data.data.item_offer_price_id = $(this).data('item_offer_price_id');
-        data.url = '/ecommerce/cart/updatecartitem';
-        data.success = function (data) {
-            $('#cart').html(data);
-        };
-        $.ajax(data);
-        var price = $(this).data('priceam');
-        console.log(price);
-        $(this).find('.total').html(price * count + ' руб.');
-    });
-    asum = sum;
-    if (typeof (deliverys) != 'undefined') {
-        delivery = deliverys[$('[name="delivery"]').val()];
-        if (sum >= parseFloat(delivery.delivery_max_cart_price)) {
-            $($('.deliverysum td').get(1)).html('0 руб.');
+        this.calcSum = function () {
+            var sum = 0;
+            $('.cartitems .item').each(function () {
+                count = parseFloat($(this).find('.cart-couner').val());
+                if (isNaN(count))
+                    count = 1;
+                if ($(this).find('.cart-couner').hasClass('rangerCount')) {
+                    count = count / 1000;
+                }
+                sum += parseFloat($(this).data('priceam')) * count;
+                data = {};
+                data.data = {};
+                data.data.cart_item_id = $(this).data('cart_item_id');
+                data.data.count = count;
+                data.data.item_offer_price_id = $(this).data('item_offer_price_id');
+                data.url = '/ecommerce/cart/updatecartitem';
+                data.success = function (data) {
+                    $('#cart').html(data);
+                };
+                $.ajax(data);
+                var price = $(this).data('priceam');
+                $(this).find('.total').html(price * count + ' руб.');
+            });
             asum = sum;
+            if (typeof (deliverys) != 'undefined') {
+                delivery = deliverys[$('[name="delivery"]').val()];
+                if (sum >= parseFloat(delivery.delivery_max_cart_price)) {
+                    $($('.deliverysum td').get(1)).html('0 руб.');
+                    asum = sum;
+                }
+                else {
+                    $($('.deliverysum td').get(1)).html(parseFloat(delivery.delivery_price) + ' руб.');
+                    asum = sum + parseFloat(delivery.delivery_price);
+                }
+                $($('.deliverysum td').get(0)).html(delivery.delivery_name + ':');
+            }
+            else {
+                $($('.deliverysum td').get(0)).html('Без доставки');
+                $($('.deliverysum td').get(1)).html('0 руб.');
+            }
+            $($('.cartsums td').get(1)).html(sum.toFixed(2) + ' руб.');
+            var packsCkeckbox = $('[name="packs"]');
+            var packSums = 0;
+            $('.packsCount').html(Math.ceil(sum / 1000));
+            if (packsCkeckbox.length > 0) {
+                if (packsCkeckbox[0].checked) {
+                    packSums = (Math.ceil(sum / 1000) * parseFloat(packsCkeckbox.val()));
+                    $($('.packssum td').get(1)).html(packSums.toFixed(2) + ' руб.');
+                }
+                else {
+                    packSums = 0;
+                    $($('.packssum td').get(1)).html('0 руб.');
+                }
+            }
+            $($('.allsums td').get(1)).html((asum + packSums).toFixed(2) + ' руб.');
         }
-        else {
-            $($('.deliverysum td').get(1)).html(parseFloat(delivery.delivery_price) + ' руб.');
-            asum = sum + parseFloat(delivery.delivery_price);
+        this.delItem = function (cart_item_id) {
+            data = {};
+            data.data = {};
+            data.url = '/ecommerce/cart/delcartitem/' + cart_item_id;
+            $('.cart_item_id' + cart_item_id).remove();
+            data.success = function (data) {
+                $('#cart').html(data);
+                inji.Ecommerce.Cart.calcSum();
+            }
+            $.ajax(data);
         }
-        $($('.deliverysum td').get(0)).html(delivery.delivery_name + ':');
     }
-    else {
-        $($('.deliverysum td').get(0)).html('Без доставки');
-        $($('.deliverysum td').get(1)).html('0 руб.');
-    }
-    $($('.cartsums td').get(1)).html(sum.toFixed(2) + ' руб.');
-    var packsCkeckbox = $('[name="packs"]');
-    var packSums = 0;
-    $('.packsCount').html(Math.ceil(sum / 1000));
-    if (packsCkeckbox.length > 0) {
-        if (packsCkeckbox[0].checked) {
-            packSums = (Math.ceil(sum / 1000) * parseFloat(packsCkeckbox.val()));
-            $($('.packssum td').get(1)).html(packSums.toFixed(2) + ' руб.');
-        }
-        else {
-            packSums = 0;
-            $($('.packssum td').get(1)).html('0 руб.');
-        }
-    }
-    $($('.allsums td').get(1)).html((asum + packSums).toFixed(2) + ' руб.');
 }
+inji.onLoad(function () {
 
-function addToCart(btn, ci_id, ciprice_id, count, countInputSelector, tokg) {
-    var data = {};
-    var btn = $(btn).button('loading');
-    btn.data('loading-text', "Подождите");
-    data.data = {};
-    data.data.ci_id = ci_id;
-    if (count != null && typeof (countInputSelector) != 'undefinded') {
-        data.data.count = count;
-    }
-    else if (countInputSelector != null && typeof (countInputSelector) != 'undefinded') {
-        data.data.count = $(btn).closest('.catalog-item').find(countInputSelector).val();
-        if (tokg) {
-            data.data.count = data.data.count / 1000;
+    //plugin bootstrap minus and plus
+    //http://jsfiddle.net/laelitenetwork/puJ6G/
+    $('body').on('click', '.btn-number', function (e) {
+        e.preventDefault();
+
+        fieldName = $(this).attr('data-field');
+        type = $(this).attr('data-type');
+        var input = $("input[name='" + fieldName + "']");
+        var currentVal = parseFloat(input.val());
+        if (!isNaN(currentVal)) {
+            if (type == 'minus') {
+
+                if (currentVal > input.attr('min')) {
+                    input.val(currentVal - 1).change();
+                }
+                if (parseFloat(input.val()) == input.attr('min')) {
+                    $(this).attr('disabled', true);
+                }
+
+            } else if (type == 'plus') {
+
+                if (currentVal < input.attr('max')) {
+                    input.val(currentVal + 1).change();
+                }
+                if (parseFloat(input.val()) == input.attr('max')) {
+                    $(this).attr('disabled', true);
+                }
+
+            }
+        } else {
+            input.val(0);
         }
-    }
-    else {
-        data.data.count = 1;
-    }
-    data.data.price = ciprice_id;
-    data.url = '/ecommerce/cart/add';
-    data.success = function (data) {
-        console.log(data.indexOf('1'));
-        if (data.indexOf('1') === 0) {
-            noty({text: 'Данного количества нет в наличии. Для покупки доступно: ' + data.replace('1|', ''), type: 'warning', timeout: 3500, layout: 'center'});
-        } else if (data != '0') {
-            noty({text: 'Товар успешно добавлен в корзину', type: 'success', timeout: 1500, layout: 'center'});
-            $('.cart-dropdown').html(data);
-        } else if (data == '0') {
-            noty({text: 'По какой то причине товар не удалось добавить в корзину', type: 'error', timeout: 1500, layout: 'center'});
+    });
+    $('body').on('focusin', '.input-number', function () {
+        $(this).data('oldValue', $(this).val());
+    });
+    $('body').on('change', '.input-number', function () {
+
+        minValue = parseFloat($(this).attr('min'));
+        maxValue = parseFloat($(this).attr('max'));
+        valueCurrent = parseFloat($(this).val());
+
+        name = $(this).attr('name');
+        if (valueCurrent >= minValue) {
+            $(".btn-number[data-type='minus'][data-field='" + name + "']").removeAttr('disabled')
+        } else {
+            alert('Нельзя заказать меньше одной единицы товара');
+            $(this).val($(this).data('oldValue'));
         }
-        btn.button('reset');
-    };
-    $.ajax(data);
-    return false;
-}
-function cartdel(cart_item_id) {
-    data = {};
-    data.data = {};
-    data.url = '/ecommerce/cart/delcartitem/' + cart_item_id;
-    $('.cart_item_id' + cart_item_id).remove();
-    data.success = function (data) {
-        $('#cart').html(data);
-        calcsum();
-    }
-    $.ajax(data);
-}
+        if (valueCurrent <= maxValue) {
+            $(".btn-number[data-type='plus'][data-field='" + name + "']").removeAttr('disabled')
+        } else {
+            alert('Извините, но больше нету');
+            $(this).val($(this).data('oldValue'));
+        }
+
+
+    });
+
+    $('body').on('keydown', ".input-number", function (e) {
+        // Allow: backspace, delete, tab, escape, enter and .
+        if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 190]) !== -1 ||
+                // Allow: Ctrl+A
+                        (e.keyCode == 65 && e.ctrlKey === true) ||
+                        // Allow: home, end, left, right
+                                (e.keyCode >= 35 && e.keyCode <= 39)) {
+                    // let it happen, don't do anything
+                    return;
+                }
+                // Ensure that it is a number and stop the keypress
+                if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                    e.preventDefault();
+                }
+            });
+
+})

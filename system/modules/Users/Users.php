@@ -172,10 +172,6 @@ class Users extends Module {
 
     function registration($data) {
         extract($data);
-        if (empty($user_name)) {
-            Msg::add('Вы не ввели ФИО', 'danger');
-            return false;
-        }
 
         if (empty($user_mail)) {
             Msg::add('Вы не ввели E-mail', 'danger');
@@ -199,6 +195,9 @@ class Users extends Module {
             Msg::add('Введенный вами логин зарегистрирован в нашей системе, войдите или введите другой логин', 'danger');
             return false;
         }
+        if (empty($user_name)) {
+            $user_name = '';
+        }
         if (empty($user_city)) {
             $user_city = '';
         }
@@ -215,10 +214,6 @@ class Users extends Module {
             'pass' => $this->hashpass($pass),
             'mail' => $user_mail,
             'login' => htmlspecialchars($user_login),
-            'name' => htmlspecialchars($user_name),
-            'city' => htmlspecialchars($user_city),
-            'birthday' => htmlspecialchars($user_birthday),
-            'phone' => htmlspecialchars($user_phone),
             'role_id' => 2,
             'group_id' => 2
         ]);
@@ -227,15 +222,21 @@ class Users extends Module {
             Msg::add('Не удалось зарегистрировать', 'danger');
             return false;
         }
-        $info = new \Users\Info(['user_id' => $user->id]);
+        $info = new \Users\Info([
+            'user_id' => $user->id,
+            'first_name' => htmlspecialchars($user_name),
+            'city' => htmlspecialchars($user_city),
+            'bday' => htmlspecialchars($user_birthday),
+            'phone' => htmlspecialchars($user_phone),
+        ]);
         $info->save();
-        $this->autorization($user_mail, $pass, 'mail');
+        //$this->autorization($user_mail, $pass, 'mail');
 
         $from = 'noreply@' . INJI_DOMAIN_NAME;
         $to = $user_mail;
-        $theme = 'Регистрация на сайте ' . INJI_DOMAIN_NAME;
+        $subject = 'Регистрация на сайте ' . INJI_DOMAIN_NAME;
         $text = 'Вы были зарегистрированы на сайте ' . INJI_DOMAIN_NAME . '<br />для входа используйте ваш почтовый ящик в качестве логина и пароль: ' . $pass;
-        Tools::sendMail($from, $to, $theme, $text);
+        Tools::sendMail($from, $to, $subject, $text);
         Msg::add('Вы были зарегистрированы. На указанный почтовый ящик был выслан ваш пароль', 'success');
 
         return $user_id;

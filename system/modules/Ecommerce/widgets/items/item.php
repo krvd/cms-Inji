@@ -10,7 +10,7 @@
     <div class="item-actions">
         <div class="btn-group btn-group-justified">
             <a class="btn btn-default item-price"><?= number_format($item->getPrice()->price, 2, '.', ' '); ?> руб</a>
-            <a class="btn btn-primary item-addtocart"><i class="glyphicon glyphicon-shopping-cart"></i></a>
+            <a class="btn btn-primary item-addtocart" onclick="inji.Ecommerce.Cart.addItem(<?= $item->getPrice()->id; ?>, 1);"><i class="glyphicon glyphicon-shopping-cart"></i></a>
         </div>
     </div>
 </div>

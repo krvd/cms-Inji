@@ -4,6 +4,8 @@ namespace Ecommerce;
 
 class Cart extends \Model {
 
+    static $objectName = 'Корзины';
+
     static function relations() {
         return [
             'user' => [
@@ -31,195 +33,65 @@ class Cart extends \Model {
             'payType' => [
                 'model' => 'Ecommerce\PayType',
                 'col' => 'paytype_id'
+            ],
+            'userAdds' => [
+                'model' => 'Ecommerce\UserAdds',
+                'col' => 'useradds_id'
             ]
         ];
     }
 
-    static $names = ['Корзина', 'Корзины', 'Корзин'];
     static $labels = [
-        'cc_user_id' => 'Пользователь',
+        'user_id' => 'Пользователь',
         'sum' => 'Сумма',
-        'cc_status' => 'Статус',
-        'cc_city' => 'Город',
-        'cc_street' => 'Улица',
-        'cc_day' => 'День',
-        'cc_time' => 'Время',
-        'cc_fio' => 'ФИО',
-        'cc_tel' => 'Телефон',
-        'cc_delivery' => 'Доставка',
-        'cc_comment' => 'Комментарий',
-        'cc_bonus_used' => 'Выгодные рубли',
-        'cc_tel' => 'Телефон',
-        'cc_date' => 'Время заказа',
-        'cc_complete_data' => 'Время заказа',
+        'cart_status_id' => 'Статус',
+        'delivery_id' => 'Доставка',
+        'comment' => 'Комментарий',
+        'bonus_used' => 'Выгодные рубли',
+        'complete_data' => 'Время заказа',
         'info' => 'Информация',
         'items' => 'Товары',
-        'cc_pay_type' => 'Способ оплаты',
-        'cc_exported' => '1c',
-        'cc_warehouse_block' => 'Блокировка товаров'
+        'paytype_id' => 'Способ оплаты',
+        'exported' => 'Экспорт',
+        'warehouse_block' => 'Блокировка товаров',
     ];
-    static $dataTable = [
-        'filters' => ['col' => 'cc_status', 'relation' => 'status'],
-        'order' => ['col' => 'cc_complete_data', 'type' => 'desc'],
-        'cols' => [
-            'info' => ['popUpEditForm' => 'infoEdit', 'showCol' => 'cc_fio'],
-            'items' => ['relation' => 'cartItems'],
-            'sum' => ['popUpEditForm' => 'sum', 'showCol' => 'sum'],
-            'cc_status' => ['widget' => 'statusCart'],
-            'cc_exported' => [],
-            'cc_delivery' => ['relation' => 'delivery', 'showCol' => 'cd_name'],
-            'cc_complete_data' => [],
+    static $cols = [
+        'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
+        'info' => ['type' => 'select', 'source' => 'relation', 'relation' => 'userAdds'],
+        'items' => ['type' => 'select', 'source' => 'relation', 'relation' => 'cartItems'],
+        'sum' => ['type' => 'text'],
+        'warehouse_block' => ['type' => 'bool'],
+        'exported' => ['type' => 'bool'],
+        'comment' => ['type' => 'textarea'],
+        'complete_data' => ['type' => 'dateTime'],
+        'items' => ['type' => 'select', 'source' => 'relation', 'relation' => 'cartItems'],
+        'cart_status_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'status'],
+        'delivery_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'delivery'],
+        'paytype_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'payType'],
+    ];
+    static $dataManagers = [
+        'manager' => [
+            'cols' => [
+                'userAdds:values',
+                'items',
+                'sum',
+                'cart_status_id',
+                'exported',
+                'delivery_id',
+                'complete_data',
+            ]
         ]
     ];
     static $forms = [
-        'manage' => [
-            'options' => [
-                'cc_user_id' => ['relation' => 'user', 'showCol' => 'user_name'],
-                'cc_status' => ['relation' => 'status', 'showCol' => 'ccs_name'],
-                'cc_tel' => 'text',
-                'cc_fio' => 'text',
-                'cc_city' => 'text',
-                'cc_street' => 'text',
-                'cc_day' => 'text',
-                'cc_time' => 'text',
-                'cc_complete_data' => 'datetime',
-                'cc_comment' => 'textarea',
-                'cc_bonus_used' => 'text',
-                'cc_warehouse_block' => 'checkbox',
-                'cc_pay_type' => ['relation' => 'payType', 'showCol' => 'cpt_name'],
-                'cc_delivery' => ['relation' => 'delivery', 'showCol' => 'cd_name'],
-                'items' => ['relation' => 'cartItems', 'form' => 'inlineEdit']
-            ],
-            'relations' => [
-                'cci_ci_id' => [
-                    'col' => 'cci_ciprice_id',
-                    'model' => 'Item',
-                    'relation' => 'prices'
-                ]
-            ],
-            'helpers' => [
-                'itemSum' => [
-                    'text' => 'Сумма товаров',
-                    'value' => [
-                        'method' => 'itemSum'
-                    ]
-                ],
-                'deliverySum' => [
-                    'text' => 'Стоимость доставки',
-                    'value' => [
-                        'method' => 'deliverySum'
-                    ]
-                ],
-                'allSum' => [
-                    'text' => 'Итоговая сумма',
-                    'value' => [
-                        'method' => 'allSum'
-                    ]
-                ],
-                'allSumBonus' => [
-                    'text' => 'Итоговая сумма с учетом выгодных рублей',
-                    'value' => [
-                        'method' => 'allSumBonus'
-                    ]
-                ],
-            ],
+        'manager' => [
             'map' => [
-                ['cc_user_id', 'cc_status'],
-                ['cc_fio', 'cc_tel'],
-                ['cc_city', 'cc_street'],
-                ['cc_day', 'cc_time'],
-                ['cc_bonus_used', 'cc_delivery'],
-                ['cc_pay_type', 'cc_comment'],
-                ['cc_warehouse_block', 'cc_complete_data'],
-                ['items']
+                ['user_id', 'cart_status_id'],
+                ['paytype_id', 'delivery_id'],
+                ['comment'],
+                ['warehouse_block', 'complete_data'],
+            //['items']
             ]
         ],
-        'infoEdit' => [
-            'options' => [
-                'cc_tel' => 'text',
-                'cc_fio' => 'text',
-                'cc_city' => 'text',
-                'cc_street' => 'text',
-                'cc_day' => 'text',
-                'cc_time' => 'text',
-                'cc_comment' => 'textarea',
-            ],
-            'helpers' => [
-                'itemSum' => [
-                    'text' => 'Сумма товаров',
-                    'value' => [
-                        'method' => 'itemSum'
-                    ]
-                ],
-                'deliverySum' => [
-                    'text' => 'Стоимость доставки',
-                    'value' => [
-                        'method' => 'deliverySum'
-                    ]
-                ],
-                'allSum' => [
-                    'text' => 'Итоговая сумма',
-                    'value' => [
-                        'method' => 'allSum'
-                    ]
-                ],
-                'allSumBonus' => [
-                    'text' => 'Итоговая сумма с учетом выгодных рублей',
-                    'value' => [
-                        'method' => 'allSumBonus'
-                    ]
-                ],
-            ],
-            'map' => [
-                ['cc_fio', 'cc_tel'],
-                ['cc_city', 'cc_street'],
-                ['cc_day', 'cc_time'],
-                ['cc_comment']
-            ]
-        ],
-        'sum' => [
-            'options' => [
-                'cc_bonus_used' => 'text',
-                'cc_delivery' => ['relation' => 'delivery', 'showCol' => 'cd_name'],
-            ],
-            'helpers' => [
-                'itemSum' => [
-                    'text' => 'Сумма товаров',
-                    'value' => [
-                        'method' => 'itemSum'
-                    ]
-                ],
-                'deliverySum' => [
-                    'text' => 'Стоимость доставки',
-                    'value' => [
-                        'method' => 'deliverySum'
-                    ]
-                ],
-                'allSum' => [
-                    'text' => 'Итоговая сумма',
-                    'value' => [
-                        'method' => 'allSum'
-                    ]
-                ],
-                'allSumBonus' => [
-                    'text' => 'Итоговая сумма с учетом выгодных рублей',
-                    'value' => [
-                        'method' => 'allSumBonus'
-                    ]
-                ],
-            ],
-            'map' => [
-                ['cc_bonus_used', 'cc_delivery'],
-            ]
-        ],
-        'itemsEdit' => [
-            'options' => [
-                'items' => ['relation' => 'cartItems']
-            ],
-            'map' => [
-                ['items']
-            ]
-        ]
     ];
 
     function addPacks($count = 1) {
@@ -251,7 +123,7 @@ class Cart extends \Model {
     }
 
     function allSumBonus() {
-        return $this->sum + $this->deliverySum() - $this->cc_bonus_used;
+        return $this->sum + $this->deliverySum() - $this->bonus_used;
     }
 
     function itemSum() {
@@ -329,8 +201,8 @@ class Cart extends \Model {
 
     function beforeSave() {
         //$event = false;
-        if ($this->cc_id) {
-            $cur = Cart::get($this->cc_id);
+        if ($this->id) {
+            $cur = Cart::get($this->id);
             if (!$cur) {
                 return;
             }

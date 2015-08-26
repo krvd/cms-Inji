@@ -614,11 +614,11 @@ class Model {
         static::$needJoin = [];
         if (!empty($options['group'])) {
             App::$cur->db->group($options['group']);
-            App::$cur->db->cols = 'COUNT('.(!empty($options['distinct'])?'DISTINCT '.static::index():'*').') as `count`' . (!empty($options['cols']) ? ',' . $options['cols'] : '');
+            App::$cur->db->cols = 'COUNT(' . (!empty($options['distinct']) ? 'DISTINCT ' . static::index() : '*') . ') as `count`' . (!empty($options['cols']) ? ',' . $options['cols'] : '');
             $count = App::$cur->db->select(static::table())->getArray();
             return $count;
         } else {
-            App::$cur->db->cols = 'COUNT('.(!empty($options['distinct'])?'DISTINCT '.static::index():'*').') as `count`';
+            App::$cur->db->cols = 'COUNT(' . (!empty($options['distinct']) ? 'DISTINCT ' . static::index() : '*') . ') as `count`';
             $count = App::$cur->db->select(static::table())->fetch();
             return $count['count'];
         }
@@ -635,7 +635,11 @@ class Model {
         }
         if (!$values)
             return false;
+
+        static::fixPrefix($values, 'key');
         if ($where) {
+            static::fixPrefix($where, 'key');
+
             App::$cur->db->where($where);
         }
         App::$cur->db->update(static::table(), $values);

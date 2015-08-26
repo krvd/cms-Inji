@@ -39,43 +39,35 @@ class Item extends \Model {
     }
 
     static $labels = [
-        'cci_ci_id' => 'Товар',
-        'cci_ciprice_id' => 'Цена',
-        'cci_count' => 'Количество',
-        'cci_cc_id' => 'Корзина'
+        'item_id' => 'Товар',
+        'item_offer_price_id' => 'Цена',
+        'count' => 'Количество',
+        'cart_id' => 'Корзина'
     ];
-    static $dataTable = [
-        'cols' => [
-            'cci_ci_id' => ['relation' => 'item', 'showCol' => 'ci_name'],
-            'cci_ciprice_id' => ['relation' => 'price', 'showCol' => 'ciprice_price'],
-            'cci_count' => [],
+    static $cols = [
+        'item_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'item'],
+        'item_offer_price_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'price', 'showCol' => 'price'],
+        'count' => ['type' => 'text'],
+    ];
+    static $dataManagers = [
+        'manager' => [
+            'cols' => [
+                'item_id',
+                'item_offer_price_id',
+                'count',
+            ],
         ],
-        'helpers' => [
-            'totalSum' => [
-                'type' => 'sum',
-                'value' => [
-                    [
-                        'relation' => 'price',
-                        'col' => 'ciprice_price'
-                    ],
-                    [
-                        'col' => 'cci_count'
-                    ]
-                ],
-                'html' => '<big>Сумма товаров: <b class = "helperValue"></b></big>'
-            ]
-        ]
     ];
     static $forms = [
         'inlineEdit' => [
             'options' => [
-                'cci_ci_id' => ['relation' => 'item', 'showCol' => ['type' => 'method', 'method' => 'itemNameCount'], 'listGetter' => ['method' => 'itemsList', 'showCol' => 'combined']],
-                'cci_ciprice_id' => ['relation' => 'price', 'showCol' => 'ciprice_price'],
-                'cci_count' => [],
+                'item_id' => ['relation' => 'item', 'showCol' => ['type' => 'method', 'method' => 'itemNameCount'], 'listGetter' => ['method' => 'itemsList', 'showCol' => 'combined']],
+                'item_offer_price_id' => ['relation' => 'price', 'showCol' => 'item_offer_price_price'],
+                'count' => [],
             ],
             'relations' => [
-                'cci_ci_id' => [
-                    'col' => 'cci_ciprice_id',
+                'item_id' => [
+                    'col' => 'item_offer_price_id',
                     'model' => 'Item',
                     'relation' => 'prices'
                 ]
@@ -83,21 +75,21 @@ class Item extends \Model {
         ],
         'manage' => [
             'options' => [
-                'cci_cc_id' => ['relation' => 'cart', 'showCol' => 'cc_id'],
-                'cci_ci_id' => ['relation' => 'item', 'showCol' => 'ci_name'],
-                'cci_ciprice_id' => ['relation' => 'price', 'showCol' => 'ciprice_price'],
-                'cci_count' => 'text',
+                'cart_id' => ['relation' => 'cart', 'showCol' => 'cart_id'],
+                'item_id' => ['relation' => 'item', 'showCol' => 'item_name'],
+                'item_offer_price_id' => ['relation' => 'price', 'showCol' => 'item_offer_price_price'],
+                'count' => 'text',
             ],
             'relations' => [
-                'cci_ci_id' => [
-                    'col' => 'cci_ciprice_id',
+                'item_id' => [
+                    'col' => 'item_offer_price_id',
                     'model' => 'Item',
                     'relation' => 'prices'
                 ]
             ],
             'map' => [
-                ['cci_cc_id', 'cci_ci_id'],
-                ['cci_ciprice_id', 'cci_count'],
+                ['cart_id', 'item_id'],
+                ['item_offer_price_id', 'count'],
             ]
         ]
     ];

@@ -192,12 +192,12 @@ class View extends \Module {
 
     function checkNeedLibs() {
         if (!empty($this->template->config['libs'])) {
-            foreach ($this->template->config['libs'] as $libName=>$libOptions) {
-                if(!is_array($libOptions)){
+            foreach ($this->template->config['libs'] as $libName => $libOptions) {
+                if (!is_array($libOptions)) {
                     $libName = $libOptions;
                     $libOptions = [];
                 }
-                $this->app->libs->loadLib($libName,$libOptions);
+                $this->app->libs->loadLib($libName, $libOptions);
             }
         }
         foreach ($this->dynAssets['js'] as $asset) {
@@ -243,6 +243,10 @@ class View extends \Module {
         $timeStr = '';
         $cssAll = '';
         foreach ($css as $href) {
+            if(preg_match('!^(http:||https:||//)!', $href)){
+                echo "\n        <link href='{$href}' rel='stylesheet' type='text/css' />";
+                continue;
+            }            
             $nativeUrl[$href] = $href;
             $urls[$href] = $path = $this->app->staticLoader->parsePath($href);
             $timeStr.=filemtime($path);

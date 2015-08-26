@@ -188,7 +188,7 @@ class DataManager extends \Object {
                         }
                         if (!empty($params['filters'][$col]['max'])) {
                             if ($colInfo['colParams']['type'] == 'dateTime' && !strpos($params['filters'][$col]['max'], ' ')) {
-                                
+
                                 $date = $params['filters'][$col]['max'] . ' 23:59:59';
                             } else {
                                 $date = $params['filters'][$col]['max'];
@@ -275,6 +275,7 @@ class DataManager extends \Object {
     }
 
     static function drawCol($item, $colName, $params = [], $dataManager = null, $originalCol = '', $originalItem = null) {
+
         if (!$originalCol) {
             $originalCol = $colName;
         }
@@ -315,10 +316,19 @@ class DataManager extends \Object {
                     }
             }
         } else {
+            if ($colName == 'values') {
+                //var_dump($href)
+                //exit();
+            }
             if (!empty($modelName::$cols[$colName]['view']['type'])) {
                 switch ($modelName::$cols[$colName]['view']['type']) {
                     case 'moduleMethod':
                         return \App::$cur->{$modelName::$cols[$colName]['view']['module']}->{$modelName::$cols[$colName]['view']['method']}($item, $colName, $modelName::$cols[$colName]);
+                        break;
+                    case'many':
+                        $managerParams = ['relation' => $modelName::$cols[$colName]['relation']];
+                        $count = $item->{$modelName::$cols[$colName]['relation']}(array_merge($params, ['count' => 1]));
+                        return "<a class = 'btn btn-xs btn-primary' onclick = 'inji.Ui.dataManagers.popUp(\"" . str_replace('\\', '\\\\', $modelName) . ":" . $item->pk() . "\"," . json_encode(array_merge($params, $managerParams)) . ")'>{$count} Элементы</a>";
                         break;
                     default:
                         return $item->$colName;
@@ -409,7 +419,7 @@ class DataManager extends \Object {
                         }
                         if (!empty($params['filters'][$col]['max'])) {
                             if ($colInfo['colParams']['type'] == 'dateTime' && !strpos($params['filters'][$col]['max'], ' ')) {
-                                
+
                                 $date = $params['filters'][$col]['max'] . ' 23:59:59';
                             } else {
                                 $date = $params['filters'][$col]['max'];

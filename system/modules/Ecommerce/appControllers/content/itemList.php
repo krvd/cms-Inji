@@ -9,6 +9,7 @@
             </div>
         </div>
         <div class="col-xs-9">
+            <?php $this->widget('Ecommerce\cart'); ?>
             <h2 class="category-name"><?= $category ? $category->name : 'Каталог продукции'; ?></h2>
             <div class="items-icons">	
                 <div class="row">	
