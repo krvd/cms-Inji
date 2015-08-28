@@ -65,7 +65,13 @@ class ecommerceController extends Controller {
             $sort = ['name' => 'asc'];
         }
 
-        $pages = new \Ui\Pages($_GET, ['count' => $this->ecommerce->getItemsCount(['parent' => $category_id, 'search' => trim($search)]), 'limit' => 18, 'filters' => !empty($_GET['filters']) ? $_GET['filters'] : []]);
+        $pages = new \Ui\Pages($_GET, ['count' => $this->ecommerce->getItemsCount([
+                'parent' => $category_id,
+                'search' => trim($search),
+                'filters' => !empty($_GET['filters']) ? $_GET['filters'] : []
+            ]),
+            'limit' => 18,
+        ]);
 
         $category_id = (int) $category_id;
 
@@ -97,7 +103,7 @@ class ecommerceController extends Controller {
             'start' => $pages->params['start'],
             'count' => $pages->params['limit'],
             'search' => trim($search),
-            'sort' => $sort, 
+            'sort' => $sort,
             'filters' => !empty($_GET['filters']) ? $_GET['filters'] : []
         ]);
         $categorys = Ecommerce\Category::getList();
