@@ -24,11 +24,8 @@ class ecommerceController extends Controller {
     }
 
     function cabinetAction() {
-        $bread = [];
-        $bread[] = array('text' => 'Каталог', 'href' => '/ecommerce');
-        $bread[] = array('text' => 'Кабинет', 'href' => '/ecommerce/cabinet');
-        $this->view->set_title('Кабинет');
-        $this->view->page(compact('bread'));
+        $this->view->setTitle('Кабинет');
+        $this->view->page();
     }
 
     function autoCompleteAction() {

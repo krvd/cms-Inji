@@ -95,12 +95,12 @@ class CartController extends Controller {
     }
 
     function historyAction() {
-        $this->view->set_title('История');
+        $this->view->setTitle('История');
         if (!Users\User::$cur->id)
             $this->url->redirect('/', 'Вы должны войти или зарегистрироваться');
 
-        $pages = new Pages($_GET, ['count' => Cart::getCount(['where' => ['user_id', Users\User::$cur->id]]), 'limit' => 10]);
-        $carts = Cart::get_list(['where' => ['user_id', Users\User::$cur->id], 'order' => ['date', 'desc'], 'start' => $pages->params['start'], 'limit' => $pages->params['limit']]);
+        $pages = new Ui\Pages($_GET, ['count' => Ecommerce\Cart::getCount(['where' => ['user_id', Users\User::$cur->id]]), 'limit' => 10]);
+        $carts = Ecommerce\Cart::getList(['where' => ['user_id', Users\User::$cur->id], 'order' => ['date_create', 'desc'], 'start' => $pages->params['start'], 'limit' => $pages->params['limit']]);
         $bread = [];
         $bread[] = [
             'text' => 'Каталог',
@@ -114,11 +114,11 @@ class CartController extends Controller {
             'text' => 'История заказов',
             'href' => '/ecommerce/cart/history'
         ];
-        $this->view->page(compact('carts', 'pages', 'bread'));
+        $this->view->page(['data' => compact('carts', 'pages', 'bread')]);
     }
 
     function orderDetailAction($id = 0) {
-        $cart = Cart::get((int) $id);
+        $cart = Ecommerce\Cart::get((int) $id);
         if ($cart->user_id != Users\User::$cur->id) {
             $this->url->redirect('/', 'Это не ваша корзина');
         }
@@ -134,8 +134,8 @@ class CartController extends Controller {
             'text' => 'Заказ: №' . $cart->id,
             'href' => '/ecommerce/cart/orderDetail/' . $cart->id
         ];
-        $this->view->set_title('Заказ №' . $cart->id);
-        $this->view->page(compact('cart', 'bread'));
+        $this->view->setTitle('Заказ №' . $cart->id);
+        $this->view->page(['data' => compact('cart', 'bread')]);
     }
 
     function continueAction($id = 0) {
