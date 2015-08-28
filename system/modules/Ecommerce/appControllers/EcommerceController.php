@@ -31,67 +31,6 @@ class ecommerceController extends Controller {
         $this->view->page(compact('bread'));
     }
 
-    function buyCardAction() {
-        $this->view->set_title('Покупка карты');
-        if ($this->users->cur->user_id) {
-            $this->db->where('cc_card_buy', 1);
-            $this->db->where('cc_user_id', $this->users->cur->user_id);
-            $cart = $this->db->select('catalog_carts')->fetch_assoc();
-            if ($cart && $cart['cc_status'] == 5) {
-                $this->url->redirect('/', 'Вы уже приобрели клубную карту');
-            } elseif ($cart) {
-                $this->url->redirect('/', 'Заявка на получение уже отправлена, если с вами ещё не связались, вы можете обратиться в горячую службу по номеру указанному в шапке сайта');
-            }
-        }
-        if (!empty($_POST)) {
-
-            $error = false;
-            if ((empty($_POST['user_phone'])) && !$this->users->cur->user_phone) {
-                $this->msg->add('Укажите ваш номер');
-                $error = true;
-            }
-            if (!$error) {
-                if (!$this->users->cur->user_id) {
-                    $user_id = $this->Users->registration($_POST);
-                    if (!$user_id) {
-                        $error = true;
-                    } else {
-                        $user = User::get($user_id);
-                    }
-                } else {
-                    $user = $this->users->cur;
-                }
-                if (!$error) {
-                    $user = $this->users->cur;
-
-                    $data['cc_user_id'] = $user->user_id;
-                    $data['cc_status'] = 2;
-                    if (!empty($_POST['user_phone'])) {
-                        $data['cc_tel'] = htmlspecialchars($_POST['user_phone']);
-                    } else {
-                        $data['cc_tel'] = $user->user_phone;
-                    }
-                    $data['cc_fio'] = $user->user_name;
-                    $data['cc_email'] = $user->user_mail;
-                    $data['cc_city'] = htmlspecialchars($_POST['city']);
-                    $data['cc_street'] = htmlspecialchars($_POST['street']);
-                    $data['cc_comment'] = htmlspecialchars($_POST['cc_comment']);
-                    $data['cc_date_status'] = date('Y-m-d H:i:s');
-                    $data['cc_complete_data'] = date('Y-m-d H:i:s');
-                    $cart = new Cart($data);
-                    $cart->save();
-                    $cart->addCard();
-
-                    $this->users->cur->user_role_id = 4;
-                    $this->users->cur->save();
-
-                    $this->url->redirect('/', 'Ваша заявка была отправлена! Через некоторое время с вами свяжутся!', 'success');
-                }
-            }
-        }
-        $this->view->page(compact('cart'));
-    }
-
     function autoCompleteAction() {
         $items = \Ecommerce\Item::getList(['cols' => ['name', 'search_index']]);
         $return = [];
@@ -120,13 +59,13 @@ class ecommerceController extends Controller {
         } else
             $search = '';
 
-        if (!empty($_GET['sort']) && in_array($_GET['sort'], array('best', 'asc', 'desc', 'hit', 'priceasc', 'pricedesc'))) {
-            $sort = $_GET['sort'];
+        if (!empty($_GET['sort']) && in_array($_GET['sort'], array('best', 'name', 'sales', 'price'))) {
+            $sort = [$_GET['sort'] => !empty($_GET['sortDirection']) && strtolower($_GET['sortDirection']) == 'desc' ? 'desc' : 'asc'];
         } else {
-            $sort = 'asc';
+            $sort = ['name' => 'asc'];
         }
 
-        $pages = new \Ui\Pages($_GET, ['count' => $this->ecommerce->getItemsCount($category_id, trim($search)), 'limit' => 18]);
+        $pages = new \Ui\Pages($_GET, ['count' => $this->ecommerce->getItemsCount(['parent' => $category_id, 'search' => trim($search)]), 'limit' => 18, 'filters' => !empty($_GET['filters']) ? $_GET['filters'] : []]);
 
         $category_id = (int) $category_id;
 
@@ -153,7 +92,14 @@ class ecommerceController extends Controller {
             $this->view->setTitle($category->name);
         }
 
-        $items = $this->ecommerce->getItems(!empty($category_ids) ? $category_ids : $category_id, $pages->params['start'], $pages->params['limit'], 'id', trim($search), $sort);
+        $items = $this->ecommerce->getItems([
+            'parent' => !empty($category_ids) ? $category_ids : $category_id,
+            'start' => $pages->params['start'],
+            'count' => $pages->params['limit'],
+            'search' => trim($search),
+            'sort' => $sort, 
+            'filters' => !empty($_GET['filters']) ? $_GET['filters'] : []
+        ]);
         $categorys = Ecommerce\Category::getList();
         $this->view->page(['data' => compact('active', 'category', 'sort', 'search', 'pages', 'items', 'categorys', 'bread')]);
     }

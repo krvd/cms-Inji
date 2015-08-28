@@ -295,7 +295,12 @@ class CartController extends Controller {
     }
 
     function getcartAction() {
-        $this->view->widget('cart');
+        $result = new Server\Result();
+        ob_start();
+        $this->view->widget('Ecommerce\cart');
+        $result->content = ob_get_contents();
+        ob_end_clean();
+        $result->send();
     }
 
     function delcartitemAction($cci_id = 0) {

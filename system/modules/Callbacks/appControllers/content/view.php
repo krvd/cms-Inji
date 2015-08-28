@@ -1,2 +1,2 @@
-<h2 class="articleTitle"><?= $callback->name; ?></h2>
+<h2 class="article-title"><?= $callback->name; ?></h2>
 <?= $callback->text; ?>

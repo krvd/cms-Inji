@@ -3,8 +3,6 @@ $cart = !empty($_SESSION['cart']['cart_id']) ? Ecommerce\Cart::get((int) $_SESSI
 $count = $cart ? count($cart->cartItems) : 0;
 $sum = $cart ? $cart->sum : 0;
 ?>
-<div id="cart"> 
-    <a href ='/ecommerce/cart'> 
-        В корзине <?= $count; ?> <?= Tools::getNumEnding($count, ['товар', 'товара', 'товаров']); ?>  (<?= $sum; ?>р.)
-    </a>
-</div> 
+<a href ='/ecommerce/cart'> 
+    В корзине <?= $count; ?> <?= Tools::getNumEnding($count, ['товар', 'товара', 'товаров']); ?>  (<?= $sum; ?>р.)
+</a>

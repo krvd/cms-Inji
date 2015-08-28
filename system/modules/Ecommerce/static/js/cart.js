@@ -9,6 +9,14 @@ inji.Ecommerce = {
                 data: {
                     itemOfferPriceId: itemOfferPriceId,
                     count: count,
+                },
+                success: function () {
+                    inji.Server.request({
+                        url: 'ecommerce/cart/getCart',
+                        success: function (data) {
+                            $("#cart").html(data);
+                        }
+                    });
                 }
             });
         }

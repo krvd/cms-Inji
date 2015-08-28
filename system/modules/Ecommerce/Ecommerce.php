@@ -37,154 +37,70 @@ class Ecommerce extends Module {
         return $bread;
     }
 
-    function dayItemCountReport() {
-        $catalogIds = [];
-        $table = '<table border = "2px">';
-        $catalogs = Catalog::get_list(['order' => ['catalog_name', 'asc']]);
-        foreach ($catalogs as $catalog) {
-            if ($catalog->catalog_parent_id == 0) {
-                $table .=$this->showChildsCatalogs($catalog, $catalogs, $catalogIds, -1);
-            }
-        }
-        $table .= '<table>';
-        $this->_MAIL->send('noreply@' . INJI_DOMAIN_NAME, 'admin@inji.ru', 'Отчет о статистике товаров с сайта ' . INJI_DOMAIN_NAME, $table);
-    }
-
-    function showChildsCatalogs($parent, $catalogs, $catalogIds, $i) {
-        $i++;
-        $isset = false;
-        $table = '';
-        foreach ($catalogs as $catalog) {
-            if ($catalog->catalog_parent_id == $parent->catalog_id) {
-                if (!$isset) {
-                    $isset = true;
-                    $itemsCount = Inji::app()->ecommerce->getItemsCount($parent->catalog_id, '');
-                    $table .= "<tr><td>" . str_repeat('• ', $i) . "<a href='http://" . INJI_DOMAIN_NAME . "/ecommerce/itemList/{$parent->catalog_id}'>{$parent->catalog_name}</a></td><td>{$itemsCount}</td></tr>";
-                }
-                $table .= $this->showChildsCatalogs($catalog, $catalogs, $catalogIds, $i);
-            }
-        }
-        if (!$isset) {
-            $itemsCount = Inji::app()->ecommerce->getItemsCount($parent->catalog_id, '');
-            $table .= "<tr><td>" . str_repeat('• ', $i) . "<a href='http://" . INJI_DOMAIN_NAME . "/ecommerce/itemList/{$parent->catalog_id}'>{$parent->catalog_name}</a></td><td>{$itemsCount}</td></tr>";
-        }
-        return $table;
-    }
-
-    function goMarketing($cart) {
-        $catalogs = [];
-
-        \App::$cur->db->order('lm_level');
-        $levelMarketing = \App::$cur->db->result_array(\App::$cur->db->select('level_marketing'));
-        $levels = array();
-        foreach ($levelMarketing as $row) {
-            $levels[$row['lm_level']][] = $row;
-            if (is_numeric($row['lm_item_type']) && !in_array($row['lm_item_type'], $catalogs)) {
-                $catalogs[] = $row['lm_item_type'];
-            }
-        }
-
-        $sums = [];
-        foreach ($cart->cartItems as $cci) {
-            if ($cci->cci_ci_id == Inji::app()->ecommerce->modConf['packItem']['ci_id'] || $cci->cci_ci_id == Inji::app()->ecommerce->modConf['cardItem']['ci_id']) {
-                continue;
-            }
-            if ($cci->item->ci_item_price_type == 'Обычная' || $cci->item->ci_item_price_type = 'Социальная группа товаров (Бонусы)') {
-                $sums[] = [
-                    'sum' => $cci->cci_final_price ? $cci->cci_final_price : $cci->price->ciprice_price,
-                    'count' => $cci->cci_count,
-                    'catalogTree' => $cci->item->ci_tree_path
-                ];
-            }
-        }
-
-        $user = $cart->user;
-        $last_level = 0;
-        foreach ($levels as $levelNum => $level) {
-            if ($levelNum != $last_level) {
-                if ($user->parent)
-                    $user = $user->parent;
-                else {
-                    break;
-                }
-            }
-            foreach ($level as $action) {
-                $bonus = 0;
-                switch ($action['lm_type']) {
-                    case 'Процент':
-                        if (is_numeric($action['lm_item_type'])) {
-                            foreach ($sums as $sum) {
-                                if (strpos($sum['catalogTree'], "/{$action['lm_item_type']}/") !== FALSE) {
-                                    $bonus += round($sum['sum'] / 100 * $action['lm_sum'] * $sum['count'], 2);
-                                }
-                            }
-                            if ($bonus)
-                                \App::$cur->db->insert('catalog_user_bonuses', [
-                                    'cub_user_id' => $user->user_id,
-                                    'cub_sum' => $bonus,
-                                    'cub_level' => $levelNum,
-                                    'cub_type' => $action['lm_type'],
-                                    'cub_cart_id' => $cart->cc_id,
-                                    'cub_curency' => $action['lm_curency'],
-                                    'cub_marketing_type' => $action['lm_item_type'],
-                                    'cub_true' => ( ($action['lm_role_id'] == $user->role->role_id) ? 1 : 0),
-                                    'cub_date' => ($cart->cc_payed_date != '0000-00-00 00:00:00') ? $cart->cc_payed_date : $cart->cc_date,
-                                ]);
-                        }
+    function parseOptions($options = []) {
+        $selectOptions = [
+            'where' => !empty($options['where']) ? $options['where'] : [],
+            'distinct' => false,
+            'join' => [],
+            'order' => [],
+            'start' => isset($options['start']) ? (int) $options['start'] : 0,
+            'limit' => !empty($options['count']) ? (int) $options['count'] : 0,
+        ];
+        if (!empty($options['sort'])) {
+            foreach ($options['sort'] as $col => $direction) {
+                switch ($col) {
+                    case 'price':
+                        $selectOptions['order'][] = [Ecommerce\Item\Offer\Price::colPrefix() . 'price', strtolower($direction) == 'desc' ? 'desc' : 'asc'];
                         break;
-                    case 'Сумма':
-                        if ($action['lm_item_type'] == 'Клубная карта') {
-                            if ($cart->cc_card_buy) {
-                                \App::$cur->db->insert('catalog_user_bonuses', [
-                                    'cub_user_id' => $user->user_id,
-                                    'cub_sum' => $action['lm_sum'],
-                                    'cub_level' => $levelNum,
-                                    'cub_type' => $action['lm_type'],
-                                    'cub_cart_id' => $cart->cc_id,
-                                    'cub_curency' => $action['lm_curency'],
-                                    'cub_marketing_type' => $action['lm_item_type'],
-                                    'cub_true' => ( ($action['lm_role_id'] == $user->role->role_id) ? 1 : 0),
-                                    'cub_date' => ($cart->cc_payed_date != '0000-00-00 00:00:00') ? $cart->cc_payed_date : $cart->cc_date,
-                                ]);
-                            }
+                }
+            }
+        }
+        if (!empty($options['filters'])) {
+            foreach ($options['filters'] as $col => $filter) {
+                switch ($col) {
+                    case 'price':
+                        if (!empty($filter['min'])) {
+                            $selectOptions['where'][] = [Ecommerce\Item\Offer\Price::colPrefix() . 'price', (float) $filter['min'], '>='];
+                        }
+                        if (!empty($filter['max'])) {
+                            $selectOptions['where'][] = [Ecommerce\Item\Offer\Price::colPrefix() . 'price', (float) $filter['max'], '<='];
                         }
                         break;
                 }
             }
         }
-    }
-
-    /**
-     * Recalculate catalogs tree path
-     * 
-     * @param int $catalogId
-     * @return boolean
-     */
-    function recalcCatalogTree() {
-        Catalog::update(['catalog_tree_path' => '']);
-        $catalogs = Catalog::get_list();
-        foreach ($catalogs as $catalog) {
-            $catalog->save();
-        }
-        return true;
-    }
-
-    /**
-     * Get catalog tree path
-     * 
-     * @param object $catalog
-     * @return string
-     */
-    function getCatalogTree($catalog) {
-        if ($catalog->catalog_parent_id) {
-            $parent = Catalog::get($catalog->catalog_parent_id);
-            if ($parent && $parent->catalog_tree_path) {
-                return $parent->catalog_tree_path . $parent->catalog_id . '/';
-            } else {
-                return $this->getCatalogTree($parent) . $parent->catalog_id . '/';
+        //parents
+        if (!empty($options['parent']) && strpos($options['parent'], ',') !== false) {
+            $first = true;
+            $where = [];
+            foreach (explode(',', $options['parent']) as $categoryId) {
+                if (!$categoryId) {
+                    continue;
+                }
+                $where[] = ['tree_path', $category->tree_path . (int) $categoryId . '/%', 'LIKE', $first ? 'AND' : 'OR'];
+                $first = false;
             }
+            $selectOptions['where'][] = $where;
+        } elseif (!empty($options['parent'])) {
+            $selectOptions['where'][] = ['tree_path', $category->tree_path . (int) $options['parent'] . '/%', 'LIKE'];
         }
-        return '/';
+
+        //search
+        if (!empty($search)) {
+            $selectOptions['where'][] = ['search_index', '%' . $search . '%', 'LIKE'];
+        }
+
+        //filters
+        $selectOptions['join'][] = [Ecommerce\Item\Offer::table(), Ecommerce\Item::index() . ' = ' . Ecommerce\Item\Offer::colPrefix() . Ecommerce\Item::index(), 'inner'];
+        $selectOptions['join'][] = [Ecommerce\Item\Offer\Price::table(),
+            Ecommerce\Item\Offer::index() . ' = ' . Ecommerce\Item\Offer\Price::colPrefix() . Ecommerce\Item\Offer::index() . ' and ' . Ecommerce\Item\Offer\Price::colPrefix() . 'price>0', 'inner'];
+        $selectOptions['join'][] = [Ecommerce\Item\Offer\Price\Type::table(), Ecommerce\Item\Offer\Price::colPrefix() . Ecommerce\Item\Offer\Price\Type::index() . ' = ' . Ecommerce\Item\Offer\Price\Type::index() .
+            ' and (' . Ecommerce\Item\Offer\Price\Type::colPrefix() . 'roles="" || ' . Ecommerce\Item\Offer\Price\Type::colPrefix() . 'roles LIKE "%|' . \Users\User::$cur->role_id . '|%")'
+            , 'inner'];
+
+        $selectOptions['group'] = Ecommerce\Item::index();
+
+        return $selectOptions;
     }
 
     /**
@@ -198,49 +114,9 @@ class Ecommerce extends Module {
      * @param string $sort
      * @return array
      */
-    function getItems($parent = '', $start = 0, $count = 0, $key = 'ci_id', $search = '', $sort = 'asc') {
-        if (is_array($parent)) {
-            extract($parent);
-        }
-        if (is_array($parent)) {
-            $parent = '';
-        }
-        $selectOptions = [
-            'where' => [],
-            'distinct' => false,
-            'join' => [],
-            'start' => $start,
-            'limit' => $count ? $count : false,
-        ];
-        if (strpos($parent, ',') !== false) {
+    function getItems($options = []) {
+        $selectOptions = $this->parseOptions($options);
 
-            $ids = explode(',', $parent);
-            $first = true;
-            foreach ($ids as $id) {
-                $category = Ecommerce\Category::get((int) $id);
-                if ($category) {
-                    $selectOptions['where'][] = ['tree_path', $category->tree_path . $category->id . '/%', 'LIKE', $first ? 'AND' : 'OR'];
-                    $first = false;
-                }
-            }
-        } elseif ($parent !== '') {
-            $category = Ecommerce\Category::get((int) $parent);
-            if ($category) {
-                $selectOptions['where'][] = ['tree_path', $category->tree_path . $category->id . '/%', 'LIKE'];
-            }
-        }
-        if (!empty($search)) {
-            $search = str_replace(' ', '%', $search);
-            $ids = Ecommerce\Item::getList(['where' => ['search_index', '%' . $search . '%', 'LIKE'], 'array' => true]);
-            $ids = array_keys($ids);
-            if (!$ids)
-                return [];
-            $selectOptions['where'][] = ['id', implode(',', $ids), 'IN'];
-        }
-        $selectOptions['join'][] = [Ecommerce\Item\Offer::table(), Ecommerce\Item::index() . ' = ' . Ecommerce\Item\Offer::colPrefix() . Ecommerce\Item::index(), 'inner'];
-        $selectOptions['join'][] = [Ecommerce\Item\Offer\Price::table(), Ecommerce\Item\Offer::index() . ' = ' . Ecommerce\Item\Offer\Price::colPrefix() . Ecommerce\Item\Offer::index() . ' and ' . Ecommerce\Item\Offer\Price::colPrefix() . 'price>0', 'inner'];
-
-        $selectOptions['group'] = Ecommerce\Item::index();
         //\App::$cur->db->cols = 'DISTINCT `' . \App::$cur->db->table_prefix . 'catalog_items`. *';
 
         /* if (empty($this->modConf['view_empty_warehouse'])) {
@@ -312,59 +188,17 @@ class Ecommerce extends Module {
      * @param string $search
      * @return int
      */
-    function getItemsCount($parent = '', $search = '') {
-        if (is_array($parent)) {
-            extract($parent);
-        }
-        if (is_array($parent)) {
-            $parent = '';
-        }
-        $selectOptions = [
-            'where' => [],
-            'distinct' => false,
-            'join' => [],
-        ];
-        if (strpos($parent, ',') !== false) {
-
-            $ids = explode(',', $parent);
-            $first = true;
-            foreach ($ids as $id) {
-                $category = Ecommerce\Category::get((int) $id);
-                if ($category) {
-                    $selectOptions['where'][] = ['tree_path', $category->tree_path . $category->id . '/%', 'LIKE', $first ? 'AND' : 'OR'];
-                    $first = false;
-                }
+    function getItemsCount($options = []) {
+        $selectOptions = $this->parseOptions($options);
+        $counts = Ecommerce\Item::getCount($selectOptions);
+        if (is_array($counts)) {
+            $sum = 0;
+            foreach ($counts as $count) {
+                $sum +=$count['count'];
             }
-        } elseif ($parent !== '') {
-            $category = Ecommerce\Category::get((int) $parent);
-            if ($category) {
-                $selectOptions['where'][] = ['tree_path', $category->tree_path . $category->id . '/%', 'LIKE'];
-            }
+            return $sum;
         }
-        if (!empty($search)) {
-            $search = str_replace(' ', '%', $search);
-            $ids = Ecommerce\Item::getList(['where' => ['search_index', '%' . $search . '%', 'LIKE'], 'array' => true]);
-            $ids = array_keys($ids);
-            if (!$ids)
-                return [];
-            $selectOptions['where'][] = ['id', implode(',', $ids), 'IN'];
-        }
-        $selectOptions['join'][] = [Ecommerce\Item\Offer::table(), Ecommerce\Item::index() . ' = ' . Ecommerce\Item\Offer::colPrefix() . Ecommerce\Item::index(), 'inner'];
-        $selectOptions['join'][] = [Ecommerce\Item\Offer\Price::table(), Ecommerce\Item\Offer::index() . ' = ' . Ecommerce\Item\Offer\Price::colPrefix() . Ecommerce\Item\Offer::index() . ' and ' . Ecommerce\Item\Offer\Price::colPrefix() . 'price>0', 'inner'];
-
-        $selectOptions['distinct'] = true;
-        $items = Ecommerce\Item::getCount($selectOptions);
-        //var_dump(App::$cur->db->lastQuery,$items);
-        return $items;
-    }
-
-    function getCatalogParents($catalog_id, $ids = []) {
-        $catalog = Ecommerce\Category::get($catalog_id);
-        $ids[] = $catalog_id;
-        if ($catalog->parent_id) {
-            $ids = $this->getCatalogParents($catalog->parent_id, $ids);
-        }
-        return $ids;
+        return $counts;
     }
 
 }

@@ -155,11 +155,11 @@ SELECT COALESCE(sum(ewb_count) ,0) as `sum`
     }
 
     function changeWarehouse($count) {
-        /*$warehouse = ItemWarehouses::get([['count', '0', '>'], ['id', $this->id]]);
-        if ($warehouse) {
-            $warehouse->ciw_count +=(float) $count;
-            $warehouse->save();
-        }*/
+        /* $warehouse = ItemWarehouses::get([['count', '0', '>'], ['id', $this->id]]);
+          if ($warehouse) {
+          $warehouse->ciw_count +=(float) $count;
+          $warehouse->save();
+          } */
     }
 
     static function relations() {
@@ -192,8 +192,17 @@ SELECT COALESCE(sum(ewb_count) ,0) as `sum`
 
     function getPrice() {
         $offers = $this->offers(['key' => false]);
-        $prices = $offers[0]->prices(['key' => false]);
-        return $prices[0];
+        $curPrice = null;
+
+        foreach ($offers[0]->prices as $price) {
+            if (
+                    (!$price->type->roles && !$curPrice) ||
+                    ($price->type->roles && !$curPrice && strpos($price->type->roles, "|" . \Users\User::$cur->role_id . "|") !== false)
+            ) {
+                $curPrice = $price;
+            }
+        }
+        return $curPrice;
     }
 
 }

@@ -13,8 +13,7 @@ $catalogIds = [];
 </ul>
 <?php
 
-function showChildsCatalogs($parent, $catalogs, $catalogIds)
-{
+function showChildsCatalogs($parent, $catalogs, $catalogIds) {
     $isset = false;
 
     foreach ($catalogs as $catalog) {
@@ -34,7 +33,7 @@ function showChildsCatalogs($parent, $catalogs, $catalogIds)
                 } else {
                     echo "glyphicon-chevron-right";
                 }
-                $itemsCount = Inji::app()->ecommerce->getItemsCount($parent->catalog_id, '');
+                $itemsCount = Inji::app()->ecommerce->getItemsCount(['parent' => $parent->catalog_id]);
                 echo "'></span> 
                     <a href='/ecommerce/itemList/{$parent->catalog_id}'>{$parent->catalog_name}</a> {$itemsCount}</label>
                     <ul class='nav nav-list nav-left-ml' ";
@@ -54,7 +53,7 @@ function showChildsCatalogs($parent, $catalogs, $catalogIds)
         if (in_array($parent->catalog_id, $catalogIds)) {
             echo ' style = "font-weight:bold;"';
         }
-        $itemsCount = Inji::app()->ecommerce->getItemsCount($parent->catalog_id, '');
+        $itemsCount = Inji::app()->ecommerce->getItemsCount(['parent' => $parent->catalog_id]);
         echo '><a href="/ecommerce/itemList/' . $parent->catalog_id . '">' . $parent->catalog_name . '</a> ' . $itemsCount . '</label></li>';
     }
 }
