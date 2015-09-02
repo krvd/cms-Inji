@@ -127,6 +127,9 @@ class ActiveForm extends \Object {
                             $param = substr($preset['userCol'], strpos($preset['userCol'], ':') + 1);
                             $this->model->$col = \Users\User::$cur->$rel->$param;
                         }
+                        else {
+                            $this->model->$col = \Users\User::$cur->{$preset['userCol']};
+                        }
                     }
                 }
                 \Msg::add($this->model->pk() ? 'Изменения были успешно сохранены' : 'Новый элемент был успешно добавлен', 'success');

@@ -91,8 +91,8 @@
             </tr>
             <tr>
                 <td colspan="2"></td>
-                <td class="text-right"><b>Доставка с фиксированной стоимостью доставки</b></td>
-                <td class="text-right"><?= (!$cart->delivery || $cart->sum >= $cart->delivery->cd_max_cart_price) ? '0' : $cart->delivery->cd_price; ?>р.</td>
+                <td class="text-right"><b><?= $cart->delivery ? $cart->delivery->name : 'Доставка'; ?></b></td>
+                <td class="text-right"><?= (!$cart->delivery || $cart->sum >= $cart->delivery->max_cart_price) ? '0' : $cart->delivery->price; ?>р.</td>
                 <td></td>
             </tr>
             <tr>
@@ -123,23 +123,29 @@
                 <td class="text-left"><?= $status->type->name; ?></td>
                 <td class="text-left">
                     <?php
-                    switch ($status->cart_event_id) {
+                    switch ($status->cart_event_type_id) {
                         case'1':
                         case'2':
-                            $item = Ecommerce\Item\Offer\Price::get($info[0])->offer->item;
-                            $itemName = $item->name();
-                            echo "<a href = '/ecommerce/view/{$item->id}'>{$itemName}</a>";
+                            $price = Ecommerce\Item\Offer\Price::get($status->info);
+                            if ($price) {
+                                echo "<a href = '/ecommerce/view/{$item->id}'>" . $price->offer->item->name() . "</a>";
+                            } else {
+                                echo 'Товар удален';
+                            }
                             break;
                         case '4':
                             $info = explode('|', $status->info);
-                            $item = Ecommerce\Item\Offer\Price::get($info[0])->offer->item;
-                            $itemName = $item->name();
-                            echo "<a href = '/ecommerce/view/{$item->id}'>{$itemName}</a> " . ($info[1] > 0 ? '+' . $info[1] : $info[1]);
+                            $price = Ecommerce\Item\Offer\Price::get($info[0]);
+                            if ($price) {
+                                echo "<a href = '/ecommerce/view/{$item->id}'>" . $price->offer->item->name() . "</a> " . ($info[1] > 0 ? '+' . $info[1] : $info[1]);
+                            } else {
+                                echo 'Товар удален';
+                            }
                             break;
-                        case 5:
+                        case '5':
                             echo Ecommerce\Cart\Status::get($status->info)->name;
                             break;
-                        default :
+                        default:
                             echo $status->info;
                     }
                     ?>
