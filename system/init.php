@@ -32,7 +32,7 @@ $finalApp = [
     'route' => INJI_DOMAIN_NAME,
 ];
 foreach ($apps as $app) {
-    if ($app['default'] && !$finalApp) {
+    if ($app['default']) {
         $finalApp = $app;
     }
     if (preg_match("!{$app['route']}!i", INJI_DOMAIN_NAME)) {
