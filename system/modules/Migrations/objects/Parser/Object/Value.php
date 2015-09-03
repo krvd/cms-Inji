@@ -46,7 +46,7 @@ class Value extends \Migrations\Parser {
                                 $sourceModel = $relation['model'];
                             }
                             $objectId = \Migrations\Id::get([['parse_id', (string) $this->reader], ['type', $sourceModel]]);
-                            if($objectId){
+                            if ($objectId) {
                                 $value = $objectId->object_id;
                             }
                         }
@@ -58,7 +58,7 @@ class Value extends \Migrations\Parser {
         } else {
             $type = 'text';
         }
-        
+
         if (!empty($options['valueReplace'])) {
             $values = $this->param->values(['key' => 'original']);
             if (empty($values[$value])) {
@@ -72,7 +72,14 @@ class Value extends \Migrations\Parser {
             }
             $value = $valueObject->replace;
         }
-        $this->model->{$this->param->value} = $value;
+        switch ($type) {
+            case 'image':
+                $dir = pathinfo($this->reader->source, PATHINFO_DIRNAME);
+                $this->model->{$this->param->value} = \App::$primary->files->uploadFromUrl($dir . '/' . $value, ['accept_group' => 'image', 'upload_code' => 'MigrationUpload']);
+                break;
+            default:
+                $this->model->{$this->param->value} = $value;
+        }
     }
 
 }
