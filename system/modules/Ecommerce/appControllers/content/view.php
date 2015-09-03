@@ -24,6 +24,13 @@
                             </div>
                         </div>
                     </div>
+                    <div class="item-options">
+                        <?php
+                        foreach ($item->options as $option) {
+                            echo "{$option->option->name}: " . $option->value();
+                        }
+                        ?>
+                    </div>
                 </div>
             </div>
         </div>
