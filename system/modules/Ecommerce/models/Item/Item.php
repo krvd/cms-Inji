@@ -187,6 +187,10 @@ SELECT COALESCE(sum(ewb_count) ,0) as `sum`
                 'model' => 'Ecommerce\Item\Type',
                 'col' => 'item_type_id',
             ],
+            'image'=>[
+                'model'=>'Files\File',
+                'col'=>'image_file_id'
+            ]
         ];
     }
 

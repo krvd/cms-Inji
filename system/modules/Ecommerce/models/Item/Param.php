@@ -53,6 +53,15 @@ class Param extends \Model {
             ]
     ]];
 
+    function value() {
+        if ($this->option->type != 'select') {
+            return $this->value;
+        } elseif ($this->optionItem) {
+            return $this->optionItem->value;
+        }
+        return '';
+    }
+
     static function relations() {
         return [
             'file' => [
@@ -67,6 +76,10 @@ class Param extends \Model {
                 'model' => 'Ecommerce\Item',
                 'col' => 'item_id'
             ],
+            'optionItem' => [
+                'model' => 'Ecommerce\Item\Option\Item',
+                'col' => 'value'
+            ]
         ];
     }
 
