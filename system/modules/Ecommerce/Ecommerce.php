@@ -55,6 +55,7 @@ class Ecommerce extends Module {
                 }
             }
         }
+        //filters
         if (!empty($options['filters'])) {
             foreach ($options['filters'] as $col => $filter) {
                 switch ($col) {
@@ -64,6 +65,12 @@ class Ecommerce extends Module {
                         }
                         if (!empty($filter['max'])) {
                             $selectOptions['where'][] = [Ecommerce\Item\Offer\Price::colPrefix() . 'price', (float) $filter['max'], '<='];
+                        }
+                        break;
+                    case 'options':
+                        foreach ($filter as $optionId => $value) {
+                            $selectOptions['join'][] = [Ecommerce\Item\Param::table(), Ecommerce\Item::index() . ' = ' . Ecommerce\Item\Param::colPrefix() . Ecommerce\Item::index() . ' AND ' .
+                                Ecommerce\Item\Param::colPrefix() . 'value = "' . (int) $value . '"', 'inner'];
                         }
                         break;
                 }
@@ -86,11 +93,11 @@ class Ecommerce extends Module {
         }
 
         //search
-        if (!empty($search)) {
-            $selectOptions['where'][] = ['search_index', '%' . $search . '%', 'LIKE'];
+        if (!empty($options['search'])) {
+            $selectOptions['where'][] = ['search_index', '%' . $options['search'] . '%', 'LIKE'];
         }
 
-        //filters
+
         $selectOptions['join'][] = [Ecommerce\Item\Offer::table(), Ecommerce\Item::index() . ' = ' . Ecommerce\Item\Offer::colPrefix() . Ecommerce\Item::index(), 'inner'];
         $selectOptions['join'][] = [Ecommerce\Item\Offer\Price::table(),
             Ecommerce\Item\Offer::index() . ' = ' . Ecommerce\Item\Offer\Price::colPrefix() . Ecommerce\Item\Offer::index() . ' and ' . Ecommerce\Item\Offer\Price::colPrefix() . 'price>0', 'inner'];
