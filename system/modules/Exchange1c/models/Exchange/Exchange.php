@@ -24,10 +24,28 @@ class Exchange extends \Model {
     ];
     static $dataManagers = [
         'manager' => [
-            'cols'=>[
-                'type','session','path','date_create','date_end'
-            ]
+            'cols' => [
+                'type', 'session', 'path', 'date_create'
+            ],
+            'rowButtons' => [
+                'open', ['href' => '/admin/exchange1c/reExchange', 'text' => '<i class = "glyphicon glyphicon-refresh"></i>'], 'edit', 'delete'
+            ],
         ]
     ];
+
+    static function relations() {
+        return[
+            'logs' => [
+                'type' => 'many',
+                'model' => 'Exchange1c\Exchange\Log',
+                'col' => 'exchange_id'
+            ],
+            'files' => [
+                'type' => 'many',
+                'model' => 'Exchange1c\Exchange\File',
+                'col' => 'exchange_id'
+            ]
+        ];
+    }
 
 }
