@@ -16,12 +16,14 @@ namespace Migrations;
 class Reader extends \Object {
 
     public $data = NULL;
+    public $source = '';
 
     function loadData($source = '') {
+        $this->source = $source;
         return FALSE;
     }
 
-    function readPath($path='/') {
+    function readPath($path = '/') {
         return [];
     }
 
