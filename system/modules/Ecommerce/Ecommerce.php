@@ -46,7 +46,7 @@ class Ecommerce extends Module {
             'start' => isset($options['start']) ? (int) $options['start'] : 0,
             'limit' => !empty($options['count']) ? (int) $options['count'] : 0,
         ];
-        if (!empty($options['sort'])) {
+        if (!empty($options['sort']) && is_array($options['sort'])) {
             foreach ($options['sort'] as $col => $direction) {
                 switch ($col) {
                     case 'price':
@@ -54,7 +54,11 @@ class Ecommerce extends Module {
                         break;
                 }
             }
+        } elseif (!empty($options['sort'])) {
+            //echo $options['sort'];
         }
+
+
         //filters
         if (!empty($options['filters'])) {
             foreach ($options['filters'] as $col => $filter) {
@@ -84,11 +88,13 @@ class Ecommerce extends Module {
                 if (!$categoryId) {
                     continue;
                 }
+                $category = \Ecommerce\Category::get($categoryId);
                 $where[] = ['tree_path', $category->tree_path . (int) $categoryId . '/%', 'LIKE', $first ? 'AND' : 'OR'];
                 $first = false;
             }
             $selectOptions['where'][] = $where;
         } elseif (!empty($options['parent'])) {
+            $category = \Ecommerce\Category::get($options['parent']);
             $selectOptions['where'][] = ['tree_path', $category->tree_path . (int) $options['parent'] . '/%', 'LIKE'];
         }
 
