@@ -19,11 +19,16 @@
 class Html {
 
     static function el($tag, $attributes = [], $body = '', $noCloseTag = false) {
-        $html = '<';
-        $html.=$tag;
+        $html = "<{$tag}";
         if ($attributes && is_array($attributes)) {
             foreach ($attributes as $key => $value) {
-                $html .=" {$key} = '" . addcslashes($value, "'") . "'";
+                $html .=" {$key} = '";
+                if (!is_array($value)) {
+                    $html .= addcslashes($value, "'");
+                } else {
+                    $html .= json_encode($value);
+                }
+                $html .= "'";
             }
         }
         if ($noCloseTag === null) {
