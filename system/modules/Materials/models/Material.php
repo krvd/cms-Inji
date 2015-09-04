@@ -29,6 +29,25 @@ class Material extends \Model {
                 'category_id',
                 'date_create'
             ],
+            'sortable' => [
+                'name',
+                'alias',
+                'user_id',
+                'category_id',
+                'date_create'
+            ],
+            'filters' => [
+                'name',
+                'preview',
+                'text',
+                'alias',
+                'template',
+                'viewer',
+                'description',
+                'keywords',
+                'user_id',
+                'date_create'
+            ],
             'categorys' => [
                 'model' => 'Materials\Category',
             ]
