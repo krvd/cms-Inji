@@ -66,6 +66,9 @@ class StaticLoader extends Module {
                     return false;
                 }
                 $path = substr($path, strpos($path, '/') + 1);
+                if (is_callable([$module, 'staticCalled'])) {
+                    return $scriptApp->$module->staticCalled($path, $scriptApp->$module->path . '/static/');
+                }
                 return $scriptApp->$module->path . '/static/' . $path;
             default:
                 return $scriptApp->path . '/static/' . $path;
