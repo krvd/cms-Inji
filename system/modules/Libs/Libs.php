@@ -30,4 +30,22 @@ class Libs extends Module {
         }
     }
 
+    function staticCalled($file, $dir) {
+        $libPath = preg_replace('!^libs/!', '', $file);
+        $libName = substr($libPath, 0, strpos($libPath, '/'));
+        if (file_exists($this->path . '/static/libs/' . $libName . '/libConfig.php')) {
+            $lib = include $this->path . '/static/libs/' . $libName . '/libConfig.php';
+            if (!empty($lib['programDirs'])) {
+                $fileDir = substr($libPath, strlen($libName) + 1, strpos($libPath, '/', strlen($libName) + 1) - strlen($libName) - 1);
+                foreach ($lib['programDirs'] as $programDir) {
+                    if ($programDir == $fileDir) {
+                        include $dir . $file;
+                        exit();
+                    }
+                }
+            }
+        }
+        return $dir . $file;
+    }
+
 }

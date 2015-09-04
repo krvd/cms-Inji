@@ -10,5 +10,8 @@ return [
             'bootstrap-ckeditor-fix.js',
             'adapters/jquery.js'
         ]
+    ],
+    'programDirs' => [
+        'program'
     ]
 ];
