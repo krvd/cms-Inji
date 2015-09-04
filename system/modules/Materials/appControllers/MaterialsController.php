@@ -43,7 +43,7 @@ class MaterialsController extends Controller {
             $pages = new Ui\Pages($_GET, ['count' => Materials\Material::getCount(['where' => ['category_id', $category->id]]), 'limit' => 10]);
             $materials = Materials\Material::getList(['where' => ['category_id', $category->id], 'order' => ['date_create', 'desc'], 'start' => $pages->params['start'], 'limit' => $pages->params['limit']]);
 
-            $this->view->page(['page' => $category->resolveTemplate(),'content' => $category->resolveViewer(), 'data' => compact('materials', 'pages', 'category')]);
+            $this->view->page(['page' => $category->resolveTemplate(), 'content' => $category->resolveViewer(), 'data' => compact('materials', 'pages', 'category')]);
         }
     }
 
@@ -73,14 +73,13 @@ class MaterialsController extends Controller {
                 $this->view->addMetaTag(['property' => 'og:image', 'content' => 'http://' . INJI_DOMAIN_NAME . $logo->path]);
             }
             $this->view->setTitle($material->name . ' ' . $material->keywords);
+            $bread[] = ['text' => $material->name, 'href' => '/' . $material->alias];
             $this->view->page([
                 'page' => $material->resolveTemplate(),
                 'content' => $material->resolveViewer(),
-                'data' => compact('material')
+                'data' => compact('material', 'bread'),
             ]);
         }
     }
 
 }
-
-?>
