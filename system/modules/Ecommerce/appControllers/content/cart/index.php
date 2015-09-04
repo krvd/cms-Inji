@@ -92,7 +92,7 @@
                         </div>                        
                         <h2 class="secondary-title">Корзина товаров</h2>
                         <div class="table-responsive">
-                            <table class="table table-bordered table-hover">
+                            <table class="table ">
                                 <thead>
                                     <tr>
                                         <th class="text-left" colspan="2">Название товара</th>
@@ -111,11 +111,11 @@
                                 </tbody>
                                 <tfoot>
                                     <tr class="cartsums">
-                                        <td colspan="4" class="text-right">Сумма:</td>
+                                        <td colspan="5" class="text-right">Сумма:</td>
                                         <td class="text-right"><?= $cart->sum; ?> руб.</td>
                                     </tr>
                                     <tr class="deliverysum">
-                                        <td colspan="4" class="text-right"><?= $cartDelivery->name; ?>:</td>
+                                        <td colspan="5" class="text-right"><?= $cartDelivery->name; ?>:</td>
                                         <td class="text-right"><?= $deliveryPrice; ?> руб.</td>
                                     </tr>
                                     <?php
@@ -126,11 +126,11 @@
                                     }
                                     ?>
                                     <tr class="packssum hidden">
-                                        <td colspan="4" class="text-right">Пакеты:</td>
+                                        <td colspan="5" class="text-right">Пакеты:</td>
                                         <td class="text-right"><?= $packSum ?> руб.</td>
                                     </tr>
                                     <tr class = 'allsums'>
-                                        <td colspan="4" class="text-right">Итого:</td>
+                                        <td colspan="5" class="text-right">Итого:</td>
                                         <td class="text-right"><?= $cart->sum + $deliveryPrice + $packSum; ?> руб.</td>
                                     </tr>
                                 </tfoot>
