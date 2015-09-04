@@ -245,6 +245,19 @@ class DataManager extends \Object {
                 }
                 if ($colName && in_array($colName, $this->managerOptions['sortable'])) {
                     $sortType = in_array($sortType, ['desc', 'asc']) ? $sortType : 'desc';
+                    /**
+                    $modelName = $this->modelName;
+                    $colInfo = $modelName::getColInfo($colName);
+                    var_dump($colInfo);
+                    if (!empty($colInfo['colParams']['type']) && $colInfo['colParams']['type'] == 'select' && $colInfo['colParams']['source'] == 'relation') {
+                        $colModelCols = $colInfo['modelName']::cols();
+                        var_dump($colInfo['modelName']::colPrefix() . 'name',$colModelCols);
+                        if (isset($colModelCols[$colInfo['modelName']::colPrefix() . 'name'])) {
+                            echo 1;
+                        }
+                    }
+                     * 
+                     */
                     $queryParams['order'][] = [$colName, $sortType];
                 }
             }
