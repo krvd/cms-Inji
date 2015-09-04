@@ -239,7 +239,7 @@ class Users extends Module {
         Tools::sendMail($from, $to, $subject, $text);
         Msg::add('Вы были зарегистрированы. На указанный почтовый ящик был выслан ваш пароль', 'success');
 
-        return $user_id;
+        return $user->id;
     }
 
     function hashpass($pass) {
