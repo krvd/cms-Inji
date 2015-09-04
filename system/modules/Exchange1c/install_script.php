@@ -19,6 +19,7 @@ return function ($step = NULL, $params = array()) {
         'exchange_log_id' => 'pk',
         'exchange_log_type' => 'varchar(255) NOT NULL',
         'exchange_log_info' => 'text NOT NULL',
+        'exchange_log_query' => 'text NOT NULL',
         'exchange_log_status' => 'varchar(255) NOT NULL',
         'exchange_log_exchange_id' => 'int(11) UNSIGNED NOT NULL',
         'exchange_log_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
