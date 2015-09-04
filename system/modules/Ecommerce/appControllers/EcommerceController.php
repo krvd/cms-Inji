@@ -2,27 +2,6 @@
 
 class ecommerceController extends Controller {
 
-    function quickViewAction($id = 0) {
-        $item = \Ecommerce\Item::get((int) $id);
-        if (!$item) {
-            $this->url->redirect('/ecommerce/', 'Такой товар не найден');
-        }
-        $active = $item->category_id;
-        $catalog = $item->category;
-
-        $bread[] = array('text' => 'Каталог', 'href' => '/ecommerce');
-
-        $catalogIds = $this->ecommerce->getCatalogParents($item->category_id);
-        $catalogIds = array_reverse($catalogIds);
-        foreach ($catalogIds as $id) {
-            $cat = Ecommerce\Category::get($id);
-            $bread[] = array('text' => $cat->name, 'href' => '/ecommerce/itemList/' . $cat->id);
-        }
-        $bread[] = array('text' => $item->name());
-        $this->view->setTitle($item->name());
-        $this->view->page(['page' => 'blank', 'content' => 'view', 'data' => compact('item', 'active', 'catalog', 'bread')]);
-    }
-
     function cabinetAction() {
         $this->view->setTitle('Кабинет');
         $this->view->page();
@@ -86,7 +65,7 @@ class ecommerceController extends Controller {
             $this->view->setTitle('Каталог');
         } else {
             $bread[] = array('text' => 'Каталог', 'href' => '/ecommerce');
-            $categoryIds = $this->ecommerce->getCatalogParents($category->id);
+            $categoryIds = array_values(array_filter(explode('/', $category->tree_path)));
             $categoryIds = array_reverse($categoryIds);
             foreach ($categoryIds as $id) {
                 $cat = Ecommerce\Category::get($id);
@@ -125,7 +104,13 @@ class ecommerceController extends Controller {
         }
         $bread[] = array('text' => $item->name());
         $this->view->setTitle($item->name());
-        $this->view->page(['data' => compact('item', 'active', 'catalog', 'bread')]);
+        $options = [
+            'data' => compact('item', 'active', 'catalog', 'bread')
+        ];
+        if (isset($_GET['quickview'])) {
+            $options['page'] = 'blank';
+        }
+        $this->view->page($options);
     }
 
 }
