@@ -1,6 +1,7 @@
 <?php
 $modelName = get_class($item);
 $table = new Ui\Table();
+$table->name = $item->name();
 $row = [];
 foreach ($modelName::$cols as $colName => $options) {
     $modelName = get_class($item);
@@ -13,7 +14,7 @@ foreach ($modelName::$cols as $colName => $options) {
                     $value = !empty($colInfo['colParams']['sourceArray'][$item->$colName]) ? $colInfo['colParams']['sourceArray'][$item->$colName] : 'Не задано';
                     break;
                 case 'method':
-                    $values = $colInfo['colParams']['module']->$colInfo['colParams']['method']();
+                    $values = App::$primary->$colInfo['colParams']['module']->$colInfo['colParams']['method']();
                     $value = !empty($values[$item->$colName]) ? $values[$item->$colName] : 'Не задано';
                     break;
                 case 'relation':
