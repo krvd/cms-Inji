@@ -80,7 +80,7 @@ class Query extends \Exchange1c\Mode {
                 addToXml($xml, $req, 'Значение', 'Товар');
             }
             $sum = $cart->sum;
-            if ($cart->delivery && $cart->delivery->price && false ) {
+            if ($cart->delivery && $cart->delivery->price && false) {
                 if ($sum < $cart->delivery->max_cart_price) {
                     $sum += $cart->delivery->price;
 
@@ -157,6 +157,27 @@ class Query extends \Exchange1c\Mode {
             $req = $reqs->appendChild($xml->createElement('ЗначениеРеквизита'));
             addToXml($xml, $req, 'Наименование', 'Отменен');
             addToXml($xml, $req, 'Значение', 'false');
+
+            if (!empty(\App::$primary->exchange1c->config['queryCartFieldGroups'])) {
+                foreach (\App::$primary->exchange1c->config['queryCartFieldGroups'] as $group) {
+                    addToXml($xml, $req, 'Наименование', $group['name']);
+                    $string = '';
+                    foreach ($group['parts'] as $part) {
+                        switch ($part['type']) {
+                            case 'text':
+                                $string .= $part['text'];
+                                break;
+                            case 'field':
+                                $value = \Ecommerce\UserAdds\Value::get([
+                                            ['useradds_field_id', $part['field']],
+                                            ['useradds_id', $cart->userAdds->id]
+                                ]);
+                                $string .= $value->value;
+                                break;
+                        }
+                    }
+                }
+            }
 
             foreach ($cart->userAdds->values as $value) {
                 $req = $reqs->appendChild($xml->createElement('ЗначениеРеквизита'));
