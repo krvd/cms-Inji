@@ -25,14 +25,12 @@ class Material extends \Model {
             'cols' => [
                 'name',
                 'alias',
-                'user_id',
                 'category_id',
                 'date_create'
             ],
             'sortable' => [
                 'name',
                 'alias',
-                'user_id',
                 'category_id',
                 'date_create'
             ],
