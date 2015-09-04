@@ -254,4 +254,21 @@ class Tools extends Model {
         return $val;
     }
 
+    static function copyFiles($from, $to) {
+        $from = rtrim($from, '/');
+        $to = rtrim($to, '/');
+        self::createDir($to);
+        $files = scandir($from);
+        foreach ($files as $file) {
+            if (in_array($file, ['.', '..'])) {
+                continue;
+            }
+            if (is_dir($from . '/' . $file)) {
+                self::copyFiles($from . '/' . $file, $to . '/' . $file);
+            } else {
+                copy($from . '/' . $file, $to . '/' . $file);
+            }
+        }
+    }
+
 }
