@@ -23,17 +23,13 @@ class Exchange1cController extends adminController {
         Tools::createDir($exchange->path);
         $exchange->save();
 
-        foreach ($reExchange->files as $reFile) {
-            if (strpos($reFile->name, '/')) {
-                Tools::createDir($exchange->path . '/' . substr($reFile->name, 0, strrpos($reFile->name, '/')));
-            }
-            copy($reExchange->path . '/' . $reFile->name, $exchange->path . '/' . $reFile->name);
-        }
+        Tools::copyFiles($reExchange->path, $exchange->path);
+
         foreach ($reExchange->logs as $reLog) {
             if (!in_array($reLog->info, ['import'])) {
                 continue;
             }
-            $_GET = json_decode($reLog->query,true);
+            $_GET = json_decode($reLog->query, true);
 
             $log = new \Exchange1c\Exchange\Log();
             $log->exchange_id = $exchange->id;
