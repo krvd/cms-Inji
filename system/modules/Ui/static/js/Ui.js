@@ -64,12 +64,12 @@ Editors.prototype.loadIn = function (selector, search) {
             }
             $.each(instances, function () {
                 if ($(this).closest('.modal').length == 0 || $(this).closest('.modal').hasClass('in')) {
-                    var editor = $(this).ckeditor();
+                    var editor = $(this).ckeditor({customConfig: inji.options.appRoot + 'static/moduleAsset/libs/libs/ckeditor/program/userConfig.php'});
                 }
                 if ($(this).closest('.modal').length != 0) {
                     var _this = this;
                     $(this).closest('.modal').on('shown.bs.modal', function () {
-                        $(_this).ckeditor();
+                        $(_this).ckeditor({customConfig: inji.options.appRoot + 'static/moduleAsset/libs/libs/ckeditor/program/userConfig.php'});
                     })
                     $(this).closest('.modal').on('hide.bs.modal', function () {
                         if ($(_this).next().hasClass('cke')) {
