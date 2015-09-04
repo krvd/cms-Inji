@@ -10,7 +10,7 @@ return [
                 'childs' => [
                     [
                         'name' => 'История',
-                        'href' => '/admin/exchange1c/history'
+                        'href' => '/admin/exchange1c/exchange'
                     ],
                     [
                         'name' => 'Ручной обмен',
