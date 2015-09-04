@@ -16,6 +16,9 @@
                     </div>
                 </div>
             </div>
+            <div class="form-group">
+                <a href ="/users/registration">Зарегистрироваться</a>
+            </div>
             <input type ='hidden' name ='autorization' value ='1' />
             <div class="form-actions text-center">
                 <button class ="btn btn-success" >Войти</button>
