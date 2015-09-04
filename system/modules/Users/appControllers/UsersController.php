@@ -27,26 +27,27 @@ class UsersController extends Controller {
         }
         if (!empty($_POST)) {
             $error = false;
-            $response = $this->Recaptcha->check($_POST['g-recaptcha-response']);
-            if ($response) {
-                if (!$response->success) {
-                    Msg::add('Вы не прошли проверку на робота', 'danger');
+            if ($this->Recaptcha) {
+                $response = $this->Recaptcha->check($_POST['g-recaptcha-response']);
+                if ($response) {
+                    if (!$response->success) {
+                        Msg::add('Вы не прошли проверку на робота', 'danger');
+                        $error = true;
+                    }
+                } else {
+                    Msg::add('Произошла ошибка, попробуйте ещё раз');
                     $error = true;
                 }
-            } else {
-                Msg::add('Произошла ошибка, попробуйте ещё раз');
-                $error = true;
             }
             if (!$error) {
-                $user_id = $this->Users->registration($_POST);
-                if ($user_id) {
-                    Tools::redirect('/');
-                }
+                $this->Users->registration($_POST);
+                Tools::redirect('/');
             }
         }
         $this->view->setTitle('Регистрация');
         $this->view->page();
     }
+
     function activationAction($userId = 0, $hash = '') {
         $user = \Users\User::get((int) $userId);
         if (!$user || $user->activation !== (string) $hash) {
