@@ -24,7 +24,7 @@ class CartController extends Controller {
 
                     if (empty($this->module->config['sell_over_warehouse'])) {
                         foreach ($cart->cartItems as $cartitem) {
-                            $warecount = $cartitem->item->warehouseCount($cart->id);
+                            $warecount = $cartitem->price->offer->warehouseCount($cart->id);
                             if ($cartitem->count > $warecount) {
                                 $error = true;
                                 Msg::add('Вы заказали <b>' . $cartitem->item->name . '</b> больше чем есть на складе. на складе: <b>' . $warecount . '</b>', 'danger');
@@ -233,9 +233,9 @@ class CartController extends Controller {
 
         $cart = $this->ecommerce->getCurCart();
 
-        if (empty($this->module->config['sell_over_warehouse']) && $item->warehouseCount() < $count) {
+        if (empty($this->module->config['sell_over_warehouse']) && $price->offer->warehouseCount() < $count) {
             $result->success = false;
-            $result->content = 'На складе недостаточно товара! Доступно: ' . $item->warehouseCount();
+            $result->content = 'На складе недостаточно товара! Доступно: ' . $price->offer->warehouseCount();
             $result->send();
         }
 

@@ -17,7 +17,7 @@ $itemName = $cartItem->item->name();
         if (!empty($cartItem->item->options['7fc7a4d1-b26a-11e4-9490-80c16e818121']) && $cartItem->item->options['7fc7a4d1-b26a-11e4-9490-80c16e818121']->cip_value) {
             echo '<div style="min-width:200px;">';
             $price = $cartItem->price->price;
-            $max = $cartItem->item->warehouseCount((!empty($_SESSION['cart']['cart_id']) ? $_SESSION['cart']['cart_id'] : 0)) * 1000;
+            $max = $cartItem->price->offer->warehouseCount((!empty($_SESSION['cart']['cart_id']) ? $_SESSION['cart']['cart_id'] : 0)) * 1000;
             $step = preg_replace('![^0-9]!', '', $cartItem->item->options['7fc7a4d1-b26a-11e4-9490-80c16e818121']->cip_value);
             ?>
             Примерный вес
@@ -32,7 +32,7 @@ $itemName = $cartItem->item->name();
                         <span class="glyphicon glyphicon-minus"></span>
                     </button>
                 </span>
-                <input style ="min-width:50px;float:none;line-height: 16px;margin:0;vertical-align: middle;" type="text" name="items[<?php echo $cartItem->id; ?>]" class="form-control input-number input-sm cart-couner" value="<?php echo (float) $cartItem->count; ?>" min="1" max="<?= $cartItem->item->warehouseCount((!empty($_SESSION['cart']['cart_id']) ? $_SESSION['cart']['cart_id'] : 0)); ?>">
+                <input style ="min-width:50px;float:none;line-height: 16px;margin:0;vertical-align: middle;" type="text" name="items[<?php echo $cartItem->id; ?>]" class="form-control input-number input-sm cart-couner" value="<?php echo (float) $cartItem->count; ?>" min="1" max="<?= $cartItem->price->offer->warehouseCount((!empty($_SESSION['cart']['cart_id']) ? $_SESSION['cart']['cart_id'] : 0)); ?>">
                 <span class="input-group-btn">
                     <button type="button" class="btn btn-default btn-number btn-sm" data-type="plus" data-field="items[<?php echo $cartItem->id; ?>]">
                         <span class="glyphicon glyphicon-plus"></span>
