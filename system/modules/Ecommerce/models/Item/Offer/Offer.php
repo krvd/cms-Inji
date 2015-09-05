@@ -64,4 +64,26 @@ class Offer extends \Model {
         ];
     }
 
+    function warehouseCount($cart_id = 0) {
+        \App::$cur->db->where(\Ecommerce\Item\Offer\Warehouse::colPrefix() . \Ecommerce\Item\Offer::index(), $this->id);
+        \App::$cur->db->cols = 'COALESCE(sum(' . \Ecommerce\Item\Offer\Warehouse::colPrefix() . 'count),0) as `sum` ';
+        $warehouse = \App::$cur->db->select(\Ecommerce\Item\Offer\Warehouse::table())->fetch();
+
+        \App::$cur->db->cols = 'COALESCE(sum(' . \Ecommerce\Warehouse\Block::colPrefix() . 'count) ,0) as `sum` ';
+        \App::$cur->db->where(\Ecommerce\Warehouse\Block::colPrefix() . \Ecommerce\Item\Offer::index(), $this->id);
+        if ($cart_id) {
+            \App::$cur->db->where(\Ecommerce\Warehouse\Block::colPrefix() . \Ecommerce\Cart::index(), (int) $cart_id, '!=');
+        }
+        $on = '
+            ' . \Ecommerce\Cart::index() . ' = ' . \Ecommerce\Warehouse\Block::colPrefix() . \Ecommerce\Cart::index() . ' AND (
+            (`' . \Ecommerce\Cart::colPrefix() . 'warehouse_block` = 1 and `' . \Ecommerce\Cart::colPrefix() . 'cart_status_id` in(2,3,6)) || 
+            (`' . \Ecommerce\Cart::colPrefix() . 'cart_status_id` in(0,1) and `' . \Ecommerce\Cart::colPrefix() . 'date_last_activ` >=subdate(now(),INTERVAL 30 MINUTE))
+            )
+        ';
+        \App::$cur->db->join(\Ecommerce\Cart::table(), $on, 'inner');
+
+        $blocked = \App::$cur->db->select(\Ecommerce\Warehouse\Block::table())->fetch();
+        return (float) $warehouse['sum'] - (float) $blocked['sum'];
+    }
+
 }

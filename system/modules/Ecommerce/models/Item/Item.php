@@ -97,18 +97,6 @@ SELECT COALESCE(sum(ewb_count) ,0) as `sum`
         return $items;
     }
 
-    function itemNameCount() {
-        \App::$cur->db->where('cip_id', $this->id);
-        \App::$cur->db->where('cip_cio_id', 1);
-        $param = \App::$cur->db->select('category_items_params')->fetch_assoc();
-        if (!empty($param['cip_value'])) {
-            $itemName = $param['cip_value'];
-        } else {
-            $itemName = $this->name;
-        }
-        return $itemName . ' (' . $this->warehouseCount() . ' на складе)';
-    }
-
     function beforeSave() {
         if ($this->id) {
             $this->search_index = $this->name . ' ';
@@ -129,29 +117,6 @@ SELECT COALESCE(sum(ewb_count) ,0) as `sum`
                     }
                 }
         }
-    }
-
-    function warehouseCount($cart_id = 0) {
-        $ids = array_keys($this->offers);
-        \App::$cur->db->where(Item\Offer\Warehouse::colPrefix() . Item\Offer::index(), implode(',', $ids), 'IN');
-        \App::$cur->db->cols = 'COALESCE(sum(' . Item\Offer\Warehouse::colPrefix() . 'count),0) as `sum` ';
-        $warehouse = \App::$cur->db->select(Item\Offer\Warehouse::table())->fetch();
-
-        \App::$cur->db->cols = 'COALESCE(sum(' . Warehouse\Block::colPrefix() . 'count) ,0) as `sum` ';
-        \App::$cur->db->where(Warehouse\Block::colPrefix() . Item\Offer::index(), implode(',', $ids), 'IN');
-        if ($cart_id) {
-            \App::$cur->db->where(Warehouse\Block::colPrefix() . Cart::index(), (int) $cart_id, '!=');
-        }
-        $on = '
-            ' . Cart::index() . ' = ' . Warehouse\Block::colPrefix() . Cart::index() . ' AND (
-            (`' . Cart::colPrefix() . 'warehouse_block` = 1 and `' . Cart::colPrefix() . 'cart_status_id` in(2,3,6)) || 
-            (`' . Cart::colPrefix() . 'cart_status_id` in(0,1) and `' . Cart::colPrefix() . 'date_last_activ` >=subdate(now(),INTERVAL 30 MINUTE))
-            )
-        ';
-        \App::$cur->db->join(Cart::table(), $on, 'inner');
-
-        $blocked = \App::$cur->db->select(Warehouse\Block::table())->fetch();
-        return (float) $warehouse['sum'] - (float) $blocked['sum'];
     }
 
     function changeWarehouse($count) {
