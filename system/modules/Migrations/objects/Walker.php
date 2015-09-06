@@ -1,9 +1,7 @@
 <?php
 
 /**
- * Item name
- *
- * Info
+ * Data tree walker
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/
@@ -19,6 +17,7 @@ class Walker {
     public $map = null;
     public $reader = null;
     public $mapPath = null;
+    public $mapPathParent = null;
     public $realPath = null;
 
     function walk($path = '/') {
@@ -32,6 +31,7 @@ class Walker {
                     $walker = clone $this;
                     $walker->reader = $item;
                     $walker->realPath = $this->realPath . $key . '/';
+                    $walker->mapPathParent = $this->mapPath;
                     $walker->walk();
                 } elseif ($type->type == 'object') {
                     $objectParser = new Parser\Object();
@@ -39,35 +39,36 @@ class Walker {
                     $objectParser->reader = $item;
                     $objectParser->parse();
                 }
-            }
-            $object = Migration\Object::get([
-                        ['code', $key],
-            ]);
-            if ($object) {
-                $objectParser = new Parser\Object();
-                $objectParser->object = $object;
-                $objectParser->reader = $item;
-                $objectParser->parse();
+            } else {
+                $object = Migration\Object::get([
+                            ['code', $key],
+                ]);
+                if ($object) {
+                    $objectParser = new Parser\Object();
+                    $objectParser->object = $object;
+                    $objectParser->reader = $item;
+                    $objectParser->parse();
+                }
             }
         }
     }
 
     function getInfo($item, $path) {
-        $mapPath = Migration\Map\Path::get([
+        $this->mapPath = Migration\Map\Path::get([
                     ['path', $path],
                     ['item', $item],
-                    ['map_id', $this->map->id]
+                    ['migration_map_id', $this->map->id]
         ]);
-        if ($mapPath && $mapPath->type) {
-            return $mapPath;
+        if ($this->mapPath && $this->mapPath->type) {
+            return $this->mapPath;
         }
-        if (!$mapPath) {
-            $mapPath = new Migration\Map\Path();
-            $mapPath->parent_id = $this->mapPath ? $this->mapPath->id : 0;
-            $mapPath->path = $path;
-            $mapPath->item = $item;
-            $mapPath->map_id = $this->map->id;
-            $mapPath->save();
+        if (!$this->mapPath) {
+            $this->mapPath = new Migration\Map\Path();
+            $this->mapPath->parent_id = $this->mapPathParent ? $this->mapPathParent->id : 0;
+            $this->mapPath->path = $path;
+            $this->mapPath->item = $item;
+            $this->mapPath->migration_map_id = $this->map->id;
+            $this->mapPath->save();
         }
     }
 
