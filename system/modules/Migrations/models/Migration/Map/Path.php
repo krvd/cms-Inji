@@ -20,6 +20,11 @@ class Path extends \Model {
             'map' => [
                 'model' => 'Migrations\Migration\Map',
                 'col' => 'map_id'
+            ],
+            'childs' => [
+                'type' => 'many',
+                'model' => 'Migrations\Migration\Map\Path',
+                'col' => 'parent_id'
             ]
         ];
     }

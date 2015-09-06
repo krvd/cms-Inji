@@ -27,7 +27,10 @@ class Map extends \Model {
     static $dataManagers = [
         'manager' => [
             'name' => 'Карты миграции данных',
-            'cols' => ['name', 'migration_id']
+            'cols' => ['name', 'migration_id'],
+            'rowButtons' => [
+                'open', ['href' => '/admin/migrations/map', 'text' => '<i class = "glyphicon glyphicon-cog"></i>'], 'edit', 'delete'
+            ],
         ]
     ];
     static $forms = [
@@ -43,6 +46,11 @@ class Map extends \Model {
             'migration' => [
                 'model' => 'Migrations\Migration',
                 'col' => 'migration_id'
+            ],
+            'paths' => [
+                'type' => 'many',
+                'model' => 'Migrations\Migration\Map\Path',
+                'col' => 'migration_map_id'
             ]
         ];
     }

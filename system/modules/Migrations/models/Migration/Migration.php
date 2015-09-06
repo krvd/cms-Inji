@@ -44,6 +44,11 @@ class Migration extends \Model {
                 'type' => 'many',
                 'model' => 'Migrations\Migration\Map',
                 'col' => 'migration_id'
+            ],
+            'objects' => [
+                'type' => 'many',
+                'model' => 'Migrations\Migration\Object',
+                'col' => 'migration_id'
             ]
         ];
     }
