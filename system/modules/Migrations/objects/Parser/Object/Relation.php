@@ -49,6 +49,9 @@ class Relation extends \Migrations\Parser {
                 $objectParser->reader = $item;
                 $objectParser->setModel();
                 if ($objectParser->model) {
+                    if(!$this->object->model->pk()){
+                        $this->object->model->save();
+                    }
                     $objectParser->model->{$relation['col']} = $this->object->model->pk();
                 }
                 $objectParser->parse();
