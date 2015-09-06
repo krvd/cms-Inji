@@ -612,13 +612,25 @@ class Model {
             }
         }
         static::$needJoin = [];
+        $cols = 'COUNT(';
+
+        if (!empty($options['distinct'])) {
+            if (is_bool($options['distinct'])) {
+                $cols .= 'DISTINCT *';
+            } else {
+                $cols .= "DISTINCT {$options['distinct']}";
+            }
+        } else {
+            $cols = '*';
+        }
+        $cols .=') as `count`' . (!empty($options['cols']) ? ',' . $options['cols'] : '');
         if (!empty($options['group'])) {
             App::$cur->db->group($options['group']);
-            App::$cur->db->cols = 'COUNT(' . (!empty($options['distinct']) ? 'DISTINCT ' . static::index() : '*') . ') as `count`' . (!empty($options['cols']) ? ',' . $options['cols'] : '');
+            App::$cur->db->cols = $cols;
             $count = App::$cur->db->select(static::table())->getArray();
             return $count;
         } else {
-            App::$cur->db->cols = 'COUNT(' . (!empty($options['distinct']) ? 'DISTINCT ' . static::index() : '*') . ') as `count`';
+            App::$cur->db->cols = $cols;
             $count = App::$cur->db->select(static::table())->fetch();
             return $count['count'];
         }
