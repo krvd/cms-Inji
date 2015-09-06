@@ -19,6 +19,10 @@ class FastEdit extends \Object {
         if($parse){
             \App::$cur->view->parseSource($value);
         }
+        else {
+            echo $value;
+        } 
+            
         echo "</div>";
     }
 
