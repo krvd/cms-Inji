@@ -1,16 +1,12 @@
-<div class = 'fastEdit' data-model='Materials\Material' data-col='text' data-key='<?= $material->material_id; ?>'>
-    <?php
-    $this->parseSource($material->material_text);
-    ?>
-</div>
+<?= Ui\FastEdit::block($material, 'text', null, true); ?>
 <?php
-$nexts = json_decode($material->material_nexts, true);
+$nexts = json_decode($material->nexts, true);
 
 if ($nexts) {
     echo '<p style = "text-align:center">';
     foreach ($nexts as $next) {
-        $nextpage = Material::get($next['material_id']);
-        $href = $nextpage->material_chpu;
+        $nextpage = Material::get($next['id']);
+        $href = $nextpage->chpu;
         if ($href == '') {
             $href = '/';
         }
