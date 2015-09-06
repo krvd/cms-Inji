@@ -14,5 +14,21 @@
 namespace Exchange1c\Exchange;
 
 class Log extends \Model {
-    //put your code here
+
+    static $cols = [
+        'type' => ['type' => 'text'],
+        'info' => ['type' => 'text'],
+        'query' => ['type' => 'text'],
+        'status' => ['type' => 'text'],
+        'date_create' => ['type' => 'dateTime'],
+        'date_end' => ['type' => 'dateTime'],
+    ];
+    static $dataManagers = [
+        'manager' => [
+            'cols' => [
+                'type', 'info', 'query', 'status', 'date_create', 'date_end'
+            ],
+        ]
+    ];
+
 }

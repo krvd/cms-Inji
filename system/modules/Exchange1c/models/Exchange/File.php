@@ -14,5 +14,17 @@
 namespace Exchange1c\Exchange;
 
 class File extends \Model {
-    //put your code here
+
+    static $cols = [
+        'name' => ['type' => 'text'],
+        'date_create' => ['type' => 'dateTime'],
+    ];
+    static $dataManagers = [
+        'manager' => [
+            'cols' => [
+                'name', 'date_create'
+            ],
+        ]
+    ];
+
 }
