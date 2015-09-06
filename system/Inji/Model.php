@@ -930,6 +930,7 @@ class Model {
                         'order' => (isset($relation['params']['order'])) ? $relation['params']['join'] : null,
                         'key' => (isset($params['key'])) ? $params['key'] : ((isset($relation['resultKey'])) ? $relation['resultKey'] : null),
                         'array' => (!empty($params['array'])) ? true : false,
+                        'forSelect' => (!empty($params['forSelect'])) ? true : false,
                         'order' => (isset($params['order'])) ? $params['order'] : ((isset($relation['order'])) ? $relation['order'] : null),
                         'start' => (isset($params['start'])) ? $params['start'] : ((isset($relation['start'])) ? $relation['start'] : null),
                         'limit' => (isset($params['limit'])) ? $params['limit'] : ((isset($relation['limit'])) ? $relation['limit'] : null),
