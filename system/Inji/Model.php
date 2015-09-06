@@ -621,7 +621,7 @@ class Model {
                 $cols .= "DISTINCT {$options['distinct']}";
             }
         } else {
-            $cols = '*';
+            $cols .= '*';
         }
         $cols .=') as `count`' . (!empty($options['cols']) ? ',' . $options['cols'] : '');
         if (!empty($options['group'])) {
