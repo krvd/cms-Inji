@@ -13,7 +13,7 @@
 class Exchange1cController extends adminController {
 
     function reExchangeAction() {
-
+        set_time_limit(0);
         $reExchange = Exchange1c\Exchange::get((int) $_GET['item_pk']);
 
         $exchange = new \Exchange1c\Exchange();
@@ -38,7 +38,6 @@ class Exchange1cController extends adminController {
             $log->status = 'process';
             $log->query = $reLog->query;
             $log->save();
-
 
             $modeClass = 'Exchange1c\Mode\\' . ucfirst(strtolower($log->info));
             if (!class_exists($modeClass)) {
