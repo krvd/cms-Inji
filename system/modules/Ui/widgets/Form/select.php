@@ -33,12 +33,12 @@ foreach ($options['values'] as $key => $value) {
 <?php
 foreach ($aditionalInputs as $key => $input) {
     $input['options']['noContainer'] = true;
-    
+
     if ($key !== $showedInput) {
         $input['options']['disabled'] = true;
         $input['options']['class'] = !empty($input['options']['class']) ? $input['options']['class'] . ' hidden' : 'hidden';
     } else {
-        $input['options']['value'] = $aditionValue;
+        $input['options']['value'] = empty($input['options']['value']) ? $aditionValue : $input['options']['value'];
     }
     if ($input['type'] == 'select') {
         $input['options']['values'] = \Ui\ActiveForm::getOptionsList($input);
