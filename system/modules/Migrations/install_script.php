@@ -15,7 +15,7 @@ return function ($step = NULL, $params = []) {
     ]);
     App::$cur->db->createTable('migrations_migration_map_path', [
         'migration_map_path_id' => 'pk',
-        'migration_map_path_map_id' => 'int(11) UNSIGNED NOT NULL',
+        'migration_map_path_migration_map_id' => 'int(11) UNSIGNED NOT NULL',
         'migration_map_path_parent_id' => 'int(11) UNSIGNED NOT NULL',
         'migration_map_path_object_id' => 'int(11) UNSIGNED NOT NULL',
         'migration_map_path_path' => 'text NOT NULL',
