@@ -75,6 +75,13 @@ class Value extends \Migrations\Parser {
         switch ($type) {
             case 'image':
                 $dir = pathinfo($this->reader->source, PATHINFO_DIRNAME);
+                if ($this->model->{$this->param->value}) {
+                    $file = \Files\File::get($this->model->{$this->param->value});
+                    if ($file) {
+                        $file->delete();
+                        $this->model->{$this->param->value} = 0;
+                    }
+                }
                 $this->model->{$this->param->value} = \App::$primary->files->uploadFromUrl($dir . '/' . $value, ['accept_group' => 'image', 'upload_code' => 'MigrationUpload']);
                 break;
             default:
