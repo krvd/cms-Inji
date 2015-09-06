@@ -138,14 +138,9 @@ class Ecommerce extends Module {
     }
 
     /**
-     * Getting items with many params
+     * Getting items with params
      * 
-     * @param mixed $parent
-     * @param int $start
-     * @param int $count
-     * @param string $key
-     * @param string $search
-     * @param string $sort
+     * @param array $params
      * @return array
      */
     function getItems($options = []) {
@@ -218,12 +213,12 @@ class Ecommerce extends Module {
     /**
      * Return count of items with params
      * 
-     * @param int $parent
-     * @param string $search
+     * @param array $params
      * @return int
      */
     function getItemsCount($options = []) {
         $selectOptions = $this->parseOptions($options);
+        $selectOptions['distinct'] = \Ecommerce\Item::index();
         $counts = Ecommerce\Item::getCount($selectOptions);
         if (is_array($counts)) {
             $sum = 0;
