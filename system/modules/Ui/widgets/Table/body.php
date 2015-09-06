@@ -1,5 +1,5 @@
 <h1>
-    <?= $table->name; ?>
+    <?= $table->name ? $table->name : ($table->buttons ? '&nbsp;' : ''); ?>
     <div class ='pull-right'>
         <div class="btn-group">
             <?php
@@ -18,6 +18,7 @@
             ?>
         </div>
     </div>
+
 </h1>
 <?= $table->afterHeader; ?>
 <table 
