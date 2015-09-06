@@ -10,15 +10,11 @@ return [
                 'childs' => [
                     [
                         'name' => 'История миграций',
-                        'href' => '/admin/migrations/history'
+                        'href' => '/admin/migrations/log'
                     ],
                     [
                         'name' => 'Ручная миграция',
                         'href' => '/admin/migrations/manual'
-                    ],
-                    [
-                        'name' => 'Конфигурация',
-                        'href' => '/admin/migrations/configure'
                     ]
                 ]
             ]
