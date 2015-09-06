@@ -9,7 +9,7 @@ echo Html::el('div', [
     'data-options' => $dataManager->managerOptions
         ], '', true);
 ?>
-<div class="row">
+
     <?php
     $mainCol = [
         'class' => 'mainTableWrap',
@@ -38,6 +38,6 @@ echo Html::el('div', [
     <?php
     echo '</div>';
     ?>
-</div>
+    <div class="clearfix"></div>
 <?php
 echo '</div>';
