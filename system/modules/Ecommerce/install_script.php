@@ -159,7 +159,7 @@ return function ($step = NULL, $params = array()) {
         //Основные параметры
         'item_offer_warehouse_warehouse_id' => 'int(11) UNSIGNED NOT NULL',
         'item_offer_warehouse_item_offer_price_id' => 'int(11) UNSIGNED NOT NULL',
-        'item_offer_warehouse_count' => 'int(11) NOT NULL',
+        'item_offer_warehouse_count' => 'DECIMAL(10, 3) UNSIGNED NOT NULL',
         //Системные
         'item_offer_warehouse_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
             ), [
@@ -257,7 +257,7 @@ return function ($step = NULL, $params = array()) {
         'cart_item_id' => 'pk',
         //Основные параметры
         'cart_item_cart_id' => 'int(11) UNSIGNED NOT NULL',
-        'cart_item_count' => 'int(11) UNSIGNED NOT NULL',
+        'cart_item_count' => 'DECIMAL(10, 3) UNSIGNED NOT NULL',
         'cart_item_item_offer_price_id' => 'int(11) UNSIGNED NOT NULL',
         'cart_item_item_id' => 'int(11) UNSIGNED NOT NULL',
         'cart_item_final_price' => 'decimal(10,2) NOT NULL',

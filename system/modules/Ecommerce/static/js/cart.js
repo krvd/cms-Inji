@@ -26,9 +26,6 @@ inji.Ecommerce = {
                 count = parseFloat($(this).find('.cart-couner').val());
                 if (isNaN(count))
                     count = 1;
-                if ($(this).find('.cart-couner').hasClass('rangerCount')) {
-                    count = count / 1000;
-                }
                 sum += parseFloat($(this).data('priceam')) * count;
                 data = {};
                 data.data = {};
