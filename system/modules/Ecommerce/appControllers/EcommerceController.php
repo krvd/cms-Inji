@@ -38,7 +38,7 @@ class ecommerceController extends Controller {
         if (!empty($_GET['sort'])) {
             $sort = $_GET['sort'];
         } else {
-            $sort = [];
+            $sort = ['name' => 'asc'];
         }
 
         $pages = new \Ui\Pages($_GET, ['count' => $this->ecommerce->getItemsCount([
