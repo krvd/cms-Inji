@@ -20,6 +20,9 @@
             $form = new Ui\Form();
             $form->begin();
             $form->input('checkbox', 'config[view_empty_warehouse]', 'Показывать отсутствующие товары', ['value' => App::$cur->ecommerce->config['view_empty_warehouse']]);
+            $form->input('checkbox', 'config[view_empty_image]', 'Показывать товары без изображения', ['value' => App::$cur->ecommerce->config['view_empty_image']]);
+            $form->input('checkbox', 'config[sell_empty_warehouse]', 'Продавать отсутствующие товары', ['value' => App::$cur->ecommerce->config['sell_empty_warehouse']]);
+            $form->input('checkbox', 'config[sell_over_warehouse]', 'Продавать сверх остатоков на складе', ['value' => App::$cur->ecommerce->config['sell_over_warehouse']]);
             $form->end('Сохранить');
             ?>
         </div>

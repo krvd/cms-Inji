@@ -11,6 +11,9 @@ class EcommerceController extends adminController {
         if (!empty($_POST['config'])) {
             $config = App::$cur->ecommerce->config;
             $config['view_empty_warehouse'] = empty($_POST['config']['view_empty_warehouse']) ? false : true;
+            $config['view_empty_image'] = empty($_POST['config']['view_empty_image']) ? false : true;
+            $config['sell_empty_warehouse'] = empty($_POST['config']['sell_empty_warehouse']) ? false : true;
+            $config['sell_over_warehouse'] = empty($_POST['config']['sell_over_warehouse']) ? false : true;
             Config::save('Module', $config, 'Ecommerce');
             Tools::redirect('/admin/ecommerce/configure', 'Настройки были изменены', 'success');
         }
