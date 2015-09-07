@@ -55,7 +55,7 @@ class CartController extends Controller {
                         $userAdds->save();
                         foreach ($fields as $field) {
                             if (!empty($_POST['userAdds']['fields'][$field->id])) {
-                                $userAdds->name .= htmlspecialchars($_POST['userAdds']['fields'][$field->id]);
+                                $userAdds->name .= htmlspecialchars($_POST['userAdds']['fields'][$field->id]).' ';
                             }
                             $userAddsValue = new Ecommerce\UserAdds\Value();
                             $userAddsValue->value = htmlspecialchars($_POST['userAdds']['fields'][$field->id]);
