@@ -246,16 +246,16 @@ class DataManager extends \Object {
                 if ($colName && in_array($colName, $this->managerOptions['sortable'])) {
                     $sortType = in_array($sortType, ['desc', 'asc']) ? $sortType : 'desc';
                     /**
-                    $modelName = $this->modelName;
-                    $colInfo = $modelName::getColInfo($colName);
-                    var_dump($colInfo);
-                    if (!empty($colInfo['colParams']['type']) && $colInfo['colParams']['type'] == 'select' && $colInfo['colParams']['source'] == 'relation') {
-                        $colModelCols = $colInfo['modelName']::cols();
-                        var_dump($colInfo['modelName']::colPrefix() . 'name',$colModelCols);
-                        if (isset($colModelCols[$colInfo['modelName']::colPrefix() . 'name'])) {
-                            echo 1;
-                        }
-                    }
+                      $modelName = $this->modelName;
+                      $colInfo = $modelName::getColInfo($colName);
+                      var_dump($colInfo);
+                      if (!empty($colInfo['colParams']['type']) && $colInfo['colParams']['type'] == 'select' && $colInfo['colParams']['source'] == 'relation') {
+                      $colModelCols = $colInfo['modelName']::cols();
+                      var_dump($colInfo['modelName']::colPrefix() . 'name',$colModelCols);
+                      if (isset($colModelCols[$colInfo['modelName']::colPrefix() . 'name'])) {
+                      echo 1;
+                      }
+                      }
                      * 
                      */
                     $queryParams['order'][] = [$colName, $sortType];
@@ -316,7 +316,7 @@ class DataManager extends \Object {
                     break;
                 default :
                     if ($item->{$modelName::$cols[$colName]['relation']}) {
-                        $href = "<a href='/admin/" . str_replace('\\', '/view/', $relations[$modelName::$cols[$colName]['relation']]['model']) . "/" . $item->{$modelName::$cols[$colName]['relation']}->pk() . "'>";
+                        $href = "<a href ='/admin/" . str_replace('\\', '/view/', $relations[$modelName::$cols[$colName]['relation']]['model']) . "/" . $item->{$modelName::$cols[$colName]['relation']}->pk() . "'>";
                         if (!empty($modelName::$cols[$colName]['showCol'])) {
                             $href .= $item->{$modelName::$cols[$colName]['relation']}->{$modelName::$cols[$colName]['showCol']};
                         } else {
@@ -351,6 +351,9 @@ class DataManager extends \Object {
                     $formName = $dataManager && !empty($dataManager->managerOptions['editForm']) ? $dataManager->managerOptions['editForm'] : 'manager';
                     $redirectUrl = !empty($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/admin/' . str_replace('\\', '/', get_class($originalItem));
                     return "<a href ='/admin/" . str_replace('\\', '/view/', get_class($originalItem)) . "/{$originalItem->id}?formName={$formName}&redirectUrl={$redirectUrl}'>{$item->$colName}</a>";
+                } elseif ($colName == 'name') {
+                    $redirectUrl = !empty($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/admin/' . str_replace('\\', '/', get_class($originalItem));
+                    return "<a href ='/admin/" . str_replace('\\', '/view/', get_class($item)) . "/{$item->id}?redirectUrl={$redirectUrl}'>{$item->$colName}</a>";
                 } else {
                     return \Model::resloveTypeValue($item, $colName);
                 }
