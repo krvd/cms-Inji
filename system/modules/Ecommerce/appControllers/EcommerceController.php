@@ -23,7 +23,7 @@ class ecommerceController extends Controller {
         if ($catalog) {
             $this->url->redirect('/ecommerce/itemList/' . (int) $catalog_id);
         }
-        $this->view->page('main', compact('hitItems', 'bestItems'));
+        $this->view->page('main');
     }
 
     function itemListAction($category_id = 0) {
@@ -35,10 +35,10 @@ class ecommerceController extends Controller {
         } else
             $search = '';
 
-        if (!empty($_GET['sort']) && in_array($_GET['sort'], array('best', 'name', 'sales', 'price'))) {
-            $sort = [$_GET['sort'] => !empty($_GET['sortDirection']) && strtolower($_GET['sortDirection']) == 'desc' ? 'desc' : 'asc'];
+        if (!empty($_GET['sort'])) {
+            $sort = $_GET['sort'];
         } else {
-            $sort = ['name' => 'asc'];
+            $sort = [];
         }
 
         $pages = new \Ui\Pages($_GET, ['count' => $this->ecommerce->getItemsCount([

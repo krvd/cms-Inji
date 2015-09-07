@@ -52,6 +52,12 @@ class Ecommerce extends Module {
                     case 'price':
                         $selectOptions['order'][] = [Ecommerce\Item\Offer\Price::colPrefix() . 'price', strtolower($direction) == 'desc' ? 'desc' : 'asc'];
                         break;
+                    case 'name':
+                        $selectOptions['order'][] = ['name', strtolower($direction) == 'desc' ? 'desc' : 'asc'];
+                        break;
+                    case 'sales':
+                        $selectOptions['sales'][] = ['name', strtolower($direction) == 'desc' ? 'desc' : 'asc'];
+                        break;
                 }
             }
         } elseif (!empty($options['sort'])) {
@@ -189,7 +195,7 @@ class Ecommerce extends Module {
           case 'rand':
           \App::$cur->db->order = 'ORDER BY RAND()';
           break;
-          case 'hit':
+          case 'sales':
           \App::$cur->db->order('ci_sales', 'DESC');
           break;
           case 'promo':
