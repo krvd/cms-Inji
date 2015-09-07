@@ -58,7 +58,10 @@ class Ecommerce extends Module {
             //echo $options['sort'];
         }
 
-
+        if (empty($this->config['view_empty_image'])) {
+            $selectOptions['where'][] = ['image_file_id', 0, '!='];
+        }
+        
         //filters
         if (!empty($options['filters'])) {
             foreach ($options['filters'] as $col => $filter) {
