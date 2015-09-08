@@ -1,4 +1,6 @@
-<?= Ui\FastEdit::block($material, 'text', null, true); ?>
+<div class="material-text">
+    <?= Ui\FastEdit::block($material, 'text', null, true); ?>
+</div>
 <?php
 $nexts = json_decode($material->nexts, true);
 
