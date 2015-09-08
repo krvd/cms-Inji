@@ -24,4 +24,10 @@ class Parser {
         
     }
 
+    function editor() {
+        return [
+            '' => 'Выберите',
+        ];
+    }
+
 }

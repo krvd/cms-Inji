@@ -50,6 +50,11 @@ class Param extends \Model {
                 'type' => 'many',
                 'model' => 'Migrations\Migration\Object\Param\Value',
                 'col' => 'param_id'
+            ],
+            'childs' => [
+                'type' => 'many',
+                'model' => 'Migrations\Migration\Object\Param',
+                'col' => 'parent_id'
             ]
         ];
     }

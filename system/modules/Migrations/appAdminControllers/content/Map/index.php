@@ -32,7 +32,7 @@ foreach ($map->paths(['where' => ['parent_id', 0]]) as $path) {
     drawPath($path, $form, $models, $objects);
 }
 
-function drawParam($param, $form, $models, $objects) {
+function drawParam($param, $form, $models, $objects, $parent = 0) {
     $selectArrays = [];
     $objectsCols = [];
 
@@ -57,10 +57,18 @@ function drawParam($param, $form, $models, $objects) {
     foreach ($modelName::relations() as $relName => $relation) {
         $relations[$relName] = $relName;
     }
-    $form->input('select', 'param[' . $param->id . ']', $param->code, ['values' => [
+    if ($parent) {
+        $parserName = '\Migrations\Parser\Object\\' . ucfirst($parent->type);
+        $parser = new $parserName;
+        $parser->param = $parent;
+        $values = $parser->editor();
+    } else {
+        $values = [
             '' => 'Выберите',
             'continue' => 'Пропустить',
             'item_key' => 'Ключ элемента',
+            'paramsList' => 'Список параметров',
+            'param' => 'Параметр',
             'value' => [
                 'text' => 'Значение',
                 'input' => [
@@ -121,9 +129,16 @@ function drawParam($param, $form, $models, $objects) {
                     ]
                 ]
             ]
-        ],
+        ];
+    }
+    $form->input('select', 'param[' . $param->id . ']', $param->code, ['values' => $values,
         'value' => $param->type
     ]);
+    foreach ($param->childs as $child) {
+        echo '<div class="col-xs-offset-1">';
+        drawParam($child, $form, $models, $objects, $param);
+        echo '</div>';
+    }
 }
 
 echo "<h2>Объекты</h2>";

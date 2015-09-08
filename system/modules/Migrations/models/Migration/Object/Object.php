@@ -51,10 +51,8 @@ class Object extends \Model {
                 'type' => 'many',
                 'model' => 'Migrations\Migration\Object\Param',
                 'col' => 'object_id',
-                'params' => [
-                    'where' => [
-                        ['parent_id', 0]
-                    ]
+                'where' => [
+                    ['parent_id', 0]
                 ]
             ]
         ];
