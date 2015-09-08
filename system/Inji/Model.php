@@ -951,6 +951,9 @@ class Model {
                     if (!empty($relation['where'])) {
                         $options['where'] = array_merge($options['where'], [$relation['where']]);
                     }
+                    if (!empty($params['where'])) {
+                        $options['where'] = array_merge($options['where'], [$params['where']]);
+                    }
                     break;
                 case 'one':
                     $getType = 'get';
