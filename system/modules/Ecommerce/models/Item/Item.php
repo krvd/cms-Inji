@@ -139,9 +139,7 @@ SELECT COALESCE(sum(ewb_count) ,0) as `sum`
                 'model' => 'Ecommerce\Item\Param',
                 'col' => 'item_id',
                 //'resultKey' => 'code',
-                'params' => [
-                    'join' => [Item\Option::table(), Item\Option::index() . ' = ' . Item\Param::colPrefix() . Item\Option::index()]
-                ]
+                'join' => [Item\Option::table(), Item\Option::index() . ' = ' . Item\Param::colPrefix() . Item\Option::index()]
             ],
             'offers' => [
                 'type' => 'many',
@@ -152,9 +150,9 @@ SELECT COALESCE(sum(ewb_count) ,0) as `sum`
                 'model' => 'Ecommerce\Item\Type',
                 'col' => 'item_type_id',
             ],
-            'image'=>[
-                'model'=>'Files\File',
-                'col'=>'image_file_id'
+            'image' => [
+                'model' => 'Files\File',
+                'col' => 'image_file_id'
             ]
         ];
     }
