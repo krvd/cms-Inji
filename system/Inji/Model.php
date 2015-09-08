@@ -936,10 +936,8 @@ class Model {
                         return [];
                     }
                     $getType = 'getList';
-
                     $options = [
                         'join' => (isset($relation['params']['join'])) ? $relation['params']['join'] : null,
-                        'order' => (isset($relation['params']['order'])) ? $relation['params']['join'] : null,
                         'key' => (isset($params['key'])) ? $params['key'] : ((isset($relation['resultKey'])) ? $relation['resultKey'] : null),
                         'array' => (!empty($params['array'])) ? true : false,
                         'forSelect' => (!empty($params['forSelect'])) ? true : false,
