@@ -15,6 +15,9 @@
                 $cartPayType = $payTypes[key($payTypes)];
             }
             ?>
+            <script>
+                var deliverys = <?= json_encode(\Ecommerce\Delivery::getList(['array' => true])); ?>;
+            </script>
             <form method = 'POST'>
                 <div class="row">
                     <div class="col-sm-4">
