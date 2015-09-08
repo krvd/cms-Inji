@@ -36,13 +36,13 @@ inji.Ecommerce = {
                 data.success = function (data) {
                     $('#cart').html(data);
                 };
-                $.ajax(data);
+                inji.Server.request(data);
                 var price = $(this).data('priceam');
-                $(this).find('.total').html(price * count + ' руб.');
+                $(this).find('.total').html((price * count).toFixed(2) + ' руб.');
             });
             asum = sum;
             if (typeof (deliverys) != 'undefined') {
-                delivery = deliverys[$('[name="delivery"]').val()];
+                var delivery = deliverys[$('[name="delivery"]').val()];
                 if (sum >= parseFloat(delivery.delivery_max_cart_price)) {
                     $($('.deliverysum td').get(1)).html('0 руб.');
                     asum = sum;
@@ -82,7 +82,7 @@ inji.Ecommerce = {
                 $('#cart').html(data);
                 inji.Ecommerce.Cart.calcSum();
             }
-            $.ajax(data);
+            inji.Server.request(data);
         }
     }
 }
