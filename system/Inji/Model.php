@@ -937,7 +937,7 @@ class Model {
                     }
                     $getType = 'getList';
                     $options = [
-                        'join' => (isset($relation['params']['join'])) ? $relation['params']['join'] : null,
+                        'join' => (isset($relation['join'])) ? $relation['join'] : null,
                         'key' => (isset($params['key'])) ? $params['key'] : ((isset($relation['resultKey'])) ? $relation['resultKey'] : null),
                         'array' => (!empty($params['array'])) ? true : false,
                         'forSelect' => (!empty($params['forSelect'])) ? true : false,
@@ -945,10 +945,11 @@ class Model {
                         'start' => (isset($params['start'])) ? $params['start'] : ((isset($relation['start'])) ? $relation['start'] : null),
                         'limit' => (isset($params['limit'])) ? $params['limit'] : ((isset($relation['limit'])) ? $relation['limit'] : null),
                         'appType' => (isset($params['appType'])) ? $params['appType'] : ((isset($relation['appType'])) ? $relation['appType'] : null),
+                        'where' => []
                     ];
-                    $options['where'] = [$relation['col'], $this->{$this->index()}];
-                    if (!empty($params['where'])) {
-                        $options['where'] = array_merge([$options['where']], [$params['where']]);
+                    $options['where'][] = [$relation['col'], $this->{$this->index()}];
+                    if (!empty($relation['where'])) {
+                        $options['where'] = array_merge($options['where'], [$relation['where']]);
                     }
                     break;
                 case 'one':
