@@ -17,7 +17,9 @@ class UsersController extends Controller {
 
     function loginAction() {
         $this->view->setTitle('Авторизация');
-        $this->view->page();
+        $bread = [];
+        $bread[] = ['text' => 'Авторизация'];
+        $this->view->page(['data' => compact('bread')]);
     }
 
     function registrationAction() {
@@ -45,7 +47,9 @@ class UsersController extends Controller {
             }
         }
         $this->view->setTitle('Регистрация');
-        $this->view->page();
+        $bread = [];
+        $bread[] = ['text' => 'Регистрация'];
+        $this->view->page(['data' => compact('bread')]);
     }
 
     function activationAction($userId = 0, $hash = '') {
