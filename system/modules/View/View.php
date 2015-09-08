@@ -242,11 +242,14 @@ class View extends \Module {
         $urls = [];
         $timeStr = '';
         $cssAll = '';
+        $exclude = ['^http:', '^https:', '^//'];
         foreach ($css as $href) {
-            if(preg_match('!^(http:||https:||//)!', $href)){
-                echo "\n        <link href='{$href}' rel='stylesheet' type='text/css' />";
-                continue;
-            }            
+            foreach ($exclude as $item) {
+                if (preg_match("!{$item}!", $href)) {
+                    echo "\n        <link href='{$href}' rel='stylesheet' type='text/css' />";
+                    continue;
+                }
+            }
             $nativeUrl[$href] = $href;
             $urls[$href] = $path = $this->app->staticLoader->parsePath($href);
             $timeStr.=filemtime($path);
