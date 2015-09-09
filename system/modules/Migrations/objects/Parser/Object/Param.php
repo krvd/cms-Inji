@@ -26,7 +26,7 @@ class Param extends \Migrations\Parser {
                 switch ($param->type) {
                     case 'paramName':
                         $col = \Migrations\Migration\Object\Param\Value::get([['original', (string) $objectParam], ['param_id', $param->id]]);
-                        if (!$col->replace) {
+                        if (!$col) {
                             $valueObject = new \Migrations\Migration\Object\Param\Value();
                             $valueObject->param_id = $param->id;
                             $valueObject->original = (string) $objectParam;
