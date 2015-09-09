@@ -33,11 +33,13 @@
                         <fieldset id="address">
                             <h4>Контактная информация</h4>
                             <?php
+                            $form = new Ui\Form;
                             foreach (Ecommerce\UserAdds\Field::getList() as $field) {
                                 ?>
                                 <div class="form-group required">
-                                    <label class="control-label"><?= $field->name; ?></label>
-                                    <input <?= $field->required ? 'required' : ''; ?> type="<?= $field->type; ?>" name="userAdds[fields][<?= $field->id; ?>]" value="<?= (!empty($_POST['userAdds']['fields'][$field->id])) ? $_POST['userAdds']['fields'][$field->id] : ''; ?>" placeholder="<?= $field->name; ?>" class="form-control"/>
+                                    <?php
+                                    $form->input($field->type, "userAdds[fields][{$field->id}]", $field->name, ['noContainer' => true, 'required' => $field->required]);
+                                    ?>
                                 </div>
                                 <?php
                             }
