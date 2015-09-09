@@ -1,16 +1,16 @@
 <?php
 
 /**
- * Item name
- *
- * Info
+ * Filed for user info model
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
+
 namespace Ecommerce\UserAdds;
+
 class Field extends \Model {
 
     static $objectName = 'Поле информации при заказе';
@@ -18,23 +18,26 @@ class Field extends \Model {
         'name' => ['type' => 'text'],
         'type' => ['type' => 'text'],
         'required' => ['type' => 'bool'],
+        'save' => ['type' => 'bool'],
     ];
     static $labels = [
         'name' => 'Название',
         'type' => 'Тип',
-        'required' => 'Обязательно'
+        'required' => 'Обязательно',
+        'save' => 'Сохраняется'
     ];
     static $dataManagers = [
         'manager' => [
             'cols' => [
-                'name', 'type', 'required'
+                'name', 'type', 'required', 'save'
             ]
         ]
     ];
     static $forms = [
         'manager' => [
             'map' => [
-                ['name', 'type', 'required']
+                ['name', 'type'],
+                ['required', 'save']
             ]
         ]
     ];

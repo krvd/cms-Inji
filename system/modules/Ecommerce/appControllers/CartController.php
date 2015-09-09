@@ -10,74 +10,83 @@ class CartController extends Controller {
             $cart = Ecommerce\Cart::get($_SESSION['cart']['cart_id']);
             if (!empty($_POST)) {
                 $error = false;
-                if (!$error) {
-                    if (!Users\User::$cur->id) {
-                        $user_id = $this->Users->registration($_POST);
-                        if (!$user_id) {
-                            $error = true;
-                        } else {
-                            $user = Users\User::get($user_id);
-                        }
+                if (!Users\User::$cur->id) {
+                    $user_id = $this->Users->registration($_POST);
+                    if (!$user_id) {
+                        $error = true;
                     } else {
-                        $user = Users\User::$cur;
+                        $user = Users\User::get($user_id);
                     }
-
-                    if (empty($this->module->config['sell_over_warehouse'])) {
-                        foreach ($cart->cartItems as $cartitem) {
-                            $warecount = $cartitem->price->offer->warehouseCount($cart->id);
-                            if ($cartitem->count > $warecount) {
-                                $error = true;
-                                Msg::add('Вы заказали <b>' . $cartitem->item->name . '</b> больше чем есть на складе. на складе: <b>' . $warecount . '</b>', 'danger');
-                            }
+                } else {
+                    $user = Users\User::$cur;
+                }
+                if (empty($this->module->config['sell_over_warehouse'])) {
+                    foreach ($cart->cartItems as $cartitem) {
+                        $warecount = $cartitem->price->offer->warehouseCount($cart->id);
+                        if ($cartitem->count > $warecount) {
+                            $error = true;
+                            Msg::add('Вы заказали <b>' . $cartitem->item->name . '</b> больше чем есть на складе. на складе: <b>' . $warecount . '</b>', 'danger');
                         }
                     }
-
-
-                    if (empty($deliverys[$_POST['delivery']])) {
+                }
+                if (empty($deliverys[$_POST['delivery']])) {
+                    $error = 1;
+                    Msg::add('Ошибка при выборе способа доставки');
+                }
+                if (empty($payTypes[$_POST['payType']])) {
+                    $error = 1;
+                    Msg::add('Ошибка при выборе способа оплаты');
+                }
+                $fields = \Ecommerce\UserAdds\Field::getList();
+                foreach ($fields as $field) {
+                    if (empty($_POST['userAdds']['fields'][$field->id]) && $field->required) {
                         $error = 1;
-                        Msg::add('Ошибка при выборе способа доставки');
+                        Msg::add('Вы не указали: ' . $field->name);
                     }
-                    if (empty($payTypes[$_POST['payType']])) {
-                        $error = 1;
-                        Msg::add('Ошибка при выборе способа оплаты');
+                }
+                $card_item_id = 0;
+                if (!empty($_POST['discounts']['card_item_id'])) {
+                    $userCard = \Ecommerce\Card\Item::get((int) $_POST['discounts']['card_item_id']);
+                    if (!$userCard) {
+                        $error = true;
+                        Msg::add('Такой карты не существует');
+                    } elseif ($userCard->user_id != $user->id) {
+                        $error = true;
+                        Msg::add('Это не ваша карта');
+                    } else {
+                        $card_item_id = $userCard->id;
                     }
-                    $fields = \Ecommerce\UserAdds\Field::getList();
+                }
 
+                if (!$error) {
+                    $userAdds = new Ecommerce\UserAdds();
+                    $userAdds->user_id = $user->id;
+                    $userAdds->save();
                     foreach ($fields as $field) {
-                        if (empty($_POST['userAdds']['fields'][$field->id]) && $field->required) {
-                            $error = 1;
-                            Msg::add('Вы не указали: ' . $field->name);
+                        if (!empty($_POST['userAdds']['fields'][$field->id])) {
+                            $userAdds->name .= htmlspecialchars($_POST['userAdds']['fields'][$field->id]) . ' ';
                         }
+                        $userAddsValue = new Ecommerce\UserAdds\Value();
+                        $userAddsValue->value = htmlspecialchars($_POST['userAdds']['fields'][$field->id]);
+                        $userAddsValue->useradds_field_id = $field->id;
+                        $userAddsValue->useradds_id = $userAdds->id;
+                        $userAddsValue->save();
                     }
-                    if (!$error) {
-                        $userAdds = new Ecommerce\UserAdds();
-                        $userAdds->user_id = $user->id;
-                        $userAdds->save();
-                        foreach ($fields as $field) {
-                            if (!empty($_POST['userAdds']['fields'][$field->id])) {
-                                $userAdds->name .= htmlspecialchars($_POST['userAdds']['fields'][$field->id]).' ';
-                            }
-                            $userAddsValue = new Ecommerce\UserAdds\Value();
-                            $userAddsValue->value = htmlspecialchars($_POST['userAdds']['fields'][$field->id]);
-                            $userAddsValue->useradds_field_id = $field->id;
-                            $userAddsValue->useradds_id = $userAdds->id;
-                            $userAddsValue->save();
-                        }
-                        $userAdds->save();
-                        $cart->user_id = $user->user_id;
-                        $cart->useradds_id = $userAdds;
-                        $cart->cart_status_id = 2;
-                        $cart->comment = htmlspecialchars($_POST['comment']);
-                        $cart->date_status = date('Y-m-d H:i:s');
-                        $cart->complete_data = date('Y-m-d H:i:s');
-                        $cart->paytype_id = (int) $_POST['payType'];
-                        $cart->delivery_id = (int) $_POST['delivery'];
-                        $cart->warehouse_block = 1;
-                        $cart->save();
-                        \Ecommerce\Cart\Event::update(['user_id' => $user->id, 'cart_id' => 0], ['cart_id', $cart->id]);
-                        unset($_SESSION['cart']['cart_id']);
-                        Tools::redirect('/ecommerce/cart/success');
-                    }
+                    $userAdds->save();
+                    $cart->user_id = $user->user_id;
+                    $cart->useradds_id = $userAdds;
+                    $cart->cart_status_id = 2;
+                    $cart->comment = htmlspecialchars($_POST['comment']);
+                    $cart->date_status = date('Y-m-d H:i:s');
+                    $cart->complete_data = date('Y-m-d H:i:s');
+                    $cart->paytype_id = (int) $_POST['payType'];
+                    $cart->delivery_id = (int) $_POST['delivery'];
+                    $cart->card_item_id = (int) $card_item_id;
+                    $cart->warehouse_block = 1;
+                    $cart->save();
+                    \Ecommerce\Cart\Event::update(['user_id' => $user->id, 'cart_id' => 0], ['cart_id', $cart->id]);
+                    unset($_SESSION['cart']['cart_id']);
+                    Tools::redirect('/ecommerce/cart/success');
                 }
             }
         }

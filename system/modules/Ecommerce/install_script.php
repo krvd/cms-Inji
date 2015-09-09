@@ -23,7 +23,8 @@ return function ($step = NULL, $params = array()) {
         //Основные параметры
         'item_type_name' => 'varchar(255) NOT NULL',
         'item_type_code' => 'varchar(255) NOT NULL',
-        'item_type_electronic' => 'tinyint(1) NOT NULL',
+        'item_type_electronic' => 'tinyint(1) UNSIGNED NOT NULL',
+        'item_type_discount' => 'tinyint(1) UNSIGNED NOT NULL',
     ));
     //Товары
     App::$cur->db->createTable('ecommerce_item', [
@@ -190,7 +191,8 @@ return function ($step = NULL, $params = array()) {
         //Основные параметры
         'useradds_field_name' => 'varchar(255) NOT NULL',
         'useradds_field_type' => 'varchar(255) NOT NULL',
-        'useradds_field_required' => 'bool NOT NULL',
+        'useradds_field_required' => 'TINYINT(1) UNSIGNED NOT NULL',
+        'useradds_field_save' => 'TINYINT(1) UNSIGNED NOT NULL',
         //Системные
         'useradds_field_weight' => 'int(11) UNSIGNED NOT NULL',
         'useradds_field_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
@@ -238,6 +240,7 @@ return function ($step = NULL, $params = array()) {
         //Системные
         'cart_sum' => 'decimal(10,2) NOT NULL',
         'cart_payid' => 'int(11) UNSIGNED NOT NULL',
+        'cart_card_item_id' => 'int(11) UNSIGNED NOT NULL',
         'cart_read' => 'bool NOT NULL',
         'cart_payed' => 'bool NOT NULL',
         'cart_warehouse_block' => 'bool NOT NULL',
@@ -311,4 +314,40 @@ return function ($step = NULL, $params = array()) {
         'INDEX ' . App::$cur->db->table_prefix . '_ecommerce_warehousesBlockItem (warehouse_block_item_offer_id)'
             ]
     );
+    //Карты
+    App::$cur->db->createTable('ecommerce_card', [
+        'card_id' => 'pk',
+        //Основные параметры
+        'card_name' => 'varchar(255) NOT NULL',
+        'card_price' => 'DECIMAL(10, 2) UNSIGNED NOT NULL',
+        'card_image_file_id' => 'int(11) UNSIGNED NOT NULL',
+    ]);
+    //Уровни карт 
+    App::$cur->db->createTable('ecommerce_card_level', [
+        'card_level_id' => 'pk',
+        //Основные параметры
+        'card_level_name' => 'varchar(255) NOT NULL',
+        'card_level_sum' => 'DECIMAL(10, 2) UNSIGNED NOT NULL',
+        'card_level_card_id' => 'int(11) UNSIGNED NOT NULL',
+        'card_level_discount_id' => 'int(11) UNSIGNED NOT NULL',
+    ]);
+    //Карты пользователей
+    App::$cur->db->createTable('ecommerce_card_item', [
+        'card_item_id' => 'pk',
+        //Основные параметры
+        'card_item_code' => 'varchar(255) NOT NULL',
+        'card_item_sum' => 'DECIMAL(10, 2) UNSIGNED NOT NULL',
+        'card_item_card_id' => 'int(11) UNSIGNED NOT NULL',
+        'card_item_user_id' => 'int(11) UNSIGNED NOT NULL',
+        'card_item_card_level_id' => 'int(11) UNSIGNED NOT NULL',
+    ]);
+    //Скидки
+    App::$cur->db->createTable('ecommerce_discount', [
+        'discount_id' => 'pk',
+        //Основные параметры
+        'discount_name' => 'varchar(255) NOT NULL',
+        'discount_type' => 'varchar(255) NOT NULL',
+        'discount_amount' => 'DECIMAL(10, 2) UNSIGNED NOT NULL',
+        'discount_condition' => 'text NOT NULL',
+    ]);
 };

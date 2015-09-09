@@ -37,6 +37,15 @@ class Cart extends \Model {
             'userAdds' => [
                 'model' => 'Ecommerce\UserAdds',
                 'col' => 'useradds_id'
+            ],
+            'extras' => [
+                'type' => 'many',
+                'model' => 'Ecommerce\Cart\Extra',
+                'col' => 'cart_id'
+            ],
+            'card' => [
+                'model' => 'Ecommerce\Card\Item',
+                'col' => 'card_item_id'
             ]
         ];
     }
@@ -52,8 +61,10 @@ class Cart extends \Model {
         'info' => 'Информация',
         'items' => 'Товары',
         'paytype_id' => 'Способ оплаты',
-        'exported' => 'Экспорт',
+        'exported' => 'Выгружено',
         'warehouse_block' => 'Блокировка товаров',
+        'extra' => 'Дополнительно',
+        'card_item_id' => 'Дисконтная карта',
     ];
     static $cols = [
         'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
@@ -64,14 +75,26 @@ class Cart extends \Model {
         'exported' => ['type' => 'bool'],
         'comment' => ['type' => 'textarea'],
         'complete_data' => ['type' => 'dateTime'],
-        'items' => ['type' => 'select', 'source' => 'relation', 'relation' => 'cartItems'],
+        'items' => ['type' => 'dataManager', 'relation' => 'cartItems'],
         'cart_status_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'status'],
         'delivery_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'delivery'],
         'paytype_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'payType'],
+        'card_item_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'card'],
+        'extra' => ['type' => 'dataManager', 'relation' => 'extras'],
     ];
     static $dataManagers = [
         'manager' => [
             'cols' => [
+                'userAdds:values',
+                'items',
+                'extra',
+                'sum',
+                'cart_status_id',
+                'exported',
+                'delivery_id',
+                'complete_data',
+            ],
+            'sortable' => [
                 'userAdds:values',
                 'items',
                 'sum',
@@ -79,6 +102,16 @@ class Cart extends \Model {
                 'exported',
                 'delivery_id',
                 'complete_data',
+            ],
+            'filters' => [
+                'sum',
+                'cart_status_id',
+                'exported',
+                'delivery_id',
+                'complete_data',
+            ],
+            'preSort' => [
+                'complete_data' => 'desc'
             ]
         ]
     ];
@@ -87,9 +120,10 @@ class Cart extends \Model {
             'map' => [
                 ['user_id', 'cart_status_id'],
                 ['paytype_id', 'delivery_id'],
-                ['comment'],
+                ['card_item_id', 'comment'],
                 ['warehouse_block', 'complete_data'],
-            //['items']
+                ['items'],
+                ['extra']
             ]
         ],
     ];
@@ -192,6 +226,9 @@ class Cart extends \Model {
                 $block->count = $cartItem->count;
                 $block->save();
             }
+        }
+        foreach ($cart->extras as $extra) {
+            $pricesum += $extra->price * $extra->count;
         }
         $cart->sum = $pricesum;
         if ($save) {

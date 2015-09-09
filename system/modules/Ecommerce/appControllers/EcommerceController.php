@@ -1,6 +1,92 @@
 <?php
 
+/**
+ * Ecommerce controller
+ *
+ * @author Alexey Krupskiy <admin@inji.ru>
+ * @link http://inji.ru/
+ * @copyright 2015 Alexey Krupskiy
+ * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
+ */
 class ecommerceController extends Controller {
+
+    function buyCardAction() {
+        $this->view->setTitle('Покупка карты');
+        $bread = [];
+        $bread[] = ['text' => 'Покупка карты'];
+        if (!empty($_POST) && !empty($_POST['card_id'])) {
+            $error = false;
+            $card = \Ecommerce\Card::get((int) $_POST['card_id']);
+            if (!$card) {
+                $error = true;
+                Msg::add('Такой карты не существует', 'danger');
+            }
+
+            if (!Users\User::$cur->id) {
+                $user_id = $this->Users->registration($_POST);
+                if (!$user_id) {
+                    $error = true;
+                } else {
+                    $user = Users\User::get($user_id);
+                }
+            } else {
+                $user = Users\User::$cur;
+            }
+            $userCard = \Ecommerce\Card\Item::get([['card_id', $card->id], ['user_id', $user->id]]);
+            if ($userCard) {
+                $error = true;
+                Msg::add('У вас уже есть такая карта', 'danger');
+            }
+
+            $fields = \Ecommerce\UserAdds\Field::getList();
+            foreach ($fields as $field) {
+                if (empty($_POST['userAdds']['fields'][$field->id]) && $field->required) {
+                    $error = 1;
+                    Msg::add('Вы не указали: ' . $field->name);
+                }
+            }
+            if (!$error) {
+                $userAdds = new Ecommerce\UserAdds();
+                $userAdds->user_id = $user->id;
+                $userAdds->save();
+                foreach ($fields as $field) {
+                    if (!empty($_POST['userAdds']['fields'][$field->id])) {
+                        $userAdds->name .= htmlspecialchars($_POST['userAdds']['fields'][$field->id]) . ' ';
+                    }
+                    $userAddsValue = new Ecommerce\UserAdds\Value();
+                    $userAddsValue->value = htmlspecialchars($_POST['userAdds']['fields'][$field->id]);
+                    $userAddsValue->useradds_field_id = $field->id;
+                    $userAddsValue->useradds_id = $userAdds->id;
+                    $userAddsValue->save();
+                }
+                $userAdds->save();
+                $cart = new \Ecommerce\Cart();
+                $cart->user_id = $user->user_id;
+                $cart->useradds_id = $userAdds;
+                $cart->cart_status_id = 2;
+                $cart->comment = htmlspecialchars($_POST['comment']);
+                $cart->date_status = date('Y-m-d H:i:s');
+                $cart->complete_data = date('Y-m-d H:i:s');
+                $cart->save();
+
+                $cardItem = new \Ecommerce\Card\Item();
+                $cardItem->card_id = $card->id;
+                $cardItem->user_id = $user->id;
+                $cardItem->save();
+
+                $extra = new \Ecommerce\Cart\Extra();
+                $extra->name = $card->name;
+                $extra->price = $card->price;
+                $extra->count = 1;
+                $extra->cart_id = $cart->id;
+                $extra->info = 'card:' . $card->id . '|cardItem:' . $cardItem->id;
+                $extra->save();
+
+                //Tools::redirect('/ecommerce/cart/success');
+            }
+        }
+        $this->view->page(['data' => compact('bread')]);
+    }
 
     function cabinetAction() {
         $this->view->setTitle('Кабинет');

@@ -46,11 +46,13 @@ class Item extends \Model {
     ];
     static $cols = [
         'item_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'item'],
+        'cart_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'cart'],
         'item_offer_price_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'price', 'showCol' => 'price'],
         'count' => ['type' => 'text'],
     ];
     static $dataManagers = [
         'manager' => [
+            'name' => 'Покупки',
             'cols' => [
                 'item_id',
                 'item_offer_price_id',
@@ -59,27 +61,7 @@ class Item extends \Model {
         ],
     ];
     static $forms = [
-        'inlineEdit' => [
-            'options' => [
-                'item_id' => ['relation' => 'item', 'showCol' => ['type' => 'method', 'method' => 'itemNameCount'], 'listGetter' => ['method' => 'itemsList', 'showCol' => 'combined']],
-                'item_offer_price_id' => ['relation' => 'price', 'showCol' => 'item_offer_price_price'],
-                'count' => [],
-            ],
-            'relations' => [
-                'item_id' => [
-                    'col' => 'item_offer_price_id',
-                    'model' => 'Item',
-                    'relation' => 'prices'
-                ]
-            ],
-        ],
-        'manage' => [
-            'options' => [
-                'cart_id' => ['relation' => 'cart', 'showCol' => 'cart_id'],
-                'item_id' => ['relation' => 'item', 'showCol' => 'item_name'],
-                'item_offer_price_id' => ['relation' => 'price', 'showCol' => 'item_offer_price_price'],
-                'count' => 'text',
-            ],
+        'manager' => [
             'relations' => [
                 'item_id' => [
                     'col' => 'item_offer_price_id',
