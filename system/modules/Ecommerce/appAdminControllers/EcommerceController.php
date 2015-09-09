@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Ecommerce admin controller
+ *
+ * @author Alexey Krupskiy <admin@inji.ru>
+ * @link http://inji.ru/
+ * @copyright 2015 Alexey Krupskiy
+ * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
+ */
 class EcommerceController extends adminController {
 
     function dashboardAction() {
@@ -17,8 +25,20 @@ class EcommerceController extends adminController {
             Config::save('Module', $config, 'Ecommerce');
             Tools::redirect('/admin/ecommerce/configure', 'Настройки были изменены', 'success');
         }
+        $managers = [
+            'Ecommerce\Delivery',
+            'Ecommerce\PayType',
+            'Ecommerce\Warehouse',
+            'Ecommerce\Unit',
+            'Ecommerce\Card',
+            'Ecommerce\Discount',
+            'Ecommerce\Item\Type',
+            'Ecommerce\Item\Option',
+            'Ecommerce\Item\Offer\Price\Type',
+            'Ecommerce\UserAdds\Field',
+        ];
         $this->view->setTitle('Настройки магазина');
-        $this->view->page();
+        $this->view->page(['data' => compact('managers')]);
     }
 
     function reBlockIndexAction() {
