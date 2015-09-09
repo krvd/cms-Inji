@@ -61,7 +61,7 @@ class Query extends \Exchange1c\Mode {
                 if ($id1c) {
                     addToXml($xml, $goods, 'Ид', $id1c->parse_id);
                 }
-                addToXml($xml, $goods, 'Наименование', $item->name());
+                addToXml($xml, $goods, 'Наименование', $item->name);
                 $one = addToXml($xml, $goods, 'БазоваяЕдиница', 'шт');
                 $one->setAttribute("Код", "796");
                 $one->setAttribute("НаименованиеПолное", "Штука");
@@ -69,6 +69,26 @@ class Query extends \Exchange1c\Mode {
                 addToXml($xml, $goods, 'ЦенаЗаЕдиницу', $price->price);
                 addToXml($xml, $goods, 'Количество', $cartitem->count);
                 addToXml($xml, $goods, 'Сумма', $price->price * $cartitem->count);
+                $reqs = $goods->appendChild($xml->createElement('ЗначенияРеквизитов'));
+
+                $req = $reqs->appendChild($xml->createElement('ЗначениеРеквизита'));
+                addToXml($xml, $req, 'Наименование', 'ВидНоменклатуры');
+                addToXml($xml, $req, 'Значение', 'Товар');
+
+                $req = $reqs->appendChild($xml->createElement('ЗначениеРеквизита'));
+                addToXml($xml, $req, 'Наименование', 'ТипНоменклатуры');
+                addToXml($xml, $req, 'Значение', 'Товар');
+            }
+            foreach ($cart->extras as $extra) {
+                $goods = $goodss->appendChild($xml->createElement('Товар'));
+                addToXml($xml, $goods, 'Наименование', $extra->name);
+                $one = addToXml($xml, $goods, 'БазоваяЕдиница', 'шт');
+                $one->setAttribute("Код", "796");
+                $one->setAttribute("НаименованиеПолное", "Штука");
+                $one->setAttribute("МеждународноеСокращение", "PCE");
+                addToXml($xml, $goods, 'ЦенаЗаЕдиницу', $extra->price);
+                addToXml($xml, $goods, 'Количество', $extra->count);
+                addToXml($xml, $goods, 'Сумма', $extra->price * $extra->count);
                 $reqs = $goods->appendChild($xml->createElement('ЗначенияРеквизитов'));
 
                 $req = $reqs->appendChild($xml->createElement('ЗначениеРеквизита'));
