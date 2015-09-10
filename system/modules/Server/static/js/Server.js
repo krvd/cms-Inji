@@ -40,27 +40,32 @@ Server.prototype.request = function (options, btn) {
         if (typeof btn != 'undefined') {
             btn.button('reset');
         }
-        if (data.success) {
-            if (data.successMsg) {
-                noty({text: data.successMsg, type: 'success', timeout: 3500, layout: 'center'});
-            }
-            if (typeof data.scripts == 'object') {
-                inji.loaded = false;
-                if (callback !== null) {
-                    inji.onLoad(function () {
-                        callback(data.content, textStatus, jqXHR)
-                    });
-                }
-                inji.loadScripts(data.scripts, 0);
-            }
-            else {
-                if (callback !== null) {
-                    callback(data.content, textStatus, jqXHR);
-                }
-            }
+        if (ajaxOptions.dataType != 'json') {
+            callback(data, textStatus, jqXHR);
         }
         else {
-            noty({text: data.error, type: 'warning', timeout: 3500, layout: 'center'});
+            if (data.success) {
+                if (data.successMsg) {
+                    noty({text: data.successMsg, type: 'success', timeout: 3500, layout: 'center'});
+                }
+                if (typeof data.scripts == 'object') {
+                    inji.loaded = false;
+                    if (callback !== null) {
+                        inji.onLoad(function () {
+                            callback(data.content, textStatus, jqXHR)
+                        });
+                    }
+                    inji.loadScripts(data.scripts, 0);
+                }
+                else {
+                    if (callback !== null) {
+                        callback(data.content, textStatus, jqXHR);
+                    }
+                }
+            }
+            else {
+                noty({text: data.error, type: 'warning', timeout: 3500, layout: 'center'});
+            }
         }
     }
     var errorCallback = null;
