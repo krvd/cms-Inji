@@ -34,9 +34,10 @@ class Cart extends \Model {
                 'model' => 'Ecommerce\PayType',
                 'col' => 'paytype_id'
             ],
-            'userAdds' => [
-                'model' => 'Ecommerce\UserAdds',
-                'col' => 'useradds_id'
+            'infos' => [
+                'type' => 'many',
+                'model' => 'Ecommerce\Cart\Info',
+                'col' => 'cart_id'
             ],
             'extras' => [
                 'type' => 'many',
@@ -65,10 +66,11 @@ class Cart extends \Model {
         'warehouse_block' => 'Блокировка товаров',
         'extra' => 'Дополнительно',
         'card_item_id' => 'Дисконтная карта',
+        'info' => 'Информация',
     ];
     static $cols = [
         'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
-        'info' => ['type' => 'select', 'source' => 'relation', 'relation' => 'userAdds'],
+        'info' => ['type' => 'dataManager', 'relation' => 'infos'],
         'items' => ['type' => 'select', 'source' => 'relation', 'relation' => 'cartItems'],
         'sum' => ['type' => 'text'],
         'warehouse_block' => ['type' => 'bool'],
@@ -85,7 +87,7 @@ class Cart extends \Model {
     static $dataManagers = [
         'manager' => [
             'cols' => [
-                'userAdds:values',
+                'info',
                 'items',
                 'extra',
                 'sum',
@@ -95,7 +97,6 @@ class Cart extends \Model {
                 'complete_data',
             ],
             'sortable' => [
-                'userAdds:values',
                 'items',
                 'sum',
                 'cart_status_id',

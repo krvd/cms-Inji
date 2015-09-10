@@ -21,57 +21,20 @@ inji.Ecommerce = {
             });
         }
         this.calcSum = function () {
-            var sum = 0;
-            $('.cartitems .item').each(function () {
-                count = parseFloat($(this).find('.cart-couner').val());
-                if (isNaN(count))
-                    count = 1;
-                sum += parseFloat($(this).data('priceam')) * count;
-                data = {};
-                data.data = {};
-                data.data.cart_item_id = $(this).data('cart_item_id');
-                data.data.count = count;
-                data.data.item_offer_price_id = $(this).data('item_offer_price_id');
-                data.url = '/ecommerce/cart/updatecartitem';
-                data.success = function (data) {
-                    $('#cart').html(data);
-                };
-                inji.Server.request(data);
-                var price = $(this).data('priceam');
-                $(this).find('.total').html((price * count).toFixed(2) + ' руб.');
+            var form = $('.ecommerce .cart-order_page form');
+            var formData = new FormData(form[0]);
+            $('.ecommerce .cart-order_page').prepend($('<div style = "position:absolute;width:'+ $('.ecommerce .cart-order_page').width()+'px;height:'+ $('.ecommerce .cart-order_page').height()+'px;background-color: rgba(255, 255, 255, 0.4);z-index:1000000"></div>'));
+            inji.Server.request({
+                url: form.attr('action'),
+                type: 'POST',
+                data: formData,
+                dataType: 'html',
+                processData: false,
+                success: function (data) {
+                    var html = $('<div>' + data.replace(/\n/g, " ") + '</div>');
+                    $('.ecommerce .cart-order_page').html(html.find('.ecommerce .cart-order_page'));
+                }
             });
-            asum = sum;
-            if (typeof (deliverys) != 'undefined') {
-                var delivery = deliverys[$('[name="delivery"]').val()];
-                if (sum >= parseFloat(delivery.delivery_max_cart_price)) {
-                    $($('.deliverysum td').get(1)).html('0 руб.');
-                    asum = sum;
-                }
-                else {
-                    $($('.deliverysum td').get(1)).html(parseFloat(delivery.delivery_price) + ' руб.');
-                    asum = sum + parseFloat(delivery.delivery_price);
-                }
-                $($('.deliverysum td').get(0)).html(delivery.delivery_name + ':');
-            }
-            else {
-                $($('.deliverysum td').get(0)).html('Без доставки');
-                $($('.deliverysum td').get(1)).html('0 руб.');
-            }
-            $($('.cartsums td').get(1)).html(sum.toFixed(2) + ' руб.');
-            var packsCkeckbox = $('[name="packs"]');
-            var packSums = 0;
-            $('.packsCount').html(Math.ceil(sum / 1000));
-            if (packsCkeckbox.length > 0) {
-                if (packsCkeckbox[0].checked) {
-                    packSums = (Math.ceil(sum / 1000) * parseFloat(packsCkeckbox.val()));
-                    $($('.packssum td').get(1)).html(packSums.toFixed(2) + ' руб.');
-                }
-                else {
-                    packSums = 0;
-                    $($('.packssum td').get(1)).html('0 руб.');
-                }
-            }
-            $($('.allsums td').get(1)).html((asum + packSums).toFixed(2) + ' руб.');
         }
         this.delItem = function (cart_item_id) {
             data = {};
@@ -93,8 +56,8 @@ inji.onLoad(function () {
     $('body').on('click', '.btn-number', function (e) {
         e.preventDefault();
 
-        fieldName = $(this).attr('data-field');
-        type = $(this).attr('data-type');
+        var fieldName = $(this).data('field');
+        var type = $(this).data('type');
         var input = $("input[name='" + fieldName + "']");
         var currentVal = parseFloat(input.val());
         if (!isNaN(currentVal)) {
@@ -126,15 +89,15 @@ inji.onLoad(function () {
     });
     $('body').on('change', '.input-number', function () {
 
-        minValue = parseFloat($(this).attr('min'));
-        maxValue = parseFloat($(this).attr('max'));
-        valueCurrent = parseFloat($(this).val());
+        var minValue = parseFloat($(this).attr('min'));
+        var maxValue = parseFloat($(this).attr('max'));
+        var valueCurrent = parseFloat($(this).val());
 
-        name = $(this).attr('name');
+        var name = $(this).attr('name');
         if (valueCurrent >= minValue) {
             $(".btn-number[data-type='minus'][data-field='" + name + "']").removeAttr('disabled')
         } else {
-            alert('Нельзя заказать меньше одной единицы товара');
+            alert('Нельзя заказать меньше ' + minValue);
             $(this).val($(this).data('oldValue'));
         }
         if (valueCurrent <= maxValue) {

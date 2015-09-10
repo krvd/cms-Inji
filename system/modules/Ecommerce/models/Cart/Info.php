@@ -2,35 +2,34 @@
 
 namespace Ecommerce\Cart;
 
-class Extra extends \Model {
+class Info extends \Model {
 
     static $labels = [
-        'name' => 'Название',
-        'price' => 'Цена',
-        'count' => 'Количество',
+        'name' => 'название',
+        'value' => 'Значение',
+        'useradds_field_id' => 'Поле',
         'cart_id' => 'Корзина'
     ];
     static $cols = [
+        'useradds_field_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'field'],
         'cart_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'cart'],
         'name' => ['type' => 'text'],
-        'price' => ['type' => 'text'],
-        'count' => ['type' => 'text'],
+        'value' => ['type' => 'text'],
     ];
     static $dataManagers = [
         'manager' => [
             'name'=>'Дополнительно',
             'cols' => [
                 'name',
-                'price',
-                'count',
+                'value',
             ],
         ],
     ];
     static $forms = [
         'manager' => [
             'map' => [
-                ['name', 'price'],
-                ['count', 'cart_id'],
+                ['name', 'value'],
+                ['useradds_field_id', 'cart_id'],
             ]
         ]
     ];
@@ -44,6 +43,10 @@ class Extra extends \Model {
             'cart' => [
                 'model' => 'Ecommerce\Cart',
                 'col' => 'cart_id'
+            ],
+            'field' => [
+                'model' => 'Ecommerce\UserAdds\Field',
+                'col' => 'useradds_field_id'
             ]
         ];
     }

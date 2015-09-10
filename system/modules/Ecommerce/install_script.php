@@ -230,7 +230,6 @@ return function ($step = NULL, $params = array()) {
         'cart_id' => 'pk',
         //Основные параметры
         'cart_user_id' => 'int(11) UNSIGNED NOT NULL',
-        'cart_useradds_id' => 'int(11) UNSIGNED NOT NULL',
         'cart_cart_status_id' => 'int(11) UNSIGNED NOT NULL',
         'cart_delivery_id' => 'int(11) UNSIGNED NOT NULL',
         'cart_paytype_id' => 'int(11) UNSIGNED NOT NULL',
@@ -349,5 +348,14 @@ return function ($step = NULL, $params = array()) {
         'discount_type' => 'varchar(255) NOT NULL',
         'discount_amount' => 'DECIMAL(10, 2) UNSIGNED NOT NULL',
         'discount_condition' => 'text NOT NULL',
+    ]);
+    //Информация в корзине
+    App::$cur->db->createTable('ecommerce_cart_info', [
+        'cart_info_id' => 'pk',
+        //Основные параметры
+        'cart_info_name' => 'varchar(255) NOT NULL',
+        'cart_info_value' => 'varchar(255) NOT NULL',
+        'cart_info_cart_id' => 'int(11) UNSIGNED NOT NUL',
+        'cart_info_useradds_field_id' => 'int(11) UNSIGNED NOT NUL',
     ]);
 };
