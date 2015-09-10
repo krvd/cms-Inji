@@ -20,6 +20,30 @@ class CartController extends Controller {
                 } else {
                     $user = Users\User::$cur;
                 }
+                $ids = [];
+                foreach ($_POST['cartItems'] as $cartItemId => $cartItemCont) {
+                    $cartItem = \Ecommerce\Cart\Item::get((int) $cartItemId);
+                    if (!$cartItem) {
+                        continue;
+                    }
+                    if ($cartItem->cart_id != $cart->id) {
+                        continue;
+                    }
+                    $count = (float) $cartItemCont;
+                    if ($count < 0.001) {
+                        $count = 1;
+                    }
+                    $cartItem->count = $count;
+                    $cartItem->save();
+                    $ids[] = $cartItemId;
+                }
+                foreach ($cart->cartItems as $cartItem) {
+                    if (!in_array($cartItem->id, $ids)) {
+                        $cartItem->delete();
+                    }
+                }
+                $cart = Ecommerce\Cart::get($cart->id);
+
                 if (empty($this->module->config['sell_over_warehouse'])) {
                     foreach ($cart->cartItems as $cartitem) {
                         $warecount = $cartitem->price->offer->warehouseCount($cart->id);
@@ -58,23 +82,42 @@ class CartController extends Controller {
                     }
                 }
 
-                if (!$error) {
-                    $userAdds = new Ecommerce\UserAdds();
-                    $userAdds->user_id = $user->id;
-                    $userAdds->save();
+                if (!$error && !empty($_POST['action']) && $_POST['action'] = 'order') {
+                    $name = '';
                     foreach ($fields as $field) {
-                        if (!empty($_POST['userAdds']['fields'][$field->id])) {
-                            $userAdds->name .= htmlspecialchars($_POST['userAdds']['fields'][$field->id]) . ' ';
+                        if ($field->save && !empty($_POST['userAdds']['fields'][$field->id])) {
+                            $name .= htmlspecialchars($_POST['userAdds']['fields'][$field->id]) . ' ';
                         }
-                        $userAddsValue = new Ecommerce\UserAdds\Value();
-                        $userAddsValue->value = htmlspecialchars($_POST['userAdds']['fields'][$field->id]);
-                        $userAddsValue->useradds_field_id = $field->id;
-                        $userAddsValue->useradds_id = $userAdds->id;
-                        $userAddsValue->save();
                     }
-                    $userAdds->save();
+                    $name = trim($name);
+
+                    $userAdds = Ecommerce\UserAdds::get([['user_id', $user->id], ['name', $name]]);
+                    if (!$userAdds) {
+                        $userAdds = new Ecommerce\UserAdds();
+                        $userAdds->user_id = $user->id;
+                        $userAdds->name = $name;
+                        $userAdds->save();
+                        foreach ($fields as $field) {
+                            if (!$field->save) {
+                                continue;
+                            }
+                            $userAddsValue = new Ecommerce\UserAdds\Value();
+                            $userAddsValue->value = htmlspecialchars($_POST['userAdds']['fields'][$field->id]);
+                            $userAddsValue->useradds_field_id = $field->id;
+                            $userAddsValue->useradds_id = $userAdds->id;
+                            $userAddsValue->save();
+                        }
+                    }
+
+                    foreach ($fields as $field) {
+                        $info = new \Ecommerce\Cart\Info();
+                        $info->name = $field->name;
+                        $info->value = htmlspecialchars($_POST['userAdds']['fields'][$field->id]);
+                        $info->useradds_field_id = $field->id;
+                        $info->cart_id = $cart->id;
+                        $info->save();
+                    }
                     $cart->user_id = $user->user_id;
-                    $cart->useradds_id = $userAdds;
                     $cart->cart_status_id = 2;
                     $cart->comment = htmlspecialchars($_POST['comment']);
                     $cart->date_status = date('Y-m-d H:i:s');
@@ -84,7 +127,7 @@ class CartController extends Controller {
                     $cart->card_item_id = (int) $card_item_id;
                     $cart->warehouse_block = 1;
                     $cart->save();
-                    \Ecommerce\Cart\Event::update(['user_id' => $user->id, 'cart_id' => 0], ['cart_id', $cart->id]);
+                    //\Ecommerce\Cart\Event::update(['user_id' => 0, 'cart_id' => $cart->id], ['cart_id', $cart->id]);
                     unset($_SESSION['cart']['cart_id']);
                     Tools::redirect('/ecommerce/cart/success');
                 }
@@ -263,44 +306,6 @@ class CartController extends Controller {
         $cart->calc();
         $result->successMsg = '<a href="/ecommerce/view/' . $item->id . '">' . $item->name() . '</a> добавлен <a href="/ecommerce/cart">в корзину покупок</a>!';
         $result->send();
-    }
-
-    function updatecartitemAction() {
-        if (empty($_SESSION['cart']['cart_id']))
-            exit('У вас нет корзины');
-
-        if (empty($_GET['cart_item_id']))
-            exit('Не передан ид элемента корзины');
-
-        if (empty($_GET['item_offer_price_id']))
-            exit('не передан ид цены элемента корзины');
-
-        $cartItem = \Ecommerce\Cart\Item::get((int) $_GET['cart_item_id']);
-
-        if (!$cartItem) {
-            exit('Нет такого элемента корзины');
-        }
-
-        if ($cartItem->cart_id != $_SESSION['cart']['cart_id']) {
-            exit('Этот элемент корзины не относится к вашей корзине');
-        }
-        $count = (float) $_GET['count'];
-        if ($count < 0.001)
-            $count = 1;
-
-        $item = $cartItem->item;
-        $price = false;
-        foreach ($item->offers as $offer) {
-            if (!empty($offer->prices[(int) $_GET['item_offer_price_id']])) {
-                $price = $offer->prices[(int) $_GET['item_offer_price_id']];
-                break;
-            }
-        }
-        $cartItem->count = $count;
-
-        $cartItem->save();
-
-        $this->getcartAction();
     }
 
     function getcartAction() {
