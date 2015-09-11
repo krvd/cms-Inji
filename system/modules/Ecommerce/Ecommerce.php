@@ -6,6 +6,45 @@ class Ecommerce extends Module {
         App::$primary->view->customAsset('js', '/moduleAsset/Ecommerce/js/cart.js');
     }
 
+    function parseFields($data, $cart) {
+        $fields = \Ecommerce\UserAdds\Field::getList();
+        $name = '';
+        foreach ($fields as $field) {
+            if ($field->save && !empty($data[$field->id])) {
+                $name .= htmlspecialchars($data[$field->id]) . ' ';
+            }
+        }
+        $name = trim($name);
+
+        $userAdds = Ecommerce\UserAdds::get([['user_id', $cart->user->id], ['name', $name]]);
+        if (!$userAdds) {
+            $userAdds = new Ecommerce\UserAdds();
+            $userAdds->user_id = $cart->user->id;
+            $userAdds->name = $name;
+            $userAdds->save();
+            foreach ($fields as $field) {
+                if (!$field->save) {
+                    continue;
+                }
+                $userAddsValue = new Ecommerce\UserAdds\Value();
+                $userAddsValue->value = htmlspecialchars($data[$field->id]);
+                $userAddsValue->useradds_field_id = $field->id;
+                $userAddsValue->useradds_id = $userAdds->id;
+                $userAddsValue->save();
+            }
+        }
+
+        foreach ($fields as $field) {
+            $info = new \Ecommerce\Cart\Info();
+            $info->name = $field->name;
+            $info->value = htmlspecialchars($data[$field->id]);
+            $info->useradds_field_id = $field->id;
+            $info->cart_id = $cart->id;
+            $info->save();
+        }
+        return $userAdds;
+    }
+
     function getCurCart() {
         $cart = false;
         if (!empty($_SESSION['cart']['cart_id'])) {
@@ -67,7 +106,7 @@ class Ecommerce extends Module {
         if (empty($this->config['view_empty_image'])) {
             $selectOptions['where'][] = ['image_file_id', 0, '!='];
         }
-        
+
         //filters
         if (!empty($options['filters'])) {
             foreach ($options['filters'] as $col => $filter) {
@@ -154,67 +193,6 @@ class Ecommerce extends Module {
      */
     function getItems($options = []) {
         $selectOptions = $this->parseOptions($options);
-
-        //\App::$cur->db->cols = 'DISTINCT `' . \App::$cur->db->table_prefix . 'catalog_items`. *';
-
-        /* if (empty($this->modConf['view_empty_warehouse'])) {
-          \App::$cur->db->join('catalog_items_options', '`cio_code` = "itemImage"', 'inner');
-          \App::$cur->db->join('catalog_items_params', '`ci_id` = `cip_ci_id` and cip_cio_id = cio_id and `cip_value`!=""', 'inner');
-
-          if (\App::$cur->db->where) {
-          \App::$cur->db->where .= ' AND ';
-          } else {
-          \App::$cur->db->where = 'WHERE ';
-          }
-          \App::$cur->db->where .= '
-          ((SELECT COALESCE(sum(`ciw_count`),0) FROM inji_catalog_item_warehouses iciw WHERE iciw.ciw_ci_id = ci_id)-
-          (SELECT COALESCE(sum(ewb_count) ,0)
-          FROM inji_ecommerce_warehouses_block iewb
-          inner JOIN inji_catalog_carts icc ON icc.cc_id = iewb.ewb_cc_id AND (
-          (`cc_warehouse_block` = 1 and `cc_status` in(2,3,6)) ||
-          (`cc_status` in(0,1) and `cc_date_last_activ` >=subdate(now(),INTERVAL 30 MINUTE))
-          )
-          WHERE iewb.ewb_ci_id = ci_id))>0 ';
-
-          //\App::$cur->db->join('catalog_carts', '`cc_warehouse_block` = 1 and `cc_status` in(2,3)');
-          //\App::$cur->db->join('catalog_cart_items', '`cci_cc_id` = `cc_id` and `cci_ci_id`= `ci_id`');
-          }
-
-          //best,asc,desc,hit,priceasc,pricedesc
-          switch ($sort) {
-          case 'best':
-          \App::$cur->db->where('ci_best', 1);
-          \App::$cur->db->order = 'ORDER BY RAND()';
-          break;
-          case 'asc':
-          \App::$cur->db->order('ci_name', 'ASC');
-          break;
-          case 'desc':
-          \App::$cur->db->order('ci_name', 'DESC');
-          break;
-          case 'rand':
-          \App::$cur->db->order = 'ORDER BY RAND()';
-          break;
-          case 'sales':
-          \App::$cur->db->order('ci_sales', 'DESC');
-          break;
-          case 'promo':
-          \App::$cur->db->cols = '*';
-          \App::$cur->db->order = 'ORDER BY RAND()';
-          if (\App::$cur->db->where)
-          \App::$cur->db->where .= ' AND (select `cip_value` from `' . \App::$cur->db->table_prefix . 'catalog_items_params` where `cip_ci_id` = `ci_id` and `cip_cio_id` = 50 limit 1) = 1 ';
-          else
-          \App::$cur->db->where = 'WHERE (select `cip_value` from `' . \App::$cur->db->table_prefix . 'catalog_items_params` where `cip_ci_id` = `ci_id` and `cip_cio_id` = 50 limit 1) = 1 ';
-          break;
-          case 'priceasc':
-          \App::$cur->db->order('price', 'ASC');
-          \App::$cur->db->cols = '*,(select `ciprice_price` from `' . \App::$cur->db->table_prefix . 'catalog_items_prices` where `ciprice_ci_id` = `ci_id` order by `ciprice_price` asc limit 1) as `price`';
-          break;
-          case 'pricedesc':
-          \App::$cur->db->order('price', 'DESC');
-          \App::$cur->db->cols = '*,(select `ciprice_price` from `' . \App::$cur->db->table_prefix . 'catalog_items_prices` where `ciprice_ci_id` = `ci_id` order by `ciprice_price` asc limit 1) as `price`';
-          break;
-          } */
         $items = Ecommerce\Item::getList($selectOptions);
         return $items;
     }
