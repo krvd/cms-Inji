@@ -52,10 +52,10 @@ class Orders extends \Object {
             } elseif (!empty($reqs['Дата оплаты по 1С']) && $reqs['Дата оплаты по 1С'] == 'T') {
                 $cancel = true;
             }
-
+            
             $this->updateCartItems($cart, $order->Товары->Товар);
             if ($payed && $cart->cart_status_id == 5) {
-
+                
             } elseif ($payed && $cart->cart_status_id == 3) {
                 $cart->cart_status_id = 5;
                 $cart->save();
@@ -81,7 +81,7 @@ class Orders extends \Object {
         foreach ($items as $item) {
             $cItem = [];
             $id = \Migrations\Id::get([['parse_id', $item->Ид], ['type', 'item']]);
-            if(!$id){
+            if (!$id) {
                 continue;
             }
             $itemIds[] = $id->object_id;
@@ -140,7 +140,7 @@ class Orders extends \Object {
                 }
                 unset($cItems[$key]);
             }
-            if (!$isset && !in_array($cItem['name'], ['Доставка', 'Клубная карта', 'Пакет майка'])) {
+            if (!$isset && !empty($cItem['name']) && !in_array($cItem['name'], ['Доставка', 'Клубная карта', 'Пакет майка'])) {
                 $cartItem->delete();
             }
         }
