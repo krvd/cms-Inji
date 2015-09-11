@@ -250,9 +250,9 @@ class Cart extends \Model {
                 $event->save();
             }
             //$events = $cur->events(['order' => [['id', 'desc']], 'limit' => 1, 'key' => false]);
-            if ($events) {
+            //if ($events) {
                 //$event = $events[0];
-            }
+            //}
         }
         // if ($event)
         //$this->date_last_activ = $event->date_create;
