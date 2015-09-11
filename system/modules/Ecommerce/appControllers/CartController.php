@@ -92,13 +92,12 @@ class CartController extends Controller {
                     $cart->complete_data = date('Y-m-d H:i:s');
                     $cart->paytype_id = (int) $_POST['payType'];
                     $cart->delivery_id = (int) $_POST['delivery'];
-                    $cart->card_item_id = (int) $card_item_id;
                     $cart->warehouse_block = 1;
                     $cart->save();
 
                     $cart = \Ecommerce\Cart::get($cart->id);
                     foreach ($cart->cartItems as $cartItem) {
-                        $cartItem->discount = $cart->card ? round($cartItem->price->price * $cart->card->level->discount->amount, 2) : 0;
+                        $cartItem->discount = $cartItem->price->offer->item->type->discount && $cart->card ? round($cartItem->price->price * $cart->card->level->discount->amount, 2) * $cartItem->count : 0;
                         $cartItem->final_price = $cartItem->price->price - $cartItem->discount;
                         $cartItem->save();
                     }
