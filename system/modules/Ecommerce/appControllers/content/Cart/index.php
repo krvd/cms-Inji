@@ -125,7 +125,7 @@
                                     $discountSum = 0;
                                     foreach ($cart->cartItems as $cartItem) {
                                         $path = $cartItem->item->image ? $cartItem->item->image->path : '/static/system/images/no-image.png';
-                                        $discount = $cartItem->price->offer->item->type->discount && $cart->card ? round($cartItem->price->price * $cart->card->level->discount->amount, 2) * $cartItem->count : 0;
+                                        $discount = $cart->card && $cartItem->price->offer->item->type && $cartItem->price->offer->item->type->discount ? round($cartItem->price->price * $cart->card->level->discount->amount, 2) * $cartItem->count : 0;
                                         $discountSum += $discount;
                                         $itemName = $cartItem->item->name();
                                         ?>
