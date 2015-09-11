@@ -262,7 +262,8 @@ return function ($step = NULL, $params = array()) {
         'cart_item_count' => 'DECIMAL(10, 3) UNSIGNED NOT NULL',
         'cart_item_item_offer_price_id' => 'int(11) UNSIGNED NOT NULL',
         'cart_item_item_id' => 'int(11) UNSIGNED NOT NULL',
-        'cart_item_final_price' => 'decimal(10,2) NOT NULL',
+        'cart_item_final_price' => 'decimal(10,2) UNSIGNED NOT NULL',
+        'cart_item_discount' => 'decimal(10,2) UNSIGNED NOT NULL',
         //Системные
         'cart_item_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
             ), [
