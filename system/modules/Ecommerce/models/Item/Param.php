@@ -53,13 +53,13 @@ class Param extends \Model {
             ]
     ]];
 
-    function value() {
+    function value($default = '') {
         if ($this->option->type != 'select') {
             return $this->value;
         } elseif ($this->optionItem) {
             return $this->optionItem->value;
         }
-        return '';
+        return $default;
     }
 
     static function relations() {
