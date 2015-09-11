@@ -106,6 +106,8 @@ class Users extends Module {
 
     function autorization($login, $pass, $ltype = 'login', $noMsg = true) {
 
+        sleep(3); //simple anti brute
+
         $user = $this->get($login, $ltype);
         if ($user && $this->verifypass($pass, $user->pass) && !$user->blocked) {
             if ($user->activation) {
@@ -170,7 +172,7 @@ class Users extends Module {
         return $user;
     }
 
-    function registration($data) {
+    function registration($data, $autorization = false) {
         extract($data);
 
         if (empty($user_mail)) {
@@ -230,7 +232,9 @@ class Users extends Module {
             'phone' => htmlspecialchars($user_phone),
         ]);
         $info->save();
-        //$this->autorization($user_mail, $pass, 'mail');
+        if ($autorization) {
+            $this->autorization($user_mail, $pass, 'mail');
+        }
 
         $from = 'noreply@' . INJI_DOMAIN_NAME;
         $to = $user_mail;
