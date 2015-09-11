@@ -98,8 +98,8 @@ class CartController extends Controller {
 
                     $cart = \Ecommerce\Cart::get($cart->id);
                     foreach ($cart->cartItems as $cartItem) {
-                        $cartItem->discount = $cart->card ? $cartItem->price->price * $cart->card->level->discount->amount : 0;
-                        $cartItem->final_price = round($cartItem->price->price - $cartItem->discount, 2);
+                        $cartItem->discount = $cart->card ? round($cartItem->price->price * $cart->card->level->discount->amount, 2) : 0;
+                        $cartItem->final_price = $cartItem->price->price - $cartItem->discount;
                         $cartItem->save();
                     }
                     unset($_SESSION['cart']['cart_id']);
