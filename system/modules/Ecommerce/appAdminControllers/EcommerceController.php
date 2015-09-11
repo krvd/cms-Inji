@@ -22,7 +22,7 @@ class EcommerceController extends adminController {
             $config['view_empty_image'] = empty($_POST['config']['view_empty_image']) ? false : true;
             $config['sell_empty_warehouse'] = empty($_POST['config']['sell_empty_warehouse']) ? false : true;
             $config['sell_over_warehouse'] = empty($_POST['config']['sell_over_warehouse']) ? false : true;
-            Config::save('Module', $config, 'Ecommerce');
+            Config::save('module', $config, 'Ecommerce');
             Tools::redirect('/admin/ecommerce/configure', 'Настройки были изменены', 'success');
         }
         $managers = [
