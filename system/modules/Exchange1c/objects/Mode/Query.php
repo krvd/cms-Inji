@@ -50,25 +50,25 @@ class Query extends \Exchange1c\Mode {
             $summ = 0;
 
             $goodss = $xml->createElement('Товары');
-
+            $sum = 0;
             foreach ($items as $cartitem) {
-                $item = $cartitem->item;
-                $price = $cartitem->price;
-
                 $goods = $goodss->appendChild($xml->createElement('Товар'));
 
-                $id1c = \Migrations\Id::get([['object_id', $item->id], ['type', 'item']]);
+                $id1c = \Migrations\Id::get([['object_id', $cartitem->item->id], ['type', 'item']]);
                 if ($id1c) {
                     addToXml($xml, $goods, 'Ид', $id1c->parse_id);
                 }
-                addToXml($xml, $goods, 'Наименование', $item->name);
+                addToXml($xml, $goods, 'Наименование', $cartitem->item->name);
                 $one = addToXml($xml, $goods, 'БазоваяЕдиница', 'шт');
                 $one->setAttribute("Код", "796");
                 $one->setAttribute("НаименованиеПолное", "Штука");
                 $one->setAttribute("МеждународноеСокращение", "PCE");
-                addToXml($xml, $goods, 'ЦенаЗаЕдиницу', $price->price);
+                addToXml($xml, $goods, 'ЦенаЗаЕдиницу', $cartitem->final_price);
                 addToXml($xml, $goods, 'Количество', $cartitem->count);
-                addToXml($xml, $goods, 'Сумма', $price->price * $cartitem->count);
+                addToXml($xml, $goods, 'Сумма', $cartitem->final_price * $cartitem->count);
+                
+                $sum += $cartitem->final_price * $cartitem->count;
+                
                 $reqs = $goods->appendChild($xml->createElement('ЗначенияРеквизитов'));
 
                 $req = $reqs->appendChild($xml->createElement('ЗначениеРеквизита'));
@@ -99,7 +99,6 @@ class Query extends \Exchange1c\Mode {
                 addToXml($xml, $req, 'Наименование', 'ТипНоменклатуры');
                 addToXml($xml, $req, 'Значение', 'Товар');
             }
-            $sum = $cart->sum;
             if ($cart->delivery && $cart->delivery->price && false) {
                 if ($sum < $cart->delivery->max_cart_price) {
                     $sum += $cart->delivery->price;
