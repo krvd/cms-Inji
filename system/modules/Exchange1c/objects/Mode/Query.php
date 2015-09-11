@@ -54,7 +54,7 @@ class Query extends \Exchange1c\Mode {
             foreach ($items as $cartitem) {
                 $goods = $goodss->appendChild($xml->createElement('Товар'));
 
-                $id1c = \Migrations\Id::get([['object_id', $cartitem->item->id], ['type', 'item']]);
+                $id1c = \Migrations\Id::get([['object_id', $cartitem->price->offer->item_id], ['type', 'item']]);
                 if ($id1c) {
                     addToXml($xml, $goods, 'Ид', $id1c->parse_id);
                 }
@@ -66,9 +66,9 @@ class Query extends \Exchange1c\Mode {
                 addToXml($xml, $goods, 'ЦенаЗаЕдиницу', $cartitem->final_price);
                 addToXml($xml, $goods, 'Количество', $cartitem->count);
                 addToXml($xml, $goods, 'Сумма', $cartitem->final_price * $cartitem->count);
-                
+
                 $sum += $cartitem->final_price * $cartitem->count;
-                
+
                 $reqs = $goods->appendChild($xml->createElement('ЗначенияРеквизитов'));
 
                 $req = $reqs->appendChild($xml->createElement('ЗначениеРеквизита'));
@@ -171,13 +171,14 @@ class Query extends \Exchange1c\Mode {
 
             $req = $reqs->appendChild($xml->createElement('ЗначениеРеквизита'));
             addToXml($xml, $req, 'Наименование', 'Доставка разрешена');
-            addToXml($xml, $req, 'Значение', 'false');
+            addToXml($xml, $req, 'Значение', $cart->delivery ? 'true' : 'false');
 
             $req = $reqs->appendChild($xml->createElement('ЗначениеРеквизита'));
             addToXml($xml, $req, 'Наименование', 'Отменен');
             addToXml($xml, $req, 'Значение', 'false');
 
             if (!empty(\App::$primary->exchange1c->config['queryCartFieldGroups'])) {
+                $req = $reqs->appendChild($xml->createElement('ЗначениеРеквизита'));
                 foreach (\App::$primary->exchange1c->config['queryCartFieldGroups'] as $group) {
                     addToXml($xml, $req, 'Наименование', $group['name']);
                     $string = '';
@@ -187,18 +188,19 @@ class Query extends \Exchange1c\Mode {
                                 $string .= $part['text'];
                                 break;
                             case 'field':
-                                $value = \Ecommerce\UserAdds\Value::get([
+                                $value = \Ecommerce\Cart\Info::get([
                                             ['useradds_field_id', $part['field']],
-                                            ['useradds_id', $cart->userAdds->id]
+                                            ['cart_id', $cart->id]
                                 ]);
                                 $string .= $value->value;
                                 break;
                         }
                     }
+                    addToXml($xml, $req, 'Значение', $string);
                 }
             }
 
-            foreach ($cart->userAdds->values as $value) {
+            foreach ($cart->infos as $value) {
                 $req = $reqs->appendChild($xml->createElement('ЗначениеРеквизита'));
                 addToXml($xml, $req, 'Наименование', $value->field->name);
                 addToXml($xml, $req, 'Значение', $value->value);
