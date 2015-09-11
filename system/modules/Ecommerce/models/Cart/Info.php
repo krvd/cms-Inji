@@ -34,10 +34,6 @@ class Info extends \Model {
         ]
     ];
 
-    function afterSave() {
-        $this->cart->calc();
-    }
-
     static function relations() {
         return [
             'cart' => [
