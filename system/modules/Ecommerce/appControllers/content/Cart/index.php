@@ -14,6 +14,7 @@
             if (!$cartPayType) {
                 $cartPayType = $payTypes[key($payTypes)];
             }
+
             $form = new Ui\Form;
             $form->action = "/ecommerce/cart";
             $form->begin();
@@ -24,59 +25,23 @@
                         <?php if (!Users\User::$cur->id) { ?>
                             <fieldset id="account">
                                 <h4>Аккаунт</h4>
-                                <?php
-                                $form->input('email', 'user_mail', 'E-Mail', ['value' => (!empty($_POST['user_mail'])) ? $_POST['user_mail'] : (($cart->email) ? $cart->email : '')]);
-                                ?>
+                                <?php $this->widget('Ecommerce\cart/fastLogin', ['form' => $form]); ?>
                             </fieldset>
-                        <?php } elseif (Ecommerce\Card::getList()) { ?>
+                        <?php } ?>
+                        <?php if (Ecommerce\Card::getList()) { ?>
                             <fieldset id="discount">
                                 <h4>Дисконтная карта</h4>
-                                <?php
-                                $userCards = \Ecommerce\Card\Item::getList(['where' => ['user_id', \Users\User::$cur->id]]);
-                                $first = true;
-                                foreach ($userCards as $userCard) {
-                                    $checked = $first;
-                                    $first = false;
-                                    $form->input('radio', "discounts[card_item_id]", $userCard->card->name, ['value' => $userCard->id, 'checked' => $checked, 'helpText' => $userCard->level->name . ' (' . $userCard->level->discount->name . ')<br />Сумма накоплений: ' . $userCard->sum . ' руб.']);
-                                }
-                                $cardItem = $userCard;
-                                ?>
+                                <?php $this->widget('Ecommerce\cart/cardSelect', ['form' => $form, 'cart' => $cart]); ?>
                             </fieldset>
                         <?php } ?>
                         <fieldset id="address">
                             <h4>Информация для доставки</h4>
-                            <?php
-                            if (\Users\User::$cur->id) {
-                                $userAdds = Ecommerce\UserAdds::getList(['where' => ['user_id', \Users\User::$cur->id]]);
-                                $values = [];
-                                foreach ($userAdds as $userAdd) {
-                                    $values[$userAdd->id] = $userAdd->values(['array' => true]);
-                                }
-                                if ($userAdds) {
-                                    $form->input('select', 'userAddsId', 'Ваши адреса', ['values' => ['' => 'Выберите'] + Ecommerce\UserAdds::getList(['where' => ['user_id', \Users\User::$cur->id], 'forSelect' => true])]);
-                                }
-                                ?>
-                                <script>
-                                    var userAddsValues = <?= json_encode($values); ?>;
-                                    inji.onLoad(function () {
-                                        $('[name="userAddsId"]').change(function () {
-                                            var values = userAddsValues[$(this).val()];
-                                            for (key in values) {
-                                                var value = values[key];
-                                                $('[name="userAdds[fields][' + value.useradds_value_useradds_field_id + ']"]').val(value.useradds_value_value);
-                                            }
-                                        });
-                                    })
-                                </script>
-                                <?php
-                            }
-                            foreach (Ecommerce\UserAdds\Field::getList() as $field) {
-                                $form->input($field->type, "userAdds[fields][{$field->id}]", $field->name, ['required' => $field->required]);
-                            }
-                            ?>
+                            <?php $this->widget('Ecommerce\cart/fields', ['form' => $form]); ?>
                         </fieldset>
                         <?php
                         $packchecked = '';
+                        $packItem = false;
+                        $packSum = 0;
                         if ($packItem) {
                             $packchecked = ((!empty($_POST) && empty($_POST['packs']))) ? '' : 'checked';
                             ?>
@@ -150,7 +115,7 @@
                                         <td colspan="2">Название товара</td>
                                         <td>Количество</td>
                                         <td>Цена</td>
-                                        <?= $cardItem ? '<td>Скидка</td>' : ''; ?>
+                                        <?= $cart->card ? '<td>Скидка</td>' : ''; ?>
                                         <td>Итого</td>
                                         <td style="width:1%"></td>
                                     </tr>
@@ -160,7 +125,7 @@
                                     $discountSum = 0;
                                     foreach ($cart->cartItems as $cartItem) {
                                         $path = $cartItem->item->image ? $cartItem->item->image->path : '/static/system/images/no-image.png';
-                                        $discount = $cardItem ? $cartItem->price->price * $cartItem->count * $cardItem->level->discount->amount : 0;
+                                        $discount = $cartItem->price->offer->item->type->discount && $cart->card ? $cartItem->price->price * $cartItem->count * $cart->card->level->discount->amount : 0;
                                         $discountSum += $discount;
                                         $itemName = $cartItem->item->name();
                                         ?>
@@ -208,8 +173,8 @@
 
                                             </td>
                                             <td class="text-right price"><?= number_format($cartItem->price->price, 2, '.', '&nbsp;'); ?>&nbsp;руб.</td>
-                                            <?php if ($cardItem) { ?>
-                                                <td class="text-right discount"><?= number_format($discount = $cardItem ? $cartItem->price->price * $cartItem->count * $cardItem->level->discount->amount : 0, 2, '.', '&nbsp;'); ?>&nbsp;руб.</td>
+                                            <?php if ($cart->card) { ?>
+                                                <td class="text-right discount"><?= number_format($discount, 2, '.', '&nbsp;'); ?>&nbsp;руб.</td>
                                             <?php } ?>
                                             <td class="text-right total"><?= number_format($cartItem->price->price * $cartItem->count - $discount, 2, '.', '&nbsp;'); ?>&nbsp;руб.</td>
                                             <td class="text-right actions">
@@ -226,7 +191,7 @@
                                 </tbody>
                                 <tfoot>
                                     <?php
-                                    $colspan = $cardItem ? 5 : 4;
+                                    $colspan = $cart->card ? 5 : 4;
                                     ?>
                                     <tr class="order_page-sum">
                                         <td colspan="<?= $colspan; ?>" class="text-right">Сумма:</td>
@@ -251,15 +216,15 @@
                                         <?php
                                     }
                                     ?>
-                                    <?php if ($cardItem) { ?>
+                                    <?php if ($cart->card) { ?>
                                         <tr class="order_page-discountSum">
                                             <td colspan="<?= $colspan; ?>" class="text-right">Скидка:</td>
-                                            <td colspan="2" class="text-right"><?= number_format($discount, 2, '.', ' '); ?>&nbsp;руб.</td>
+                                            <td colspan="2" class="text-right"><?= number_format($discountSum, 2, '.', ' '); ?>&nbsp;руб.</td>
                                         </tr>
                                     <?php } ?>
                                     <tr class="order_page-total">
                                         <td colspan="<?= $colspan; ?>" class="text-right">Итого:</td>
-                                        <td colspan="2" class="text-right"><?= number_format($cart->sum + $deliveryPrice + $packSum - $discount, 2, '.', ' '); ?>&nbsp;руб.</td>
+                                        <td colspan="2" class="text-right"><?= number_format($cart->sum + $deliveryPrice + $packSum - $discountSum, 2, '.', ' '); ?>&nbsp;руб.</td>
                                     </tr>
                                 </tfoot>
                             </table>

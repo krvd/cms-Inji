@@ -23,7 +23,7 @@ class ecommerceController extends Controller {
             }
 
             if (!Users\User::$cur->id) {
-                $user_id = $this->Users->registration($_POST);
+                $user_id = $this->Users->registration($_POST, true);
                 if (!$user_id) {
                     $error = true;
                 } else {
@@ -46,20 +46,6 @@ class ecommerceController extends Controller {
                 }
             }
             if (!$error) {
-                $userAdds = new Ecommerce\UserAdds();
-                $userAdds->user_id = $user->id;
-                $userAdds->save();
-                foreach ($fields as $field) {
-                    if (!empty($_POST['userAdds']['fields'][$field->id])) {
-                        $userAdds->name .= htmlspecialchars($_POST['userAdds']['fields'][$field->id]) . ' ';
-                    }
-                    $userAddsValue = new Ecommerce\UserAdds\Value();
-                    $userAddsValue->value = htmlspecialchars($_POST['userAdds']['fields'][$field->id]);
-                    $userAddsValue->useradds_field_id = $field->id;
-                    $userAddsValue->useradds_id = $userAdds->id;
-                    $userAddsValue->save();
-                }
-                $userAdds->save();
                 $cart = new \Ecommerce\Cart();
                 $cart->user_id = $user->user_id;
                 $cart->useradds_id = $userAdds;
@@ -67,7 +53,13 @@ class ecommerceController extends Controller {
                 $cart->comment = htmlspecialchars($_POST['comment']);
                 $cart->date_status = date('Y-m-d H:i:s');
                 $cart->complete_data = date('Y-m-d H:i:s');
+                if (!empty($_SESSION['cart']['cart_id'])) {
+                    $curCart = Ecommerce\Cart::get($_SESSION['cart']['cart_id']);
+                    $cart->card_item_id = $cardItem->id;
+                }
                 $cart->save();
+
+                $this->module->parseFields($_POST['userAdds']['fields'], $cart);
 
                 $cardItem = new \Ecommerce\Card\Item();
                 $cardItem->card_id = $card->id;
@@ -81,8 +73,7 @@ class ecommerceController extends Controller {
                 $extra->cart_id = $cart->id;
                 $extra->info = 'card:' . $card->id . '|cardItem:' . $cardItem->id;
                 $extra->save();
-
-                //Tools::redirect('/ecommerce/cart/success');
+                Tools::redirect('/ecommerce/cart/success');
             }
         }
         $this->view->page(['data' => compact('bread')]);
