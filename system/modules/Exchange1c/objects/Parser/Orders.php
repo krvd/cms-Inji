@@ -65,8 +65,8 @@ class Orders extends \Object {
             if ($cart->warehouse_block && !$payed && !$cancel && !empty($reqs['Проведен']) && $reqs['Проведен'] == 'true') {
                 $cart->warehouse_block = 0;
                 foreach ($cart->cartItems as $cci) {
-                    if ($cci->item) {
-                        $cci->item->changeWarehouse('-' . (float) $cci->count);
+                    if ($cci->price && $cci->price->offer) {
+                        $cci->price->offer->changeWarehouse('-' . (float) $cci->count);
                     }
                 }
             }
