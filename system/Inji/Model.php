@@ -879,6 +879,14 @@ class Model {
         return false;
     }
 
+    function deleteList($where) {
+        if ($where) {
+            static::fixPrefix($where, 'key');
+            App::$cur->db->where($where);
+        }
+        App::$cur->db->delete(static::table());
+    }
+
     function afterDelete() {
         
     }
