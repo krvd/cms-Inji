@@ -54,6 +54,10 @@ class Ecommerce extends Module {
             $cart = new Ecommerce\Cart();
             $cart->cart_status_id = 1;
             $cart->user_id = Users\User::$cur->id;
+            $userCard = \Ecommerce\Card\Item::get(\Users\User::$cur->id, 'user_id');
+            if ($userCard) {
+                $cart->card_item_id = $userCard->id;
+            }
             $cart->save();
             $_SESSION['cart']['cart_id'] = $cart->id;
         }

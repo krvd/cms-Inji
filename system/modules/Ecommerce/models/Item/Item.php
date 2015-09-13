@@ -62,41 +62,6 @@ class Item extends \Model {
             ]
     ]];
 
-    static function itemsListOld() {
-        /**
-          SELECT *,COALESCE(sum(ciw_count),0) AS warehouse,(
-
-          SELECT COALESCE(sum(ewb_count) ,0) as `sum`
-          FROM `rodnik`.`inji_ecommerce_warehouses_block`
-          inner JOIN `inji_category_carts`
-          ON cc_id = ewb_cc_id AND ( (`cc_warehouse_block` = 1 and `cc_status` in(2,3,6)) || (`cc_status` in(0,1) and `cc_date_last_activ` >=subdate(now(),INTERVAL 30 MINUTE)) )
-          WHERE `ewb_id` = ici.id
-
-          ) as `blocked`
-          FROM inji_category_items ici
-          LEFT JOIN `inji_category_item_warehouses` ON `ciw_id` = ici.id
-          GROUP BY ici.id
-         */
-        \App::$cur->db->cols = '*,COALESCE(sum(ciw_count),0) AS warehouse,(
-
-SELECT COALESCE(sum(ewb_count) ,0) as `sum` 
-  FROM `inji_ecommerce_warehouses_block` 
-  inner JOIN `inji_category_carts` 
-  ON cc_id = ewb_cc_id AND ( (`cc_warehouse_block` = 1 and `cc_status` in(2,3,6)) || (`cc_status` in(0,1) and `cc_date_last_activ` >=subdate(now(),INTERVAL 30 MINUTE)) ) 
-  WHERE `ewb_id` = id
-  
-  ) as `blocked`, cip_value';
-        \App::$cur->db->join('category_item_warehouses', '`ciw_id` = id');
-        \App::$cur->db->join('category_items_params', '`cip_id` = id and cip_cio_id = 1');
-        \App::$cur->db->group('id');
-        \App::$cur->db->order('name');
-        $items = Item::get_list();
-        foreach ($items as $key => $item) {
-            $item->combined = ($item->cip_value ? $item->cip_value : $item->name) . ' (' . ($item->warehouse - $item->blocked) . ' на складе)';
-        }
-        return $items;
-    }
-
     function beforeSave() {
         if ($this->id) {
             $this->search_index = $this->name . ' ';
@@ -117,14 +82,6 @@ SELECT COALESCE(sum(ewb_count) ,0) as `sum`
                     }
                 }
         }
-    }
-
-    function changeWarehouse($count) {
-        /* $warehouse = ItemWarehouses::get([['count', '0', '>'], ['id', $this->id]]);
-          if ($warehouse) {
-          $warehouse->ciw_count +=(float) $count;
-          $warehouse->save();
-          } */
     }
 
     static function relations() {
@@ -170,6 +127,16 @@ SELECT COALESCE(sum(ewb_count) ,0) as `sum`
             }
         }
         return $curPrice;
+    }
+
+    function name() {
+        if (!empty(\App::$primary->ecommerce->config['item_option_as_name'])) {
+            $param = Item\Param::get([['item_id', $this->id], ['item_option_id', \App::$primary->ecommerce->config['item_option_as_name']]]);
+            if ($param && $param->value) {
+                return $param->value;
+            }
+        }
+        return $this->name;
     }
 
 }

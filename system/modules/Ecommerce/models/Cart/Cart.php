@@ -197,43 +197,23 @@ class Cart extends \Model {
     }
 
     function calc($save = true) {
-        if (!$this->id)
+        if (!$this->id) {
             return;
-
-        $pricesum = 0;
-        $cur = new \DateTime();
-        $blocks = Warehouse\Block::getList(['where' => ['cart_id', $this->id]]);
-        foreach ($blocks as $block) {
-            $block->delete();
         }
+
+        $this->sum = 0;
         $cart = Cart::get($this->id);
         foreach ($cart->cartItems as $cartItem) {
             if (!$cartItem->price) {
                 continue;
             }
-            $pricesum += (float) $cartItem->price->price * (float) $cartItem->count;
-            if (in_array($this->cart_status_id, [0, 1, 2, 3, 6])) {
-                if (in_array($this->cart_status_id, [0, 1])) {
-                    $lastActive = new \DateTime($this->date_last_activ);
-                    $interval = $cur->diff($lastActive);
-                    if ($interval->days || $interval->h || $interval->i >= 30) {
-                        continue;
-                    }
-                }
-
-                $block = new Warehouse\Block();
-                $block->item_offer_id = $cartItem->price->item_offer_id;
-                $block->cart_id = $this->id;
-                $block->count = $cartItem->count;
-                $block->save();
-            }
+            $this->sum += (float) ($cartItem->price->price - $cartItem->discount()) * (float) $cartItem->count;
         }
         foreach ($cart->extras as $extra) {
-            $pricesum += $extra->price * $extra->count;
+            $this->sum += $extra->price * $extra->count;
         }
-        $cart->sum = $pricesum;
         if ($save) {
-            $cart->save();
+            $this->save();
         }
     }
 
@@ -245,13 +225,27 @@ class Cart extends \Model {
                 return;
             }
             if ($cur->cart_status_id != $this->cart_status_id) {
-                //$this->date_status = date('Y-m-d H:i:s');
+                $this->date_status = date('Y-m-d H:i:s');
+                if ($this->cart_status_id == 5 && $cur->cart_status_id == 3) {
+                    if ($this->card) {
+                        $sum = 0;
+                        foreach ($this->cartItems as $cartItem) {
+                            $sum += ($cartItem->price->price - $cartItem->discont()) * $cartItem->count;
+                        }
+                        $cardItemHistory = new Card\Item\History();
+                        $cardItemHistory->amount = $sum;
+                        $cardItemHistory->card_item_id = $this->card_item_id;
+                        $cardItemHistory->save();
+                        $this->card->sum += $sum;
+                        $this->card->save();
+                    }
+                }
                 $event = new Cart\Event(['cart_id' => $this->id, 'user_id' => \Users\User::$cur->id, 'cart_event_type_id' => 5, 'info' => $this->cart_status_id]);
                 $event->save();
             }
             //$events = $cur->events(['order' => [['id', 'desc']], 'limit' => 1, 'key' => false]);
             //if ($events) {
-                //$event = $events[0];
+            //$event = $events[0];
             //}
         }
         // if ($event)

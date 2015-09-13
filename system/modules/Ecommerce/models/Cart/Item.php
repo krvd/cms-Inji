@@ -29,13 +29,52 @@ class Item extends \Model {
     }
 
     function afterSave() {
-        $this->cart->calc();
+        $block = \Ecommerce\Warehouse\Block::get([['cart_id', $this->cart->id], ['item_offer_id', $this->price->item_offer_id]]);
+        if (in_array($this->cart_status_id, [0, 1, 2, 3, 6])) {
+            if (in_array($this->cart_status_id, [0, 1])) {
+                $cur = new \DateTime();
+                $lastActive = new \DateTime($this->date_last_activ);
+                $interval = $cur->diff($lastActive);
+                if ($interval->days || $interval->h || $interval->i >= 30) {
+                    if ($block) {
+                        $block->delete();
+                    }
+                    $this->cart->save();
+                    return;
+                }
+            }
+            $block = \Ecommerce\Warehouse\Block::get([['cart_id', $this->cart_id], ['item_offer_id', $this->price->item_offer_id]]);
+            if ($block) {
+                $block->count = $this->count;
+                $block->save();
+            } else {
+                $block = new \Ecommerce\Warehouse\Block();
+                $block->item_offer_id = $this->price->item_offer_id;
+                $block->cart_id = $this->cart_id;
+                $block->count = $this->count;
+                $block->save();
+            }
+        } elseif ($block) {
+            $block->delete();
+        }
+        $this->cart->save();
     }
 
     function afterDelete() {
         $event = new Event(['cart_id' => $this->cart_id, 'user_id' => \Users\User::$cur->id, 'cart_event_type_id' => 2, 'info' => $this->item_offer_price_id]);
         $event->save();
-        $this->cart->calc();
+        $block = \Ecommerce\Warehouse\Block::get([['cart_id', $this->cart->id], ['item_offer_id', $this->price->item_offer_id]]);
+        if ($block) {
+            $block->delete();
+        }
+        $this->cart->save();
+    }
+
+    function discount() {
+        if ($this->cart->card && $this->price->offer->item->type && $this->price->offer->item->type->discount) {
+            return round($this->price->price * $this->cart->card->level->discount->amount, 2);
+        }
+        return 0;
     }
 
     static $labels = [

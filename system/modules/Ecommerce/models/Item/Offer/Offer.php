@@ -64,6 +64,20 @@ class Offer extends \Model {
         ];
     }
 
+    function changeWarehouse($count) {
+        $warehouse = Offer\Warehouse::get([['count', '0', '>'], ['item_offer_id', $this->id]]);
+        if ($warehouse) {
+            $warehouse->count +=(float) $count;
+            $warehouse->save();
+        } else {
+            $warehouse = Offer\Warehouse::get([['item_offer_id', $this->id]]);
+            if ($warehouse) {
+                $warehouse->count +=(float) $count;
+                $warehouse->save();
+            }
+        }
+    }
+
     function warehouseCount($cart_id = 0) {
         \App::$cur->db->where(\Ecommerce\Item\Offer\Warehouse::colPrefix() . \Ecommerce\Item\Offer::index(), $this->id);
         \App::$cur->db->cols = 'COALESCE(sum(' . \Ecommerce\Item\Offer\Warehouse::colPrefix() . 'count),0) as `sum` ';
