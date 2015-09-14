@@ -12,7 +12,7 @@ class Materials extends Module {
         if (!empty($conf['files']['modules']['Materials'])) {
 
             foreach ($conf['files']['modules']['Materials'] as $file) {
-                if ($file['type'] == 'Material') {
+                if (!empty($file['type']) && $file['type'] == 'Material') {
                     $return[$file['file']] = $file['name'];
                 }
             }
