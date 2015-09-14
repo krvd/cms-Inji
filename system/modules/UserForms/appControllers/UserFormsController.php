@@ -34,7 +34,7 @@ class UserFormsController extends Controller {
             }
         }
         ?>
-        <button class = 'btn btn-danger btn-block'>Отправить</button>
+        <button class = 'btn btn-success btn-block'>Отправить</button>
         </form>
         <?php
     }
