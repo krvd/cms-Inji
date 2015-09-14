@@ -35,7 +35,7 @@
     ?>
 </select>
 <?php
-if($false)
+if(false)
 foreach ($widgets as $widget) {
     if ($widget->widget_params) {
         $params = json_decode($widget->widget_params, true);
