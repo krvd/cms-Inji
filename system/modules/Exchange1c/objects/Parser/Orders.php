@@ -80,7 +80,7 @@ class Orders extends \Object {
         $cItems = [];
         foreach ($items as $item) {
             $cItem = [];
-            $id = \Migrations\Id::get([['parse_id', $item->Ид], ['type', 'item']]);
+            $id = \Migrations\Id::get([['parse_id', $item->Ид], ['type', 'Ecommerce\Item']]);
             if (!$id) {
                 continue;
             }

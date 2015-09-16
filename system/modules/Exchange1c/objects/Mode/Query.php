@@ -54,7 +54,7 @@ class Query extends \Exchange1c\Mode {
             foreach ($items as $cartitem) {
                 $goods = $goodss->appendChild($xml->createElement('Товар'));
 
-                $id1c = \Migrations\Id::get([['object_id', $cartitem->price->offer->item_id], ['type', 'item']]);
+                $id1c = \Migrations\Id::get([['object_id', $cartitem->price->offer->item_id], ['type', 'Ecommerce\Item']]);
                 if ($id1c) {
                     addToXml($xml, $goods, 'Ид', $id1c->parse_id);
                 }
