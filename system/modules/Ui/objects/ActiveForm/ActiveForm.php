@@ -126,8 +126,7 @@ class ActiveForm extends \Object {
                             $rel = substr($preset['userCol'], 0, strpos($preset['userCol'], ':'));
                             $param = substr($preset['userCol'], strpos($preset['userCol'], ':') + 1);
                             $this->model->$col = \Users\User::$cur->$rel->$param;
-                        }
-                        else {
+                        } else {
                             $this->model->$col = \Users\User::$cur->{$preset['userCol']};
                         }
                     }
@@ -234,7 +233,14 @@ class ActiveForm extends \Object {
                 $relation = $modelName::getRelation($inputParams['relation']);
                 $selectParams = !empty($params['dataManagerParams']) ? $params['dataManagerParams'] : [];
                 $filters = $relation['model']::managerFilters();
-                $items = $relation['model']::getList(['where' => !empty($filters['getRows']['where']) ? $filters['getRows']['where'] : '']);
+                $options = [];
+                if (!empty($filters['getRows']['where'])) {
+                    $options['where'] = $filters['getRows']['where'];
+                }
+                if (!empty($relation['order'])) {
+                    $options['order'] = $relation['order'];
+                }
+                $items = $relation['model']::getList($options);
 
                 $values = [0 => 'Не задано'];
                 foreach ($items as $key => $item) {
