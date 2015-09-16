@@ -49,10 +49,12 @@ class Orders extends \Object {
                 $payed = true;
                 $date = new \DateTime((string) $reqs['Дата оплаты по 1С']);
                 $cart->payed_date = $date->format('Y-m-d H:i:s');
-            } elseif (!empty($reqs['Дата оплаты по 1С']) && $reqs['Дата оплаты по 1С'] == 'T') {
+            } elseif (
+                    (!empty($req['Отменен']) && $req['Отменен'] == 'true') ||
+                    (!empty($reqs['Дата оплаты по 1С']) && $reqs['Дата оплаты по 1С'] == 'T')) {
                 $cancel = true;
             }
-            
+
             $this->updateCartItems($cart, $order->Товары->Товар);
             if ($payed && $cart->cart_status_id == 5) {
                 
