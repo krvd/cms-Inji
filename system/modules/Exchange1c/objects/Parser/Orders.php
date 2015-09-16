@@ -50,7 +50,7 @@ class Orders extends \Object {
                 $date = new \DateTime((string) $reqs['Дата оплаты по 1С']);
                 $cart->payed_date = $date->format('Y-m-d H:i:s');
             } elseif (
-                    (!empty($req['Отменен']) && $req['Отменен'] == 'true') ||
+                    (!empty($reqs['Отменен']) && $reqs['Отменен'] == 'true') ||
                     (!empty($reqs['Дата оплаты по 1С']) && $reqs['Дата оплаты по 1С'] == 'T')) {
                 $cancel = true;
             }
@@ -72,7 +72,7 @@ class Orders extends \Object {
                     }
                 }
             }
-            $cart->cc_exported = 1;
+            //$cart->cc_exported = 1;
             $cart->save();
         }
     }
