@@ -33,7 +33,7 @@ class Ecommerce extends Module {
                 $userAddsValue->save();
             }
         }
-
+        $user = \Users\User::get($cart->user_id);
         foreach ($fields as $field) {
             $info = new \Ecommerce\Cart\Info();
             $info->name = $field->name;
@@ -41,6 +41,20 @@ class Ecommerce extends Module {
             $info->useradds_field_id = $field->id;
             $info->cart_id = $cart->id;
             $info->save();
+            $relations = [];
+            if ($field->userfield) {
+                if (strpos($field->userfield, ':')) {
+                    $path = explode(':', $field->userfield);
+                    $user->{$path[0]}->{$path[1]} = $info->value;
+                    $relations[$path[0]] = $path[0];
+                } else {
+                    $user->{$field->userfield} = $info->value;
+                }
+            }
+            foreach ($relations as $rel) {
+                $user->$rel->save();
+            }
+            $user->save();
         }
         return $userAdds;
     }

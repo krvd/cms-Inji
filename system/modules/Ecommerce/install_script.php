@@ -191,6 +191,7 @@ return function ($step = NULL, $params = array()) {
         //Основные параметры
         'useradds_field_name' => 'varchar(255) NOT NULL',
         'useradds_field_type' => 'varchar(255) NOT NULL',
+        'useradds_field_userfield' => 'varchar(255) NOT NULL',
         'useradds_field_required' => 'TINYINT(1) UNSIGNED NOT NULL',
         'useradds_field_save' => 'TINYINT(1) UNSIGNED NOT NULL',
         //Системные
