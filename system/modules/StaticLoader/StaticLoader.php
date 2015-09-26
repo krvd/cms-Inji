@@ -79,12 +79,15 @@ class StaticLoader extends Module
 
     function giveFile($file)
     {
-        $file = preg_match('![а-Я]!', $file) ? mb_convert_encoding($file, 'Windows-1251', 'UTF-8') : $file;
+        $convet = FALSE;
+        if (!file_exists($file) && file_exists(mb_convert_encoding($file, 'Windows-1251', 'UTF-8'))) {
+            $file = mb_convert_encoding($file, 'Windows-1251', 'UTF-8');
+            $convet = true;
+        }
         if (!file_exists($file)) {
             header('HTTP/1.1 404 Not Found');
             exit();
         }
-
 
         $fileinfo = pathinfo($file);
         if (empty($fileinfo['extension'])) {

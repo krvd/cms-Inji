@@ -26,7 +26,7 @@ class Cache
     {
         if (!self::$connectTrying && class_exists('Memcache', false)) {
             self::$server = new Memcache();
-            self::$connected = @self::$server->connect('192.168.0.88', 11211);
+            self::$connected = @self::$server->connect('localhost', 11211);
         }
         self::$connectTrying = true;
     }
@@ -64,6 +64,31 @@ class Cache
             return @self::$server->set($name . serialize($params), $val, false, $lifeTime);
         }
         return false;
+    }
+
+    static function file($file, $options = [])
+    {
+        $dir = App::$primary->path;
+        $sizes = !empty($options['resize']) ? $options['resize'] : [];
+        $crop = !empty($options['crop']) ? $options['crop'] : '';
+        $pos = !empty($options['cropPosition']) ? $options['cropPosition'] : 'center';
+
+        $fileinfo = pathinfo($file);
+        $dirnoslash = md5($fileinfo['dirname']);
+        $path = 'cache/' . App::$primary->name . '/' . $dirnoslash . '_' . $fileinfo['filename'];
+        if ($sizes) {
+            $path .= '.' . $sizes['x'] . 'x' . $sizes['y'] . $crop . $pos;
+        }
+        $path .= '.' . $fileinfo['extension'];
+        if (!file_exists($path)) {
+            Tools::createDir('cache/' . App::$primary->name . '/');
+            copy($file, $path);
+            if ($sizes) {
+                Tools::resizeImage($path, $sizes['x'], $sizes['y'], $crop, $pos);
+            }
+        }
+
+        return $path;
     }
 
 }

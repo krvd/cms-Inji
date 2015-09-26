@@ -88,12 +88,17 @@ class ecommerceController extends Controller
 
     function autoCompleteAction()
     {
-        $items = \Ecommerce\Item::getList(['cols' => ['name', 'search_index']]);
-        $return = [];
-        foreach ($items as $item) {
-            $return[] = ['name' => $item->name(), 'search' => $item->search_index];
+        $return = Cache::get('itemsAutocomplete');
+        if (!$return) {
+            $items = \Ecommerce\Item::getList(['cols' => ['name', 'search_index']]);
+            $return = [];
+            foreach ($items as $item) {
+                $return[] = ['name' => $item->name(), 'search' => $item->search_index];
+            }
+            $return = json_encode($return);
+            Cache::set('itemsAutocomplete', [], $return);
         }
-        echo json_encode($return);
+        echo $return;
     }
 
     function indexAction($catalog_id = 0)
