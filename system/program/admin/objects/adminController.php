@@ -16,14 +16,16 @@
  *
  * @author inji
  */
-class adminController extends Controller {
-
-    function indexAction() {
+class adminController extends Controller
+{
+    function indexAction()
+    {
         $args = func_get_args();
         call_user_func_array([$this, 'dataManagerAction'], $args);
     }
 
-    function dataManagerAction($model = '', $dataManager = 'manager') {
+    function dataManagerAction($model = '', $dataManager = 'manager')
+    {
         if (!$model) {
             $modulePath = Module::getModulePath($this->module->moduleName);
             $path = $modulePath . '/models';
@@ -45,7 +47,8 @@ class adminController extends Controller {
         $this->view->page(['module' => 'Ui', 'content' => 'dataManager/manager', 'data' => compact('dataManager')]);
     }
 
-    function viewAction($model, $pk) {
+    function viewAction($model, $pk)
+    {
         $fullModelName = $this->module->moduleName . '\\' . ucfirst($model);
         $item = $fullModelName::get($pk);
         $this->view->setTitle($item->name());

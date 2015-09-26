@@ -13,8 +13,8 @@
 
 namespace View;
 
-class Template extends \Object {
-
+class Template extends \Object
+{
     /**
      * App for template
      * 
@@ -90,7 +90,8 @@ class Template extends \Object {
      * 
      * @param array $params
      */
-    function __construct($params = []) {
+    function __construct($params = [])
+    {
         $this->setParams($params);
         if (!$this->path) {
             $this->path = $this->app->view->templatesPath . '/' . $this->name;
@@ -106,7 +107,8 @@ class Template extends \Object {
      * 
      * @param string $configPath
      */
-    function loadConfig($configPath = '') {
+    function loadConfig($configPath = '')
+    {
         if (!$configPath) {
             $configPath = $this->path . '/config.php';
         }
@@ -119,7 +121,8 @@ class Template extends \Object {
      * 
      * @param array $params
      */
-    function setParams($params) {
+    function setParams($params)
+    {
         foreach ($params as $param => $value) {
             $this->$param = $value;
         }
@@ -130,7 +133,8 @@ class Template extends \Object {
      * 
      * @param string $page
      */
-    function setPage($page = '') {
+    function setPage($page = '')
+    {
         if (!$page) {
             $page = !empty($this->config['defaultPage']) ? $this->config['defaultPage'] : $this->page;
         }
@@ -147,7 +151,8 @@ class Template extends \Object {
      * @param type $page
      * @return type
      */
-    function getPagePaths($page = '') {
+    function getPagePaths($page = '')
+    {
         if (!$page) {
             $page = $this->page;
         }
@@ -162,7 +167,8 @@ class Template extends \Object {
      * 
      * @param \Module $module
      */
-    function setModule($module = null) {
+    function setModule($module = null)
+    {
         if (!$module && !$this->module) {
             $this->module = \Module::$cur;
         } else {
@@ -178,7 +184,8 @@ class Template extends \Object {
      * 
      * @param string $content
      */
-    function setContent($content = '') {
+    function setContent($content = '')
+    {
         if ($content) {
             $this->content = $content;
         }
@@ -197,7 +204,8 @@ class Template extends \Object {
      * @param string $content
      * @return string
      */
-    function getContentPaths($content = '') {
+    function getContentPaths($content = '')
+    {
         if (!$content) {
             $content = $this->content;
         }
@@ -242,7 +250,8 @@ class Template extends \Object {
      * @param \App $app
      * @return \View\Template
      */
-    static function get($templateName, $app = null, $templatesPath = '') {
+    static function get($templateName, $app = null, $templatesPath = '')
+    {
         if (!$app) {
             $app = \App::$cur;
         }

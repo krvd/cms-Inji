@@ -13,8 +13,8 @@
 
 namespace Ecommerce;
 
-class UserAdds extends \Model {
-
+class UserAdds extends \Model
+{
     static $labels = [
         'values' => 'Информация'
     ];
@@ -22,7 +22,8 @@ class UserAdds extends \Model {
         'values' => ['type' => 'select', 'source' => 'relation', 'relation' => 'values'],
     ];
 
-    static function relations() {
+    static function relations()
+    {
         return [
             'values' => [
                 'type' => 'many',

@@ -1,4 +1,5 @@
 <?php
+
 $form = new Ui\Form();
 $form->begin();
 $form->input('text', 'sitekey', 'sitekey', ['value' => $config['sitekey']]);

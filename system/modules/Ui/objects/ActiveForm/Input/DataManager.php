@@ -11,9 +11,10 @@
 
 namespace Ui\ActiveForm\Input;
 
-class DataManager extends \Ui\ActiveForm\Input {
-
-    function draw() {
+class DataManager extends \Ui\ActiveForm\Input
+{
+    function draw()
+    {
         $inputOptions = [];
         $modelName = $this->modelName;
         $inputOptions['relation'] = $modelName::getRelation($this->colParams['relation']);

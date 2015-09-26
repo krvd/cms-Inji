@@ -1,7 +1,9 @@
 <?php
-class TextBlocks extends Module {
 
-    function init() {
+class TextBlocks extends Module
+{
+    function init()
+    {
         
     }
 

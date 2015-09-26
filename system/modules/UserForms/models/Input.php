@@ -8,8 +8,8 @@
 
 namespace UserForms;
 
-class Input extends \Model {
-
+class Input extends \Model
+{
     static $labels = [
         'label' => 'Название',
         'fit_id' => 'Тип',

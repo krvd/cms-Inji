@@ -2,8 +2,8 @@
 
 namespace Ecommerce;
 
-class Warehouse extends \Model {
-
+class Warehouse extends \Model
+{
     static $objectName = 'Склад';
     static $labels = [
         'name' => 'Название',

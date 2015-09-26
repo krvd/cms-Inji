@@ -8,9 +8,10 @@
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
-class MapController extends Controller {
-
-    function indexAction() {
+class MapController extends Controller
+{
+    function indexAction()
+    {
         $this->view->setTitle('Карты миграции данных');
 
         if (!empty($_POST['type'])) {

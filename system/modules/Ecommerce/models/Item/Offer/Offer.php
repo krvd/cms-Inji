@@ -13,8 +13,8 @@
 
 namespace Ecommerce\Item;
 
-class Offer extends \Model {
-
+class Offer extends \Model
+{
     static $objectName = 'Торговое предложение';
     static $cols = [
         'name' => ['type' => 'text'],
@@ -45,7 +45,8 @@ class Offer extends \Model {
         ]
     ];
 
-    static function relations() {
+    static function relations()
+    {
         return [
             'warehouses' => [
                 'type' => 'many',
@@ -64,7 +65,8 @@ class Offer extends \Model {
         ];
     }
 
-    function changeWarehouse($count) {
+    function changeWarehouse($count)
+    {
         $warehouse = Offer\Warehouse::get([['count', '0', '>'], ['item_offer_id', $this->id]]);
         if ($warehouse) {
             $warehouse->count +=(float) $count;
@@ -78,7 +80,8 @@ class Offer extends \Model {
         }
     }
 
-    function warehouseCount($cart_id = 0) {
+    function warehouseCount($cart_id = 0)
+    {
         \App::$cur->db->where(\Ecommerce\Item\Offer\Warehouse::colPrefix() . \Ecommerce\Item\Offer::index(), $this->id);
         \App::$cur->db->cols = 'COALESCE(sum(' . \Ecommerce\Item\Offer\Warehouse::colPrefix() . 'count),0) as `sum` ';
         $warehouse = \App::$cur->db->select(\Ecommerce\Item\Offer\Warehouse::table())->fetch();

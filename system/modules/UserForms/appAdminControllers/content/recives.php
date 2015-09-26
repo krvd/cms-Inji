@@ -1,4 +1,5 @@
 
-                <?php
-                $dataTable->view(['editUrl' => '/admin/forms/edit/']);
-                ?>
+<?php
+
+$dataTable->view(['editUrl' => '/admin/forms/edit/']);
+?>

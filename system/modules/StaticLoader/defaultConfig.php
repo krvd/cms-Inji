@@ -3,7 +3,7 @@
 return [
     'access' => [
         'accessTree' => [
-            '_access'=>[]
+            '_access' => []
         ]
     ],
     'mimes' => [

@@ -10,18 +10,18 @@ echo empty($options['noContainer']) ? '</div>' : '';
 ?>
 <script>
     inji.onLoad(function () {
-        $("[data-dateui='<?= $uid; ?>']").datetimepicker({
-            changeMonth: true,
-            changeYear: true,
-            numberOfMonths: 1,
-            dateFormat: 'yy-mm-dd',
-            yearRange: "c-70:c+10",
-            timeFormat:'HH:mm:ss',
-            beforeShow: function () {
-                setTimeout(function () {
-                    $('.ui-datepicker').css('z-index', 99999999999999);
-                }, 500);
-            }
-        });
+      $("[data-dateui='<?= $uid; ?>']").datetimepicker({
+        changeMonth: true,
+        changeYear: true,
+        numberOfMonths: 1,
+        dateFormat: 'yy-mm-dd',
+        yearRange: "c-70:c+10",
+        timeFormat: 'HH:mm:ss',
+        beforeShow: function () {
+          setTimeout(function () {
+            $('.ui-datepicker').css('z-index', 99999999999999);
+          }, 500);
+        }
+      });
     })
 </script>

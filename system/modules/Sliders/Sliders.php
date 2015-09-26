@@ -1,7 +1,9 @@
 <?php
-class Sliders extends Module {
 
-    function init() {
+class Sliders extends Module
+{
+    function init()
+    {
         
     }
 

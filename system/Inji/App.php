@@ -8,8 +8,8 @@
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
-class App {
-
+class App
+{
     /**
      * static instances
      */
@@ -38,7 +38,8 @@ class App {
      * 
      * @param array $preSet
      */
-    function __construct($preSet = []) {
+    function __construct($preSet = [])
+    {
         foreach ($preSet as $key => $value) {
             $this->{$key} = $value;
         }
@@ -50,7 +51,8 @@ class App {
      * @param string $className
      * @return object
      */
-    function getObject($className, $params = []) {
+    function getObject($className, $params = [])
+    {
         $paramsStr = serialize($params);
         $className = ucfirst($className);
         if (isset($this->_objects[$className][$paramsStr])) {
@@ -65,7 +67,8 @@ class App {
      * @param string $moduleName
      * @return mixed
      */
-    function findModuleClass($moduleName) {
+    function findModuleClass($moduleName)
+    {
         $paths = Module::getModulePaths($moduleName);
         foreach ($paths as $path) {
             if (file_exists($path . '/' . $moduleName . '.php')) {
@@ -90,7 +93,8 @@ class App {
         return false;
     }
 
-    function isLoaded($moduleName) {
+    function isLoaded($moduleName)
+    {
         return !empty($this->_objects[$moduleName]);
     }
 
@@ -100,7 +104,8 @@ class App {
      * @param string $className
      * @return mixed
      */
-    function loadObject($className, $params = []) {
+    function loadObject($className, $params = [])
+    {
         $paramsStr = serialize($params);
         $moduleClassName = $this->findModuleClass($className);
         if (!is_bool($moduleClassName) && $moduleClassName != $className) {
@@ -117,11 +122,13 @@ class App {
         return null;
     }
 
-    function __get($className) {
+    function __get($className)
+    {
         return $this->getObject($className);
     }
 
-    function __call($className, $params) {
+    function __call($className, $params)
+    {
         return $this->getObject($className, $params);
     }
 

@@ -11,11 +11,12 @@
 
 namespace Db\Mysql;
 
-class Result extends \Object {
-
+class Result extends \Object
+{
     public $pdoResult = null;
 
-    public function getArray($keyCol = '') {
+    public function getArray($keyCol = '')
+    {
         if (!$keyCol) {
             return $this->pdoResult->fetchAll(\PDO::FETCH_ASSOC);
         } else {
@@ -27,7 +28,8 @@ class Result extends \Object {
         }
     }
 
-    public function getObjects($class, $keyCol = '') {
+    public function getObjects($class, $keyCol = '')
+    {
 
         $array = [];
         while ($object = $this->pdoResult->fetchObject($class)) {
@@ -41,7 +43,8 @@ class Result extends \Object {
         return $array;
     }
 
-    function fetch($className = '') {
+    function fetch($className = '')
+    {
         if ($className) {
             return $this->pdoResult->fetchObject($className);
         } else {

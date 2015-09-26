@@ -13,14 +13,15 @@
 
 namespace Server;
 
-class Result extends \Object {
-
+class Result extends \Object
+{
     public $content = null;
     public $success = true;
     public $successMsg = '';
     public $scripts = [];
 
-    function send() {
+    function send()
+    {
         $return = [];
         $return['success'] = $this->success;
         if ($this->success) {
@@ -32,7 +33,7 @@ class Result extends \Object {
         if (!headers_sent()) {
             header('Content-type: application/json');
         }
-        $return['scripts']= \App::$cur->view->getScripts();
+        $return['scripts'] = \App::$cur->view->getScripts();
         echo json_encode($return);
         exit();
     }

@@ -2,11 +2,12 @@
 
 namespace Ecommerce;
 
-class Cart extends \Model {
-
+class Cart extends \Model
+{
     static $objectName = 'Корзины';
 
-    static function relations() {
+    static function relations()
+    {
         return [
             'user' => [
                 'model' => 'Users\User',
@@ -125,11 +126,13 @@ class Cart extends \Model {
         ],
     ];
 
-    function addPacks($count = 1) {
+    function addPacks($count = 1)
+    {
         $this->addItem(Inji::app()->ecommerce->modConf['packItem']['ci_id'], Inji::app()->ecommerce->modConf['packItem']['ciprice_id'], $count);
     }
 
-    function needDelivery() {
+    function needDelivery()
+    {
         foreach ($this->cartItems as $cartItem) {
             if (!$cartItem->item->type) {
                 continue;
@@ -141,7 +144,8 @@ class Cart extends \Model {
         return false;
     }
 
-    function deliverySum() {
+    function deliverySum()
+    {
 
         if ($this->needDelivery() && $this->delivery && $this->sum < $this->delivery->cd_max_cart_price) {
             return $this->delivery->cd_price;
@@ -149,19 +153,23 @@ class Cart extends \Model {
         return 0;
     }
 
-    function allSum() {
+    function allSum()
+    {
         return $this->sum + $this->deliverySum();
     }
 
-    function allSumBonus() {
+    function allSumBonus()
+    {
         return $this->sum + $this->deliverySum() - $this->bonus_used;
     }
 
-    function itemSum() {
+    function itemSum()
+    {
         return $this->sum;
     }
 
-    function addItem($item_id, $offer_price_id, $count = 1, $final_price = 0) {
+    function addItem($item_id, $offer_price_id, $count = 1, $final_price = 0)
+    {
         $item = Item::get((int) $item_id);
 
         if (!$item) {
@@ -192,7 +200,8 @@ class Cart extends \Model {
         return true;
     }
 
-    function calc($save = true) {
+    function calc($save = true)
+    {
         if (!$this->id) {
             return;
         }
@@ -213,7 +222,8 @@ class Cart extends \Model {
         }
     }
 
-    function beforeSave() {
+    function beforeSave()
+    {
         //$event = false;
         if ($this->id) {
             $cur = Cart::get($this->id);
@@ -249,7 +259,8 @@ class Cart extends \Model {
         $this->calc(false);
     }
 
-    function checkFormAccess($formName) {
+    function checkFormAccess($formName)
+    {
         if ($formName == 'manage' && !in_array(Inji::app()->users->cur->user_group_id, array(3, 4))) {
             return false;
         }

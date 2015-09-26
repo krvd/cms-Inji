@@ -13,8 +13,8 @@
 
 namespace Menu;
 
-class Menu extends \Model {
-
+class Menu extends \Model
+{
     static $objectName = 'Меню';
     static $labels = [
         'name' => 'Название',
@@ -56,7 +56,8 @@ class Menu extends \Model {
         ]
     ];
 
-    static function relations() {
+    static function relations()
+    {
         return [
             'items' => [
                 'type' => 'many',
@@ -66,7 +67,8 @@ class Menu extends \Model {
         ];
     }
 
-    static function index() {
+    static function index()
+    {
         return 'id';
     }
 

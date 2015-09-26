@@ -38,7 +38,7 @@ if (!empty($modelFullName)) {
         $values[] = [
             'label' => !empty($modelFullName::$labels[$colName]) ? $modelFullName::$labels[$colName] : '',
             'code' => $colName,
-            'type' => !empty($col['relation']) ? ['primary'=>'relation','aditional'=>$relations[$col['relation']]['model']] : $col['type']
+            'type' => !empty($col['relation']) ? ['primary' => 'relation', 'aditional' => $relations[$col['relation']]['model']] : $col['type']
         ];
     }
 }

@@ -12,13 +12,13 @@ if (\Users\User::$cur->id) {
     <script>
         var userAddsValues = <?= json_encode($values); ?>;
         inji.onLoad(function () {
-            $('[name="userAddsId"]').change(function () {
-                var values = userAddsValues[$(this).val()];
-                for (key in values) {
-                    var value = values[key];
-                    $('[name="userAdds[fields][' + value.useradds_value_useradds_field_id + ']"]').val(value.useradds_value_value);
-                }
-            });
+          $('[name="userAddsId"]').change(function () {
+            var values = userAddsValues[$(this).val()];
+            for (key in values) {
+              var value = values[key];
+              $('[name="userAdds[fields][' + value.useradds_value_useradds_field_id + ']"]').val(value.useradds_value_value);
+            }
+          });
         })
     </script>
     <?php

@@ -43,7 +43,7 @@
     <script>
         var metaI = <?= $i; ?>;
         function addMeta() {
-            $(".metatable").append("<tr>\n\
+          $(".metatable").append("<tr>\n\
     <td><input type ='text' name ='metatags[" + (++metaI) + "][name]' class ='form-control' /></td>\n\
 <td><input type ='text' name ='metatags[" + (metaI) + "][content]' class ='form-control' /></td>\n\
 <td><button type = 'button' class='btn btn-danger btn-sm delproove' onclick = '$(this).parent().parent().remove();'><i class='glyphicon glyphicon-remove'></i></button></td>\n\

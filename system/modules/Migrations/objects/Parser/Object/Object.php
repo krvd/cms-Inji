@@ -13,15 +13,16 @@
 
 namespace Migrations\Parser;
 
-class Object extends \Object {
-
+class Object extends \Object
+{
     public $object;
     public $parentObject;
     public $parentParam;
     public $reader;
     public $model;
 
-    function parse() {
+    function parse()
+    {
         if (!$this->model) {
             $this->setModel();
         }
@@ -46,7 +47,8 @@ class Object extends \Object {
         }
     }
 
-    function setModel() {
+    function setModel()
+    {
         $keyCol = null;
         $uniques = [];
 
@@ -127,7 +129,8 @@ class Object extends \Object {
         }
     }
 
-    function getParam($code) {
+    function getParam($code)
+    {
         $param = \Migrations\Migration\Object\Param::get([
                     ['object_id', $this->object->id],
                     ['code', $code]

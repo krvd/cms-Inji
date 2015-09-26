@@ -11,9 +11,10 @@
 
 namespace Ui\ActiveForm\Input;
 
-class Select extends \Ui\ActiveForm\Input {
-
-    function draw() {
+class Select extends \Ui\ActiveForm\Input
+{
+    function draw()
+    {
         $inputName = $this->colName();
         $inputLabel = $this->colLabel();
 

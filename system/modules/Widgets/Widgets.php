@@ -16,6 +16,7 @@
  *
  * @author inji
  */
-class Widgets extends \Module {
+class Widgets extends \Module
+{
     //put your code here
 }

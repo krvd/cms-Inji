@@ -13,9 +13,10 @@
 
 namespace Exchange1c\Mode;
 
-class Checkauth extends \Exchange1c\Mode {
-
-    function process() {
+class Checkauth extends \Exchange1c\Mode
+{
+    function process()
+    {
         $_SESSION['auth'] = true;
         \App::$cur->exchange1c->response('success', session_name() . "\n" . session_id(), false);
         $this->end();

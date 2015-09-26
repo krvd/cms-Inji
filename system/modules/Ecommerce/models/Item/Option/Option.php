@@ -2,8 +2,8 @@
 
 namespace Ecommerce\Item;
 
-class Option extends \Model {
-
+class Option extends \Model
+{
     static $objectName = 'Свойство';
     static $cols = [
         'name' => ['type' => 'text'],
@@ -49,7 +49,8 @@ class Option extends \Model {
         ]
     ];
 
-    static function relations() {
+    static function relations()
+    {
         return [
             'user' => [
                 'model' => 'Users\User',
@@ -63,7 +64,8 @@ class Option extends \Model {
         ];
     }
 
-    function beforeSave() {
+    function beforeSave()
+    {
         if (!isset($this->id)) {
             $this->user_id = \Users\User::$cur->id;
         }

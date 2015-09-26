@@ -10,9 +10,10 @@
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
-class MigrationsController extends adminController {
-
-    function manualAction() {
+class MigrationsController extends adminController
+{
+    function manualAction()
+    {
         if (!empty($_POST)) {
             $this->module->startMigration($_POST['migration'], $_POST['map'], $_FILES['file']['tmp_name']);
         }

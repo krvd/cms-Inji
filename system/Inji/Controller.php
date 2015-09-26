@@ -8,8 +8,8 @@
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
-class Controller {
-
+class Controller
+{
     static $cur = null;
     public $params = [];
     public $path = '';
@@ -20,7 +20,8 @@ class Controller {
     /**
      * Run controller
      */
-    function run() {
+    function run()
+    {
         if (!empty($this->params[0]) && method_exists($this, $this->params[0] . 'Action')) {
             $this->method = $this->params[0];
             $this->params = array_slice($this->params, 1);
@@ -36,14 +37,16 @@ class Controller {
     /**
      * Reference to short access core modules
      */
-    function __get($name) {
+    function __get($name)
+    {
         return App::$cur->__get($name);
     }
 
     /**
      * Reference to short access core modules
      */
-    function __call($name, $params) {
+    function __call($name, $params)
+    {
         return App::$cur->__call($name, $params);
     }
 
@@ -52,7 +55,8 @@ class Controller {
      * 
      * @return boolean
      */
-    function checkAccess() {
+    function checkAccess()
+    {
         return $this->module->app->access->checkAccess($this);
     }
 

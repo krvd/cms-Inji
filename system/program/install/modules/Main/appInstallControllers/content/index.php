@@ -1,5 +1,5 @@
 <?php
-$dataManager = new Ui\DataManager('Db\Options','manager');
+$dataManager = new Ui\DataManager('Db\Options', 'manager');
 $dataManager->draw();
 ?>
 <div class="pull-right">

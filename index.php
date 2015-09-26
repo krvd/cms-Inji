@@ -15,9 +15,9 @@ setlocale(LC_NUMERIC, 'C');
 // time start
 define('INJI_TIME_START', microtime(true));
 // system files dir
-define('INJI_SYSTEM_DIR', __DIR__.'/system');
+define('INJI_SYSTEM_DIR', __DIR__ . '/system');
 // sites files dir
-define('INJI_PROGRAM_DIR', __DIR__.'/program');
+define('INJI_PROGRAM_DIR', __DIR__ . '/program');
 
 // check base config
 if (!file_exists(INJI_SYSTEM_DIR) || !is_dir(INJI_SYSTEM_DIR)) {
@@ -29,11 +29,11 @@ if (!file_exists(INJI_PROGRAM_DIR) || !is_dir(INJI_PROGRAM_DIR)) {
 
 
 require_once( INJI_SYSTEM_DIR . '/init.php' );
-
 /**
  * System error messages
  */
-function INJI_SYSTEM_ERROR($msg, $fatal = false) {
+function INJI_SYSTEM_ERROR($msg, $fatal = false)
+{
     if ($fatal) {
         exit("<div style = 'text-align:center;font-size:20px;margin-top:25%;'>{$msg}</div>");
     } else {

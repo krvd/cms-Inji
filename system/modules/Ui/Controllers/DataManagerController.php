@@ -10,9 +10,10 @@
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
-class DataManagerController extends Controller {
-
-    function indexAction() {
+class DataManagerController extends Controller
+{
+    function indexAction()
+    {
         $result = new Server\Result();
         ob_start();
         if (strpos($_GET['item'], ':')) {
@@ -43,7 +44,8 @@ class DataManagerController extends Controller {
 
     //function 
 
-    function loadRowsAction() {
+    function loadRowsAction()
+    {
         $result = new Server\Result();
         $result->content = [];
         ob_start();
@@ -131,7 +133,8 @@ class DataManagerController extends Controller {
         $result->send();
     }
 
-    function loadCategorysAction() {
+    function loadCategorysAction()
+    {
         $result = new Server\Result();
         ob_start();
         if (strpos($_GET['modelName'], ':')) {
@@ -163,7 +166,8 @@ class DataManagerController extends Controller {
         $result->send();
     }
 
-    function delRowAction() {
+    function delRowAction()
+    {
 
         if (strpos($_GET['modelName'], ':')) {
             $raw = explode(':', $_GET['modelName']);
@@ -197,7 +201,8 @@ class DataManagerController extends Controller {
         $result->send();
     }
 
-    function groupActionAction() {
+    function groupActionAction()
+    {
 
 
         if (strpos($_GET['modelName'], ':')) {
@@ -264,7 +269,8 @@ class DataManagerController extends Controller {
         $result->send();
     }
 
-    function delCategoryAction() {
+    function delCategoryAction()
+    {
 
         $dataManager = new Ui\DataManager($_GET['modelName'], $_GET['managerName']);
         if ($dataManager->checkAccess() && !empty($dataManager->managerOptions['categorys'])) {

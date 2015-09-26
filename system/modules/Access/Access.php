@@ -1,8 +1,9 @@
 <?php
 
-class Access extends Module {
-
-    function getDeniedRedirect($app = false) {
+class Access extends Module
+{
+    function getDeniedRedirect($app = false)
+    {
         if (!$app) {
             $app = $this->app->type;
         }
@@ -12,7 +13,8 @@ class Access extends Module {
         return '/';
     }
 
-    function checkAccess($element, $user = null) {
+    function checkAccess($element, $user = null)
+    {
         $access = NULL;
         if ($element instanceof Controller) {
             $path = [
@@ -39,7 +41,7 @@ class Access extends Module {
         if (empty($access)) {
             return true;
         }
-        
+
 
         if ((!$user->group_id && !empty($access)) || ($user->group_id && !empty($access) && !in_array($user->user_group_id, $access)))
             return false;
@@ -47,7 +49,8 @@ class Access extends Module {
         return true;
     }
 
-    function resovePath($array, $path, $element) {
+    function resovePath($array, $path, $element)
+    {
         while ($path) {
             $result = $this->pathWalker($array, array_merge($path, [$element]));
             if ($result !== null) {
@@ -58,7 +61,8 @@ class Access extends Module {
         return null;
     }
 
-    function pathWalker($array, $path) {
+    function pathWalker($array, $path)
+    {
         if ($path && isset($array[$path[0]])) {
             return $this->pathWalker($array[$path[0]], array_slice($path, 1));
         } elseif (!$path) {

@@ -8,14 +8,16 @@
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
-class DashboardController extends adminController {
-
-    function indexAction() {
+class DashboardController extends adminController
+{
+    function indexAction()
+    {
         $this->view->setTitle('Панель управления');
         $this->view->page();
     }
 
-    function siteConfigAction() {
+    function siteConfigAction()
+    {
         if (isset($_POST['site_name'])) {
             $config = \App::$primary->config;
             $config['site']['name'] = $_POST['site_name'];

@@ -1,8 +1,9 @@
 <?php
 
-class UserFormsController extends Controller {
-
-    function getFormHtmlAction($form_id) {
+class UserFormsController extends Controller
+{
+    function getFormHtmlAction($form_id)
+    {
         $form = \UserForms\Form::get((int) $form_id);
         if (!$form) {
             echo('form not found');

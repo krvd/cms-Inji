@@ -10,9 +10,10 @@
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
-class Migrations extends \Module {
-
-    function startMigration($migrationId, $mapId, $filePath) {
+class Migrations extends \Module
+{
+    function startMigration($migrationId, $mapId, $filePath)
+    {
         $log = new \Migrations\Log();
         $log->migration_id = $migrationId;
         $log->migration_map_id = $mapId;

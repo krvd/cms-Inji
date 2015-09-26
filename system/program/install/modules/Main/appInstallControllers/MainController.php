@@ -8,14 +8,16 @@
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
-class MainController extends Controller {
-
-    function indexAction() {
+class MainController extends Controller
+{
+    function indexAction()
+    {
         $this->view->setTitle('Настройка подключения');
         $this->view->page();
     }
 
-    function modulesAction() {
+    function modulesAction()
+    {
         if (!empty($_GET['modules'])) {
             foreach ($_GET['modules'] as $module) {
                 $this->modules->install($module);
@@ -26,7 +28,8 @@ class MainController extends Controller {
         $this->view->page();
     }
 
-    function finishAction() {
+    function finishAction()
+    {
         $config = Config::share();
         $config['installed'] = true;
         Config::save('share', $config);

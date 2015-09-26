@@ -8,9 +8,10 @@
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
-class Main extends Module {
-
-    function init() {
+class Main extends Module
+{
+    function init()
+    {
         $config = Config::share();
         if (!empty($config['installed'])) {
             Tools::redirect('/', 'Приложение уже установлено');

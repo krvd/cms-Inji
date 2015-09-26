@@ -1,7 +1,7 @@
 <?php
 
-class Db extends Module {
-
+class Db extends Module
+{
     public $connection = null;
     public $connect = false;
     public $dbConfig = [];
@@ -10,11 +10,12 @@ class Db extends Module {
     public $QueryClassName = '';
     public $ResultClassName = '';
 
-    function init($param = null) {
+    function init($param = null)
+    {
         if (!$param) {
             $param = isset($this->config['default']) ? $this->config['default'] : 'local';
         }
-        if (!is_array($param)) {   
+        if (!is_array($param)) {
             if (!($dbOption = Db\Options::get($param, 'connect_alias', ['array' => true])))
                 return false;
 
@@ -34,7 +35,8 @@ class Db extends Module {
         $this->ResultClassName = 'Db\\' . $this->dbConfig['driver'] . '\\Result';
     }
 
-    function __call($name, $params) {
+    function __call($name, $params)
+    {
         if (!is_object($this->connection)) {
             return false;
         }
@@ -51,7 +53,8 @@ class Db extends Module {
         return false;
     }
 
-    function __get($name) {
+    function __get($name)
+    {
         if (isset($this->connection->$name)) {
             return $this->connection->$name;
         }
@@ -63,7 +66,8 @@ class Db extends Module {
         }
     }
 
-    function __set($name, $value) {
+    function __set($name, $value)
+    {
         if (isset($this->connection->$name)) {
             return $this->connection->$name = $value;
         }

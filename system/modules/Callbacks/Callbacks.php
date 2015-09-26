@@ -1,7 +1,9 @@
 <?php
-class Callbacks extends Module {
 
-    function init() {
+class Callbacks extends Module
+{
+    function init()
+    {
         
     }
 

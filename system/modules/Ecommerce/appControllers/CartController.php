@@ -1,8 +1,9 @@
 <?php
 
-class CartController extends Controller {
-
-    function indexAction() {
+class CartController extends Controller
+{
+    function indexAction()
+    {
         $cart = '';
         $deliverys = \Ecommerce\Delivery::getList();
         $payTypes = \Ecommerce\PayType::getList();
@@ -97,7 +98,7 @@ class CartController extends Controller {
 
                     $cart = \Ecommerce\Cart::get($cart->id);
                     foreach ($cart->cartItems as $cartItem) {
-                        $cartItem->discount =  $cartItem->discount();
+                        $cartItem->discount = $cartItem->discount();
                         $cartItem->final_price = $cartItem->price->price - $cartItem->discount;
                         $cartItem->save();
                     }
@@ -119,7 +120,8 @@ class CartController extends Controller {
         $this->view->page(['data' => compact('cart', 'items', 'deliverys', 'payTypes', 'packItem', 'bread')]);
     }
 
-    function historyAction() {
+    function historyAction()
+    {
         $this->view->setTitle('История');
         if (!Users\User::$cur->id)
             $this->url->redirect('/', 'Вы должны войти или зарегистрироваться');
@@ -142,7 +144,8 @@ class CartController extends Controller {
         $this->view->page(['data' => compact('carts', 'pages', 'bread')]);
     }
 
-    function orderDetailAction($id = 0) {
+    function orderDetailAction($id = 0)
+    {
         $cart = Ecommerce\Cart::get((int) $id);
         if ($cart->user_id != Users\User::$cur->id) {
             $this->url->redirect('/', 'Это не ваша корзина');
@@ -163,7 +166,8 @@ class CartController extends Controller {
         $this->view->page(['data' => compact('cart', 'bread')]);
     }
 
-    function continueAction($id = 0) {
+    function continueAction($id = 0)
+    {
         $cart = Cart::get((int) $id);
         if ($cart->user_id != Users\User::$cur->id) {
             $this->url->redirect('/', 'Это не ваша корзина');
@@ -175,7 +179,8 @@ class CartController extends Controller {
         $this->url->redirect('/ecommerce/cart');
     }
 
-    function deleteAction($id = 0) {
+    function deleteAction($id = 0)
+    {
         $cart = Cart::get((int) $id);
         if ($cart->user_id != Users\User::$cur->id) {
             $this->url->redirect('/', 'Это не ваша корзина');
@@ -187,7 +192,8 @@ class CartController extends Controller {
         $this->url->redirect('/ecommerce/cart/history', 'Корзина была удалена', 'success');
     }
 
-    function refillAction($id = 0) {
+    function refillAction($id = 0)
+    {
         $cart = Cart::get((int) $id);
         if ($cart->user_id != Users\User::$cur->id) {
             $this->url->redirect('/', 'Это не ваша корзина');
@@ -209,7 +215,8 @@ class CartController extends Controller {
         $this->url->redirect('/ecommerce/cart/');
     }
 
-    function successAction() {
+    function successAction()
+    {
         $bread = [];
         $bread[] = [
             'text' => 'Каталог',
@@ -227,7 +234,8 @@ class CartController extends Controller {
         $this->view->page(['data' => compact('bread')]);
     }
 
-    function addAction() {
+    function addAction()
+    {
         $result = new Server\Result();
         if (empty($_GET['itemOfferPriceId'])) {
             $result->success = false;
@@ -281,7 +289,8 @@ class CartController extends Controller {
         $result->send();
     }
 
-    function getcartAction() {
+    function getcartAction()
+    {
         $result = new Server\Result();
         ob_start();
         $this->view->widget('Ecommerce\cart');
@@ -290,7 +299,8 @@ class CartController extends Controller {
         $result->send();
     }
 
-    function delcartitemAction($cci_id = 0) {
+    function delcartitemAction($cci_id = 0)
+    {
         if (empty($_SESSION['cart']['cart_id']))
             exit('У вас нет корзины');
         $cartItem = \Ecommerce\Cart\Item::get((int) $cci_id);

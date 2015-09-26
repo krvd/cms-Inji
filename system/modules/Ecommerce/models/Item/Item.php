@@ -11,8 +11,8 @@
 
 namespace Ecommerce;
 
-class Item extends \Model {
-
+class Item extends \Model
+{
     static $categoryModel = 'Ecommerce\Category';
     static $objectName = 'Товар';
     static $labels = [
@@ -62,7 +62,8 @@ class Item extends \Model {
             ]
     ]];
 
-    function beforeSave() {
+    function beforeSave()
+    {
         if ($this->id) {
             $this->search_index = $this->name . ' ';
             if ($this->category) {
@@ -84,7 +85,8 @@ class Item extends \Model {
         }
     }
 
-    static function relations() {
+    static function relations()
+    {
 
         return [
             'category' => [
@@ -114,7 +116,8 @@ class Item extends \Model {
         ];
     }
 
-    function getPrice() {
+    function getPrice()
+    {
         $offers = $this->offers(['key' => false]);
         $curPrice = null;
 
@@ -129,7 +132,8 @@ class Item extends \Model {
         return $curPrice;
     }
 
-    function name() {
+    function name()
+    {
         if (!empty(\App::$primary->ecommerce->config['item_option_as_name'])) {
             $param = Item\Param::get([['item_id', $this->id], ['item_option_id', \App::$primary->ecommerce->config['item_option_as_name']]]);
             if ($param && $param->value) {

@@ -8,6 +8,7 @@
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
-class Apps extends Module {
-
+class Apps extends Module
+{
+    
 }

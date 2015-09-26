@@ -1,17 +1,19 @@
 <?php
 
-class Value {
-
+class Value
+{
     public $valueKey = '';
     public $model = null;
     public $type = 'string';
 
-    function __construct($model, $key) {
+    function __construct($model, $key)
+    {
         $this->model = $model;
         $this->valueKey = $key;
     }
 
-    function forView($options = []) {
+    function forView($options = [])
+    {
         $modelName = get_class($this->model);
         $colInfo = $modelName::getColInfo($this->valueKey);
         $type = !empty($colInfo['colParams']['type']) ? $colInfo['colParams']['type'] : 'string';

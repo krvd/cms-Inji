@@ -1,10 +1,11 @@
 <?php
 
-class Users extends Module {
-
+class Users extends Module
+{
     public $cookiePrefix = '';
 
-    function init() {
+    function init()
+    {
 
         if (!empty($this->config['cookieSplit'])) {
             $this->cookiePrefix = \App::$cur->type;
@@ -32,7 +33,8 @@ class Users extends Module {
         }
     }
 
-    function logOut($redirect = true) {
+    function logOut($redirect = true)
+    {
         if (!headers_sent()) {
             setcookie($this->cookiePrefix . "_user_session_hash", '', 0, "/");
             setcookie($this->cookiePrefix . "_user_id", '', 0, "/");
@@ -42,7 +44,8 @@ class Users extends Module {
         }
     }
 
-    function cuntinueSession($hash, $userId) {
+    function cuntinueSession($hash, $userId)
+    {
         $session = Users\Session::get([
                     ['user_id', $userId],
                     ['hash', $hash]
@@ -68,7 +71,8 @@ class Users extends Module {
         }
     }
 
-    function passre($user_mail) {
+    function passre($user_mail)
+    {
         $user = $this->get($user_mail, 'mail');
         if (!$user) {
             Msg::add('Пользователь ' . $user_mail . ' не найден, проверьте првильность ввода e-mail или зарегистрируйтесь', 'danger');
@@ -86,7 +90,8 @@ class Users extends Module {
         Tools::redirect('/', 'На указанный почтовый ящик была выслана инструкция по восстановлению пароля', 'success');
     }
 
-    function passrecont($hash) {
+    function passrecont($hash)
+    {
         $passre = Users\Passre::get([['hash', $hash]]);
         if ($passre) {
             if ($passre->status != 1) {
@@ -104,7 +109,8 @@ class Users extends Module {
         }
     }
 
-    function autorization($login, $pass, $ltype = 'login', $noMsg = true) {
+    function autorization($login, $pass, $ltype = 'login', $noMsg = true)
+    {
 
         sleep(3); //simple anti brute
 
@@ -136,7 +142,8 @@ class Users extends Module {
         return false;
     }
 
-    function newSession($user) {
+    function newSession($user)
+    {
         $hash = Tools::randomString(255);
 
         $session = new Users\Session([
@@ -156,7 +163,8 @@ class Users extends Module {
         }
     }
 
-    function get($idn = false, $ltype = 'id') {
+    function get($idn = false, $ltype = 'id')
+    {
         if (!$idn)
             return false;
 
@@ -172,7 +180,8 @@ class Users extends Module {
         return $user;
     }
 
-    function registration($data, $autorization = false) {
+    function registration($data, $autorization = false)
+    {
         extract($data);
 
         if (empty($user_mail)) {
@@ -246,11 +255,13 @@ class Users extends Module {
         return $user->id;
     }
 
-    function hashpass($pass) {
+    function hashpass($pass)
+    {
         return password_hash($pass, PASSWORD_DEFAULT);
     }
 
-    function verifypass($pass, $hash) {
+    function verifypass($pass, $hash)
+    {
         return password_verify($pass, $hash);
     }
 

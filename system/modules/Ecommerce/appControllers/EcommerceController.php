@@ -8,9 +8,10 @@
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
-class ecommerceController extends Controller {
-
-    function buyCardAction() {
+class ecommerceController extends Controller
+{
+    function buyCardAction()
+    {
         $this->view->setTitle('Покупка карты');
         $bread = [];
         $bread[] = ['text' => 'Покупка карты'];
@@ -79,12 +80,14 @@ class ecommerceController extends Controller {
         $this->view->page(['data' => compact('bread')]);
     }
 
-    function cabinetAction() {
+    function cabinetAction()
+    {
         $this->view->setTitle('Кабинет');
         $this->view->page();
     }
 
-    function autoCompleteAction() {
+    function autoCompleteAction()
+    {
         $items = \Ecommerce\Item::getList(['cols' => ['name', 'search_index']]);
         $return = [];
         foreach ($items as $item) {
@@ -93,7 +96,8 @@ class ecommerceController extends Controller {
         echo json_encode($return);
     }
 
-    function indexAction($catalog_id = 0) {
+    function indexAction($catalog_id = 0)
+    {
         Tools::redirect('/ecommerce/itemList');
         $catalog = Ecommerce\Category::get((int) $catalog_id);
 
@@ -103,7 +107,8 @@ class ecommerceController extends Controller {
         $this->view->page('main');
     }
 
-    function itemListAction($category_id = 0) {
+    function itemListAction($category_id = 0)
+    {
         if (!empty($_GET['search'])) {
             if (!empty($_GET['inCatalog'])) {
                 $category_id = (int) $_GET['inCatalog'];
@@ -163,7 +168,8 @@ class ecommerceController extends Controller {
         $this->view->page(['data' => compact('active', 'category', 'sort', 'search', 'pages', 'items', 'categorys', 'bread')]);
     }
 
-    function viewAction($id = '') {
+    function viewAction($id = '')
+    {
         $item = \Ecommerce\Item::get((int) $id);
         if (!$item) {
             $this->url->redirect('/ecommerce/', 'Такой товар не найден');

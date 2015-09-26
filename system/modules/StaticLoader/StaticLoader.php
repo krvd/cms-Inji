@@ -8,15 +8,17 @@
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
-class StaticLoader extends Module {
-
+class StaticLoader extends Module
+{
     public $mimes = [];
 
-    function init() {
+    function init()
+    {
         $this->mimes = $this->config['mimes'];
     }
 
-    function parsePath($path) {
+    function parsePath($path)
+    {
         $path = Tools::parsePath($path);
 
         if (strpos($path, '/') === 0) {
@@ -75,7 +77,9 @@ class StaticLoader extends Module {
         }
     }
 
-    function giveFile($file) {
+    function giveFile($file)
+    {
+        $file = preg_match('![а-Я]!', $file) ? mb_convert_encoding($file, 'Windows-1251', 'UTF-8') : $file;
         if (!file_exists($file)) {
             header('HTTP/1.1 404 Not Found');
             exit();

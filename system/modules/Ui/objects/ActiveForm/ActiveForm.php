@@ -13,8 +13,8 @@
 
 namespace Ui;
 
-class ActiveForm extends \Object {
-
+class ActiveForm extends \Object
+{
     public $model = null;
     public $modelName = '';
     public $header = "";
@@ -25,7 +25,8 @@ class ActiveForm extends \Object {
     public $requestFullFormName = '';
     public $parent = null;
 
-    function __construct($model, $form = []) {
+    function __construct($model, $form = [])
+    {
         if (is_array($model)) {
             $this->form = $model;
             if (is_string($form)) {
@@ -54,7 +55,8 @@ class ActiveForm extends \Object {
         }
     }
 
-    function getInputs() {
+    function getInputs()
+    {
         $inputs = [];
         $modelName = $this->modelName;
         foreach ($this->form['map'] as $row) {
@@ -83,7 +85,8 @@ class ActiveForm extends \Object {
         return $inputs;
     }
 
-    function checkRequest($params = [], $ajax = false) {
+    function checkRequest($params = [], $ajax = false)
+    {
         if (!$this->checkAccess()) {
             $this->drawError('you not have access to "' . $this->modelName . '" manager with name: "' . $this->formName . '"');
             return [];
@@ -148,7 +151,8 @@ class ActiveForm extends \Object {
         }
     }
 
-    function draw($params = [], $ajax = false) {
+    function draw($params = [], $ajax = false)
+    {
         if (!$this->checkAccess()) {
             $this->drawError('you not have access to "' . $this->modelName . '" manager with name: "' . $this->formName . '"');
             return [];
@@ -187,7 +191,8 @@ class ActiveForm extends \Object {
         }
     }
 
-    function drawCol($colName, $options, $form, $params = []) {
+    function drawCol($colName, $options, $form, $params = [])
+    {
         $modelName = $this->modelName;
         if (is_object($options)) {
             $options->draw();
@@ -214,7 +219,8 @@ class ActiveForm extends \Object {
         }
     }
 
-    static function getOptionsList($inputParams, $params = [], $modelName = false, $aditionalInputNamePrefix = 'aditional') {
+    static function getOptionsList($inputParams, $params = [], $modelName = false, $aditionalInputNamePrefix = 'aditional')
+    {
         $values = [];
         switch ($inputParams['source']) {
             case 'model':
@@ -266,7 +272,8 @@ class ActiveForm extends \Object {
      * 
      * @param text $errorText
      */
-    function drawError($errorText) {
+    function drawError($errorText)
+    {
         echo $errorText;
     }
 
@@ -275,7 +282,8 @@ class ActiveForm extends \Object {
      * 
      * @return boolean
      */
-    function checkAccess() {
+    function checkAccess()
+    {
         if (empty($this->form)) {
             $this->drawError('"' . $this->modelName . '" manager with name: "' . $this->managerName . '" not found');
             return false;

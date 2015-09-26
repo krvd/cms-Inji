@@ -11,14 +11,15 @@
 
 namespace Ui\ActiveForm\Input;
 
-class Bool extends \Ui\ActiveForm\Input {
-
-    function draw() {
+class Bool extends \Ui\ActiveForm\Input
+{
+    function draw()
+    {
         $inputName = $this->colName();
         $inputLabel = $this->colLabel();
         $inputOptions = [
             'value' => $this->value(),
-            'disabled'=>$this->readOnly()
+            'disabled' => $this->readOnly()
         ];
         $preset = $this->preset();
         if ($preset !== null) {

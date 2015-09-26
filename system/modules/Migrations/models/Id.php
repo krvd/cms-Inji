@@ -13,6 +13,7 @@
 
 namespace Migrations;
 
-class Id extends \Model {
+class Id extends \Model
+{
     //put your code here
 }

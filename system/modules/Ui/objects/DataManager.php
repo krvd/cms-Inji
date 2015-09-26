@@ -12,8 +12,8 @@
 
 namespace Ui;
 
-class DataManager extends \Object {
-
+class DataManager extends \Object
+{
     public $modelName = '';
     public $managerOptions = [];
     public $managerName = 'manager';
@@ -26,7 +26,8 @@ class DataManager extends \Object {
     public $cols = [];
     public $managerId = '';
 
-    function __construct($modelName, $dataManager = 'manager', $options = []) {
+    function __construct($modelName, $dataManager = 'manager', $options = [])
+    {
         $this->modelName = $modelName;
         if (is_string($dataManager)) {
             $this->managerName = $dataManager;
@@ -49,7 +50,8 @@ class DataManager extends \Object {
      * @param string $params
      * @param object $model
      */
-    function getButtons($params = [], $model = null) {
+    function getButtons($params = [], $model = null)
+    {
         $formModelName = $modelName = $this->modelName;
         $formParams = [
             'dataManagerParams' => $params
@@ -85,7 +87,8 @@ class DataManager extends \Object {
      * 
      * @return string
      */
-    function getCols() {
+    function getCols()
+    {
         $modelName = $this->modelName;
         $cols = [];
         if (!empty($this->managerOptions['groupActions'])) {
@@ -121,7 +124,8 @@ class DataManager extends \Object {
      * @param object $model
      * @return type
      */
-    function getRows($params = [], $model = null) {
+    function getRows($params = [], $model = null)
+    {
         if (!$this->checkAccess()) {
             $this->drawError('you not have access to "' . $this->modelName . '" manager with name: "' . $this->managerName . '"');
             return [];
@@ -287,7 +291,8 @@ class DataManager extends \Object {
         return $rows;
     }
 
-    static function drawCol($item, $colName, $params = [], $dataManager = null, $originalCol = '', $originalItem = null) {
+    static function drawCol($item, $colName, $params = [], $dataManager = null, $originalCol = '', $originalItem = null)
+    {
 
         if (!$originalCol) {
             $originalCol = $colName;
@@ -363,7 +368,8 @@ class DataManager extends \Object {
         }
     }
 
-    function rowButtons($item, $params) {
+    function rowButtons($item, $params)
+    {
         ob_start();
         $widgetName = !empty($this->managerOptions['rowButtonsWidget']) ? $this->managerOptions['rowButtonsWidget'] : 'Ui\DataManager/rowButtons';
         \App::$cur->view->widget($widgetName, [
@@ -376,7 +382,8 @@ class DataManager extends \Object {
         return $buttons;
     }
 
-    function getPages($params = [], $model = null) {
+    function getPages($params = [], $model = null)
+    {
         if (!$this->checkAccess()) {
             $this->drawError('you not have access to "' . $this->modelName . '" manager with name: "' . $this->managerName . '"');
             return [];
@@ -494,7 +501,8 @@ class DataManager extends \Object {
         return $pages;
     }
 
-    function preDraw($params = [], $model = null) {
+    function preDraw($params = [], $model = null)
+    {
         $this->managerId = str_replace('\\', '_', 'dataManager_' . $this->modelName . '_' . $this->managerName . '_' . \Tools::randomString());
         $this->predraw = true;
         $modelName = $this->modelName;
@@ -516,7 +524,8 @@ class DataManager extends \Object {
         }
     }
 
-    function draw($params = [], $model = null) {
+    function draw($params = [], $model = null)
+    {
         if (!$this->predraw) {
             $this->preDraw($params, $model);
         }
@@ -528,7 +537,8 @@ class DataManager extends \Object {
         ]);
     }
 
-    function drawCategorys() {
+    function drawCategorys()
+    {
         ?>
         <ul class="nav nav-list-categorys" data-col='tree_path'>
             <?php
@@ -548,7 +558,8 @@ class DataManager extends \Object {
         <?php
     }
 
-    function showCategory($categorys, $category) {
+    function showCategory($categorys, $category)
+    {
         $isset = false;
         $class = get_class($category);
         foreach ($categorys as $categoryChild) {
@@ -587,7 +598,8 @@ class DataManager extends \Object {
      * 
      * @param text $errorText
      */
-    function drawError($errorText) {
+    function drawError($errorText)
+    {
         echo $errorText;
     }
 
@@ -596,7 +608,8 @@ class DataManager extends \Object {
      * 
      * @return boolean
      */
-    function checkAccess() {
+    function checkAccess()
+    {
         $modelName = $this->modelName;
         if (empty($this->managerOptions)) {
             $this->drawError('"' . $this->modelName . '" manager with name: "' . $this->managerName . '" not found');

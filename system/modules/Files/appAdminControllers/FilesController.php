@@ -16,9 +16,10 @@
  *
  * @author inji
  */
-class FilesController extends adminController {
-
-    function managerForEditorAction() {
+class FilesController extends adminController
+{
+    function managerForEditorAction()
+    {
         $this->view->page(['page' => 'blank']);
     }
 

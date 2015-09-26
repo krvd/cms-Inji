@@ -7,7 +7,6 @@
  */
 class Log
 {
-
     public $log = array();
     public $lastLog = 0;
     public $run = true;
@@ -85,8 +84,9 @@ class Log
             }
         }
         echo '<tr><th>Summary</th><th>' . round(( microtime(true) - $this->startTime), 5) . '</th></tr>';
-        echo '<tr><th>Memory</th><th>' . $this->convertSize(memory_get_peak_usage()) . ' of '.ini_get('memory_limit').'</th></tr></table></div>';
+        echo '<tr><th>Memory</th><th>' . $this->convertSize(memory_get_peak_usage()) . ' of ' . ini_get('memory_limit') . '</th></tr></table></div>';
     }
+
     function convertSize($size)
     {
 
@@ -97,6 +97,7 @@ class Log
         else
             return round($size / 1048576, 2) . "MB";
     }
+
     function __destruct()
     {
         if ($this->run && $_SERVER['REMOTE_ADDR'] == '127.0.0.1' && $this->template_parsed) {

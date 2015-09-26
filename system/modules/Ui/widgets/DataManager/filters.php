@@ -1,6 +1,6 @@
 <h3>Фильтры</h3>
 <form accept-charset="UTF-8" action="" class="dataManagerFilters" method="get" onsubmit="inji.Ui.dataManagers.get(this).reload();
-        return false;">
+      return false;">
           <?php
           $form = new Ui\Form();
           foreach ($dataManager->managerOptions['filters'] as $col) {

@@ -31,7 +31,6 @@
  */
 class FlorangeObject extends Object
 {
-
     function processParseWeb($catalogUrl)
     {
         $option = Option::get('cio_code', 'gallery');
@@ -49,7 +48,7 @@ class FlorangeObject extends Object
         if (!$catalog) {
             $catalog = new Catalog([
                 'catalog_name' => $element = $html->find('.leftside .nav li a.current', 1)->innertext,
-                'catalog_image' => $this->files->upload_from_url('http://florange.ru' .  $html->find('.intro img', 0)->src),
+                'catalog_image' => $this->files->upload_from_url('http://florange.ru' . $html->find('.intro img', 0)->src),
                 'catalog_parent' => 0,
                 'catalog_prices' => 1,
                 'catalog_imported' => 'http://florange.ru' . $catalogUrl

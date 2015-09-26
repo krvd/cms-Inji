@@ -8,8 +8,8 @@
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
-class Inji {
-
+class Inji
+{
     static $inst = NULL;
     private static $_listeners = [];
     public static $config = [];
@@ -21,7 +21,8 @@ class Inji {
      * @param string $listenCode
      * @param array|function $callback
      */
-    function listen($eventName, $listenCode, $callback) {
+    function listen($eventName, $listenCode, $callback)
+    {
         $this->_listeners[$eventName][$listenCode] = $callback;
     }
 
@@ -32,7 +33,8 @@ class Inji {
      * @param mixed $eventObject
      * @return mixed
      */
-    function event($eventName, $eventObject = null) {
+    function event($eventName, $eventObject = null)
+    {
         $event = [
             'eventName' => $eventName,
             'eventObject' => $eventObject,
@@ -62,7 +64,8 @@ class Inji {
      * @param string $eventName
      * @param string $listenCode
      */
-    function unlisten($eventName, $listenCode) {
+    function unlisten($eventName, $listenCode)
+    {
         if (!empty($this->_listeners[$eventName][$listenCode])) {
             unset($this->_listeners[$eventName][$listenCode]);
         }

@@ -1,4 +1,6 @@
 <?php
 
-class CallbacksController extends adminController {
+class CallbacksController extends adminController
+{
+    
 }

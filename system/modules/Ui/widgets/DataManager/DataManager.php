@@ -10,34 +10,34 @@ echo Html::el('div', [
         ], '', true);
 ?>
 
-    <?php
-    $mainCol = [
-        'class' => 'mainTableWrap',
-        'style' => ''
-    ];
-    if (!empty($dataManager->managerOptions['categorys'])) {
-        $mainCol['style'].='margin-left:260px;';
-        ?>
-        <div class ="pull-left" style = 'width:250px;'>
-            <?php $this->widget('Ui\DataManager/categorys', compact('dataManager')); ?>
-        </div>
-        <?php
-    }
-    if (!empty($dataManager->managerOptions['filters'])) {
-        $mainCol['style'].='margin-right:260px;';
-        ?>
-        <div class ="pull-right" style = 'width:250px;'>
-            <?php $this->widget('Ui\DataManager/filters', compact('dataManager')); ?>
-        </div>
-        <?php
-    }
-    echo Html::el('div', $mainCol, '', true);
-    $table->draw();
+<?php
+$mainCol = [
+    'class' => 'mainTableWrap',
+    'style' => ''
+];
+if (!empty($dataManager->managerOptions['categorys'])) {
+    $mainCol['style'].='margin-left:260px;';
     ?>
-    <div class="pagesContainer text-right"></div>
+    <div class ="pull-left" style = 'width:250px;'>
+        <?php $this->widget('Ui\DataManager/categorys', compact('dataManager')); ?>
+    </div>
     <?php
-    echo '</div>';
+}
+if (!empty($dataManager->managerOptions['filters'])) {
+    $mainCol['style'].='margin-right:260px;';
     ?>
-    <div class="clearfix"></div>
+    <div class ="pull-right" style = 'width:250px;'>
+        <?php $this->widget('Ui\DataManager/filters', compact('dataManager')); ?>
+    </div>
+    <?php
+}
+echo Html::el('div', $mainCol, '', true);
+$table->draw();
+?>
+<div class="pagesContainer text-right"></div>
+<?php
+echo '</div>';
+?>
+<div class="clearfix"></div>
 <?php
 echo '</div>';

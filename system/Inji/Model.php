@@ -1,7 +1,7 @@
 <?php
 
-class Model {
-
+class Model
+{
     static $storage = ['type' => 'db'];
     static $objectName = '';
     public $_params = [];
@@ -15,15 +15,18 @@ class Model {
     static $needJoin = [];
     static $relJoins = [];
 
-    function __construct($params = array()) {
+    function __construct($params = array())
+    {
         $this->setParams($params);
     }
 
-    static function objectName() {
+    static function objectName()
+    {
         return static::$objectName;
     }
 
-    static function getColValue($object, $valuePath, $convert = false, $manageHref = false) {
+    static function getColValue($object, $valuePath, $convert = false, $manageHref = false)
+    {
         if (strpos($valuePath, ':')) {
             $rel = substr($valuePath, 0, strpos($valuePath, ':'));
             $param = substr($valuePath, strpos($valuePath, ':') + 1);
@@ -45,7 +48,8 @@ class Model {
         }
     }
 
-    static function resloveTypeValue($item, $colName, $manageHref = false) {
+    static function resloveTypeValue($item, $colName, $manageHref = false)
+    {
         $modelName = get_class($item);
         $colInfo = $modelName::getColInfo($colName);
         $type = !empty($colInfo['colParams']['type']) ? $colInfo['colParams']['type'] : 'string';
@@ -112,7 +116,8 @@ class Model {
         return $value;
     }
 
-    static function fixPrefix(&$array, $searchtype = 'key', $rootModel = '') {
+    static function fixPrefix(&$array, $searchtype = 'key', $rootModel = '')
+    {
         if (!$rootModel) {
             $rootModel = get_called_class();
         }
@@ -160,7 +165,8 @@ class Model {
         }
     }
 
-    static function checkForJoin(&$col, $rootModel) {
+    static function checkForJoin(&$col, $rootModel)
+    {
 
         if (strpos($col, ':') !== false) {
             $relations = static::relations();
@@ -186,11 +192,13 @@ class Model {
         }
     }
 
-    static function getColInfo($col) {
+    static function getColInfo($col)
+    {
         return static::parseColRecursion($col);
     }
 
-    private static function parseColRecursion($info) {
+    private static function parseColRecursion($info)
+    {
         if (is_string($info)) {
             $info = ['col' => $info, 'rawCol' => $info, 'modelName' => '', 'label' => [], 'joins' => []];
         }
@@ -237,41 +245,49 @@ class Model {
         return $info;
     }
 
-    static function cols() {
+    static function cols()
+    {
         if (empty(Model::$cols[static::table()])) {
             Model::$cols[static::table()] = App::$cur->db->getTableCols(static::table());
         }
         return Model::$cols[static::table()];
     }
 
-    static function table() {
+    static function table()
+    {
         return strtolower(str_replace('\\', '_', get_called_class()));
     }
 
-    static function index() {
+    static function index()
+    {
 
         return static::colPrefix() . 'id';
     }
 
-    static function colPrefix() {
+    static function colPrefix()
+    {
         $classPath = explode('\\', get_called_class());
         $classPath = array_slice($classPath, 1);
         return strtolower(implode('_', $classPath)) . '_';
     }
 
-    static function relations() {
+    static function relations()
+    {
         return [];
     }
 
-    static function nameCol() {
+    static function nameCol()
+    {
         return 'name';
     }
 
-    function name() {
+    function name()
+    {
         return $this->name ? $this->name : $this->pk();
     }
 
-    static function get($param = null, $col = null, $options = []) {
+    static function get($param = null, $col = null, $options = [])
+    {
         if (static::$storage['type'] == 'moduleConfig') {
             return static::getFromModuleStorage($param, $col, $options);
         }
@@ -338,7 +354,8 @@ class Model {
      * @param type $options
      * @return \class
      */
-    static function get_list($options = []) {
+    static function get_list($options = [])
+    {
 
         $return = array();
         if (!empty($options['where']))
@@ -416,7 +433,8 @@ class Model {
      * @param type $options
      * @return type
      */
-    static function getList($options = []) {
+    static function getList($options = [])
+    {
         if (static::$storage['type'] != 'db') {
             return static::getListFromModuleStorage($options);
         }
@@ -429,7 +447,8 @@ class Model {
         return static::get_list($options);
     }
 
-    static function getFromModuleStorage($param = null, $col = null, $options = []) {
+    static function getFromModuleStorage($param = null, $col = null, $options = [])
+    {
         if ($col === null) {
 
             $col = static::index();
@@ -468,7 +487,8 @@ class Model {
         return [];
     }
 
-    static function getListFromModuleStorage($options = []) {
+    static function getListFromModuleStorage($options = [])
+    {
         $classPath = explode('\\', get_called_class());
         if (!empty(static::$storage['options']['share'])) {
             $moduleConfig = Config::share($classPath[0]);
@@ -499,7 +519,8 @@ class Model {
         return [];
     }
 
-    static function getCountFromModuleStorage($options = []) {
+    static function getCountFromModuleStorage($options = [])
+    {
 
         $classPath = explode('\\', get_called_class());
         $count = 0;
@@ -531,7 +552,8 @@ class Model {
         return $count;
     }
 
-    static function checkWhere($item = [], $where = '', $value = '', $operation = '=', $concatenation = 'AND') {
+    static function checkWhere($item = [], $where = '', $value = '', $operation = '=', $concatenation = 'AND')
+    {
 
         if (is_array($where)) {
             if (is_array($where[0])) {
@@ -559,7 +581,8 @@ class Model {
         return false;
     }
 
-    static function getCount($options = array()) {
+    static function getCount($options = array())
+    {
 
         if (static::$storage['type'] == 'moduleConfig') {
             return static::getCountFromModuleStorage($options);
@@ -636,7 +659,8 @@ class Model {
         }
     }
 
-    static function update($params, $where = []) {
+    static function update($params, $where = [])
+    {
 
         $cols = self::cols();
 
@@ -657,15 +681,18 @@ class Model {
         App::$cur->db->update(static::table(), $values);
     }
 
-    function pk() {
+    function pk()
+    {
         return $this->{$this->index()};
     }
 
-    function beforeSave() {
+    function beforeSave()
+    {
         
     }
 
-    function saveModuleStorage($options) {
+    function saveModuleStorage($options)
+    {
 
         $col = static::index();
         $id = $this->pk();
@@ -717,7 +744,8 @@ class Model {
         return true;
     }
 
-    function changeCategoryTree() {
+    function changeCategoryTree()
+    {
         $class = get_class($this);
         $itemModel = $class::$treeCategory;
         $oldPath = $this->tree_path;
@@ -744,7 +772,8 @@ class Model {
         $itemModel::update([$itemTreeCol => $this->tree_path . $this->id . '/'], [$itemModel::colPrefix() . $this->index(), $this->id]);
     }
 
-    function getCatalogTree($catalog) {
+    function getCatalogTree($catalog)
+    {
         $catalogClass = get_class($catalog);
         $catalogParent = $catalogClass::get($catalog->parent_id);
         if ($catalog && $catalogParent) {
@@ -757,7 +786,8 @@ class Model {
         return '/';
     }
 
-    function changeItemTree() {
+    function changeItemTree()
+    {
         $class = get_class($this);
         $categoryModel = $class::$categoryModel;
         $category = $categoryModel::get($this->{$categoryModel::index()});
@@ -768,7 +798,8 @@ class Model {
         }
     }
 
-    function save($options = []) {
+    function save($options = [])
+    {
 
         if (static::$storage['type'] == 'moduleConfig') {
             return static::saveModuleStorage($options);
@@ -809,15 +840,18 @@ class Model {
         return $this->{$this->index()};
     }
 
-    function afterSave() {
+    function afterSave()
+    {
         
     }
 
-    function beforeDelete() {
+    function beforeDelete()
+    {
         
     }
 
-    function deleteFromModuleStorage($options) {
+    function deleteFromModuleStorage($options)
+    {
 
         $col = static::index();
         $id = $this->pk();
@@ -862,7 +896,8 @@ class Model {
         return true;
     }
 
-    function delete($options = []) {
+    function delete($options = [])
+    {
         $this->beforeDelete();
 
         if (static::$storage['type'] == 'moduleConfig') {
@@ -879,7 +914,8 @@ class Model {
         return false;
     }
 
-    function deleteList($where) {
+    function deleteList($where)
+    {
         if ($where) {
             static::fixPrefix($where, 'key');
             App::$cur->db->where($where);
@@ -887,11 +923,13 @@ class Model {
         App::$cur->db->delete(static::table());
     }
 
-    function afterDelete() {
+    function afterDelete()
+    {
         
     }
 
-    static function findRelation($col) {
+    static function findRelation($col)
+    {
 
         foreach (static::relations() as $relName => $rel) {
             if ($rel['col'] == $col)
@@ -900,17 +938,20 @@ class Model {
         return NULL;
     }
 
-    function setParams($params) {
+    function setParams($params)
+    {
         static::fixPrefix($params);
         $this->_params = array_merge($this->_params, $params);
     }
 
-    static function getRelation($relName) {
+    static function getRelation($relName)
+    {
         $relations = static::relations();
         return !empty($relations[$relName]) ? $relations[$relName] : false;
     }
 
-    function loadRelation($name, $params = []) {
+    function loadRelation($name, $params = [])
+    {
         $relation = static::getRelation($name);
         if ($relation) {
             if (!isset($relation['type']))
@@ -984,7 +1025,8 @@ class Model {
         return NULL;
     }
 
-    function addRelation($relName, $objectId) {
+    function addRelation($relName, $objectId)
+    {
         $relations = $this->relations();
         if (isset($relations[$relName])) {
             $relation = $relations[$relName];
@@ -1003,21 +1045,24 @@ class Model {
         return false;
     }
 
-    function checkFormAccess($formName) {
+    function checkFormAccess($formName)
+    {
         if ($formName == 'manage' && !Users\User::$cur->isAdmin()) {
             return false;
         }
         return true;
     }
 
-    function checkAccess($mode = 'write', $user = null) {
+    function checkAccess($mode = 'write', $user = null)
+    {
         if (!$user) {
             $user = \Users\User::$cur;
         }
         return $user->isAdmin();
     }
 
-    function __call($name, $params) {
+    function __call($name, $params)
+    {
         $fixedName = $name;
         static::fixPrefix($fixedName);
         if (isset($this->_params[$fixedName])) {
@@ -1028,7 +1073,8 @@ class Model {
         return call_user_func_array([$this, 'loadRelation'], array_merge([$name], $params));
     }
 
-    function __get($name) {
+    function __get($name)
+    {
         $fixedName = $name;
         static::fixPrefix($fixedName);
         if (isset($this->_params[$fixedName])) {
@@ -1040,7 +1086,8 @@ class Model {
         return $this->loadRelation($name);
     }
 
-    function value($name) {
+    function value($name)
+    {
         $fixedName = $name;
         static::fixPrefix($fixedName);
         if (isset($this->_params[$fixedName])) {
@@ -1051,21 +1098,25 @@ class Model {
         return null;
     }
 
-    static function managerFilters() {
+    static function managerFilters()
+    {
         return [];
     }
 
-    function __set($name, $value) {
+    function __set($name, $value)
+    {
         static::fixPrefix($name);
         $this->_params[$name] = $value;
     }
 
-    function __isset($name) {
+    function __isset($name)
+    {
         static::fixPrefix($name);
         return isset($this->_params[$name]);
     }
 
-    public function __toString() {
+    public function __toString()
+    {
         if (!empty($this->_params['name'])) {
             return $this->_params['name'];
         }

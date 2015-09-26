@@ -16,9 +16,10 @@
  *
  * @author inji
  */
-class Html {
-
-    static function el($tag, $attributes = [], $body = '', $noCloseTag = false) {
+class Html
+{
+    static function el($tag, $attributes = [], $body = '', $noCloseTag = false)
+    {
         $html = "<{$tag}";
         if ($attributes && is_array($attributes)) {
             foreach ($attributes as $key => $value) {

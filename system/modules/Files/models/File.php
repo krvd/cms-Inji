@@ -2,21 +2,24 @@
 
 namespace Files;
 
-class File extends \Model {
-
-    function beforeDelete() {
+class File extends \Model
+{
+    function beforeDelete()
+    {
         $path = $this->getRealPath();
         if (file_exists($path)) {
             unlink($path);
         }
     }
 
-    function getRealPath() {
+    function getRealPath()
+    {
         $sitePath = \App::$primary->path;
         return "{$sitePath}/{$this->file_path}";
     }
 
-    static function relations() {
+    static function relations()
+    {
         return [
             'type' => [
                 'model' => 'Files\Type',

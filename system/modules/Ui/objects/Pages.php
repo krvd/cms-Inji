@@ -2,13 +2,14 @@
 
 namespace Ui;
 
-class Pages extends \Object {
-
+class Pages extends \Object
+{
     public $data = [];
     public $options = [];
     public $params = [];
 
-    function __construct($data, $options = []) {
+    function __construct($data, $options = [])
+    {
         $this->data = $data;
         $this->options = $options;
 
@@ -40,7 +41,8 @@ class Pages extends \Object {
         }
     }
 
-    function draw($class = 'pagination pagination-centered margin-none pagination-sm') {
+    function draw($class = 'pagination pagination-centered margin-none pagination-sm')
+    {
         $getArr = $this->data;
         $getArr['limit'] = $this->params['limit'];
         \App::$cur->view->widget('Ui\Pages/pages', ['class' => $class, 'pagesInstance' => $this, 'getArr' => $getArr]);

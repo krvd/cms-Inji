@@ -1,8 +1,9 @@
 <?php
 
-class UsersController extends adminController {
-
-    function loginAction() {
+class UsersController extends adminController
+{
+    function loginAction()
+    {
         if (!Users\User::$cur->user_id) {
             $this->view->page(['page' => 'login', 'content' => 'login']);
         } else {
@@ -10,7 +11,8 @@ class UsersController extends adminController {
         }
     }
 
-    function loginAsAction($userId) {
+    function loginAsAction($userId)
+    {
         $user = Users\User::get($userId);
         $this->users->autorization($user->user_mail, $user->user_pass, 'mail');
         Tools::redirect('/', 'Теперь вы на сайте под пользователем ' . $user->user_mail);

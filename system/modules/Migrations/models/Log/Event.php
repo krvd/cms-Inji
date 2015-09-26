@@ -13,8 +13,8 @@
 
 namespace Migrations\Log;
 
-class Event extends \Model {
-
+class Event extends \Model
+{
     static $objectName = 'Событие истории миграции';
     static $labels = [
         'type' => 'Тип',

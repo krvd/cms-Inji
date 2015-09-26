@@ -2,9 +2,10 @@
 
 namespace Ecommerce\Cart;
 
-class Item extends \Model {
-
-    function beforeSave() {
+class Item extends \Model
+{
+    function beforeSave()
+    {
         if (!$this->id) {
             $event = new Event(['cart_id' => $this->cart_id, 'user_id' => \Users\User::$cur->id, 'cart_event_type_id' => 1, 'info' => $this->item_offer_price_id]);
             $event->save();
@@ -28,7 +29,8 @@ class Item extends \Model {
         }
     }
 
-    function afterSave() {
+    function afterSave()
+    {
         $block = \Ecommerce\Warehouse\Block::get([['cart_id', $this->cart->id], ['item_offer_id', $this->price->item_offer_id]]);
         if (in_array($this->cart_status_id, [0, 1, 2, 3, 6])) {
             if (in_array($this->cart_status_id, [0, 1])) {
@@ -60,7 +62,8 @@ class Item extends \Model {
         $this->cart->save();
     }
 
-    function afterDelete() {
+    function afterDelete()
+    {
         $event = new Event(['cart_id' => $this->cart_id, 'user_id' => \Users\User::$cur->id, 'cart_event_type_id' => 2, 'info' => $this->item_offer_price_id]);
         $event->save();
         $block = \Ecommerce\Warehouse\Block::get([['cart_id', $this->cart->id], ['item_offer_id', $this->price->item_offer_id]]);
@@ -70,7 +73,8 @@ class Item extends \Model {
         $this->cart->save();
     }
 
-    function discount() {
+    function discount()
+    {
         if ($this->cart->card && $this->price->offer->item->type && $this->price->offer->item->type->discount) {
             return round($this->price->price * $this->cart->card->level->discount->amount, 2);
         }
@@ -115,7 +119,8 @@ class Item extends \Model {
         ]
     ];
 
-    static function relations() {
+    static function relations()
+    {
         return [
             'item' => [
                 'model' => 'Ecommerce\Item',

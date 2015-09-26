@@ -10,9 +10,10 @@
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
-class ViewController extends Controller {
-
-    function editorcssAction() {
+class ViewController extends Controller
+{
+    function editorcssAction()
+    {
         if (file_exists($this->view->template->path . '/css/editor.css')) {
             Tools::redirect('/static/templates/' . $this->view->template['name'] . '/css/editor.css');
         } else {
@@ -21,7 +22,8 @@ class ViewController extends Controller {
         }
     }
 
-    function templateProgramAction() {
+    function templateProgramAction()
+    {
         $args = func_get_args();
         if ($args) {
             $moduleName = ucfirst($args[0]);

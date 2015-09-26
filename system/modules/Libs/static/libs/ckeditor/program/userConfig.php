@@ -16,3 +16,8 @@ if (!empty(App::$cur->libs->config['libConfig']['ckeditor']['pasteFromWordRemove
 }
 ?>
 };
+<?php
+if (!empty(App::$cur->libs->config['libConfig']['ckeditor']['pasteFromWordRemoveStyle'])) {
+    echo 'CKEDITOR.config.pasteFromWordRemoveStyle = true;';
+}
+?>

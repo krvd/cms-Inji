@@ -12,8 +12,9 @@
  */
 
 namespace Db;
-class Options extends \Model {
 
+class Options extends \Model
+{
     /**
      * Model options
      */
@@ -36,7 +37,7 @@ class Options extends \Model {
         'id' => ['type' => 'pk'],
         'connect_name' => ['type' => 'text', 'default' => 'local'],
         'connect_alias' => ['type' => 'text', 'default' => 'local'],
-        'driver' =>['type' => 'select', 'source' => 'array', 'sourceArray' =>['Mysql' => 'Mysql']],
+        'driver' => ['type' => 'select', 'source' => 'array', 'sourceArray' => ['Mysql' => 'Mysql']],
         'host' => ['type' => 'text', 'default' => 'localhost'],
         'user' => ['type' => 'text', 'default' => 'root'],
         'pass' => ['type' => 'text'],
@@ -45,10 +46,9 @@ class Options extends \Model {
         'table_prefix' => ['type' => 'text', 'default' => 'inji_'],
         'port' => ['type' => 'text', 'default' => '3306'],
     ];
-    
     static $dataManagers = [
         'manager' => [
-            'name'=>'Настройки соединения с БД',
+            'name' => 'Настройки соединения с БД',
             'options' => [
                 'access' => [
                     'groups' => [
@@ -65,9 +65,9 @@ class Options extends \Model {
     ];
     static $forms = [
         'manager' => [
-            'name'=>'Соединение с БД',
+            'name' => 'Соединение с БД',
             'map' => [
-                ['connect_name', 'connect_alias','driver'],
+                ['connect_name', 'connect_alias', 'driver'],
                 ['host', 'user'],
                 ['pass', 'db_name'],
                 ['encoding', 'table_prefix', 'port']
@@ -75,7 +75,8 @@ class Options extends \Model {
         ]
     ];
 
-    static function index() {
+    static function index()
+    {
         return 'id';
     }
 

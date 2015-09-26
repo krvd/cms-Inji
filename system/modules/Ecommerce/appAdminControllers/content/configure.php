@@ -7,7 +7,7 @@
     foreach ($managers as $manager) {
         $dataManager = new Ui\DataManager($manager);
         $dataManagers[$manager] = $dataManager;
-        $code = 'tab_'.str_replace('\\', '_', $manager);
+        $code = 'tab_' . str_replace('\\', '_', $manager);
         echo "<li role='presentation'><a href='#{$code}' aria-controls='{$code}' role='tab' data-toggle='tab'>{$dataManager->name}</a></li>";
     }
     ?>
@@ -26,7 +26,7 @@
     </div>
     <?php
     foreach ($dataManagers as $manager => $dataManager) {
-        $code = 'tab_'.str_replace('\\', '_', $manager);
+        $code = 'tab_' . str_replace('\\', '_', $manager);
         ?>
         <div role="tabpanel" class="tab-pane fade" id="<?= $code; ?>">
             <?php

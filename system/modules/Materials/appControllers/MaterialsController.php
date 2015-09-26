@@ -1,8 +1,9 @@
 <?php
 
-class MaterialsController extends Controller {
-
-    function indexAction() {
+class MaterialsController extends Controller
+{
+    function indexAction()
+    {
         $args = func_get_args();
         $category = null;
         $material = null;
@@ -29,7 +30,8 @@ class MaterialsController extends Controller {
         }
     }
 
-    function categoryAction($category_id = 0) {
+    function categoryAction($category_id = 0)
+    {
         $category = Materials\Category::get((int) $category_id);
         if (!$category) {
             Tools::header('404');
@@ -47,7 +49,8 @@ class MaterialsController extends Controller {
         }
     }
 
-    function viewAction($material_id = 0) {
+    function viewAction($material_id = 0)
+    {
         $material = \Materials\Material::get((int) $material_id);
         if (!$material) {
             Tools::header('404');

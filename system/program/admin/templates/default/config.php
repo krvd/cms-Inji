@@ -6,7 +6,7 @@ return [
     'css' => [
         'style.css'
     ],
-    'libs'=>[
-        'bootstrap','jquery-ui'
+    'libs' => [
+        'bootstrap', 'jquery-ui'
     ]
 ];

@@ -2,8 +2,8 @@
 
 namespace Ecommerce\Item\Offer\Price;
 
-class Type extends \Model {
-
+class Type extends \Model
+{
     static $objectName = 'Тип цены';
     static $cols = [
         'name' => ['type' => 'text'],

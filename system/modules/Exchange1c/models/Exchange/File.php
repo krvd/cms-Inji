@@ -13,8 +13,8 @@
 
 namespace Exchange1c\Exchange;
 
-class File extends \Model {
-
+class File extends \Model
+{
     static $cols = [
         'name' => ['type' => 'text'],
         'date_create' => ['type' => 'dateTime'],

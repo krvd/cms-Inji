@@ -7,15 +7,15 @@ $uid = Tools::randomString();
 <script>
     var myMap<?= $uid; ?>;
     inji.onLoad(function () {
-        ymaps.ready(init<?= $uid; ?>);
+      ymaps.ready(init<?= $uid; ?>);
 
-        function init<?= $uid; ?>() {
+      function init<?= $uid; ?>() {
 
-            var myPlacemark;
-            myMap<?= $uid; ?> = new ymaps.Map("map<?= $uid; ?>", {
-                center: ["<?= !empty($options['value']['lat']) ? $options['value']['lat'] : '55.76'; ?>", "<?= !empty($options['value']['lng']) ? $options['value']['lng'] : '37.64'; ?>"],
-                zoom: 13
-            });
+        var myPlacemark;
+        myMap<?= $uid; ?> = new ymaps.Map("map<?= $uid; ?>", {
+          center: ["<?= !empty($options['value']['lat']) ? $options['value']['lat'] : '55.76'; ?>", "<?= !empty($options['value']['lng']) ? $options['value']['lng'] : '37.64'; ?>"],
+          zoom: 13
+        });
 
 <?php
 if (!empty($options['value']['lat']) && !empty($options['value']['lng'])) {
@@ -31,21 +31,21 @@ if (!empty($options['value']['lat']) && !empty($options['value']['lng'])) {
       <?php */
 }
 ?>
-            myMap<?= $uid; ?>.events.add('click', function (e) {
-                console.log(e);
-                console.log(e.get('coordPosition'));
-                var coords = e.get('coordPosition');
-                myMap<?= $uid; ?>.balloon.open(coords, {
-                    contentHeader: 'Событие!',
-                    contentBody: '<p>Кто-то щелкнул по карте.</p>' +
-                            '<p>Координаты щелчка: ' + [
-                                coords[0].toPrecision(6),
-                                coords[1].toPrecision(6)
-                            ].join(', ') + '</p>',
-                    contentFooter: '<sup>Щелкните еще раз</sup>'
-                });
-            });
-        }
+        myMap<?= $uid; ?>.events.add('click', function (e) {
+          console.log(e);
+          console.log(e.get('coordPosition'));
+          var coords = e.get('coordPosition');
+          myMap<?= $uid; ?>.balloon.open(coords, {
+            contentHeader: 'Событие!',
+            contentBody: '<p>Кто-то щелкнул по карте.</p>' +
+                    '<p>Координаты щелчка: ' + [
+                      coords[0].toPrecision(6),
+                      coords[1].toPrecision(6)
+                    ].join(', ') + '</p>',
+            contentFooter: '<sup>Щелкните еще раз</sup>'
+          });
+        });
+      }
     });
 </script>
 <input type ="hidden" name = '<?= $name; ?>[lat]' value = '<?= !empty($options['value']['lat']) ? addcslashes($options['value']['lat'], "'") : ''; ?>' />

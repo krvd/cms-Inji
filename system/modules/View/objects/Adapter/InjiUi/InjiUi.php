@@ -13,6 +13,7 @@
 
 namespace View\Adapter;
 
-class InjiUi extends \View\Adapter {
+class InjiUi extends \View\Adapter
+{
     //put your code here
 }

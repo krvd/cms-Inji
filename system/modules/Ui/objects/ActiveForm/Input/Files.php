@@ -11,9 +11,10 @@
 
 namespace Ui\ActiveForm\Input;
 
-class Files extends \Ui\ActiveForm\Input {
-
-    function parseRequest($request) {
+class Files extends \Ui\ActiveForm\Input
+{
+    function parseRequest($request)
+    {
         if (!empty($_FILES[$this->activeForm->requestFormName]['tmp_name'][$this->modelName][$this->colName])) {
             $file_ids = !empty($request[$this->colName]) ? $request[$this->colName] : [];
             foreach ($_FILES[$this->activeForm->requestFormName]['tmp_name'][$this->modelName][$this->colName] as $key => $tmp_name) {

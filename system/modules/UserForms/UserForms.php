@@ -1,8 +1,9 @@
 <?php
 
-class UserForms extends \Module {
-
-    function init() {
+class UserForms extends \Module
+{
+    function init()
+    {
         \App::$cur->view->customAsset('js', '/static/moduleAsset/UserForms/js/formCatcher.js');
         if (!empty($_POST['UserForms'])) {
             foreach ($_POST['UserForms'] as $form_id => $inputs) {
@@ -40,7 +41,8 @@ class UserForms extends \Module {
         }
     }
 
-    function formData($item) {
+    function formData($item)
+    {
         $inputs = json_decode($item->data, true);
         $text = '';
         foreach ($item->form->inputs as $input) {

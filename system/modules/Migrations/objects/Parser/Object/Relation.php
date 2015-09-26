@@ -13,9 +13,10 @@
 
 namespace Migrations\Parser\Object;
 
-class Relation extends \Migrations\Parser {
-
-    function parse() {
+class Relation extends \Migrations\Parser
+{
+    function parse()
+    {
         $options = $this->param->options ? json_decode($this->param->options, true) : [];
         $modelName = get_class($this->object->model);
         $relation = $modelName::getRelation($this->param->value);
@@ -49,7 +50,7 @@ class Relation extends \Migrations\Parser {
                 $objectParser->reader = $item;
                 $objectParser->setModel();
                 if ($objectParser->model) {
-                    if(!$this->object->model->pk()){
+                    if (!$this->object->model->pk()) {
                         $this->object->model->save();
                     }
                     $objectParser->model->{$relation['col']} = $this->object->model->pk();
@@ -67,10 +68,9 @@ class Relation extends \Migrations\Parser {
                 }
                 $modelName = $relation['model'];
                 $objects = $modelName::getList(['where' => $where]);
-                foreach ($objects as $object){
+                foreach ($objects as $object) {
                     $object->delete();
                 }
-                
             }
         } else {
             $objectParser = new \Migrations\Parser\Object();

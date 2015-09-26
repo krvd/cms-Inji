@@ -13,11 +13,13 @@
 
 namespace Exchange1c\Mode;
 
-class Query extends \Exchange1c\Mode {
+class Query extends \Exchange1c\Mode
+{
+    function process()
+    {
 
-    function process() {
-
-        function addToXml($xml, $parent, $nodeName, $text) {
+        function addToXml($xml, $parent, $nodeName, $text)
+        {
             $node = $parent->appendChild($xml->createElement($nodeName));
             $node->appendChild($xml->createTextNode($text));
             return $node;

@@ -1,8 +1,9 @@
 <?php
 
-class Materials extends Module {
-
-    function viewsList() {
+class Materials extends Module
+{
+    function viewsList()
+    {
         $return = [
             'inherit' => 'Как у родителя',
             'default' => 'Стандартная страница'
@@ -20,7 +21,8 @@ class Materials extends Module {
         return $return;
     }
 
-    function templatesList() {
+    function templatesList()
+    {
         $return = [
             'inherit' => 'Как у родителя',
             'current' => 'Текущая тема'
@@ -38,7 +40,8 @@ class Materials extends Module {
         return $return;
     }
 
-    function viewsCategoryList() {
+    function viewsCategoryList()
+    {
         $return = [
             'inherit' => 'Как у родителя',
             'category' => 'Стандартная категория',
@@ -56,7 +59,8 @@ class Materials extends Module {
         return $return;
     }
 
-    function templatesCategoryList() {
+    function templatesCategoryList()
+    {
         $return = [
             'inherit' => 'Как у родителя',
             'current' => 'Текущая тема'

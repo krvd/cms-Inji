@@ -1,12 +1,14 @@
 <?php
 
-class UsersController extends Controller {
-
-    function indexAction() {
+class UsersController extends Controller
+{
+    function indexAction()
+    {
         Tools::redirect('/users/profile');
     }
 
-    function profileAction() {
+    function profileAction()
+    {
         $this->view->setTitle('Профиль');
         $form = new Ui\ActiveForm(Users\User::$cur->info, 'profile');
         $form->header = false;
@@ -15,14 +17,16 @@ class UsersController extends Controller {
         $this->view->page(['data' => compact('form')]);
     }
 
-    function loginAction() {
+    function loginAction()
+    {
         $this->view->setTitle('Авторизация');
         $bread = [];
         $bread[] = ['text' => 'Авторизация'];
         $this->view->page(['data' => compact('bread')]);
     }
 
-    function registrationAction() {
+    function registrationAction()
+    {
         $this->view->setTitle('Регистрация');
         if (Users\User::$cur->user_id) {
             Tools::redirect('/', 'Вы уже зарегистрированы');
@@ -52,7 +56,8 @@ class UsersController extends Controller {
         $this->view->page(['data' => compact('bread')]);
     }
 
-    function activationAction($userId = 0, $hash = '') {
+    function activationAction($userId = 0, $hash = '')
+    {
         $user = \Users\User::get((int) $userId);
         if (!$user || $user->activation !== (string) $hash) {
             Tools::redirect('/', 'Во время активации произошли ошибки', 'danger');
@@ -62,7 +67,8 @@ class UsersController extends Controller {
         Tools::redirect('/', 'Вы успешно активировали ваш аккаунт, теперь вы можете войти');
     }
 
-    function logoutAction() {
+    function logoutAction()
+    {
         setcookie("user_login", '', 0, "/");
         setcookie("user_mail", '', 0, "/");
         setcookie("user_pass", '', 0, "/");

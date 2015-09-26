@@ -10,9 +10,10 @@
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
-class Exchange1cController extends adminController {
-
-    function reExchangeAction() {
+class Exchange1cController extends adminController
+{
+    function reExchangeAction()
+    {
         set_time_limit(0);
         $reExchange = Exchange1c\Exchange::get((int) $_GET['item_pk']);
 

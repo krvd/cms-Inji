@@ -2,8 +2,8 @@
 
 namespace Users;
 
-class User extends \Model {
-
+class User extends \Model
+{
     static $cur;
     public static $objectName = "Пользователь";
     static $labels = [
@@ -66,7 +66,8 @@ class User extends \Model {
         ]
     ];
 
-    static function relations() {
+    static function relations()
+    {
         return [
             'group' => [
                 'model' => 'Users\Group',
@@ -88,7 +89,8 @@ class User extends \Model {
         ];
     }
 
-    function name() {
+    function name()
+    {
         if ($this->info) {
             return $this->info->name();
         } else {
@@ -96,14 +98,16 @@ class User extends \Model {
         }
     }
 
-    function isAdmin() {
+    function isAdmin()
+    {
         if ($this->group_id == 3) {
             return true;
         }
         return false;
     }
 
-    function beforeDelete() {
+    function beforeDelete()
+    {
         if ($this->info) {
             $this->info->delete();
         }
@@ -111,10 +115,10 @@ class User extends \Model {
         foreach ($sessions as $session) {
             $session->delete();
         }
-        /*$socials = Social::getList(['where' => ['user_id' => $this->id]]);
-        foreach ($socials as $social) {
-            $social->delete();
-        }*/
+        /* $socials = Social::getList(['where' => ['user_id' => $this->id]]);
+          foreach ($socials as $social) {
+          $social->delete();
+          } */
     }
 
 }

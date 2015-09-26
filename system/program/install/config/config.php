@@ -6,7 +6,6 @@ return [
         'Main',
         'Modules',
         'Users',
-        
         'Db',
         'View',
         'Libs',

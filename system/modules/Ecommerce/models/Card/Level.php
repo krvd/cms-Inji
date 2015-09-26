@@ -11,8 +11,8 @@
 
 namespace Ecommerce\Card;
 
-class Level extends \Model {
-
+class Level extends \Model
+{
     static $objectName = 'Уровень карты';
     static $cols = [
         'name' => ['type' => 'text'],
@@ -45,7 +45,8 @@ class Level extends \Model {
             ]
     ]];
 
-    static function relations() {
+    static function relations()
+    {
         return [
             'card' => [
                 'model' => 'Ecommerce\Card',

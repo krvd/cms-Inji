@@ -1,8 +1,9 @@
 <?php
 
-class MenuController extends adminController {
-
-    function indexAction($appType = 'app') {
+class MenuController extends adminController
+{
+    function indexAction($appType = 'app')
+    {
         $this->view->setTitle('Меню сайта');
         if (!$appType) {
             $appType = App::$cur->type;

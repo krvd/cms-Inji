@@ -11,6 +11,7 @@
 
 namespace Ui\ActiveForm\Input;
 
-class Date extends \Ui\ActiveForm\Input {
+class Date extends \Ui\ActiveForm\Input
+{
     
 }

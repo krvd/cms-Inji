@@ -1,14 +1,15 @@
 <?php
 
-class Ecommerce_HELPER extends Module {
-
-    function abc($liters) {
-		$get = $_GET;
+class Ecommerce_HELPER extends Module
+{
+    function abc($liters)
+    {
+        $get = $_GET;
         echo '<div class = "text-center">';
         $btn_group = $this->bootstrap->widget('btn_group');
         foreach ($liters as $liter) {
             $active = false;
-            if ( !empty($_GET['search']) && $_GET['search'] == $liter['liter'])
+            if (!empty($_GET['search']) && $_GET['search'] == $liter['liter'])
                 $active = true;
             $get['search'] = $liter;
             $btn_group->add_item($liter['liter'], "?" . http_build_query($get), $active);
@@ -17,7 +18,8 @@ class Ecommerce_HELPER extends Module {
         echo '</div>';
     }
 
-    function limits($limits) {
+    function limits($limits)
+    {
         $get = $_GET;
         ?>
         <div class = 'btn-group'>
@@ -46,7 +48,8 @@ class Ecommerce_HELPER extends Module {
         <?php
     }
 
-    function sorts($sorts) {
+    function sorts($sorts)
+    {
         $get = $_GET;
         ?>
         <div class = 'btn-group'>
@@ -75,7 +78,8 @@ class Ecommerce_HELPER extends Module {
         <?php
     }
 
-    function show_items($items) {
+    function show_items($items)
+    {
         if ($items) {
             $i = 0;
             foreach ($items as $item) {
@@ -107,23 +111,23 @@ class Ecommerce_HELPER extends Module {
                                     var timer;
 
                                     function showRemaining<?php echo $item['ci_id']; ?>() {
-                                        var now = new Date();
-                                        var distance = end<?php echo $item['ci_id']; ?> - now;
-                                        if (distance < 0) {
-                                            document.getElementById("countdown").innerHTML = "Акция окончена";
-                                            return;
-                                        }
-                                        var days = Math.floor(distance / _day);
-                                        var hours = Math.floor((distance % _day) / _hour);
-                                        if (hours < 10)
-                                            hours = '0' + hours;
-                                        var minutes = Math.floor((distance % _hour) / _minute);
-                                        if (minutes < 10)
-                                            minutes = '0' + minutes;
-                                        var seconds = Math.floor((distance % _minute) / _second);
-                                        if (seconds < 10)
-                                            seconds = '0' + seconds;
-                                        document.getElementById('sale_timer<?php echo $item['ci_id']; ?>').innerHTML = "" + days + " дн. " + hours + ":" + minutes + ":" + seconds + "";
+                                      var now = new Date();
+                                      var distance = end<?php echo $item['ci_id']; ?> - now;
+                                      if (distance < 0) {
+                                        document.getElementById("countdown").innerHTML = "Акция окончена";
+                                        return;
+                                      }
+                                      var days = Math.floor(distance / _day);
+                                      var hours = Math.floor((distance % _day) / _hour);
+                                      if (hours < 10)
+                                        hours = '0' + hours;
+                                      var minutes = Math.floor((distance % _hour) / _minute);
+                                      if (minutes < 10)
+                                        minutes = '0' + minutes;
+                                      var seconds = Math.floor((distance % _minute) / _second);
+                                      if (seconds < 10)
+                                        seconds = '0' + seconds;
+                                      document.getElementById('sale_timer<?php echo $item['ci_id']; ?>').innerHTML = "" + days + " дн. " + hours + ":" + minutes + ":" + seconds + "";
                                     }
 
                                     timer = setInterval(showRemaining<?php echo $item['ci_id']; ?>, 1000);

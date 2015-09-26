@@ -1,7 +1,7 @@
 <div class="dynamicList">
     <h3>
         <div class="pull-right">
-            <?=!empty($options['modelPk'])?'<a class="btn btn-primary btn-xs" onclick="inji.Ui.forms.addRowToList(this);">Добавить</a>':'';?>
+            <?= !empty($options['modelPk']) ? '<a class="btn btn-primary btn-xs" onclick="inji.Ui.forms.addRowToList(this);">Добавить</a>' : ''; ?>
         </div>
         <?= $label; ?>
     </h3>

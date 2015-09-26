@@ -5,9 +5,11 @@
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  */
-namespace Ecommerce\Item;
-class Type extends \Model {
 
+namespace Ecommerce\Item;
+
+class Type extends \Model
+{
     static $objectName = 'Тип товара';
     static $cols = [
         'name' => ['type' => 'text'],

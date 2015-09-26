@@ -13,9 +13,10 @@
 
 namespace Migrations\Migration\Map;
 
-class Path extends \Model {
-
-    static function relations() {
+class Path extends \Model
+{
+    static function relations()
+    {
         return [
             'map' => [
                 'model' => 'Migrations\Migration\Map',

@@ -13,8 +13,8 @@
 
 namespace Ecommerce\Item\Option;
 
-class Item extends \Model {
-
+class Item extends \Model
+{
     static $objectName = 'Элемент коллекции опции';
     static $cols = [
         'value' => ['type' => 'text']

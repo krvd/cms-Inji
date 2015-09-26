@@ -1,12 +1,14 @@
 <?php
 
-class Ecommerce extends Module {
-
-    function init() {
+class Ecommerce extends Module
+{
+    function init()
+    {
         App::$primary->view->customAsset('js', '/moduleAsset/Ecommerce/js/cart.js');
     }
 
-    function parseFields($data, $cart) {
+    function parseFields($data, $cart)
+    {
         $fields = \Ecommerce\UserAdds\Field::getList();
         $name = '';
         foreach ($fields as $field) {
@@ -59,7 +61,8 @@ class Ecommerce extends Module {
         return $userAdds;
     }
 
-    function getCurCart() {
+    function getCurCart()
+    {
         $cart = false;
         if (!empty($_SESSION['cart']['cart_id'])) {
             $cart = Ecommerce\Cart::get((int) $_SESSION['cart']['cart_id']);
@@ -78,7 +81,8 @@ class Ecommerce extends Module {
         return $cart;
     }
 
-    function getBreadcrumb() {
+    function getBreadcrumb()
+    {
         $bread = [];
         $bread['/ecommerce'] = 'Онлайн-магазин';
         if (!empty($this->view->content_data['catalog'])) {
@@ -94,7 +98,8 @@ class Ecommerce extends Module {
         return $bread;
     }
 
-    function parseOptions($options = []) {
+    function parseOptions($options = [])
+    {
         $selectOptions = [
             'where' => !empty($options['where']) ? $options['where'] : [],
             'distinct' => false,
@@ -209,7 +214,8 @@ class Ecommerce extends Module {
      * @param array $params
      * @return array
      */
-    function getItems($options = []) {
+    function getItems($options = [])
+    {
         $selectOptions = $this->parseOptions($options);
         $items = Ecommerce\Item::getList($selectOptions);
         return $items;
@@ -221,7 +227,8 @@ class Ecommerce extends Module {
      * @param array $params
      * @return int
      */
-    function getItemsCount($options = []) {
+    function getItemsCount($options = [])
+    {
         $selectOptions = $this->parseOptions($options);
         $selectOptions['distinct'] = \Ecommerce\Item::index();
         $counts = Ecommerce\Item::getCount($selectOptions);

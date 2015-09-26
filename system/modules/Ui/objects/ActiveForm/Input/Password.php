@@ -11,9 +11,10 @@
 
 namespace Ui\ActiveForm\Input;
 
-class Password extends \Ui\ActiveForm\Input {
-
-    function parseRequest($request) {
+class Password extends \Ui\ActiveForm\Input
+{
+    function parseRequest($request)
+    {
         if (!empty($request[$this->colName]['pass']) && !empty($request[$this->colName]['pass'])) {
             if (empty($request[$this->colName]['pass'])) {
                 \Msg::add('Вы не ввели пароль в первое поле', 'danger');

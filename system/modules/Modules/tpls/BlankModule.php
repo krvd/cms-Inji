@@ -1,8 +1,8 @@
-<?="<?php\n";?>
-class <?=$codeName;?> extends Module {
+<?= "<?php\n"; ?>
+class <?= $codeName; ?> extends Module {
 
-    function init() {
-        
-    }
+function init() {
+
+}
 
 }

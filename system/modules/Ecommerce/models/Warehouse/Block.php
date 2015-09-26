@@ -2,5 +2,7 @@
 
 namespace Ecommerce\Warehouse;
 
-class Block extends \Model {
+class Block extends \Model
+{
+    
 }

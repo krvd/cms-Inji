@@ -8,9 +8,10 @@
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
-class UiController extends Controller {
-
-    function formPopUpAction() {
+class UiController extends Controller
+{
+    function formPopUpAction()
+    {
         if (strpos($_GET['item'], ':')) {
             $raw = explode(':', $_GET['item']);
             $modelName = $raw[0];
@@ -50,7 +51,8 @@ class UiController extends Controller {
         }
     }
 
-    function fastEditAction() {
+    function fastEditAction()
+    {
         $model = $_POST['model']::get($_POST['key']);
         if ($model && $model->checkAccess()) {
             $model->$_POST['col'] = $_POST['data'];

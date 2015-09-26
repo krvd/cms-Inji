@@ -8,9 +8,10 @@
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
-class Ui extends Module {
-
-    function init() {
+class Ui extends Module
+{
+    function init()
+    {
         App::$cur->view->customAsset('js', ['file' => '/static/moduleAsset/Ui/js/Ui.js', 'name' => 'Ui']);
         if (\Users\User::$cur->isAdmin() && \App::$cur->type == 'app') {
             App::$cur->view->customAsset('js', ['file' => '/static/moduleAsset/Ui/js/fastEdit.js', 'name' => 'Ui', 'libs' => ['ckeditor']]);
@@ -18,7 +19,8 @@ class Ui extends Module {
         App::$cur->view->customAsset('css', '/static/moduleAsset/Ui/css/Ui.css');
     }
 
-    function getModelManager($modelName, $dataManagerName = '') {
+    function getModelManager($modelName, $dataManagerName = '')
+    {
         if (!$dataManagerName) {
             $dataManagerName = 'manger';
         }
@@ -26,11 +28,13 @@ class Ui extends Module {
         return !empty($managers[$dataManagerName]) ? $managers[$dataManagerName] : [];
     }
 
-    function getModelManagers($modelName) {
+    function getModelManagers($modelName)
+    {
         return $modelName::$dataManagers;
     }
 
-    function getModelForm($modelName, $formName = '') {
+    function getModelForm($modelName, $formName = '')
+    {
         if (!$formName) {
             $formName = 'manger';
         }
@@ -38,7 +42,8 @@ class Ui extends Module {
         return !empty($forms[$formName]) ? $forms[$formName] : [];
     }
 
-    function getModelForms($modelName) {
+    function getModelForms($modelName)
+    {
         return $modelName::$forms;
     }
 

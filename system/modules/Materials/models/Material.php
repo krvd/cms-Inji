@@ -2,8 +2,8 @@
 
 namespace Materials;
 
-class Material extends \Model {
-
+class Material extends \Model
+{
     static $objectName = 'Материал';
     static $categoryModel = 'Materials\Category';
     static $labels = [
@@ -85,7 +85,8 @@ class Material extends \Model {
         ]
     ];
 
-    static function relations() {
+    static function relations()
+    {
         return [
             'category' => [
                 'model' => '\Materials\Category',
@@ -102,7 +103,8 @@ class Material extends \Model {
         ];
     }
 
-    function resolveTemplate() {
+    function resolveTemplate()
+    {
         if ($this->template !== 'inherit') {
             return $this->template;
         } elseif ($this->template == 'inherit' && $this->category) {
@@ -112,7 +114,8 @@ class Material extends \Model {
         }
     }
 
-    function resolveViewer() {
+    function resolveViewer()
+    {
         if ($this->viewer !== 'inherit') {
             return $this->viewer;
         } elseif ($this->viewer == 'inherit' && $this->category) {

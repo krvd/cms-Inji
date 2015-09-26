@@ -13,17 +13,18 @@
 
 namespace CodeGenerator;
 
-class Property extends \Object {
-
+class Property extends \Object
+{
     public $security = 'public';
     public $static = false;
     public $name = 'property';
     public $value = 'value';
 
-    function generate() {
+    function generate()
+    {
         $code = $this->security . ' ';
         $code .= $this->static ? 'static ' : '';
-        $code .= '$'.$this->name . ' = ';
+        $code .= '$' . $this->name . ' = ';
         if (is_array($this->value)) {
             $code .= \CodeGenerator::genArray($this->value);
         } else {

@@ -2,8 +2,8 @@
 
 namespace Ecommerce;
 
-class Delivery extends \Model {
-
+class Delivery extends \Model
+{
     static $objectName = 'Доставка';
     static $cols = [
         'name' => ['type' => 'text'],
@@ -35,7 +35,8 @@ class Delivery extends \Model {
             ]
     ]];
 
-    static function relations() {
+    static function relations()
+    {
         return [
             'icon' => [
                 'model' => 'Files\File',

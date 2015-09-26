@@ -13,9 +13,10 @@
 
 namespace Exchange1c\Parser\Item\Offer;
 
-class Warehouse extends \Migrations\Parser {
-
-    function parse() {
+class Warehouse extends \Migrations\Parser
+{
+    function parse()
+    {
         $id = $this->reader->data['ИдСклада'];
         $count = $this->reader->data['КоличествоНаСкладе'];
         $objectId = \Migrations\Id::get([['parse_id', (string) $this->reader->data['ИдСклада']], ['type', 'Ecommerce\Warehouse']]);
@@ -28,9 +29,7 @@ class Warehouse extends \Migrations\Parser {
                     \Ecommerce\Warehouse::index() => $objectId->object_id,
                     'count' => $count
                 ]);
-                
-            }
-            else {
+            } else {
                 $warehouse->count = $count;
             }
             $warehouse->save();

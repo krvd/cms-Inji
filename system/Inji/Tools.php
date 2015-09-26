@@ -10,10 +10,10 @@
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
-class Tools extends Model {
-
-    static function randomString($length = 20) {
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+class Tools extends Model
+{
+    static function randomString($length = 20, $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')
+    {
         $charactersLength = strlen($characters);
         $randomString = '';
         for ($i = 0; $i < $length; $i++) {
@@ -22,7 +22,8 @@ class Tools extends Model {
         return $randomString;
     }
 
-    static function uriParse($uri) {
+    static function uriParse($uri)
+    {
         $answerPos = strpos($uri, '?');
         $params = array_slice(explode('/', substr($uri, 0, $answerPos ? $answerPos : strlen($uri) )), 1);
 
@@ -36,7 +37,8 @@ class Tools extends Model {
         return $params;
     }
 
-    static function createDir($path) {
+    static function createDir($path)
+    {
         if (file_exists($path))
             return true;
 
@@ -51,7 +53,8 @@ class Tools extends Model {
         return true;
     }
 
-    static function resizeImage($img_path, $max_width = 1000, $max_height = 1000, $crop = false, $pos = 'center') {
+    static function resizeImage($img_path, $max_width = 1000, $max_height = 1000, $crop = false, $pos = 'center')
+    {
         ini_set("gd.jpeg_ignore_warning", 1);
         list( $img_width, $img_height, $img_type, $img_tag ) = getimagesize($img_path);
         switch ($img_type) {
@@ -135,14 +138,16 @@ class Tools extends Model {
         return $img_type;
     }
 
-    static function sendMail($from, $to, $subject, $text, $charset = 'utf-8', $ctype = 'text/html') {
+    static function sendMail($from, $to, $subject, $text, $charset = 'utf-8', $ctype = 'text/html')
+    {
         $headers = "From: {$from}\r\n";
         $headers .= "Content-type: {$ctype}; charset={$charset}\r\n";
         $headers .= "Mime-Version: 1.0\r\n";
         return mail($to, $subject, $text, $headers);
     }
 
-    static function redirect($href = '/', $text = false, $status = 'info') {
+    static function redirect($href = '/', $text = false, $status = 'info')
+    {
 
         if ($text !== false) {
             Msg::add($text, $status);
@@ -160,7 +165,8 @@ class Tools extends Model {
      *         например array('яблоко', 'яблока', 'яблок')
      * @return String
      */
-    static function getNumEnding($number, $endingArray) {
+    static function getNumEnding($number, $endingArray)
+    {
         $number = $number % 100;
         if ($number >= 11 && $number <= 19) {
             $ending = $endingArray[2];
@@ -179,7 +185,8 @@ class Tools extends Model {
         return $ending;
     }
 
-    static function parsePath($path) {
+    static function parsePath($path)
+    {
         $path = str_replace('\\', '/', $path);
         $pathArray = explode('/', $path);
         $cleanPathArray = [];
@@ -203,7 +210,8 @@ class Tools extends Model {
         return (strpos($path, '/') === 0 ? '/' : '') . implode('/', $pathArray);
     }
 
-    static function toRusDate($date) {
+    static function toRusDate($date)
+    {
         $yy = (int) substr($date, 0, 4);
         $mm = (int) substr($date, 5, 2);
         $dd = (int) substr($date, 8, 2);
@@ -217,7 +225,8 @@ class Tools extends Model {
         return ($dd > 0 ? $dd . " " : '') . $month[$mm - 1] . " " . $yy . " " . $hours;
     }
 
-    static function header($code, $exit = false) {
+    static function header($code, $exit = false)
+    {
         switch ($code) {
             case '404':
                 header('HTTP/1.1 404 Not Found');
@@ -230,7 +239,8 @@ class Tools extends Model {
         }
     }
 
-    static function pathsResolve($paths = [], $default = false) {
+    static function pathsResolve($paths = [], $default = false)
+    {
         foreach ($paths as $path) {
             if (file_exists($path)) {
                 return $path;
@@ -239,7 +249,8 @@ class Tools extends Model {
         return $default;
     }
 
-    static function toBytes($val) {
+    static function toBytes($val)
+    {
         $val = trim($val);
         $last = strtolower($val[strlen($val) - 1]);
         switch ($last) {
@@ -254,7 +265,8 @@ class Tools extends Model {
         return $val;
     }
 
-    static function copyFiles($from, $to) {
+    static function copyFiles($from, $to)
+    {
         $from = rtrim($from, '/');
         $to = rtrim($to, '/');
         self::createDir($to);

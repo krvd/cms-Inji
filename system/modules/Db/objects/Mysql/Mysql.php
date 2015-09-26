@@ -10,8 +10,8 @@
 
 namespace Db;
 
-class Mysql extends \Object {
-
+class Mysql extends \Object
+{
     public $config = array();       // настройки подключения выбраной базы
     public $connect = FALSE;        // ярлык соединения с MySQL
     public $encoding = 'utf-8';        // установленная кодировка
@@ -26,7 +26,8 @@ class Mysql extends \Object {
     /**
      * Подключение к MySQL
      */
-    public function init($connect_options) {
+    public function init($connect_options)
+    {
         extract($connect_options);
         if (isset($db_name))
             $this->db_name = $db_name;
@@ -58,7 +59,8 @@ class Mysql extends \Object {
         }
     }
 
-    function getTableCols($table_name) {
+    function getTableCols($table_name)
+    {
         $query = new Mysql\Query($this);
         $old_db = $this->db_name;
         $old_prefix = $this->table_prefix;
@@ -73,12 +75,14 @@ class Mysql extends \Object {
         return $result->getArray('COLUMN_NAME');
     }
 
-    function tableExist($tableName) {
+    function tableExist($tableName)
+    {
         $query = new Mysql\Query($this);
         return (bool) $query->query("SHOW TABLES FROM `{$this->db_name}` LIKE '{$this->table_prefix}{$tableName}'")->getArray();
     }
 
-    function add_col($table = false, $name = false, $param = 'TEXT NOT NULL') {
+    function add_col($table = false, $name = false, $param = 'TEXT NOT NULL')
+    {
         if (!$table || !$name) {
             return false;
         }
@@ -89,15 +93,17 @@ class Mysql extends \Object {
         return $query->query("ALTER TABLE `{$this->db_name}`.`{$this->table_prefix}{$table}` ADD `{$name}` {$param}");
     }
 
-    function del_col($table = false, $name = false) {
+    function del_col($table = false, $name = false)
+    {
         if (!$table || !$name) {
             return false;
         }
 
         return $this->query("ALTER TABLE `{$this->db_name}`.`{$this->table_prefix}{$table}` DROP `{$name}`");
     }
-    
-    function getTables(){
+
+    function getTables()
+    {
         $query = new Mysql\Query($this);
         return $query->query("SHOW TABLES")->getArray();
     }

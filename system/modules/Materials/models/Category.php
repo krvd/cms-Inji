@@ -2,8 +2,8 @@
 
 namespace Materials;
 
-class Category extends \Model {
-
+class Category extends \Model
+{
     static $objectModel = 'Категория';
     static $treeCategory = 'Materials\Material';
     static $labels = [
@@ -63,13 +63,15 @@ class Category extends \Model {
         ]
     ];
 
-    function beforeDelete() {
+    function beforeDelete()
+    {
         foreach ($this->childs as $child) {
             $child->delete();
         }
     }
 
-    static function relations() {
+    static function relations()
+    {
         return [
             'parent' => [
                 'model' => 'Materials\Category',
@@ -92,7 +94,8 @@ class Category extends \Model {
         ];
     }
 
-    function resolveTemplate($material = false) {
+    function resolveTemplate($material = false)
+    {
         $param = $material ? 'material_template' : 'template';
         if ($this->$param !== 'inherit') {
             return $this->$param;
@@ -103,7 +106,8 @@ class Category extends \Model {
         }
     }
 
-    function resolveViewer($material = false) {
+    function resolveViewer($material = false)
+    {
         $param = $material ? 'material_viewer' : 'viewer';
         if ($this->$param !== 'inherit') {
             return $this->$param;

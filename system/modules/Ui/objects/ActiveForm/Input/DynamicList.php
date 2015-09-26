@@ -11,9 +11,10 @@
 
 namespace Ui\ActiveForm\Input;
 
-class DynamicList extends \Ui\ActiveForm\Input {
-
-    function draw() {
+class DynamicList extends \Ui\ActiveForm\Input
+{
+    function draw()
+    {
         $inputName = $this->colName();
         $inputLabel = $this->colLabel();
         $inputOptions = [
@@ -25,7 +26,8 @@ class DynamicList extends \Ui\ActiveForm\Input {
         return true;
     }
 
-    function parseRequest($request) {
+    function parseRequest($request)
+    {
         $modelName = $this->modelName;
         $rels = [];
         $relation = $modelName::getRelation($this->colParams['relation']);
@@ -55,7 +57,8 @@ class DynamicList extends \Ui\ActiveForm\Input {
         }
     }
 
-    function value() {
+    function value()
+    {
         $values = [];
         if ($this->activeForm->model) {
             $items = $this->activeForm->model->{$this->colParams['relation']}(['array' => true]);
@@ -67,7 +70,8 @@ class DynamicList extends \Ui\ActiveForm\Input {
         return $values;
     }
 
-    function getCols() {
+    function getCols()
+    {
         $modelName = $this->modelName;
         $relation = $modelName::getRelation($this->colParams['relation']);
         $cols = [];

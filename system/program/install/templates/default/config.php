@@ -6,7 +6,7 @@ return [
     'css' => [
         'style.css'
     ],
-    'libs'=>[
+    'libs' => [
         'bootstrap'
     ]
 ];

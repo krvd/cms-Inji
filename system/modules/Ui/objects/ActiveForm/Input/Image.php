@@ -11,9 +11,10 @@
 
 namespace Ui\ActiveForm\Input;
 
-class Image extends \Ui\ActiveForm\Input {
-
-    function draw() {
+class Image extends \Ui\ActiveForm\Input
+{
+    function draw()
+    {
         $inputName = $this->colName();
         $inputLabel = $this->colLabel();
         $inputOptions = [
@@ -33,7 +34,8 @@ class Image extends \Ui\ActiveForm\Input {
         return true;
     }
 
-    function parseRequest($request) {
+    function parseRequest($request)
+    {
         if (!empty($_FILES[$this->activeForm->requestFormName]['tmp_name'][$this->modelName][$this->colName])) {
             $file_id = \App::$primary->files->upload([
                 'tmp_name' => $_FILES[$this->activeForm->requestFormName]['tmp_name'][$this->modelName][$this->colName],

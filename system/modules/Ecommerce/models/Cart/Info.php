@@ -2,8 +2,8 @@
 
 namespace Ecommerce\Cart;
 
-class Info extends \Model {
-
+class Info extends \Model
+{
     static $labels = [
         'name' => 'название',
         'value' => 'Значение',
@@ -18,7 +18,7 @@ class Info extends \Model {
     ];
     static $dataManagers = [
         'manager' => [
-            'name'=>'Дополнительно',
+            'name' => 'Дополнительно',
             'cols' => [
                 'name',
                 'value',
@@ -34,7 +34,8 @@ class Info extends \Model {
         ]
     ];
 
-    static function relations() {
+    static function relations()
+    {
         return [
             'cart' => [
                 'model' => 'Ecommerce\Cart',

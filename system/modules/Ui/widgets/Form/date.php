@@ -10,12 +10,12 @@ echo empty($options['noContainer']) ? '</div>' : '';
 ?>
 <script>
     inji.onLoad(function () {
-        $("[data-dateui='<?= $uid; ?>']").datepicker({
-            changeMonth: true,
-            changeYear: true,
-            numberOfMonths: 1,
-            dateFormat: 'yy-mm-dd',
-            yearRange: "c-70:c+10"
-        });
+      $("[data-dateui='<?= $uid; ?>']").datepicker({
+        changeMonth: true,
+        changeYear: true,
+        numberOfMonths: 1,
+        dateFormat: 'yy-mm-dd',
+        yearRange: "c-70:c+10"
+      });
     })
 </script>

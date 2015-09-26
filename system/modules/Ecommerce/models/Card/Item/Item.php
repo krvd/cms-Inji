@@ -11,8 +11,8 @@
 
 namespace Ecommerce\Card;
 
-class Item extends \Model {
-
+class Item extends \Model
+{
     static $objectName = 'Карта пользователя';
     static $cols = [
         'card_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'card'],
@@ -49,7 +49,8 @@ class Item extends \Model {
             ]
     ]];
 
-    function beforeSave() {
+    function beforeSave()
+    {
         foreach ($this->card->levels as $level) {
             if ((float) $level->sum <= (float) $this->sum) {
                 $this->card_level_id = $level->id;
@@ -57,7 +58,8 @@ class Item extends \Model {
         }
     }
 
-    static function relations() {
+    static function relations()
+    {
         return [
             'card' => [
                 'model' => 'Ecommerce\Card',

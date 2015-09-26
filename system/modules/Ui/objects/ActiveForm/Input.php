@@ -13,8 +13,8 @@
 
 namespace Ui\ActiveForm;
 
-class Input extends \Object {
-
+class Input extends \Object
+{
     public $form = null;
     public $activeForm = null;
     public $activeFormParams = [];
@@ -22,7 +22,8 @@ class Input extends \Object {
     public $colName = '';
     public $colParams = [];
 
-    function draw() {
+    function draw()
+    {
         $inputName = $this->colName();
         $inputLabel = $this->colLabel();
         $inputOptions = [
@@ -41,7 +42,8 @@ class Input extends \Object {
         return true;
     }
 
-    function parseRequest($request) {
+    function parseRequest($request)
+    {
         if (isset($request[$this->colName])) {
             $this->activeForm->model->{$this->colName} = $request[$this->colName];
         } else {
@@ -50,7 +52,8 @@ class Input extends \Object {
         }
     }
 
-    function value() {
+    function value()
+    {
         $value = isset($this->colParams['default']) ? $this->colParams['default'] : '';
         if ($this->activeForm) {
             $value = ($this->activeForm && $this->activeForm->model && isset($this->activeForm->model->{$this->colName})) ? $this->activeForm->model->{$this->colName} : $value;
@@ -58,7 +61,8 @@ class Input extends \Object {
         return $value;
     }
 
-    function preset() {
+    function preset()
+    {
         $preset = !empty($this->activeForm->form['preset'][$this->colName]) ? $this->activeForm->form['preset'][$this->colName] : [];
         if (!empty($this->activeForm->form['userGroupPreset'][\Users\User::$cur->group_id][$this->colName])) {
             $preset = array_merge($preset, $this->activeForm->form['userGroupPreset'][\Users\User::$cur->group_id][$this->colName]);
@@ -79,16 +83,19 @@ class Input extends \Object {
         return null;
     }
 
-    function colName() {
+    function colName()
+    {
         return "{$this->activeForm->requestFormName}[{$this->activeForm->modelName}][{$this->colName}]";
     }
 
-    function colLabel() {
+    function colLabel()
+    {
         $modelName = $this->modelName;
         return ($this->activeForm->model && !empty($modelName::$labels[$this->colName])) ? $modelName::$labels[$this->colName] : $this->colName;
     }
 
-    function readOnly() {
+    function readOnly()
+    {
         return !empty($this->activeForm->form['userGroupReadonly'][\Users\User::$cur->group_id]) && in_array($this->colName, $this->activeForm->form['userGroupReadonly'][\Users\User::$cur->group_id]);
     }
 

@@ -16,9 +16,10 @@
  *
  * @author inji
  */
-class Exchange1cController extends Controller {
-
-    function indexAction() {
+class Exchange1cController extends Controller
+{
+    function indexAction()
+    {
         set_time_limit(0);
         if (empty($_SESSION['auth'])) {
             if (!isset($_SERVER['PHP_AUTH_USER']) || !isset($_SERVER['PHP_AUTH_PW'])) {
@@ -62,4 +63,5 @@ class Exchange1cController extends Controller {
         $mode->log = $log;
         $mode->process();
     }
+
 }

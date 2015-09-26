@@ -11,8 +11,8 @@
 
 namespace Migrations;
 
-class Walker {
-
+class Walker
+{
     public $migration = null;
     public $map = null;
     public $reader = null;
@@ -20,7 +20,8 @@ class Walker {
     public $mapPathParent = null;
     public $realPath = null;
 
-    function walk($path = '/') {
+    function walk($path = '/')
+    {
         if (!$this->realPath) {
             $this->realPath = $path;
         }
@@ -53,7 +54,8 @@ class Walker {
         }
     }
 
-    function getInfo($item, $path) {
+    function getInfo($item, $path)
+    {
         $this->mapPath = Migration\Map\Path::get([
                     ['path', $path],
                     ['item', $item],

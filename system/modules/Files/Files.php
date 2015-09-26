@@ -1,7 +1,7 @@
 <?php
 
-class Files extends Module {
-
+class Files extends Module
+{
     /**
      * Загрузка файлов
      * 
@@ -10,7 +10,8 @@ class Files extends Module {
      * --	[file_code]: уникальный код для системы медиаданых
      * --	[allow_types]: досупные для заливки типы файлов. Например image (тип форматов из таблицы типов файлов file_type_ext)
      */
-    function upload($file, $options = array()) {
+    function upload($file, $options = array())
+    {
 
         $site_path = App::$primary->path;
 
@@ -68,7 +69,8 @@ class Files extends Module {
      * --	[file_code]: уникальный код для системы медиаданых
      * --	[allow_types]: досупные для заливки типы файлов. Например image (тип форматов из таблицы типов файлов file_type_ext)
      */
-    function uploadFromUrl($url, $options = array()) {
+    function uploadFromUrl($url, $options = array())
+    {
         $site_path = App::$primary->path;
 
         $fileinfo = pathinfo($url);

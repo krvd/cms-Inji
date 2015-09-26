@@ -13,9 +13,10 @@
 
 namespace Migrations\Parser\Object;
 
-class Param extends \Migrations\Parser {
-
-    function parse() {
+class Param extends \Migrations\Parser
+{
+    function parse()
+    {
         $objectParamValue = [
             'col' => '',
             'value' => ''
@@ -59,7 +60,8 @@ class Param extends \Migrations\Parser {
         }
     }
 
-    function getParam($code) {
+    function getParam($code)
+    {
         $param = \Migrations\Migration\Object\Param::get([
                     ['parent_id', $this->param->id],
                     ['object_id', $this->object->object->id],
@@ -75,7 +77,8 @@ class Param extends \Migrations\Parser {
         return $param;
     }
 
-    function editor() {
+    function editor()
+    {
         return [
             '' => 'Выберите',
             'paramName' => 'Название параметра',

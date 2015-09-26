@@ -28,14 +28,14 @@
                         <label>Ваше фото</label>
                         <img src ='/static/system/images/no-image.png' class ='img-responsive' />
                         <input type ='file' name ='user_photo' onchange="
-                                if (this.files && this.files[0]) {
-                                    var reader = new FileReader();
-                                    _this = this;
-                                    reader.onload = function (e) {
-                                        $(_this).prev().attr('src', e.target.result);
-                                    }
-                                    reader.readAsDataURL(this.files[0]);
+                              if (this.files && this.files[0]) {
+                                var reader = new FileReader();
+                                _this = this;
+                                reader.onload = function (e) {
+                                  $(_this).prev().attr('src', e.target.result);
                                 }
+                                reader.readAsDataURL(this.files[0]);
+                              }
                                "/>
                     </div>
                 </div>

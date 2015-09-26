@@ -1,8 +1,9 @@
 <?php
 
-class RecaptchaController extends Controller {
-
-    function indexAction() {
+class RecaptchaController extends Controller
+{
+    function indexAction()
+    {
         $config = $this->Recaptcha->config;
         if (filter_input(INPUT_POST, 'secret', FILTER_SANITIZE_STRING) && filter_input(INPUT_POST, 'sitekey', FILTER_SANITIZE_STRING)) {
             $config['secret'] = filter_input(INPUT_POST, 'secret', FILTER_SANITIZE_STRING);

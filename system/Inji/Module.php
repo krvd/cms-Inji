@@ -8,8 +8,8 @@
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
-class Module {
-
+class Module
+{
     public static $cur = null;
     public $moduleName = '';
     public $config = [];
@@ -18,7 +18,8 @@ class Module {
     public $path = '';
     public $app = null;
 
-    function __construct($app) {
+    function __construct($app)
+    {
         $this->app = $app;
         $this->moduleName = get_class($this);
         $this->path = Router::getLoadedClassPath($this->moduleName);
@@ -26,7 +27,8 @@ class Module {
         $this->config = Config::module($this->moduleName, !empty($this->info['systemConfig']));
     }
 
-    static function getModulePaths($moduleName) {
+    static function getModulePaths($moduleName)
+    {
         $moduleName = ucfirst($moduleName);
         $paths = [];
         if (App::$cur !== App::$primary) {
@@ -37,7 +39,8 @@ class Module {
         return $paths;
     }
 
-    static function getModulePath($moduleName) {
+    static function getModulePath($moduleName)
+    {
         $moduleName = ucfirst($moduleName);
         $paths = Module::getModulePaths($moduleName);
         foreach ($paths as $path) {
@@ -47,8 +50,9 @@ class Module {
         }
     }
 
-    static function installed($moduleName, $app) {
-        
+    static function installed($moduleName, $app)
+    {
+
         $systemModules = !empty(Inji::$config['modules']) ? Inji::$config['modules'] : [];
         if (in_array($moduleName, $systemModules)) {
             return true;
@@ -58,19 +62,20 @@ class Module {
         if (in_array($moduleName, $primaryModules)) {
             return true;
         }
-        
+
         if ($app !== \App::$primary) {
             $appModules = !empty($app->config['modules']) ? $app->config['modules'] : [];
             if (in_array($moduleName, $appModules)) {
                 return true;
             }
         }
-        
+
 
         return FALSE;
     }
 
-    static function resolveModule($app) {
+    static function resolveModule($app)
+    {
         $moduleName = false;
         if (!empty($app->params[0]) && $app->{$app->params[0]}) {
             $module = $app->{$app->params[0]};
@@ -91,7 +96,8 @@ class Module {
         return null;
     }
 
-    function getControllerPaths() {
+    function getControllerPaths()
+    {
         $paths = [];
         if (App::$cur != App::$primary) {
             if (!empty($this->params[0])) {
@@ -124,7 +130,8 @@ class Module {
         return $paths;
     }
 
-    function findController() {
+    function findController()
+    {
         $paths = $this->getControllerPaths();
         foreach ($paths as $pathName => $path) {
             if (file_exists($path)) {
@@ -147,7 +154,8 @@ class Module {
         }
     }
 
-    static function getInfo($moduleName = '') {
+    static function getInfo($moduleName = '')
+    {
         if (!$moduleName && get_called_class()) {
             $moduleName = get_called_class();
         } elseif (!$moduleName) {

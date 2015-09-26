@@ -1,5 +1,6 @@
 <?php
 
-class SlidersController extends adminController {
-
+class SlidersController extends adminController
+{
+    
 }

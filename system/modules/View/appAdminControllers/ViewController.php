@@ -1,21 +1,24 @@
 <?php
 
-class ViewController extends Controller {
-
-    function indexAction() {
+class ViewController extends Controller
+{
+    function indexAction()
+    {
         $templates = App::$primary->view->config;
         App::$cur->view->setTitle('Шаблоны сайта');
         App::$cur->view->page(['data' => compact('templates')]);
     }
 
-    function setDefaultAction($name) {
+    function setDefaultAction($name)
+    {
         $templates = App::$primary->view->config;
         $templates['app']['current'] = $name;
         Config::save('module', $templates, 'View', App::$primary);
         Tools::redirect('/admin/View');
     }
 
-    function createTemplateAction() {
+    function createTemplateAction()
+    {
         $this->view->setTitle('Создание шаблона');
         App::$cur->view->customAsset('css', '/static/moduleAsset/View/css/blockDrop.css');
         App::$cur->view->customAsset('js', ['file' => '/static/moduleAsset/View/js/blockDrop.js', 'libs' => ['jquery-ui']]);
@@ -53,7 +56,8 @@ class ViewController extends Controller {
         $this->view->page();
     }
 
-    function editTemplateAction($templateName) {
+    function editTemplateAction($templateName)
+    {
         $this->view->setTitle('Редактирование шаблона');
         App::$cur->view->customAsset('css', '/static/moduleAsset/View/css/blockDrop.css');
         App::$cur->view->customAsset('js', '/static/moduleAsset/View/js/blockDrop.js');
@@ -62,7 +66,7 @@ class ViewController extends Controller {
         if (!empty($_POST)) {
             $templates = App::$primary->view->config;
             $templates['app']['installed'][$templateName] = $_POST['name'];
-            Config::save('module', $templates, 'View',App::$primary);
+            Config::save('module', $templates, 'View', App::$primary);
 
             file_put_contents($pathMap, trim($_POST['map']));
 

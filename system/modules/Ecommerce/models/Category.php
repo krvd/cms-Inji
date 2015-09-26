@@ -2,8 +2,8 @@
 
 namespace Ecommerce;
 
-class Category extends \Model {
-
+class Category extends \Model
+{
     static $treeCategory = 'Ecommerce\Item';
     static $cols = [
         'name' => ['type' => 'text'],
@@ -32,7 +32,8 @@ class Category extends \Model {
         ]
     ];
 
-    static function relations() {
+    static function relations()
+    {
         return [
             'items' => [
                 'type' => 'many',

@@ -42,7 +42,7 @@
                         <div class="col-lg-10">
                             <select class="form-control" name = 'user_role_id'>
                                 <?php
-                                foreach( $roles as $role ) {
+                                foreach ($roles as $role) {
                                     echo "<option value = '{$role['role_id']}'>{$role['role_name']}</option>";
                                 }
                                 ?>
@@ -64,7 +64,7 @@
                     <input type = 'submit' class = 'btn btn-primary' value = 'Сохранить' />
                 </div>
 
-                </div>
             </div>
         </div>
+    </div>
 </form>

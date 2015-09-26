@@ -2,8 +2,8 @@
 
 namespace Ecommerce;
 
-class PayType extends \Model {
-
+class PayType extends \Model
+{
     static $objectName = 'Оплата';
     static $labels = [
         'name' => 'Название',
@@ -28,7 +28,8 @@ class PayType extends \Model {
             ]
     ]];
 
-    static function relations() {
+    static function relations()
+    {
         return [
             'icon' => [
                 'model' => 'Files\File',

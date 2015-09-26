@@ -2,8 +2,8 @@
 
 namespace Ecommerce;
 
-class Discount extends \Model {
-
+class Discount extends \Model
+{
     static $objectName = 'Скидка';
     static $cols = [
         'name' => ['type' => 'text'],
@@ -32,7 +32,7 @@ class Discount extends \Model {
             'map' => [
                 ['name'],
                 ['type', 'amount'],
-                //['condition']
+            //['condition']
             ]
     ]];
 

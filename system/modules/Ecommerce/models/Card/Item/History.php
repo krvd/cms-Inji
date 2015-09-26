@@ -11,6 +11,7 @@
 
 namespace Ecommerce\Card\Item;
 
-class History extends \Model {
+class History extends \Model
+{
     //put your code here
 }

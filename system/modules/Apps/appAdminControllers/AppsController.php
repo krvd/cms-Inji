@@ -8,9 +8,10 @@
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
-class AppsController extends Controller {
-
-    function indexAction() {
+class AppsController extends Controller
+{
+    function indexAction()
+    {
         
     }
 

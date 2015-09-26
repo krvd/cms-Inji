@@ -2,6 +2,7 @@
 
 namespace Files;
 
-class Type extends \Model {
-
+class Type extends \Model
+{
+    
 }

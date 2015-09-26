@@ -2,7 +2,7 @@
 
 class UserFormsController extends adminController
 {
-
-
+    
 }
+
 ?>

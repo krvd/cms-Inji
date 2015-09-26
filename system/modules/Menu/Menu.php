@@ -1,5 +1,6 @@
 <?php
 
-class Menu extends Module {
+class Menu extends Module
+{
     
 }

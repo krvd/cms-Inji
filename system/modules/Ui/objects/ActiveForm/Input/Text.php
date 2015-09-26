@@ -11,6 +11,7 @@
 
 namespace Ui\ActiveForm\Input;
 
-class Text extends \Ui\ActiveForm\Input {
-
+class Text extends \Ui\ActiveForm\Input
+{
+    
 }

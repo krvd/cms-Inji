@@ -2,8 +2,8 @@
 
 namespace Ecommerce\Item\Offer;
 
-class Warehouse extends \Model {
-
+class Warehouse extends \Model
+{
     static $objectName = 'Товар на складе';
     static $labels = [
         'count' => 'Количество',
@@ -17,7 +17,7 @@ class Warehouse extends \Model {
     ];
     static $dataManagers = [
         'manager' => [
-            'name'=>'Складской учет',
+            'name' => 'Складской учет',
             'cols' => [
                 'warehouse_id',
                 'count',
@@ -32,7 +32,8 @@ class Warehouse extends \Model {
             ]
     ]];
 
-    static function relations() {
+    static function relations()
+    {
         return [
             'warehouse' => [
                 'model' => 'Ecommerce\Warehouse',

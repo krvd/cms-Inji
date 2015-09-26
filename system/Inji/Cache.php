@@ -16,13 +16,14 @@
  *
  * @author inji
  */
-class Cache {
-
+class Cache
+{
     static $server = null;
     static $connectTrying = false;
     static $connected = false;
 
-    static function connect() {
+    static function connect()
+    {
         if (!self::$connectTrying && class_exists('Memcache', false)) {
             self::$server = new Memcache();
             self::$connected = @self::$server->connect('192.168.0.88', 11211);
@@ -30,7 +31,8 @@ class Cache {
         self::$connectTrying = true;
     }
 
-    static function get($name, $params = [], $callback = null) {
+    static function get($name, $params = [], $callback = null)
+    {
         if (!self::$connected) {
             self::connect();
         }
@@ -53,7 +55,8 @@ class Cache {
         return false;
     }
 
-    static function set($name, $params = [], $val = '', $lifeTime = 3600) {
+    static function set($name, $params = [], $val = '', $lifeTime = 3600)
+    {
         if (!self::$connected) {
             self::connect();
         }

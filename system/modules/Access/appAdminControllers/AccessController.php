@@ -1,7 +1,10 @@
 <?php
 
-class AccessController extends Controller {
-    public function indexAction() {
+class AccessController extends Controller
+{
+    public function indexAction()
+    {
         
     }
+
 }

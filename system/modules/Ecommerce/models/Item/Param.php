@@ -8,8 +8,8 @@
 
 namespace Ecommerce\Item;
 
-class Param extends \Model {
-
+class Param extends \Model
+{
     static $objectName = 'Параметр товара';
     static $labels = [
         'item_option_id' => 'Параметр',
@@ -22,7 +22,8 @@ class Param extends \Model {
         'value' => ['type' => 'dynamicType', 'typeSource' => 'selfMethod', 'selfMethod' => 'realType'],
     ];
 
-    function realType() {
+    function realType()
+    {
         $type = $this->option->type;
         if ($type == 'select') {
             return [
@@ -53,7 +54,8 @@ class Param extends \Model {
             ]
     ]];
 
-    function value($default = '') {
+    function value($default = '')
+    {
         if ($this->option->type != 'select') {
             return $this->value;
         } elseif ($this->optionItem) {
@@ -62,7 +64,8 @@ class Param extends \Model {
         return $default;
     }
 
-    static function relations() {
+    static function relations()
+    {
         return [
             'file' => [
                 'model' => 'Files\File',

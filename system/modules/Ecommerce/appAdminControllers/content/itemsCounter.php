@@ -12,8 +12,8 @@ $catalogIds = [];
     ?>
 </ul>
 <?php
-
-function showChildsCatalogs($parent, $catalogs, $catalogIds) {
+function showChildsCatalogs($parent, $catalogs, $catalogIds)
+{
     $isset = false;
 
     foreach ($catalogs as $catalog) {

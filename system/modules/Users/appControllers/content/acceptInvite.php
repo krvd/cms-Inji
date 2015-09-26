@@ -1,18 +1,18 @@
 <div class ='col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1'>
-<form method = 'POST'>
-    <div class ='form-group'>
-        <label>Укажите ФИО</label>
-        <input type ='text' class ='form-control' name ='user_name' required />
-    </div>
-    <div class="checkbox">
-        <label>
-            <input type="checkbox" name = 'accept_license' required> Я принимаю <a href = '#userLicense' type="button" data-toggle="modal" data-target="#userLicense">Пользовательское соглашение</a>
-        </label>
-    </div>
-    <div class ='form-group'>
-        <button class ="btn btn-block btn-success" >Продолжить</button>
-    </div>
-</form>
+    <form method = 'POST'>
+        <div class ='form-group'>
+            <label>Укажите ФИО</label>
+            <input type ='text' class ='form-control' name ='user_name' required />
+        </div>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" name = 'accept_license' required> Я принимаю <a href = '#userLicense' type="button" data-toggle="modal" data-target="#userLicense">Пользовательское соглашение</a>
+            </label>
+        </div>
+        <div class ='form-group'>
+            <button class ="btn btn-block btn-success" >Продолжить</button>
+        </div>
+    </form>
 </div>
 <!-- userLicense -->
 <div class="modal fade" id="userLicense" tabindex="-1" role="dialog" aria-labelledby="Пользовательское соглашение" aria-hidden="true">

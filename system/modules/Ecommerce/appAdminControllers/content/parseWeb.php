@@ -15,20 +15,20 @@ if (isset($catalogs)) {
 ?>
 <script>
     $(function () {
-        $('.startParse').click(function () {
-            $(this).attr('disabled', true);
-            startParse($(this), $(this).data('site'), $(this).data('catalognum'))
+      $('.startParse').click(function () {
+        $(this).attr('disabled', true);
+        startParse($(this), $(this).data('site'), $(this).data('catalognum'))
+      });
+      function startParse(btn, site, catalogNum) {
+        $.get('/admin/ecommerce/processParseWeb/' + site + '/' + catalogNum, function (data) {
+          if (data != 'success') {
+            //btn.button('loading');
+            startParse(btn, site, catalogNum);
+          } else {
+            btn.removeAttr('disabled');
+            //btn.button('reset');
+          }
         });
-        function startParse(btn, site, catalogNum) {
-            $.get('/admin/ecommerce/processParseWeb/' + site + '/' + catalogNum, function (data) {
-                if (data != 'success') {
-                    //btn.button('loading');
-                    startParse(btn, site, catalogNum);
-                } else {
-                    btn.removeAttr('disabled');
-                    //btn.button('reset');
-                }
-            });
-        }
+      }
     });
 </script>

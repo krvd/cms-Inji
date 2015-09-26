@@ -2,8 +2,8 @@
 
 namespace Sliders;
 
-class Slide extends \Model {
-
+class Slide extends \Model
+{
     public static $objectName = "Слайд";
     public static $cols = [
         'name' => [
@@ -65,7 +65,8 @@ class Slide extends \Model {
         ],
     ];
 
-    public static function relations() {
+    public static function relations()
+    {
         return [
             'slider' => [
                 'model' => 'Sliders\Slider',

@@ -13,18 +13,20 @@
 
 namespace Migrations;
 
-class Parser {
-
+class Parser
+{
     public $reader;
     public $param;
     public $model;
     public $object;
 
-    function parse() {
+    function parse()
+    {
         
     }
 
-    function editor() {
+    function editor()
+    {
         return [
             '' => 'Выберите',
         ];

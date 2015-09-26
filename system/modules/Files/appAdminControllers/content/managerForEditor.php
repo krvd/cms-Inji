@@ -19,7 +19,7 @@
         foreach ($files as $file) {
             ?>
             <div class="col-xs-6 col-sm-2 fileChooser" onclick="OpenFile('<?= $file->path; ?>');
-                        return false;">
+                      return false;">
                 <div class="thumbnail">
                     <?php
                     if ($file->type->group == 'image') {
@@ -47,25 +47,25 @@
 <script>
     function GetUrlParam(paramName)
     {
-        var oRegex = new RegExp('[\?&]' + paramName + '=([^&]+)', 'i');
-        var oMatch = oRegex.exec(window.top.location.search);
+      var oRegex = new RegExp('[\?&]' + paramName + '=([^&]+)', 'i');
+      var oMatch = oRegex.exec(window.top.location.search);
 
-        if (oMatch && oMatch.length > 1)
-            return decodeURIComponent(oMatch[1]);
-        else
-            return '';
+      if (oMatch && oMatch.length > 1)
+        return decodeURIComponent(oMatch[1]);
+      else
+        return '';
     }
     function OpenFile(fileUrl)
     {
-        //PATCH: Using CKEditors API we set the file in preview window.	
-        funcNum = GetUrlParam('CKEditorFuncNum');
+      //PATCH: Using CKEditors API we set the file in preview window.	
+      funcNum = GetUrlParam('CKEditorFuncNum');
 
-        //fixed the issue: images are not displayed in preview window when filename contain spaces due encodeURI encoding already encoded fileUrl	
-        window.top.opener.CKEDITOR.tools.callFunction(funcNum, fileUrl);
+      //fixed the issue: images are not displayed in preview window when filename contain spaces due encodeURI encoding already encoded fileUrl	
+      window.top.opener.CKEDITOR.tools.callFunction(funcNum, fileUrl);
 //	window.top.opener.SetUrl( encodeURI( fileUrl ).replace( '#', '%23' ) ) ;
 
-        window.top.close();
-        window.top.opener.focus();
+      window.top.close();
+      window.top.opener.focus();
     }
 </script>
 <style>

@@ -13,8 +13,8 @@
 
 namespace Ui;
 
-class Form extends \Object {
-
+class Form extends \Object
+{
     public $method = 'POST';
     public $action = '';
     public $inputs = [];
@@ -22,12 +22,14 @@ class Form extends \Object {
     public $userDataTree = [];
     public $options = ['widgetsDir' => 'Form'];
 
-    function __construct($options = []) {
+    function __construct($options = [])
+    {
         $this->options = array_merge($this->options, $options);
         $this->genUserDataTree($_POST);
     }
 
-    function genUserDataTree($data, $treeKey = '') {
+    function genUserDataTree($data, $treeKey = '')
+    {
         foreach ($data as $key => $item) {
             if (is_array($item)) {
                 $this->genUserDataTree($item, $treeKey ? $treeKey . "[{$key}]" : $key);
@@ -37,13 +39,15 @@ class Form extends \Object {
         }
     }
 
-    function begin($header = '', $options = []) {
+    function begin($header = '', $options = [])
+    {
         $params = compact('header', 'options');
         $params['form'] = $this;
         \App::$cur->view->widget('Ui\\' . $this->options['widgetsDir'] . '/begin', $params);
     }
 
-    function input($type, $name, $label = '', $options = []) {
+    function input($type, $name, $label = '', $options = [])
+    {
         switch ($type) {
             case 'html':
                 \App::$cur->libs->loadLib('ckeditor');
@@ -69,7 +73,8 @@ class Form extends \Object {
         }
     }
 
-    function end($btnText = 'Отправить', $attributs = []) {
+    function end($btnText = 'Отправить', $attributs = [])
+    {
         $params = compact('btnText', 'attributs');
         $params['form'] = $this;
         \App::$cur->view->widget('Ui\\' . $this->options['widgetsDir'] . '/end', $params);

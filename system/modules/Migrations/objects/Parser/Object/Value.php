@@ -13,9 +13,10 @@
 
 namespace Migrations\Parser\Object;
 
-class Value extends \Migrations\Parser {
-
-    function parse() {
+class Value extends \Migrations\Parser
+{
+    function parse()
+    {
         $options = $this->param->options ? json_decode($this->param->options, true) : [];
         $modelName = get_class($this->model);
         $cols = $modelName::$cols;

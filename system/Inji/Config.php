@@ -1,7 +1,7 @@
 <?php
 
-class Config {
-
+class Config
+{
     private static $_configs = array();
 
     /**
@@ -9,7 +9,8 @@ class Config {
      * 
      * @return array
      */
-    public static function system() {
+    public static function system()
+    {
         if (isset(self::$_configs['system']))
             return self::$_configs['system'];
 
@@ -25,7 +26,8 @@ class Config {
      * @param string $path
      * @return array
      */
-    public static function custom($path) {
+    public static function custom($path)
+    {
         if (isset(self::$_configs['custom'][$path]))
             return self::$_configs['custom'][$path];
 
@@ -41,7 +43,8 @@ class Config {
      * @param type $site_name
      * @return type
      */
-    public static function app($app = false) {
+    public static function app($app = false)
+    {
         if (!$app) {
             $app = App::$primary;
         }
@@ -61,7 +64,8 @@ class Config {
      * @param type $site_name
      * @return type
      */
-    public static function share($module = '') {
+    public static function share($module = '')
+    {
         if ($module) {
             if (isset($_configs['shareModules'][$module]))
                 return self::$_configs['shareModules'][$module];
@@ -90,8 +94,9 @@ class Config {
         }
     }
 
-    public static function module($module_name, $system = false, $app = null) {
-        
+    public static function module($module_name, $system = false, $app = null)
+    {
+
         if (!$app) {
             $app = App::$primary;
         }
@@ -119,7 +124,8 @@ class Config {
         return self::$_configs['module'][$appName][$module_name] = include $path;
     }
 
-    public static function save($type, $data, $module = NULL, $app = null) {
+    public static function save($type, $data, $module = NULL, $app = null)
+    {
         if (!$app) {
             $app = App::$primary;
         }
@@ -153,8 +159,9 @@ class Config {
                 self::$_configs['custom'][$path] = $data;
                 break;
         }
-        $text = "<?php\nreturn ". CodeGenerator::genArray($data);
+        $text = "<?php\nreturn " . CodeGenerator::genArray($data);
         Tools::createDir(substr($path, 0, strripos($path, '/')));
         file_put_contents($path, $text);
     }
+
 }

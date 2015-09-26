@@ -11,8 +11,8 @@
 
 namespace Ecommerce;
 
-class Card extends \Model {
-
+class Card extends \Model
+{
     static $objectName = 'Карта';
     static $cols = [
         'name' => ['type' => 'text'],
@@ -45,7 +45,8 @@ class Card extends \Model {
             ]
     ]];
 
-    static function relations() {
+    static function relations()
+    {
         return [
             'levels' => [
                 'type' => 'many',

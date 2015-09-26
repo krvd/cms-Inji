@@ -1,4 +1,5 @@
 <?php
+
 return [
     'Sliders.php' => '2adcd5881ace9a8b3ee5208df615ab62',
     'models/Slider.php' => 'dc447ed4b27b942d9670c915bd01b4b5',
