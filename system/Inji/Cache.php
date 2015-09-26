@@ -75,13 +75,13 @@ class Cache
 
         $fileinfo = pathinfo($file);
         $dirnoslash = md5($fileinfo['dirname']);
-        $path = 'cache/' . App::$primary->name . '/' . $dirnoslash . '_' . $fileinfo['filename'];
+        $path = 'cache/' . App::$primary->dir . '/' . $dirnoslash . '_' . $fileinfo['filename'];
         if ($sizes) {
             $path .= '.' . $sizes['x'] . 'x' . $sizes['y'] . $crop . $pos;
         }
         $path .= '.' . $fileinfo['extension'];
         if (!file_exists($path)) {
-            Tools::createDir('cache/' . App::$primary->name . '/');
+            Tools::createDir('cache/' . App::$primary->dir . '/');
             copy($file, $path);
             if ($sizes) {
                 Tools::resizeImage($path, $sizes['x'], $sizes['y'], $crop, $pos);
