@@ -7,9 +7,9 @@ return function ($step = NULL, $params = array()) {
         'user_login' => 'varchar(255) NOT NULL',
         'user_mail' => 'varchar(255) NOT NULL',
         'user_pass' => 'text NOT NULL',
-        'user_parent_id' => 'INT NOT NULL',
-        'user_group_id' => 'INT NOT NULL',
-        'user_role_id' => 'INT NOT NULL',
+        'user_parent_id' => 'INT(11) UNSIGNED NOT NULL',
+        'user_group_id' => 'INT(11) UNSIGNED NOT NULL',
+        'user_role_id' => 'INT(11) UNSIGNED NOT NULL',
         'user_activ' => 'text NOT NULL',
         'user_admin_text' => 'text NOT NULL',
         'user_activation' => 'varchar(255) NOT NULL',
@@ -39,15 +39,15 @@ return function ($step = NULL, $params = array()) {
         'session_hash' => 'varchar(255) NOT NULL',
         'session_ip' => 'varchar(255) NOT NULL',
         'session_agent' => 'varchar(255) NOT NULL',
-        'session_user_id' => 'int(11) NOT NULL',
+        'session_user_id' => 'int(11) UNSIGNED NOT NULL',
         'session_date' => 'timestamp DEFAULT CURRENT_TIMESTAMP',
     ));
     //users passre
     App::$cur->db->createTable('users_passre', array(
         'passre_id' => 'pk',
         'passre_hash' => 'text NOT NULL',
-        'passre_user_id' => 'int(11) NOT NULL',
-        'passre_status' => 'int(11) NOT NULL',
+        'passre_user_id' => 'int(11) UNSIGNED NOT NULL',
+        'passre_status' => 'int(1) UNSIGNED NOT NULL',
         'passre_date' => 'timestamp DEFAULT CURRENT_TIMESTAMP',
     ));
     //users info
@@ -58,14 +58,32 @@ return function ($step = NULL, $params = array()) {
         'info_middle_name' => 'varchar(255) NOT NULL',
         'info_phone' => 'varchar(255) NOT NULL',
         'info_city' => 'varchar(255) NOT NULL',
-        'info_user_id' => 'int(11) NOT NULL',
-        'info_sex' => 'int(11) NOT NULL',
-        'info_photo_file_id' => 'int(11) NOT NULL',
+        'info_user_id' => 'int(11) UNSIGNED NOT NULL',
+        'info_sex' => 'int(1) UNSIGNED NOT NULL',
+        'info_photo_file_id' => 'int(11) UNSIGNED NOT NULL',
         'info_bday' => 'date NOT NULL',
     ));
     App::$cur->db->insert('users_info', array(
         'info_first_name' => 'Администратор',
         'info_user_id' => $userId,
+    ));
+    //users invite
+    App::$cur->db->createTable('users_user_invite', array(
+        'user_invite_id' => 'pk',
+        'user_invite_code' => 'varchar(255) NOT NULL',
+        'user_invite_type' => 'varchar(255) NOT NULL',
+        'user_invite_limit' => 'int(11) UNSIGNED NOT NULL',
+        'user_invite_count' => 'int(11) UNSIGNED NOT NULL',
+        'user_invite_user_id' => 'int(11) UNSIGNED NOT NULL',
+        'user_invite_date_create' => 'timestamp DEFAULT CURRENT_TIMESTAMP',
+    ));
+    //users invite history
+    App::$cur->db->createTable('users_user_invite', array(
+        'user_invite_history_id' => 'pk',
+        'user_invite_history_type' => 'varchar(255) NOT NULL',
+        'user_invite_history_user_invite_id' => 'int(11) UNSIGNED NOT NULL',
+        'user_invite_history_user_id' => 'int(11) UNSIGNED NOT NULL',
+        'user_invite_history_date_create' => 'timestamp DEFAULT CURRENT_TIMESTAMP',
     ));
     //users group
     App::$cur->db->createTable('users_group', array(

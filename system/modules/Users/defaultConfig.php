@@ -37,5 +37,6 @@ return [
     'loginUrl' => [
         'app' => '/',
         'appAdmin' => '/admin'
-    ]
+    ],
+    'invites' => false
 ];

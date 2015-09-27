@@ -218,6 +218,20 @@ class Users extends Module
         if (empty($user_phone)) {
             $user_phone = '';
         }
+        if (!empty($invite_code)) {
+            $invite = Users\User\Invite::get($invite_code, 'code');
+            if (!$invite) {
+                Msg::add('Такой код пришлашения не найден', 'danger');
+                return false;
+            }
+            if ($invite->limit && !($invite->limit - $invite->count)) {
+                Msg::add('Лимит приглашений для данного кода исчерпан', 'danger');
+                return false;
+            }
+            $parent_id = $invite->user_id;
+            $invite->count++;
+            $invite->save();
+        }
 
 
         $pass = Tools::randomString(10);
@@ -226,7 +240,8 @@ class Users extends Module
             'mail' => $user_mail,
             'login' => htmlspecialchars($user_login),
             'role_id' => 2,
-            'group_id' => 2
+            'group_id' => 2,
+            'parent_id' => !empty($parent_id) ? $parent_id : 0
         ]);
         $user->save();
         if (!$user->id) {

@@ -46,8 +46,9 @@ class UsersController extends Controller
                 }
             }
             if (!$error) {
-                $this->Users->registration($_POST);
-                Tools::redirect('/');
+                if ($this->Users->registration($_POST)) {
+                    Tools::redirect('/');
+                }
             }
         }
         $this->view->setTitle('Регистрация');

@@ -13,12 +13,15 @@
                     <?php $form->input('date', 'user_birthday', 'Дата рождения'); ?>
                     <?php $form->input('text', 'user_city', 'Город'); ?>
                     <?php
-                    if (!empty($this->users->modConf['sponsors'])) {
+                    if (!empty(App::$cur->users->config['invites'])) {
                         ?>
                         <div class ='form-group'>
-                            <label>ID спонсора</label>
-                            <input type ='number' name ='user_parent_id' class ='form-control' placeholder ='Например: 256' value ="<?= (isset($_POST['user_parent_id']) ? $_POST['user_parent_id'] : ((!empty($_COOKIE['partnerId']) ? $_COOKIE['partnerId'] : ''))); ?>" required />
-                        </div>               
+                            <label>Код приглашения</label>
+                            <input type ='text' name ='invite_code' class ='form-control' value ="<?= (isset($_POST['invite_code']) ? $_POST['invite_code'] : ((!empty($_COOKIE['invite_code']) ? $_COOKIE['invite_code'] : ''))); ?>" />
+                        </div>   
+                        <script>
+
+                        </script>
                         <?php
                     }
                     ?>
