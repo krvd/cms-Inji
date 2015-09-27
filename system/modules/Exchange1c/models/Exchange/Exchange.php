@@ -35,6 +35,7 @@ class Exchange extends \Model
     ];
     static $dataManagers = [
         'manager' => [
+            'name' => 'История обмена',
             'cols' => ['type', 'session', 'path', 'log', 'file', 'date_create'],
             'sortable' => ['type', 'session', 'path', 'log', 'file', 'date_create'],
             'filters' => ['type', 'session', 'path', 'log', 'file', 'date_create'],

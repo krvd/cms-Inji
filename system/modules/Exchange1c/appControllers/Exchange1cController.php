@@ -20,6 +20,8 @@ class Exchange1cController extends Controller
 {
     function indexAction()
     {
+        ini_set('memory_limit', '2000M');
+        ignore_user_abort(true);
         set_time_limit(0);
         if (empty($_SESSION['auth'])) {
             if (!isset($_SERVER['PHP_AUTH_USER']) || !isset($_SERVER['PHP_AUTH_PW'])) {

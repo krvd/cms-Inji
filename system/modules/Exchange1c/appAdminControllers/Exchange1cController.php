@@ -14,6 +14,8 @@ class Exchange1cController extends adminController
 {
     function reExchangeAction()
     {
+        ini_set('memory_limit', '2000M');
+        ignore_user_abort(true);
         set_time_limit(0);
         $reExchange = Exchange1c\Exchange::get((int) $_GET['item_pk']);
 
@@ -24,7 +26,14 @@ class Exchange1cController extends adminController
         Tools::createDir($exchange->path);
         $exchange->save();
 
-        Tools::copyFiles($reExchange->path, $exchange->path);
+        foreach ($reExchange->files as $reFile) {
+            if (strpos($reFile->name, '/')) {
+                Tools::createDir($exchange->path . '/' . substr($reFile->name, 0, strrpos($reFile->name, '/')));
+            }
+            copy($reExchange->path . '/' . $reFile->name, $exchange->path . '/' . $reFile->name);
+        }
+
+        //Tools::copyFiles($reExchange->path, $exchange->path);
 
         foreach ($reExchange->logs as $reLog) {
             if (!in_array($reLog->info, ['import'])) {
