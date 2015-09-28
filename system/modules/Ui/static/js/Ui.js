@@ -354,30 +354,27 @@ DataManager.prototype.load = function (options) {
   }
   if (this.options.sortable) {
     sortableIndexes = [];
-    for (key in this.options.sortable) {
-      var colName = this.options.sortable[key];
-      var i = 0;
-      for (key2 in  this.options.cols) {
-        var colname;
-        if (typeof this.options.cols[key2] == 'object') {
-          colname = key2;
-        }
-        else {
-          colname = this.options.cols[key2];
-        }
-        if (colname == colName) {
+    var i = 0;
+    for (key2 in  this.options.cols) {
+      var colname;
+      if (typeof this.options.cols[key2] == 'object') {
+        colname = key2;
+      }
+      else {
+        colname = this.options.cols[key2];
+      }
+      for (key in this.options.sortable) {
+        if (colname == this.options.sortable[key]) {
           sortableIndexes.push(parseInt(i));
         }
-        i++;
       }
-
+      i++;
     }
     for (key in sortableIndexes) {
       var shift = 1;
       if (this.options.groupActions) {
         shift++;
       }
-
       var headTh = $(dataManager.element.find('thead th').get(sortableIndexes[key] + shift));
       var footTh = $(dataManager.element.find('tfoot th').get(sortableIndexes[key] + shift));
       if (!headTh.hasClass('sortable')) {
