@@ -29,17 +29,26 @@ class Object extends \Object
         foreach ($this->reader->readPath() as $code => $objectParam) {
             $param = $this->getParam($code);
             if ($this->model && $param->type && $param->type != 'item_key') {
-                if ($param->type == 'custom') {
-                    $parserName = $param->value;
+                if ($param->type == 'object') {
+                    $object = \Migrations\Migration\Object::get($param->value);
+                    $parser = new \Migrations\Parser\Object;
+                    $parser->reader = $objectParam;
+                    $parser->object = $object;
+                    $parser->parentObject = $this;
+                    $parser->parse();
                 } else {
-                    $parserName = '\Migrations\Parser\Object\\' . ucfirst($param->type);
+                    if ($param->type == 'custom') {
+                        $parserName = $param->value;
+                    } else {
+                        $parserName = '\Migrations\Parser\Object\\' . ucfirst($param->type);
+                    }
+                    $parser = new $parserName;
+                    $parser->reader = $objectParam;
+                    $parser->param = $param;
+                    $parser->model = $this->model;
+                    $parser->object = $this;
+                    $parser->parse();
                 }
-                $parser = new $parserName;
-                $parser->reader = $objectParam;
-                $parser->param = $param;
-                $parser->model = $this->model;
-                $parser->object = $this;
-                $parser->parse();
             }
         }
         if ($this->model) {
@@ -82,7 +91,6 @@ class Object extends \Object
                 if (!$this->reader->__isset($code)) {
                     return;
                 }
-
                 switch ($param->type) {
                     case 'objectLink':
                         $object = \Migrations\Migration\Object::get($param->value);
@@ -114,6 +122,9 @@ class Object extends \Object
                     if (!empty($relation['type']) && $relation['type'] == 'many') {
                         $where[] = [$relation['col'], $this->parentObject->model->pk()];
                     }
+                } elseif ($this->parentObject) {
+                    $modelName = get_class($this->parentObject->model);
+                    $where[] = [$modelName::index(), $this->parentObject->model->pk()];
                 }
             }
             if ($where) {

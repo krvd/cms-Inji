@@ -45,12 +45,13 @@ class Xml extends \Migrations\Reader
 
     function __isset($name)
     {
-        return isset($this->data->$name);
+        return isset($this->data->$name) || isset($this->data[$name]);
     }
 
     function __get($name)
     {
-        return (string) $this->data->$name;
+        //var_dump($name,($this->data->$name) ? (string) ($this->data->$name) : (string) $this->data[$name]);
+        return ($this->data->$name) ? (string) ($this->data->$name) : (string) $this->data[$name];
     }
 
 }
