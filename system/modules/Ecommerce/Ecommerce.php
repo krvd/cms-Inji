@@ -132,7 +132,10 @@ class Ecommerce extends Module
         if (!empty($this->config['view_filter'])) {
             if (!empty($this->config['view_filter']['options'])) {
                 foreach ($this->config['view_filter']['options'] as $optionId => $optionValue) {
-                    $selectOptions['where'][] = [['options:value', $optionValue], ['options:'.Ecommerce\Item\Option::index(), $optionId]];
+                    $selectOptions['join'][] = [Ecommerce\Item\Param::table(), Ecommerce\Item::index() . ' = ' . 'option' . $optionId . '.' . Ecommerce\Item\Param::colPrefix() . Ecommerce\Item::index() . ' AND ' .
+                        'option' . $optionId . '.' . Ecommerce\Item\Param::colPrefix() . Ecommerce\Item\Option::index() . ' = "' . (int) $optionId . '" AND ' .
+                        'option' . $optionId . '.' . Ecommerce\Item\Param::colPrefix() . 'value = "' . (int) $optionValue . '"',
+                        'inner', 'option' . $optionId];
                 }
             }
         }
@@ -149,9 +152,11 @@ class Ecommerce extends Module
                         }
                         break;
                     case 'options':
-                        foreach ($filter as $optionId => $value) {
-                            $selectOptions['join'][] = [Ecommerce\Item\Param::table(), Ecommerce\Item::index() . ' = ' . Ecommerce\Item\Param::colPrefix() . Ecommerce\Item::index() . ' AND ' .
-                                Ecommerce\Item\Param::colPrefix() . 'value = "' . (int) $value . '"', 'inner'];
+                        foreach ($filter as $optionId => $optionValue) {
+                            $selectOptions['join'][] = [Ecommerce\Item\Param::table(), Ecommerce\Item::index() . ' = ' . 'option' . $optionId . '.' . Ecommerce\Item\Param::colPrefix() . Ecommerce\Item::index() . ' AND ' .
+                                'option' . $optionId . '.' . Ecommerce\Item\Param::colPrefix() . Ecommerce\Item\Option::index() . ' = "' . (int) $optionId . '" AND ' .
+                                'option' . $optionId . '.' . Ecommerce\Item\Param::colPrefix() . 'value = "' . (int) $optionValue . '"',
+                                'inner', 'option' . $optionId];
                         }
                         break;
                 }

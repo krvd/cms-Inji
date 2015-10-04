@@ -101,15 +101,9 @@ class ecommerceController extends Controller
         echo $return;
     }
 
-    function indexAction($catalog_id = 0)
+    function indexAction()
     {
         Tools::redirect('/ecommerce/itemList');
-        $catalog = Ecommerce\Category::get((int) $catalog_id);
-
-        if ($catalog) {
-            $this->url->redirect('/ecommerce/itemList/' . (int) $catalog_id);
-        }
-        $this->view->page('main');
     }
 
     function itemListAction($category_id = 0)
