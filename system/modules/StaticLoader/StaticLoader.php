@@ -93,7 +93,7 @@ class StaticLoader extends Module
             header('HTTP/1.1 404 Not Found');
             exit();
         }
-
+        $options = [];
         if (!empty($_GET['resize'])) {
 
             $allow_resize = false;
@@ -136,69 +136,18 @@ class StaticLoader extends Module
                     if (!empty($_GET['resize_pos']) && in_array($_GET['resize_pos'], array('top', 'center'))) {
                         $pos = $_GET['resize_pos'];
                     }
-                    $dirnoslash = str_replace('/', '', substr($fileinfo['dirname'], strpos($fileinfo['dirname'], '/static')));
-                    $path = $dir . '/static/cache/' . $dirnoslash . $fileinfo['filename'] . '.' . $sizes[0] . 'x' . $sizes[1] . $crop . $pos . '.' . $fileinfo['extension'];
-                    if (!file_exists($path)) {
-                        Tools::createDir($dir . '/static/cache/');
-                        copy($file, $path);
-                        Tools::resizeImage($path, $sizes[0], $sizes[1], $crop, $pos);
+                    $options = [];
+                    if ($sizes) {
+                        $options = ['resize' => ['x' => $sizes[0], 'y' => $sizes[1]]];
                     }
-
-                    $file = $path;
+                    $options['crop'] = $crop;
+                    $options['pos'] = $pos;
                 }
             }
         }
-
-        $request = getallheaders();
-        if (isset($request['If-Modified-Since'])) {
-            // Разделяем If-Modified-Since (Netscape < v6 отдаёт их неправильно)
-            $modifiedSince = explode(';', $request['If-Modified-Since']);
-
-            // Преобразуем запрос клиента If-Modified-Since в таймштамп
-            $modifiedSince = strtotime($modifiedSince[0]);
-        } else {
-            // Устанавливаем время модификации в ноль
-            $modifiedSince = 0;
-        }
-
-        header("Cache-control: public");
-        header("Accept-Ranges: bytes");
-        header("Pragma: public");
-        header("Content-Length: " . filesize($file));
-        header('Last-Modified: ' . gmdate('D, d M Y H:i:s', filemtime($file)) . ' GMT');
-        header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 60 * 60 * 24 * 256) . ' GMT');
-        if (filemtime($file) <= $modifiedSince && (!isset($_SERVER['HTTP_CACHE_CONTROL']) || $_SERVER['HTTP_CACHE_CONTROL'] != 'no-cache')) {
-            // Разгружаем канал передачи данных!
-            header('HTTP/1.1 304 Not Modified');
-            exit();
-        }
-
-        //if( strpos( $file, '/static/doc' ) !== false ) {
-        header('Content-Description: File Transfer');
-        //}
-        if (isset($this->mimes[strtolower($fileinfo['extension'])])) {
-            header("Content-Type: " . $this->mimes[strtolower($fileinfo['extension'])]);
-        }
-
-        if (isset($_GET['frustrate_dl']) || in_array($fileinfo['extension'], array('doc', 'docx', 'xls', 'xlsx'))) {
-
-            $fileName = $fileinfo['filename'] . '.' . $fileinfo['extension'];
-            if (App::$cur->db->connect) {
-                $fileObj = Files\File::get([ 'path', '%/' . $fileinfo['filename'] . '.' . $fileinfo['extension'], 'LIKE']);
-                if ($fileObj) {
-                    $fileName = $fileObj->original_name;
-                }
-            }
-            header('Content-Disposition: attachment; filename="' . $fileName . '"');
-        }
-
-        header('Content-Transfer-Encoding: binary');
-        //}
-
-
-
-        readfile($file);
-        exit();
+        $path = Cache::file($file, $options);
+        $path = $convet ? mb_convert_encoding($path, 'UTF-8', 'Windows-1251') : $path;
+        Tools::redirect('/' . $path);
     }
 
 }

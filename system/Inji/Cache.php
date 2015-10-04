@@ -71,7 +71,7 @@ class Cache
         $dir = App::$primary->path;
         $sizes = !empty($options['resize']) ? $options['resize'] : [];
         $crop = !empty($options['crop']) ? $options['crop'] : '';
-        $pos = !empty($options['cropPosition']) ? $options['cropPosition'] : 'center';
+        $pos = !empty($options['pos']) ? $options['pos'] : 'center';
 
         $fileinfo = pathinfo($file);
         $dirnoslash = md5($fileinfo['dirname']);
