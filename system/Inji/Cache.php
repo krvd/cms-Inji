@@ -72,10 +72,9 @@ class Cache
         $sizes = !empty($options['resize']) ? $options['resize'] : [];
         $crop = !empty($options['crop']) ? $options['crop'] : '';
         $pos = !empty($options['pos']) ? $options['pos'] : 'center';
-
         $fileinfo = pathinfo($file);
-        $dirnoslash = md5($fileinfo['dirname']);
-        $path = 'cache/' . App::$primary->dir . '/' . $dirnoslash . '_' . $fileinfo['filename'];
+        $fileCheckSum = md5($fileinfo['dirname'].filemtime($file));
+        $path = 'cache/' . App::$primary->dir . '/' . $fileCheckSum . '_' . $fileinfo['filename'];
         if ($sizes) {
             $path .= '.' . $sizes['x'] . 'x' . $sizes['y'] . $crop . $pos;
         }
