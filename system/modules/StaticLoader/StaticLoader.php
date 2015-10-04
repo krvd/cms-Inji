@@ -147,6 +147,27 @@ class StaticLoader extends Module
         }
         $path = Cache::file($file, $options);
         $path = $convet ? mb_convert_encoding($path, 'UTF-8', 'Windows-1251') : $path;
+
+        $request = getallheaders();
+        if (isset($request['If-Modified-Since'])) {
+            // Разделяем If-Modified-Since (Netscape < v6 отдаёт их неправильно)
+            $modifiedSince = explode(';', $request['If-Modified-Since']);
+
+            // Преобразуем запрос клиента If-Modified-Since в таймштамп
+            $modifiedSince = strtotime($modifiedSince[0]);
+        } else {
+            // Устанавливаем время модификации в ноль
+            $modifiedSince = 0;
+        }
+        header("Cache-control: public");
+        header("Pragma: public");
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s', filemtime($path)) . ' GMT');
+        header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 60 * 60 * 24 * 256) . ' GMT');
+        if (filemtime($path) <= $modifiedSince && (!isset($_SERVER['HTTP_CACHE_CONTROL']) || $_SERVER['HTTP_CACHE_CONTROL'] != 'no-cache')) {
+            // Разгружаем канал передачи данных!
+            header('HTTP/1.1 304 Not Modified');
+            exit();
+        }
         Tools::redirect('/' . $path);
     }
 
