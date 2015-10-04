@@ -129,7 +129,13 @@ class Ecommerce extends Module
         if (empty($this->config['view_empty_image'])) {
             $selectOptions['where'][] = ['image_file_id', 0, '!='];
         }
-
+        if (!empty($this->config['view_filter'])) {
+            if (!empty($this->config['view_filter']['options'])) {
+                foreach ($this->config['view_filter']['options'] as $optionId => $optionValue) {
+                    $selectOptions['where'][] = [['options:value', $optionValue], ['options:'.Ecommerce\Item\Option::index(), $optionId]];
+                }
+            }
+        }
         //filters
         if (!empty($options['filters'])) {
             foreach ($options['filters'] as $col => $filter) {
@@ -173,7 +179,6 @@ class Ecommerce extends Module
         if (!empty($options['search'])) {
             $selectOptions['where'][] = ['search_index', '%' . $options['search'] . '%', 'LIKE'];
         }
-
         if (empty($this->config['view_empty_warehouse'])) {
             $selectOptions['where'][] = [
                 '(
