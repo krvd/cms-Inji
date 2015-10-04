@@ -283,8 +283,8 @@ class View extends \Module
             Tools::createDir(App::$primary->path . '/static/cache/');
             file_put_contents(App::$primary->path . '/static/cache/all' . $timeMd5 . '.css', $cssAll);
         }
-        echo "\n        <link href='/static/cache/all{$timeMd5}.css' rel='stylesheet' type='text/css' />";
-        echo "\n        <script src='" . ($this->app->type != 'app' ? '/' . $this->app->name : '' ) . "/static/system/js/Inji.js'></script>";
+        echo "\n        <link href='" . Statics::file("/static/cache/all{$timeMd5}.css") . "' rel='stylesheet' type='text/css' />";
+        echo "\n        <script src='" . Statics::file(($this->app->type != 'app' ? '/' . $this->app->name : '' ) . "/static/system/js/Inji.js") . "'></script>";
     }
 
     function getCss()
@@ -418,7 +418,7 @@ class View extends \Module
             file_put_contents(App::$primary->path . '/static/cache/all' . $timeMd5 . '.js', $scriptAll);
         }
         $options = [
-            'scripts' => ['/static/cache/all' . $timeMd5 . '.js'],
+            'scripts' => [Statics::file('/static/cache/all' . $timeMd5 . '.js')],
             'compresedScripts' => $nativeUrl,
             'styles' => [],
             'appRoot' => $this->app->type == 'app' ? '/' : '/' . $this->app->name . '/',
@@ -580,5 +580,3 @@ class View extends \Module
     }
 
 }
-
-?>
