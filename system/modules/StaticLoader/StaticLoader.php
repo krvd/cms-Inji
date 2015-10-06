@@ -42,7 +42,7 @@ class StaticLoader extends Module
                 $scriptApp = \App::$cur;
             }
         } else {
-            $scriptApp = \App::$cur;
+            $scriptApp = \App::$cur->system ? \App::$primary : \App::$cur;
         }
 
         if (strpos($path, 'static/') !== false && strpos($path, 'static/') <= 1) {
