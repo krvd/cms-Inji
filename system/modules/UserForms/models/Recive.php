@@ -15,7 +15,9 @@ class Recive extends \Model
         'form_title' => 'Название',
         'form_user_id' => 'Пользователь',
         'inputs' => 'Поля формы',
-        'form_date_create' => 'Дата'
+        'date_create' => 'Дата',
+        'form_id' => 'Форма',
+        'data' => 'Данные',
     ];
     static $cols = [
         'form_id' => ['relation' => 'form', 'showCol' => 'form_title'],
@@ -36,6 +38,14 @@ class Recive extends \Model
                 'form_id',
                 'data',
                 'date_create',
+            ],
+            'sortable' => [
+                'form_id',
+                'data',
+                'date_create',
+            ],
+            'preSort' => [
+                'date_create' => 'desc'
             ]
         ]
     ];
