@@ -58,8 +58,7 @@ Editors.prototype.loadIn = function (selector, search) {
       var instances;
       if (typeof search != 'undefined') {
         instances = $(selector).find(search);
-      }
-      else {
+      } else {
         instances = $(selector);
       }
       $.each(instances, function () {
@@ -117,8 +116,7 @@ Modals.prototype.show = function (title, body, code, size) {
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>\
                   <h4 class="modal-title">' + title + '</h4>\
                 </div>';
-    }
-    else {
+    } else {
       title = '';
     }
     var html = '\
@@ -198,8 +196,7 @@ function DataManagers() {
             });
             return false;
           });
-        }
-        else {
+        } else {
           inji.Server.request({
             url: 'ui/dataManager/groupAction',
             data: {params: instance.params, modelName: instance.modelName, ids: ids, managerName: instance.managerName, action: actionName},
@@ -217,16 +214,13 @@ DataManagers.prototype.get = function (element) {
   if ($(element).hasClass('dataManager')) {
     if (typeof (this.instances[$(element).attr('id')]) != 'undefined') {
       return this.instances[$(element).attr('id')];
-    }
-    else {
+    } else {
       return this.instances[$(element).attr('id')] = new DataManager($(element));
     }
-  }
-  else {
+  } else {
     if ($(element).closest('.dataManager').length == 1 && typeof (this.instances[$(element).closest('.dataManager').attr('id')]) != 'undefined') {
       return this.instances[$(element).closest('.dataManager').attr('id')];
-    }
-    else if ($(element).closest('.dataManager').length == 1) {
+    } else if ($(element).closest('.dataManager').length == 1) {
       return this.instances[$(element).closest('.dataManager').attr('id')] = new DataManager($(element).closest('.dataManager'));
     }
   }
@@ -267,6 +261,8 @@ function DataManager(element) {
   this.page = 1;
   this.sortered = {};
   this.categoryPath = '/';
+  this.mode = '';
+  this.all = 0;
   this.ajaxUrl = 'ui/dataManager/loadRows';
   if (this.options.ajaxUrl) {
     this.ajaxUrl = this.options.ajaxUrl;
@@ -278,13 +274,27 @@ function DataManager(element) {
       $(instance.element).find('tbody tr').each(function () {
         $($(this).find('td').get(index)).find('[type="checkbox"]')[0].checked = false;
       });
-    }
-    else {
+    } else {
       $(instance.element).find('tbody tr').each(function () {
         $($(this).find('td').get(index)).find('[type="checkbox"]')[0].checked = true;
       });
     }
   });
+  if (this.options.sortMode) {
+    $(this.element).find('.modesContainer').on('click', 'a', function () {
+      if (instance.mode != $(this).data('mode')) {
+        instance.mode = $(this).data('mode');
+        instance.all = 1;
+        instance.page = 1;
+        instance.load();
+      } else {
+        instance.mode = '';
+        instance.all = 0;
+        instance.page = 1;
+        instance.load();
+      }
+    });
+  }
   $(this.element).find('.pagesContainer').on('click', 'a', function () {
     instance.page = $(this).attr('href').match(/page\=(\d+)\&?/)[1];
     instance.limit = $(this).attr('href').match(/limit\=(\d+)\&?/)[1];
@@ -327,8 +337,7 @@ DataManager.prototype.load = function (options) {
   }
   if (Object.prototype.toString.call(this.params) === '[object Array]') {
     var params = {};
-  }
-  else {
+  } else {
     var params = this.params;
   }
   params.limit = this.limit;
@@ -346,8 +355,7 @@ DataManager.prototype.load = function (options) {
       }
       if ($(this).attr('type') == 'checkbox' && !$(this)[0].checked) {
         filters[maths[0]][maths[1]] = 0;
-      }
-      else {
+      } else {
         filters[maths[0]][maths[1]] = $(this).val();
       }
     });
@@ -359,8 +367,7 @@ DataManager.prototype.load = function (options) {
       var colname;
       if (typeof this.options.cols[key2] == 'object') {
         colname = key2;
-      }
-      else {
+      } else {
         colname = this.options.cols[key2];
       }
       for (key in this.options.sortable) {
@@ -384,8 +391,7 @@ DataManager.prototype.load = function (options) {
           if (this.options.preSort[this.options.sortable[key]] == 'asc') {
             headTh.addClass('sorted-asc');
             this.sortered[sortableIndexes[key]] = 'asc';
-          }
-          else if (this.options.preSort[this.options.sortable[key]] == 'desc') {
+          } else if (this.options.preSort[this.options.sortable[key]] == 'desc') {
             headTh.addClass('sorted-desc');
             this.sortered[sortableIndexes[key]] = 'desc';
           }
@@ -400,14 +406,12 @@ DataManager.prototype.load = function (options) {
             $(this).addClass('sorted-desc');
             dataManager.sortered[$(this).index() - shift] = 'desc';
             dataManager.reload();
-          }
-          else if ($(this).hasClass('sorted-desc')) {
+          } else if ($(this).hasClass('sorted-desc')) {
             $(this).removeClass('sorted-desc');
             $(this).addClass('sorted-asc');
             dataManager.sortered[$(this).index() - shift] = 'asc';
             dataManager.reload();
-          }
-          else if ($(this).hasClass('sorted-asc')) {
+          } else if ($(this).hasClass('sorted-asc')) {
             $(this).removeClass('sorted-asc');
             delete dataManager.sortered[$(this).index() - shift];
             dataManager.reload();
@@ -427,14 +431,12 @@ DataManager.prototype.load = function (options) {
             $(this).addClass('sorted-desc');
             dataManager.sortered[$(this).index() - shift] = 'desc';
             dataManager.reload();
-          }
-          else if ($(this).hasClass('sorted-desc')) {
+          } else if ($(this).hasClass('sorted-desc')) {
             $(this).removeClass('sorted-desc');
             $(this).addClass('sorted-asc');
             dataManager.sortered[$(this).index() - shift] = 'asc';
             dataManager.reload();
-          }
-          else if ($(this).hasClass('sorted-asc')) {
+          } else if ($(this).hasClass('sorted-asc')) {
             $(this).removeClass('sorted-asc');
             delete dataManager.sortered[$(this).index() - shift];
             dataManager.reload();
@@ -444,7 +446,7 @@ DataManager.prototype.load = function (options) {
       }
     }
   }
-  var data = {params: params, modelName: this.modelName, managerName: this.managerName, filters: filters, sortered: this.sortered};
+  var data = {params: params, modelName: this.modelName, managerName: this.managerName, filters: filters, sortered: this.sortered, mode: this.mode, all: this.all};
   if (options && options.download) {
     data.download = true;
     var url = this.ajaxUrl;
@@ -463,6 +465,25 @@ DataManager.prototype.load = function (options) {
     success: function (data) {
       dataManager.element.find('tbody').html(data.rows);
       dataManager.element.find('.pagesContainer').html(data.pages);
+      if (dataManager.options.sortMode) {
+        dataManager.element.find('.modesContainer').html('<a class ="btn btn-xs btn-default" data-mode="sort">' + (dataManager.mode != 'sort' ? 'Включить' : 'Выключить') + ' режим сортировки</a>');
+      }
+      $(instance.element).find('tbody').sortable().sortable("disable");
+      if (dataManager.mode == 'sort') {
+        $(instance.element).find('tbody').sortable({
+          stop: function (event, ui) {
+            ids = $(instance.element).find('tbody tr');
+            i = 0;
+            while (ids[i]) {
+              var key = $(ids[i++]).find('td').get(0).innerHTML;
+              inji.Server.request({
+                url: 'ui/dataManager/updateRow',
+                data: {params: instance.params, modelName: instance.modelName, key: key, col: 'weight', col_value: i, managerName: instance.managerName, silence: true},
+              });
+            }
+          }
+        }).sortable("enable");
+      }
     }
   });
   if (dataManager.element.find('.categoryTree').length > 0) {
@@ -566,8 +587,7 @@ Forms.prototype.checkAditionals = function (select) {
     if (i != selectedInputAd) {
       nextSelect[0].disabled = true;
       nextSelect.addClass('hidden');
-    }
-    else {
+    } else {
       if ($(select).data('aditionalEnabled') != 1) {
         $(select).data('aditionalEnabled', 1);
       }

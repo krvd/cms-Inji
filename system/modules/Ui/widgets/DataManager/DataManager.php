@@ -19,7 +19,7 @@ if (!empty($dataManager->managerOptions['categorys'])) {
     $mainCol['style'].='margin-left:260px;';
     ?>
     <div class ="pull-left" style = 'width:250px;'>
-        <?php $this->widget('Ui\DataManager/categorys', compact('dataManager')); ?>
+      <?php $this->widget('Ui\DataManager/categorys', compact('dataManager')); ?>
     </div>
     <?php
 }
@@ -27,14 +27,18 @@ if (!empty($dataManager->managerOptions['filters'])) {
     $mainCol['style'].='margin-right:260px;';
     ?>
     <div class ="pull-right" style = 'width:250px;'>
-        <?php $this->widget('Ui\DataManager/filters', compact('dataManager')); ?>
+      <?php $this->widget('Ui\DataManager/filters', compact('dataManager')); ?>
     </div>
     <?php
 }
 echo Html::el('div', $mainCol, '', true);
 $table->draw();
 ?>
-<div class="pagesContainer text-right"></div>
+<div>
+  <div class="modesContainer pull-left"></div>
+  <div class="pagesContainer pull-right"></div>
+  <div class="clearfix"></div>
+</div>
 <?php
 echo '</div>';
 ?>

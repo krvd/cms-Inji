@@ -236,7 +236,9 @@ class DataManager extends \Object
                 }
             }
         }
-        if (!empty($params['sortered']) && !empty($this->managerOptions['sortable'])) {
+        if (!empty($params['mode']) && $params['mode'] == 'sort') {
+            $queryParams['order'] = ['weight', 'asc'];
+        } elseif (!empty($params['sortered']) && !empty($this->managerOptions['sortable'])) {
             foreach ($params['sortered'] as $key => $sortType) {
                 $keys = array_keys($this->managerOptions['cols']);
                 $colName = '';
@@ -249,19 +251,6 @@ class DataManager extends \Object
                 }
                 if ($colName && in_array($colName, $this->managerOptions['sortable'])) {
                     $sortType = in_array($sortType, ['desc', 'asc']) ? $sortType : 'desc';
-                    /**
-                      $modelName = $this->modelName;
-                      $colInfo = $modelName::getColInfo($colName);
-                      var_dump($colInfo);
-                      if (!empty($colInfo['colParams']['type']) && $colInfo['colParams']['type'] == 'select' && $colInfo['colParams']['source'] == 'relation') {
-                      $colModelCols = $colInfo['modelName']::cols();
-                      var_dump($colInfo['modelName']::colPrefix() . 'name',$colModelCols);
-                      if (isset($colModelCols[$colInfo['modelName']::colPrefix() . 'name'])) {
-                      echo 1;
-                      }
-                      }
-                     * 
-                     */
                     $queryParams['order'][] = [$colName, $sortType];
                 }
             }
@@ -518,7 +507,8 @@ class DataManager extends \Object
         }
         $tableCols[] = '';
         $this->table->setCols($tableCols);
-        $this->table->afterHeader = '<div class="pagesContainer text-right"></div>';
+        $this->table->afterHeader = '<div class="modesContainer pull-left"></div>
+                                    <div class="pagesContainer pull-right"></div>';
         foreach ($buttons as $button) {
             $this->table->addButton($button);
         }
@@ -541,19 +531,19 @@ class DataManager extends \Object
     {
         ?>
         <ul class="nav nav-list-categorys" data-col='tree_path'>
-            <?php
-            $categoryModel = $this->managerOptions['categorys']['model'];
-            $categorys = $categoryModel::getList();
-            echo "<li>
+          <?php
+          $categoryModel = $this->managerOptions['categorys']['model'];
+          $categorys = $categoryModel::getList();
+          echo "<li>
                         <label class='nav-header'>
                             <a href='#' onclick='inji.Ui.dataManagers.get(this).switchCategory(this);return false;' data-path ='/'>/</a> 
                         </label>
                     </li>";
-            foreach ($categorys as $category) {
-                if ($category->parent_id == 0)
-                    $this->showCategory($categorys, $category);
-            }
-            ?>
+          foreach ($categorys as $category) {
+              if ($category->parent_id == 0)
+                  $this->showCategory($categorys, $category);
+          }
+          ?>
         </ul>
         <?php
     }

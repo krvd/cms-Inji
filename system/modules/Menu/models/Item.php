@@ -41,6 +41,7 @@ class Item extends \Model
         'aditional' => ['type' => 'hidden'],
         'name' => ['type' => 'text'],
         'href' => ['type' => 'text'],
+        'weight' => ['type' => 'number'],
         'Menu_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'menu', 'showCol' => 'name'],
     ];
     static $dataManagers = [
@@ -50,7 +51,8 @@ class Item extends \Model
                 'name',
                 'href',
                 'Menu_id'
-            ]
+            ],
+            'sortMode' => true
         ]
     ];
     static $forms = [

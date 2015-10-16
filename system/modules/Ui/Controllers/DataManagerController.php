@@ -76,6 +76,12 @@ class DataManagerController extends Controller
         if (!empty($_GET['sortered'])) {
             $params['sortered'] = $_GET['sortered'];
         }
+        if (!empty($_GET['mode'])) {
+            $params['mode'] = $_GET['mode'];
+        }
+        if (!empty($_GET['all'])) {
+            $params['all'] = true;
+        }
         $dataManager = new Ui\DataManager($modelName, $_GET['managerName']);
         if (!empty($_GET['download'])) {
             $params['all'] = true;
@@ -123,13 +129,16 @@ class DataManagerController extends Controller
         }
         $result->content['rows'] = ob_get_contents();
         ob_clean();
-        $pages = $dataManager->getPages($params, $model);
+        $result->content['pages'] = '';
+        if (empty($params['all'])) {
+            $pages = $dataManager->getPages($params, $model);
 
-        if ($pages) {
-            $pages->draw();
+            if ($pages) {
+                $pages->draw();
+            }
+            $result->content['pages'] = ob_get_contents();
+            ob_end_clean();
         }
-        $result->content['pages'] = ob_get_contents();
-        ob_end_clean();
         $result->send();
     }
 
@@ -197,7 +206,43 @@ class DataManagerController extends Controller
             }
         }
         $result = new Server\Result();
-        $result->successMsg = 'Запись удалена';
+        $result->successMsg = empty($_GET['silence']) ? 'Запись удалена' : '';
+        $result->send();
+    }
+
+    function updateRowAction()
+    {
+
+        if (strpos($_GET['modelName'], ':')) {
+            $raw = explode(':', $_GET['modelName']);
+            $modelName = $raw[0];
+            $id = $raw[1];
+            $model = $modelName::get($id);
+        } else {
+            $modelName = $_GET['modelName'];
+            $id = null;
+            $model = null;
+        }
+        if (!empty($_GET['params'])) {
+            $params = $_GET['params'];
+            if (!empty($params['relation'])) {
+                $relations = $modelName::relations();
+
+                $modelName = $relations[$params['relation']]['model'];
+            }
+        } else {
+            $params = [];
+        }
+        $dataManager = new Ui\DataManager($modelName, $_GET['managerName']);
+        if ($dataManager->checkAccess()) {
+            $model = $modelName::get($_GET['key'], $modelName::index(), !empty($_GET['params']) ? $_GET['params'] : []);
+            if ($model) {
+                $model->$_GET['col'] = $_GET['col_value'];
+                $model->save();
+            }
+        }
+        $result = new Server\Result();
+        $result->successMsg = empty($_GET['silence']) ? 'Запись Обновлена' : '';
         $result->send();
     }
 

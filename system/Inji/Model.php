@@ -515,6 +515,17 @@ class Model
                 }
                 $items[$item[static::index()]] = new $class($item);
             }
+            if (!empty($options['order'])) {
+                usort($items, function($a, $b) use($options) {
+                    if ($a->{$options['order'][0]} > $b->{$options['order'][0]} && $options['order'][1]='asc') {
+                        return 1;
+                    }
+                    elseif ($a->{$options['order'][0]} < $b->{$options['order'][0]} && $options['order'][1]='asc') {
+                        return -1;
+                    }
+                    return 0;
+                });
+            }
             return $items;
         }
         return [];

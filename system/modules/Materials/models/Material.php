@@ -48,7 +48,8 @@ class Material extends \Model
             ],
             'categorys' => [
                 'model' => 'Materials\Category',
-            ]
+            ],
+            'sortMode' => true
         ]
     ];
     static $cols = [
