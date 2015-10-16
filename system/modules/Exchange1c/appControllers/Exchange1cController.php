@@ -24,7 +24,7 @@ class Exchange1cController extends Controller
         ignore_user_abort(true);
         set_time_limit(0);
         if (empty($_SESSION['auth'])) {
-            if (!isset($_SERVER['PHP_AUTH_USER']) || !isset($_SERVER['PHP_AUTH_PW'])) {
+            if (empty($_SERVER['PHP_AUTH_USER']) || !isset($_SERVER['PHP_AUTH_PW'])) {
                 header('WWW-Authenticate: Basic realm="exchange1c"');
                 header('HTTP/1.0 401 Unauthorized');
                 $this->module->response('failure', 'Not isset PHP_AUTH_USER or PHP_AUTH_PW');
