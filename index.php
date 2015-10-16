@@ -26,7 +26,13 @@ if (!file_exists(INJI_SYSTEM_DIR) || !is_dir(INJI_SYSTEM_DIR)) {
 if (!file_exists(INJI_PROGRAM_DIR) || !is_dir(INJI_PROGRAM_DIR)) {
     INJI_SYSTEM_ERROR('Error in base config: INJI_PROGRAM_DIR not correct', true);
 }
-
+foreach ($_SERVER as $key => $item) {
+    if (strpos($key, 'HTTP_AUTHORIZATION') != false) {
+        $auth = explode(':', base64_decode(substr($item, 6)));
+        $_SERVER['PHP_AUTH_USER'] = $auth[0];
+        $_SERVER['PHP_AUTH_PW'] = isset($auth[1]) ? $auth[1] : '';
+    }
+}
 
 require_once( INJI_SYSTEM_DIR . '/init.php' );
 /**

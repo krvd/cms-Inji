@@ -1,5 +1,7 @@
 AddDefaultCharset UTF-8
 
 RewriteEngine on
+RewriteCond %{HTTP:Authorization} ^(.*)
+RewriteRule ^(.*) - [E=HTTP_AUTHORIZATION:%1]
 RewriteCond %{REQUEST_URI} !^/cache/
 RewriteRule (.*) index.php [QSA,L]
