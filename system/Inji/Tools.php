@@ -154,6 +154,8 @@ class Tools extends Model
         }
         if (!headers_sent()) {
             header("Location: {$href}");
+        } else {
+            echo '\'"><script>window.location="' . $href . '";</script>';
         }
         exit("Перенаправление на: <a href = '{$href}'>{$href}</a>");
     }
