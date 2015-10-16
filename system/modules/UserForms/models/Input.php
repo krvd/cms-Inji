@@ -10,9 +10,10 @@ namespace UserForms;
 
 class Input extends \Model
 {
+    static $objectName = 'Поле формы';
     static $labels = [
         'label' => 'Название',
-        'fit_id' => 'Тип',
+        'type' => 'Тип',
         'params' => 'Параметры'
     ];
     static $cols = [

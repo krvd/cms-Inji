@@ -1,8 +1,8 @@
 
 
 function popUpForm(formId, title) {
-  if ($('#popUpForm' + formId).length == 0) {
-    var html = '\
+if ($('#popUpForm' + formId).length == 0) {
+var html = '\
                 <div class="modal fade " id = "popUpForm' + formId + '">\
                     <div class="modal-dialog modal-sm">\
                       <div class="modal-content">\
@@ -19,12 +19,12 @@ function popUpForm(formId, title) {
                       </div>\
                     </div>\
                   </div>';
-    $('body').append(html);
-  }
-  var modal = $('#popUpForm' + formId);
-  modal.modal('show');
-  $.get('/UserForms/getFormHtml/' + formId, function (html) {
-    modal.find('.modal-body').html(html);
-  });
-  return false;
+        $('body').append(html);
+        }
+var modal = $('#popUpForm' + formId);
+        modal.modal('show');
+        $.get('/UserForms/getFormHtml/' + formId, function (html) {
+        modal.find('.modal-body').html(html);
+        });
+        return false;
 }

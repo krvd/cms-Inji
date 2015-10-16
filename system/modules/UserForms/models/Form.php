@@ -10,6 +10,7 @@ namespace UserForms;
 
 class Form extends \Model
 {
+    static $objectName = 'Форма обращения с сайта';
     static $labels = [
         'title' => 'Название',
         'user_id' => 'Пользователь',
@@ -19,6 +20,7 @@ class Form extends \Model
     static $cols = [
         'title' => ['type' => 'text'],
         'user_id' => [ 'type' => 'select', 'source' => 'relation', 'relation' => 'user', 'showCol' => 'user_name'],
+        'inputs' => [ 'type' => 'dataManager', 'relation' => 'inputs'],
         'date_create' => ['type' => 'dateTime'],
     ];
     static $dataManagers = [
@@ -32,6 +34,7 @@ class Form extends \Model
     ];
     static $forms = [
         'manager' => [
+            'name' => 'Форма приема обращений с сайта',
             'map' => [
                 ['title'],
                 ['inputs'],
