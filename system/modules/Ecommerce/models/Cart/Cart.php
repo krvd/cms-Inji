@@ -232,6 +232,11 @@ class Cart extends \Model
             }
             if ($cur->cart_status_id != $this->cart_status_id) {
                 $this->date_status = date('Y-m-d H:i:s');
+                if ($this->cart_status_id == 2 && $cur->cart_status_id < 2 && !empty(\App::$cur->ecommerce->config['notify_mail'])) {
+                    $text = 'Перейдите в админ панель чтобы просмотреть новый заказ <a href = "http://' . INJI_DOMAIN_NAME . '/admin/ecommerce/Cart">Админ панель</a>';
+                    $title = 'Новый заказ на сайте ' . INJI_DOMAIN_NAME;
+                    \Tools::sendMail('noreply@' . INJI_DOMAIN_NAME, \App::$cur->ecommerce->config['notify_mail'], $title, $text);
+                }
                 if ($this->cart_status_id == 5 && $cur->cart_status_id == 3) {
                     if ($this->card) {
                         $sum = 0;

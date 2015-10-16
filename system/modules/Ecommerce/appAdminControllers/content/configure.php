@@ -21,6 +21,7 @@
     $form->input('checkbox', 'config[view_empty_image]', 'Показывать товары без изображения', ['value' => App::$cur->ecommerce->config['view_empty_image']]);
     $form->input('checkbox', 'config[sell_empty_warehouse]', 'Продавать отсутствующие товары', ['value' => App::$cur->ecommerce->config['sell_empty_warehouse']]);
     $form->input('checkbox', 'config[sell_over_warehouse]', 'Продавать сверх остатоков на складе', ['value' => App::$cur->ecommerce->config['sell_over_warehouse']]);
+    $form->input('text', 'config[notify_mail]', 'E-mail оповещений о новых заказах', ['value' => App::$cur->ecommerce->config['notify_mail']]);
     $form->input('hidden', 'config[save]', '', ['value' => 1]);
     $form->end('Сохранить');
     ?>

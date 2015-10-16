@@ -5,4 +5,5 @@ return [
     'view_empty_image' => true,
     'sell_empty_warehouse' => true,
     'sell_over_warehouse' => true,
+    'notify_mail' => ''
 ];
