@@ -15,8 +15,12 @@ class FastEdit extends \Object
 {
     static function block($object, $col, $value = null, $parse = false)
     {
-        echo "<div class = 'fastEdit' data-model='" . get_class($object) . "' data-col='{$col}' data-key='" . $object->pk() . "'>";
-        $value = $value !== null ? $value : $object->$col;
+        echo "<div class = 'fastEdit' ";
+        if ($object) {
+            echo "data-model='" . get_class($object) . "' data-col='{$col}' data-key='" . $object->pk() . "'";
+        }
+        echo ">";
+        $value = $value !== null ? $value : ($object ? $object->$col : '');
         if ($parse) {
             \App::$cur->view->parseSource($value);
         } else {
