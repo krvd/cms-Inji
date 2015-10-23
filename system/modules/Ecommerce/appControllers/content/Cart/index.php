@@ -25,7 +25,7 @@
                         <?php if (!Users\User::$cur->id) { ?>
                             <fieldset id="account">
                                 <h4>Аккаунт</h4>
-                                <?php $this->widget('Ecommerce\cart/fastLogin', ['form' => $form]); ?>
+                                <?php $this->widget('Ecommerce\cart/fastLogin', ['form' => $form, 'cart' => $cart]); ?>
                             </fieldset>
                         <?php } ?>
                         <?php if (Ecommerce\Card::getList()) { ?>
@@ -36,7 +36,7 @@
                         <?php } ?>
                         <fieldset id="address">
                             <h4>Информация для доставки</h4>
-                            <?php $this->widget('Ecommerce\cart/fields', ['form' => $form]); ?>
+                            <?php $this->widget('Ecommerce\cart/fields', ['form' => $form, 'cart' => $cart]); ?>
                         </fieldset>
                         <?php
                         $packchecked = '';
