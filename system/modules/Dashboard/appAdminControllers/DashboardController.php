@@ -24,7 +24,9 @@ class DashboardController extends adminController
             $config['site']['email'] = $_POST['site_email'];
             $config['site']['keywords'] = $_POST['site_keywords'];
             $config['site']['description'] = $_POST['site_description'];
-            $config['site']['metatags'] = $_POST['metatags'];
+            if (!empty($_POST['metatags'])) {
+                $config['site']['metatags'] = $_POST['metatags'];
+            }
             if (!empty($_FILES['site_logo']['tmp_name'])) {
                 $fileId = $this->Files->upload($_FILES['site_logo'], array('file_code' => 'site_logo'));
                 $config['site']['site_logo'] = Files\File::get($fileId)->path;

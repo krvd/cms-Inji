@@ -41,7 +41,22 @@ class User extends \Model
             ],
             'cols' => [
                 'mail',
+                'info:first_name',
+                'info:last_name',
                 'group_id',
+                'role_id',
+            ],
+            'sortable' => [
+                'mail',
+                'info:first_name',
+                'info:last_name',
+                'group_id',
+                'role_id',
+            ],
+            'filters' => [
+                'mail',
+                'info:first_name',
+                'info:last_name',
                 'role_id',
             ],
             'searchableCols' => ['mail']
