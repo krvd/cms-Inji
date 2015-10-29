@@ -463,6 +463,7 @@ DataManager.prototype.load = function (options) {
     url: this.ajaxUrl,
     data: data,
     success: function (data) {
+      console.log(instance.element);
       dataManager.element.find('tbody').html(data.rows);
       dataManager.element.find('.pagesContainer').html(data.pages);
       if (dataManager.options.sortMode) {
@@ -495,10 +496,40 @@ DataManager.prototype.load = function (options) {
         dataManager.element.find('.categoryTree').html(data);
         var active = dataManager.element.find('.categoryTree [data-path="' + instance.categoryPath + '"]');
         if (active.length > 0) {
-          active.parents('.nav-left-ml').css('display', 'none');
+          var child = $($($(active).parent().parent().get(0)).children().get(1)).children().get(0);
+          if (child) {
+            //$(child).parents().map(function(){$(this).find('.glyphicon-chevron-right:first').removeClass('glyphicon-chevron-right').addClass('glyphicon-chevron-down');});
+            $(child).parents('.nav-left-ml').css('display', 'none');
+          } else {
+            active.parents('.nav-left-ml').css('display', 'none');
+          }
+          active.css('fontWeight', 'bold')
         }
 
         inji.Ui.bindMenu(dataManager.element.find('.categoryTree .nav-list-categorys'));
+        $(instance.element).find('.categoryTree').sortable().sortable("disable");
+        if (dataManager.mode == 'sort') {
+          $(instance.element).find('.categoryTree ul a[data-path]').map(function () {
+            this.onclick = null
+          });
+          $(instance.element).find('.categoryTree ul').sortable({
+            stop: function (event, ui) {
+              ids = $(instance.element).find('li');
+              i = 0;
+              while (ids[i]) {
+                var key = $(ids[i]).data('id');
+                var model = $(ids[i]).data('model');
+                if (key && model) {
+                  inji.Server.request({
+                    url: 'ui/dataManager/updateRow',
+                    data: {params: instance.params, modelName: model, key: key, col: 'weight', col_value: i, managerName: instance.managerName, silence: true},
+                  });
+                }
+                i++;
+              }
+            }
+          }).sortable("enable");
+        }
       }
     });
   }

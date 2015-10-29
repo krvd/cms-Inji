@@ -533,7 +533,7 @@ class DataManager extends \Object
         <ul class="nav nav-list-categorys" data-col='tree_path'>
           <?php
           $categoryModel = $this->managerOptions['categorys']['model'];
-          $categorys = $categoryModel::getList();
+          $categorys = $categoryModel::getList(['order'=>['weight']]);
           echo "<li>
                         <label class='nav-header'>
                             <a href='#' onclick='inji.Ui.dataManagers.get(this).switchCategory(this);return false;' data-path ='/'>/</a> 
@@ -556,7 +556,7 @@ class DataManager extends \Object
             if ($categoryChild->parent_id == $category->pk()) {
                 if (!$isset) {
                     $isset = true;
-                    echo "<li>
+                    echo "<li data-id='{$category->pk()}' data-model = '" . get_class($category) . "'>
                             <label class='nav-toggle nav-header'>
                                 <span class='nav-toggle-icon glyphicon glyphicon-chevron-right'></span> 
                                 <a href='#' onclick='inji.Ui.dataManagers.get(this).switchCategory(this);return false;' data-path ='" . $category->tree_path . ($category->pk() ? $category->pk() . "/" : '') . "'> " . $category->name . "</a> 
@@ -572,12 +572,14 @@ class DataManager extends \Object
             echo '</ul>
                     </li>';
         } else {
-            echo "<li>
+            echo "<li data-id='{$category->pk()}' data-model = '" . get_class($category) . "'>
                 <label class='nav-header'>
-                    <span  class=' nav-toggle-icon fa fa-minus'></span>&nbsp;
+                    <span  class=' nav-toggle-icon glyphicon glyphicon-minus'></span>
+                    <div class ='pull-right actions'>
+                        <a href = '#' onclick = 'inji.Ui.forms.popUp(\"" . str_replace('\\', '\\\\', get_class($category)) . ':' . $category->pk() . "\")' class ='glyphicon glyphicon-edit'></a>
+                        <a onclick='inji.Ui.dataManagers.get(this).delCategory({$category->pk()});return false;' class ='glyphicon glyphicon-remove'></a>
+                    </div>
                     <a href='#' onclick='inji.Ui.dataManagers.get(this).switchCategory(this);return false;' data-path ='" . $category->tree_path . ($category->pk() ? $category->pk() . "/" : '') . "'> " . $category->name . "</a> 
-                    <a href = '#' onclick = 'inji.Ui.forms.popUp(\"" . str_replace('\\', '\\\\', get_class($category)) . ':' . $category->pk() . "\")' class ='glyphicon glyphicon-edit'></a>&nbsp;    
-                    <a onclick='inji.Ui.dataManagers.get(this).delCategory({$category->pk()});return false;' class ='glyphicon glyphicon-remove'></a>
                 </label>
             </li>";
         }

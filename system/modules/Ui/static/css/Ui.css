@@ -1,21 +1,33 @@
 .table > tbody > tr > td.actionTd{
-    vertical-align: middle;
-    width:40px;
+  vertical-align: middle;
+  width:40px;
 }
-.nav-list{padding-left:15px;margin-bottom:0;}
-.nav-list-categorys label{font-weight: 400; font-size:14px;}
-.nav-list-categorys{padding-left:0px;padding-right:0px;margin-bottom:0;}
-span.nav-toggle-icon{font-size:14px !important;top:0px !important;color:#888 !important;cursor:pointer;}
+.nav-list-categorys .nav-list{
+  padding-left:15px;margin-bottom:0;
+}
+.nav-list-categorys .actions{
+  white-space: nowrap;margin-left: 10px}
+.nav-list-categorys label{font-weight: 400; font-size:12px;
+}
+.nav-list-categorys{
+  padding-left:0px;padding-right:0px;margin-bottom:0;
+}
+span.nav-toggle-icon{
+  font-size:12px !important;top:0px !important;color:#888 !important;cursor:pointer;
+}
 
+.dataManager {
+  font-size: 12px;
+}
 .dataManager th.sortable a{
-    background:url("/static/moduleAsset/Ui/images/orderable.png") no-repeat 0 4px;
-    padding-left:13px
+  background:url("/static/moduleAsset/Ui/images/orderable.png") no-repeat 0 4px;
+  padding-left:13px
 }
 
 .dataManager th.sorted-asc a{
-    background-position:0 -27px
+  background-position:0 -27px
 }
 
 .dataManager th.sorted-desc a{
-    background-position:0 -56px
+  background-position:0 -56px
 }

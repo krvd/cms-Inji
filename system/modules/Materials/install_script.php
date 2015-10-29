@@ -15,6 +15,7 @@ return function ($step = NULL, $params = array()) {
         'category_image_file_id' => 'int(11) UNSIGNED NOT NULL',
         'category_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
         'category_tree_path' => 'text NOT NULL',
+        'category_weight' => 'int(11) UNSIGNED NOT NULL',
     ]);
     App::$cur->db->createTable('materials_material', [
         'material_id' => 'pk',
