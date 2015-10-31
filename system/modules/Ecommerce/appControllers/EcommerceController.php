@@ -148,7 +148,6 @@ class ecommerceController extends Controller
         } else {
             $bread[] = array('text' => 'Каталог', 'href' => '/ecommerce');
             $categoryIds = array_values(array_filter(explode('/', $category->tree_path)));
-            $categoryIds = array_reverse($categoryIds);
             foreach ($categoryIds as $id) {
                 $cat = Ecommerce\Category::get($id);
                 $bread[] = array('text' => $cat->name, 'href' => '/ecommerce/itemList/' . $cat->id);
