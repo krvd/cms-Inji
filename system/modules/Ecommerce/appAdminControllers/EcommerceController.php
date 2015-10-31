@@ -58,7 +58,7 @@ class EcommerceController extends adminController
     function reSearchIndexAction()
     {
         set_time_limit(0);
-        $count = 1000;
+        $count = 100;
         $i = 0;
         while ($items = Ecommerce\Item::getList(['start' => $i * $count, 'limit' => $count])) {
             $i++;
