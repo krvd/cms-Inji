@@ -182,7 +182,7 @@ class Ecommerce extends Module
 
         //search
         if (!empty($options['search'])) {
-            $searchStr = preg_replace('![^A-zА-я0-9 ]!iSu', '', $options['search']);
+            $searchStr = preg_replace('![^A-zА-я0-9 ]!iSu', ' ', $options['search']);
             $searchArr = [];
             foreach (explode(' ', $searchStr) as $part) {
                 $part = trim($part);

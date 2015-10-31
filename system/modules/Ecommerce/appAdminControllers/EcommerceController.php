@@ -69,6 +69,7 @@ class EcommerceController extends adminController
                 unset($items[$key]);
                 unset($item);
             }
+            echo 'Происходит процесс индексации: проиндексировано ' . $i * $count;
             Tools::redirect('/admin/ecommerce/reSearchIndex/' . $i);
         }
     }
