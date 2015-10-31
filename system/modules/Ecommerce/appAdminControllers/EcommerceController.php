@@ -55,7 +55,7 @@ class EcommerceController extends adminController
         $this->url->redirect($this->url->module() . '/configure', 'Данные о блокировках обновлены');
     }
 
-    function reSearchIndexAction()
+    function reSearchIndexAction($i = 0)
     {
         set_time_limit(0);
         $count = 100;
