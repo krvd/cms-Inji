@@ -64,21 +64,23 @@ class Item extends \Model
 
     function beforeSave()
     {
+        
         if ($this->id) {
             $this->search_index = $this->name . ' ';
             if ($this->category) {
                 $this->search_index .= $this->category->name . ' ';
             }
-            if ($this->options)
+            if ($this->options) {
                 foreach ($this->options as $option) {
-                    if ($option->searchable && $option->value) {
-                        if ($option->type != 'select') {
+                    if ($option->item_option_searchable && $option->value) {
+                        if ($option->item_option_type != 'select') {
                             $this->search_index .= $option->value . ' ';
                         } elseif (!empty($option->option->items[$option->value])) {
                             $option->option->items[$option->value]->value . ' ';
                         }
                     }
                 }
+            }
         }
     }
 

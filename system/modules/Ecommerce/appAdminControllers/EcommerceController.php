@@ -58,13 +58,17 @@ class EcommerceController extends adminController
     function reSearchIndexAction()
     {
         set_time_limit(0);
-        $items = Ecommerce\Item::get_list();
-        foreach ($items as $key => $item) {
-            $item->save();
-            unset($items[$key]);
-            unset($item);
+        $count = 1000;
+        $i = 0;
+        while ($items = Ecommerce\Item::getList(['start' => $i * $count, 'limit' => $count])) {
+            $i++;
+            foreach ($items as $key => $item) {
+                $item->save();
+                unset($items[$key]);
+                unset($item);
+            }
+            unset($items);
         }
-        $this->view->page();
         Tools::redirect('/admin/ecommerce/configure', 'Поисковый индекс обновлен');
     }
 
