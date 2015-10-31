@@ -38,6 +38,8 @@
       <?php
   }
   ?>
+  <h3>Обслужвание</h3>
+  <a href="/admin/ecommerce/reSearchIndex" class="btn btn-primary">Обновить поисковые индексы</a>
 </div>
 
 

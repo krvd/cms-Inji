@@ -182,7 +182,17 @@ class Ecommerce extends Module
 
         //search
         if (!empty($options['search'])) {
-            $selectOptions['where'][] = ['search_index', '%' . $options['search'] . '%', 'LIKE'];
+            $searchStr = preg_replace('![^A-zА-я0-9 ]!iSu', '', $options['search']);
+            $searchArr = [];
+            foreach (explode(' ', $searchStr) as $part) {
+                $part = trim($part);
+                if ($part && strlen($part) > 2) {
+                    $searchArr[] = ['search_index', '%' . $part . '%', 'LIKE'];
+                }
+            }
+            if ($searchArr) {
+                $selectOptions['where'][] = $searchArr;
+            }
         }
         if (empty($this->config['view_empty_warehouse'])) {
             $selectOptions['where'][] = [

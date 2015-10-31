@@ -90,10 +90,11 @@ class ecommerceController extends Controller
     {
         $return = Cache::get('itemsAutocomplete');
         if (!$return) {
-            $items = \Ecommerce\Item::getList(['cols' => ['name', 'search_index']]);
+            $count = $this->ecommerce->getItemsCount();
+            $items = $this->ecommerce->getItems();
             $return = [];
             foreach ($items as $item) {
-                $return[] = ['name' => $item->name(), 'search' => $item->search_index];
+                $return[] = ['name' => $item->name(), 'search' => $item->search_index . ' ' . $item->name];
             }
             $return = json_encode($return);
             Cache::set('itemsAutocomplete', [], $return);

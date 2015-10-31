@@ -58,15 +58,14 @@ class EcommerceController extends adminController
     function reSearchIndexAction()
     {
         set_time_limit(0);
-        $items = Item::get_list();
-        Inji::app()->Log->stop();
+        $items = Ecommerce\Item::get_list();
         foreach ($items as $key => $item) {
             $item->save();
             unset($items[$key]);
             unset($item);
         }
         $this->view->page();
-        $this->url->redirect($this->url->module() . '/configure', 'Поисковый индекс обновлен');
+        $this->url->redirect('/admin/ecommerce/configure', 'Поисковый индекс обновлен');
     }
 
     function parseWebAction($site = '', $catalogNum = '')
