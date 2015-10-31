@@ -59,17 +59,18 @@ class EcommerceController extends adminController
     {
         set_time_limit(0);
         $count = 100;
-        $i = 0;
-        while ($items = Ecommerce\Item::getList(['start' => $i * $count, 'limit' => $count])) {
+        $items = Ecommerce\Item::getList(['start' => $i * $count, 'limit' => $count]);
+        if (!$items) {
+            Tools::redirect('/admin/ecommerce/configure', 'Поисковый индекс обновлен');
+        } else {
             $i++;
             foreach ($items as $key => $item) {
                 $item->save();
                 unset($items[$key]);
                 unset($item);
             }
-            unset($items);
+            Tools::redirect('/admin/ecommerce/reSearchIndex/' . $i);
         }
-        Tools::redirect('/admin/ecommerce/configure', 'Поисковый индекс обновлен');
     }
 
     function parseWebAction($site = '', $catalogNum = '')
