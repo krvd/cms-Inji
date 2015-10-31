@@ -67,18 +67,15 @@ class Item extends \Model
         if ($this->id) {
             $this->search_index = $this->name . ' ';
             if ($this->category) {
-                $this->search_index .= $this->category->category_name . ' ';
+                $this->search_index .= $this->category->name . ' ';
             }
             if ($this->options)
                 foreach ($this->options as $option) {
-                    if ($option->cio_searchable && $option->cip_value) {
-                        if ($option->cio_type != 'select') {
-                            $this->search_index .= $option->cip_value . ' ';
-                        } else {
-                            $data = json_decode($option->cio_advance, true);
-                            if (!empty($data['data'][$option->cip_value])) {
-                                $this->search_index .= $data['data'][$option->cip_value] . ' ';
-                            }
+                    if ($option->searchable && $option->value) {
+                        if ($option->type != 'select') {
+                            $this->search_index .= $option->value . ' ';
+                        } elseif (!empty($option->option->items[$option->value])) {
+                            $option->option->items[$option->value]->value . ' ';
                         }
                     }
                 }

@@ -65,7 +65,7 @@ class EcommerceController extends adminController
             unset($item);
         }
         $this->view->page();
-        $this->url->redirect('/admin/ecommerce/configure', 'Поисковый индекс обновлен');
+        Tools::redirect('/admin/ecommerce/configure', 'Поисковый индекс обновлен');
     }
 
     function parseWebAction($site = '', $catalogNum = '')
