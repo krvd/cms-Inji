@@ -91,4 +91,9 @@ class EcommerceController extends adminController
         }
     }
 
+    function newOrdersSubscribeAction()
+    {
+        $this->Notifications->subscribe('Ecommerce-orders');
+    }
+
 }

@@ -103,6 +103,18 @@ class CartController extends Controller
                         $cartItem->save();
                     }
                     unset($_SESSION['cart']['cart_id']);
+                    if (!empty(\App::$cur->ecommerce->config['notify_mail'])) {
+                        $text = 'Перейдите в админ панель чтобы просмотреть новый заказ <a href = "http://' . INJI_DOMAIN_NAME . '/admin/ecommerce/Cart">Админ панель</a>';
+                        $title = 'Новый заказ в интернет магазине на сайте ' . INJI_DOMAIN_NAME;
+                        \Tools::sendMail('noreply@' . INJI_DOMAIN_NAME, \App::$cur->ecommerce->config['notify_mail'], $title, $text);
+                    }
+                    if ($this->notifications) {
+                        $notification = new Notifications\Notification();
+                        $notification->name = 'Новый заказ в интернет магазине на сайте ' . INJI_DOMAIN_NAME;
+                        $notification->text = 'Перейдите в админ панель чтобы просмотреть новый заказ';
+                        $notification->chanel_id = $this->notifications->getChanel('Ecommerce-orders')->id;
+                        $notification->save();
+                    }
                     Tools::redirect('/ecommerce/cart/success');
                 }
             }
