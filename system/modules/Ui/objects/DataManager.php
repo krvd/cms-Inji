@@ -533,7 +533,11 @@ class DataManager extends \Object
         <ul class="nav nav-list-categorys" data-col='tree_path'>
           <?php
           $categoryModel = $this->managerOptions['categorys']['model'];
-          $categorys = $categoryModel::getList(['order'=>['weight']]);
+          $order = [];
+          if (!empty($this->managerOptions['sortMode'])) {
+              $order[] = ['weight', 'asc'];
+          }
+          $categorys = $categoryModel::getList(['order' => $order]);
           echo "<li>
                         <label class='nav-header'>
                             <a href='#' onclick='inji.Ui.dataManagers.get(this).switchCategory(this);return false;' data-path ='/'>/</a> 
