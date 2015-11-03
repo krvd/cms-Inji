@@ -109,8 +109,8 @@ Controller::$cur = Module::$cur->findController();
 if (Controller::$cur === null) {
     INJI_SYSTEM_ERROR('Controller not found', true);
 }
-if (!empty(App::$cur->config['autoloadModules'])) {
-    foreach (App::$cur->config['autoloadModules'] as $module) {
+if (!empty(App::$primary->config['autoloadModules'])) {
+    foreach (App::$primary->config['autoloadModules'] as $module) {
         App::$cur->$module;
     }
 }
