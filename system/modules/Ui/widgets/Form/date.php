@@ -15,7 +15,12 @@ echo empty($options['noContainer']) ? '</div>' : '';
         changeYear: true,
         numberOfMonths: 1,
         dateFormat: 'yy-mm-dd',
-        yearRange: "c-70:c+10"
+        yearRange: "c-70:c+10",
+        beforeShow: function () {
+          setTimeout(function () {
+            $('.ui-datepicker').css('z-index', 99999999999999);
+          }, 500);
+        }
       });
     })
 </script>
