@@ -39,18 +39,20 @@ class Mysql extends \Object
             $this->noConnectAbort = $noConnectAbort;
 
         $dsn = "mysql:host=$host;port=$port;dbname=$db_name;charset=$encoding";
+        $dt = new \DateTime();
+        $offset = $dt->format("P");
         $opt = array(
             \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
-            \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC
+            \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+            \PDO::MYSQL_ATTR_INIT_COMMAND => "SET time_zone = '{$offset}'"
         );
+
         $this->pdo = new \PDO($dsn, $user, $pass, $opt);
         $error = $this->pdo->errorInfo();
-
-        if ($error[0]) {
+        if ((int) $error[0]) {
             if ($this->noConnectAbort) {
                 return false;
             } else {
-
                 INJI_SYSTEM_ERROR($error[2], true);
             }
         } else {
