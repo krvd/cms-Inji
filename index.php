@@ -11,7 +11,8 @@
 //set locale
 setlocale(LC_ALL, 'ru_RU.UTF-8', 'rus_RUS.UTF-8', 'Russian_Russia.65001');
 setlocale(LC_NUMERIC, 'C');
-
+//default timezone
+date_default_timezone_set('Asia/Krasnoyarsk');
 // time start
 define('INJI_TIME_START', microtime(true));
 // system files dir
