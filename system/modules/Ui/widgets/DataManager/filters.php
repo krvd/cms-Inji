@@ -86,6 +86,7 @@
                                   $inputOptions['value'] = $colOptions['value'];
                               }
                           }
+                          $inputOptions['class'] = 'input-sm';
                           $form->input('select', "datamanagerFilters[{$col}][value]", $colInfo['label'], $inputOptions);
                           break;
                       case 'email':
@@ -97,7 +98,7 @@
                         <label><?= $colInfo['label']; ?></label>
                         <div class="row">
                             <div class="col-xs-6">
-                                <select name="datamanagerFilters[<?= $col; ?>][compareType]" class="form-control">
+                                <select name="datamanagerFilters[<?= $col; ?>][compareType]" class="form-control input-sm">
                                     <option value="contains">Содержит</option>
                                     <option value="equals">=</option>
                                     <option value="starts_with">Начинается с</option>
@@ -105,7 +106,7 @@
                                 </select>
                             </div>
                             <div class="col-xs-6">
-                                <input  class="form-control" name="datamanagerFilters[<?= $col; ?>][value]" type="text">
+                                <input  class="form-control input-sm" name="datamanagerFilters[<?= $col; ?>][value]" type="text">
                             </div>
                         </div>
                     </div>
@@ -146,6 +147,7 @@
                                 $inputOptions['value'] = $colOptions['value'];
                             }
                         }
+                        $inputOptions['class'] = 'input-sm';
                         $form->input('select', "datamanagerFilters[{$col}][value]", $colInfo['label'], $inputOptions);
                         ?>
                     </div>
@@ -203,7 +205,7 @@
     }
     ?>
     <div class="form-actions">
-        <button class="btn btn-primary">Фильтровать</button>
-        <button type="reset" class="btn btn-default">Очистить</button>
+        <button class="btn btn-primary btn-sm">Фильтровать</button>
+        <button type="reset" class="btn btn-default btn-sm">Очистить</button>
     </div>
 </form>
