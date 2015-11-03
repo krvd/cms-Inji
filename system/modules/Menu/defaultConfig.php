@@ -9,7 +9,7 @@ return [
                     'ai' => 2
                 ],
                 'Item' => [
-                    'ai' => 3
+                    'ai' => 4
                 ]
             ],
             'Menu' => [
