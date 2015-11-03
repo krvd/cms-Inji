@@ -463,7 +463,6 @@ DataManager.prototype.load = function (options) {
     url: this.ajaxUrl,
     data: data,
     success: function (data) {
-      console.log(instance.element);
       dataManager.element.find('tbody').html(data.rows);
       dataManager.element.find('.pagesContainer').html(data.pages);
       if (dataManager.options.sortMode) {
