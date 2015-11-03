@@ -78,7 +78,7 @@ return function ($step = NULL, $params = array()) {
         'user_invite_date_create' => 'timestamp DEFAULT CURRENT_TIMESTAMP',
     ));
     //users invite history
-    App::$cur->db->createTable('users_user_invite', array(
+    App::$cur->db->createTable('users_user_invite_history', array(
         'user_invite_history_id' => 'pk',
         'user_invite_history_type' => 'varchar(255) NOT NULL',
         'user_invite_history_user_invite_id' => 'int(11) UNSIGNED NOT NULL',
