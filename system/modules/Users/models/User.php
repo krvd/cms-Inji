@@ -126,11 +126,11 @@ class User extends \Model
         if ($this->info) {
             $this->info->delete();
         }
-        $sessions = Session::getList(['where' => ['user_id' => $this->id]]);
+        $sessions = Session::getList(['where' => ['user_id', $this->id]]);
         foreach ($sessions as $session) {
             $session->delete();
         }
-        /* $socials = Social::getList(['where' => ['user_id' => $this->id]]);
+        /*$socials = Social::getList(['where' => ['user_id' , $this->id]]);
           foreach ($socials as $social) {
           $social->delete();
           } */
