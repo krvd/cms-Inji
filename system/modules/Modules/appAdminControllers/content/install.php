@@ -2,7 +2,7 @@
 <form>
     <?php
     $config = Config::app(App::$primary ? App::$primary : App::$cur);
-    $modules = !empty($config['modules']) ? array_flip($config['modules']) : [];
+    $modules = array_flip(Module::getInstalled(App::$cur));
     $systemModules = array_slice(scandir(INJI_SYSTEM_DIR . '/modules'), 2);
     foreach ($systemModules as $module) {
         $info = Module::getInfo($module);

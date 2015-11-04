@@ -12,7 +12,8 @@ $table->setCols([
     'По умолчанию'
 ]);
 $default = !empty(App::$primary->config['defaultModule']) ? App::$primary->config['defaultModule'] : '';
-foreach (App::$primary->config['modules'] as $module) {
+
+foreach (Module::getInstalled(App::$cur) as $module) {
     $info = Module::getInfo($module);
     $table->addRow([
         empty($info['name']) ? $module : $info['name'],
@@ -22,5 +23,6 @@ foreach (App::$primary->config['modules'] as $module) {
         $default == $module ? 'По умолчанию' : "<a class = 'btn btn-primary btn-xs' href = '/admin/modules/setDefault/{$module}'>Установить по умолчанию</a>"
     ]);
 }
+
 
 $table->draw();
