@@ -28,7 +28,7 @@ class Form extends \Model
     static $dataManagers = [
         'manager' => [
             'cols' => [
-                'title',
+                'name',
                 'user_id',
                 'date_create',
             ]

@@ -23,7 +23,7 @@ if (!$form) {
               ?>
               <div class ='form-group'>
                 <label><?= $input->label; ?></label>
-                <input class ='form-control' type ='text' name ='UserForms[<?= (int) $form_id; ?>][input<?= $input->id; ?>]' required />
+                <input class ='form-control' type ='text' name ='UserForms[<?= (int) $form_id; ?>][input<?= $input->id; ?>]' <?= $input->required ? 'required' : ''; ?> />
               </div>
               <?php
               break;
@@ -31,7 +31,7 @@ if (!$form) {
               ?>
               <div class ='form-group'>
                 <label><?= $input->label; ?></label>
-                <textarea class ='form-control' name ='UserForms[<?= (int) $form_id; ?>][input<?= $input->id; ?>]' required /></textarea>
+                <textarea class ='form-control' name ='UserForms[<?= (int) $form_id; ?>][input<?= $input->id; ?>]' <?= $input->required ? 'required' : ''; ?> /></textarea>
               </div>
               <?php
               break;

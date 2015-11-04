@@ -15,6 +15,7 @@ return function ($step = NULL, $params = array()) {
         'input_user_id' => 'INT(11) NOT NULL',
         'input_label' => 'varchar(255) NOT NULL',
         'input_type' => 'varchar(255) NOT NULL',
+        'input_required' => 'tinyint(1) NOT NULL',
         'input_params' => 'text NOT NULL',
         'input_date_create' => 'timestamp DEFAULT CURRENT_TIMESTAMP',
     ));

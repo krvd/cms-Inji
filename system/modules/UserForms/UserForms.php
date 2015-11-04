@@ -14,18 +14,24 @@ class UserForms extends \Module
                 $formRecive->user_id = (int) \Users\User::$cur->id;
                 $formRecive->form_id = (int) $form_id;
                 $data = [];
+                $error = false;
                 foreach ($form->inputs as $input) {
                     if (isset($inputs['input' . $input->id])) {
                         $data['input' . $input->id] = htmlspecialchars($inputs['input' . $input->id]);
+                    } elseif ($input->required) {
+                        $error = true;
+                        Msg::add('Вы не заполнили поле: ' . $input->label);
                     } else {
                         $data['input' . $input->id] = '';
                     }
                 }
-                $formRecive->data = json_encode($data);
-                $formRecive->save();
+                if (!$error) {
+                    $formRecive->data = json_encode($data);
+                    $formRecive->save();
+                }
             }
 
-            if (!empty(App::$cur->config['site']['email'])) {
+            if (!$error && !empty(App::$cur->config['site']['email'])) {
                 $text = '';
                 foreach ($form->inputs as $input) {
                     if (isset($inputs['input' . $input->id])) {

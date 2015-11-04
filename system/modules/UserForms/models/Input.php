@@ -14,17 +14,20 @@ class Input extends \Model
     static $labels = [
         'label' => 'Название',
         'type' => 'Тип',
+        'required' => 'Обязательное',
         'params' => 'Параметры'
     ];
     static $cols = [
         'label' => ['type' => 'text'],
         'type' => ['type' => 'text'],
+        'required' => ['type' => 'bool'],
     ];
     static $dataManagers = [
         'manager' => [
             'cols' => [
                 'label',
                 'type',
+                'required',
             ]
         ]
     ];
@@ -32,7 +35,7 @@ class Input extends \Model
         'manager' => [
             'map' => [
                 ['label'],
-                ['type'],
+                ['type','required'],
             ]
         ]
     ];
