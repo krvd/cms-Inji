@@ -232,11 +232,12 @@ class View extends \Module
 
         echo "<title>{$this->title}</title>\n";
 
-        if (!empty($this->template->config['favicon']) && file_exists($this->template->path . "/{$this->template->config['favicon']}"))
+        if (!empty($this->template->config['favicon']) && file_exists($this->template->path . "/{$this->template->config['favicon']}")) {
             echo "        <link rel='shortcut icon' href='/templates/{$this->template->name}/{$this->template->config['favicon']}' />";
-        elseif (file_exists($this->app->path . '/static/images/favicon.ico'))
+        } elseif (file_exists($this->app->path . '/static/images/favicon.ico')) {
             echo "        <link rel='shortcut icon' href='/static/images/favicon.ico' />";
-
+        }
+        
         foreach ($this->getMetaTags() as $meta) {
             echo "\n        " . Html::el('meta', $meta, '', null);
         }
@@ -351,14 +352,14 @@ class View extends \Module
     {
         $metas = [];
 
-        if (!empty($this->app->Config->app['site']['keywords'])) {
-            $metas['metaName:keywords'] = ['name' => 'keywords', 'content' => $this->app->Config->site['site']['keywords']];
+        if (!empty($this->app->config['site']['keywords'])) {
+            $metas['metaName:keywords'] = ['name' => 'keywords', 'content' => $this->app->config['site']['keywords']];
         }
-        if (!empty($this->app->Config->app['site']['description'])) {
-            $metas['metaName:description'] = ['name' => 'description', 'content' => $this->app->Config->site['site']['description']];
+        if (!empty($this->app->config['site']['description'])) {
+            $metas['metaName:description'] = ['name' => 'description', 'content' => $this->app->config['site']['description']];
         }
-        if (!empty($this->app->Config->app['site']['metatags'])) {
-            foreach ($this->app->Config->app['site']['metatags'] as $meta) {
+        if (!empty($this->app->config['site']['metatags'])) {
+            foreach ($this->app->config['site']['metatags'] as $meta) {
                 if (!empty($meta['name'])) {
                     $metas['metaName:' . $meta['name']] = $meta;
                 } elseif (!empty($meta['property'])) {
@@ -511,8 +512,8 @@ class View extends \Module
 
     function setTitle($title, $add = true)
     {
-        if ($add && !empty($this->app->Config->app['site']['name'])) {
-            $this->title = $title . ' - ' . $this->app->Config->app['site']['name'];
+        if ($add && !empty($this->app->config['site']['name'])) {
+            $this->title = $title . ' - ' . $this->app->config['site']['name'];
         } else {
             $this->title = $title;
         }
