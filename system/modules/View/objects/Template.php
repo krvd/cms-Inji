@@ -189,13 +189,15 @@ class Template extends \Object
         if ($content) {
             $this->content = $content;
         }
-        if (!$this->content) {
-            $this->content = \Controller::$cur ? \Controller::$cur->method : '';
+        if (\Controller::$cur && \Controller::$cur->run) {
+            if (!$this->content) {
+                $this->content = \Controller::$cur->method;
+            }
+            if (!$this->contentPath && \Module::$cur) {
+                $this->contentPath = \Module::$cur->path . '/' . \Module::$cur->app->type . "Controllers/content/{$this->content}.php";
+            }
+            $this->contentPath = \Tools::pathsResolve($this->getContentPaths(), $this->contentPath);
         }
-        if (!$this->contentPath && \Module::$cur) {
-            $this->contentPath = \Module::$cur->path . '/' . \Module::$cur->app->type . "Controllers/content/{$this->content}.php";
-        }
-        $this->contentPath = \Tools::pathsResolve($this->getContentPaths(), $this->contentPath);
     }
 
     /**
