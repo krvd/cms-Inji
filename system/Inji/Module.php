@@ -53,25 +53,17 @@ class Module
     static function installed($moduleName, $app)
     {
 
-        $systemModules = !empty(Inji::$config['modules']) ? Inji::$config['modules'] : [];
-        if (in_array($moduleName, $systemModules)) {
+        if (in_array($moduleName, self::getInstalled($app))) {
             return true;
         }
-
-        $primaryModules = !empty(App::$primary->config['modules']) ? App::$primary->config['modules'] : [];
-        if (in_array($moduleName, $primaryModules)) {
-            return true;
-        }
-
-        if ($app !== \App::$primary) {
-            $appModules = !empty($app->config['modules']) ? $app->config['modules'] : [];
-            if (in_array($moduleName, $appModules)) {
-                return true;
-            }
-        }
-
 
         return FALSE;
+    }
+
+    static function getInstalled($app)
+    {
+        $modules = array_unique(array_merge(!empty(Inji::$config['modules']) ? Inji::$config['modules'] : [], !empty(App::$primary->config['modules']) ? App::$primary->config['modules'] : [], $app !== \App::$primary && !empty($app->config['modules']) ? $app->config['modules'] : []));
+        return $modules;
     }
 
     static function resolveModule($app)
