@@ -46,4 +46,11 @@ return function ($step = NULL, $params = array()) {
         'material_preview' => '<p>Главная страница</p>',
         'material_tree_path' => '/'
     ]);
+    App::$cur->db->createTable('materials_material_link', [
+        'material_link_id' => 'pk',
+        'material_link_material_id' => 'int(11) UNSIGNED NOT NULL',
+        'material_link_linked_material_id' => 'int(11) UNSIGNED NOT NULL',
+        'material_link_name' => 'varchar(255) NOT NULL',
+        'material_link_weight' => 'int(11) UNSIGNED NOT NULL',
+    ]);
 };

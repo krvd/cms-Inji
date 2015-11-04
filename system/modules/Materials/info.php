@@ -6,7 +6,7 @@ return array(
         'appAdmin' => [
             [
                 'name' => 'Материалы',
-                'href' => '/admin/materials',
+                'href' => '/admin/materials/material',
                 'childs' => []
             ]
         ]

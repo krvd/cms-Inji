@@ -61,10 +61,11 @@ class Material extends \Model
         'template' => ['type' => 'select', 'source' => 'method', 'method' => 'templatesList', 'module' => 'Materials'],
         'preview' => ['type' => 'html'],
         'text' => ['type' => 'html'],
-        'category_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'category', 'showCol' => 'category_name'],
+        'category_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'category'],
         'image_file_id' => ['type' => 'image'],
         'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
         'date_create' => ['type' => 'dateTime'],
+        'link' => ['type' => 'dataManager','relation'=>'links'],
     ];
     static $forms = [
         'manager' => [
@@ -82,6 +83,7 @@ class Material extends \Model
                 ['keywords', 'description'],
                 ['preview'],
                 ['text'],
+                ['link'],
             ]
         ]
     ];
@@ -100,6 +102,11 @@ class Material extends \Model
             'user' => [
                 'model' => '\Users\User',
                 'col' => 'user_id'
+            ],
+            'links' => [
+                'type' => 'many',
+                'model' => '\Materials\Material\Link',
+                'col' => 'material_id'
             ]
         ];
     }

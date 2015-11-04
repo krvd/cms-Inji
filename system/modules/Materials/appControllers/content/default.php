@@ -1,18 +1,16 @@
 <div class="material-text">
-    <?= Ui\FastEdit::block($material, 'text', null, true); ?>
+  <?= Ui\FastEdit::block($material, 'text', null, true); ?>
 </div>
 <?php
-$nexts = json_decode($material->nexts, true);
-
-if ($nexts) {
-    echo '<p style = "text-align:center">';
-    foreach ($nexts as $next) {
-        $nextpage = Material::get($next['id']);
-        $href = $nextpage->chpu;
+if ($material->links) {
+    echo '<ul class = "material-links">';
+    foreach ($material->links as $materialLink) {
+        $href = $materialLink->linkedMaterial->alias;
         if ($href == '') {
             $href = '/';
         }
-        echo "<a href = '{$href}' class = 'nextbtn'>{$next['name']}</a>";
+        $name = $materialLink->name ? $materialLink->name : $materialLink->linkedMaterial->name;
+        echo "<li><a href = '{$href}'>{$name}</a></li>";
     }
-    echo '</p>';
+    echo '</ul>';
 }
