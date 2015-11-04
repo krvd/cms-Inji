@@ -12,7 +12,7 @@ echo Html::el('div', [
 
 <?php
 $mainCol = [
-    'class' => 'mainTableWrap',
+    'class' => 'mainTableWrap table-responsive',
     'style' => ''
 ];
 if (!empty($dataManager->managerOptions['categorys'])) {

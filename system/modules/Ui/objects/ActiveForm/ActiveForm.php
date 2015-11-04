@@ -169,7 +169,7 @@ class ActiveForm extends \Object
                 $colSize = 12 / count($row);
                 echo "<div class ='row'>";
                 foreach ($row as $col) {
-                    echo "<div class = 'col-xs-{$colSize}'>";
+                    echo "<div class = 'col-sm-{$colSize}'>";
                     if ($col) {
                         $this->drawCol($col, $this->form['inputs'][$col], $form, $params);
                     }
