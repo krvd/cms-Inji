@@ -19,7 +19,7 @@ class Table extends \Object
     public $name = '&nbsp;';
     public $afterHeader = '';
     public $id = '';
-    public $class = 'table table-condensed';
+    public $class = 'table table-condensed table-hover';
     public $attributes = [];
     public $indexCol = null;
 
