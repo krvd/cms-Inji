@@ -9,7 +9,7 @@ return [
                     'ai' => 2
                 ],
                 'Item' => [
-                    'ai' => 4
+                    'ai' => 5
                 ]
             ],
             'Menu' => [
@@ -20,6 +20,13 @@ return [
                 ]
             ],
             'Item' => [
+                [
+                    'id' => 4,
+                    'type' => 'href',
+                    'name' => 'Основные настройки',
+                    'href' => '/admin/siteConfig',
+                    'Menu_id' => 1
+                ],
                 [
                     'id' => 1,
                     'type' => 'href',

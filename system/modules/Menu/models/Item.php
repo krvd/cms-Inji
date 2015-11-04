@@ -19,6 +19,7 @@ class Item extends \Model
     static $labels = [
         'type' => 'Тип',
         'name' => 'Название',
+        'tooltip' => 'Подсказка',
         'href' => 'Ссылка',
         'Menu_id' => 'Меню',
         'parent_id' => 'Дочерний пункт'
@@ -35,12 +36,22 @@ class Item extends \Model
                         'model' => '\Materials\Category',
                         'name' => 'aditional'
                     ]
+                ],
+                'material' => [
+                    'text' => 'Материал',
+                    'input' => [
+                        'type' => 'select',
+                        'source' => 'model',
+                        'model' => '\Materials\Material',
+                        'name' => 'aditional'
+                    ]
                 ]
             ]
         ],
         'aditional' => ['type' => 'hidden'],
         'name' => ['type' => 'text'],
         'href' => ['type' => 'text'],
+        'tooltip' => ['type' => 'text'],
         'weight' => ['type' => 'number'],
         'Menu_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'menu', 'showCol' => 'name'],
     ];
@@ -49,6 +60,7 @@ class Item extends \Model
             'cols' => [
                 'type',
                 'name',
+                'tooltip',
                 'href',
                 'Menu_id'
             ],
@@ -60,7 +72,8 @@ class Item extends \Model
             'map' => [
                 ['aditional'],
                 ['type', 'Menu_id'],
-                ['name', 'href']
+                ['name', 'href'],
+                ['tooltip']
             ]
         ]
     ];
