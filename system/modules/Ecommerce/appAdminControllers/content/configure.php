@@ -25,6 +25,27 @@
     $form->input('hidden', 'config[save]', '', ['value' => 1]);
     $form->end('Сохранить');
     ?>
+    <h3>Обслужвание</h3>
+    <a href="/admin/ecommerce/reSearchIndex" class="btn btn-primary">Обновить поисковые индексы</a>
+    <h3>Уведомления в браузере</h3>
+    <a id ="push-notifications-button" href="#" class="btn btn-primary">Получать уведомления</a>
+    <script>
+        inji.onLoad(function () {
+          document.querySelector('#push-notifications-button').addEventListener('click', function () {
+            if (!Notification) {
+              alert('Desktop notifications not available in your browser. Try Chromium.');
+              return;
+            }
+            if (Notification.permission !== "granted") {
+              Notification.requestPermission();
+            }
+            inji.Server.request({
+              url: '/admin/ecommerce/newOrdersSubscribe'
+            });
+          });
+        })
+
+    </script>
   </div>
   <?php
   foreach ($dataManagers as $manager => $dataManager) {
@@ -38,27 +59,6 @@
       <?php
   }
   ?>
-  <h3>Обслужвание</h3>
-  <a href="/admin/ecommerce/reSearchIndex" class="btn btn-primary">Обновить поисковые индексы</a>
-  <h3>Уведомления в браузере</h3>
-  <a id ="push-notifications-button" href="#" class="btn btn-primary">Получать уведомления</a>
-  <script>
-      inji.onLoad(function () {
-        document.querySelector('#push-notifications-button').addEventListener('click', function () {
-          if (!Notification) {
-            alert('Desktop notifications not available in your browser. Try Chromium.');
-            return;
-          }
-          if (Notification.permission !== "granted") {
-            Notification.requestPermission();
-          }
-          inji.Server.request({
-            url: '/admin/ecommerce/newOrdersSubscribe'
-          });
-        });
-      })
-
-  </script>
 </div>
 
 
