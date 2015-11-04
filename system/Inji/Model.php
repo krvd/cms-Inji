@@ -248,7 +248,11 @@ class Model
 
     static function cols()
     {
+        if (static::$storage['type'] == 'moduleConfig') {
+            return [];
+        }
         if (empty(Model::$cols[static::table()])) {
+
             Model::$cols[static::table()] = App::$cur->db->getTableCols(static::table());
         }
         return Model::$cols[static::table()];
@@ -517,10 +521,9 @@ class Model
             }
             if (!empty($options['order'])) {
                 usort($items, function($a, $b) use($options) {
-                    if ($a->{$options['order'][0]} > $b->{$options['order'][0]} && $options['order'][1]='asc') {
+                    if ($a->{$options['order'][0]} > $b->{$options['order'][0]} && $options['order'][1] = 'asc') {
                         return 1;
-                    }
-                    elseif ($a->{$options['order'][0]} < $b->{$options['order'][0]} && $options['order'][1]='asc') {
+                    } elseif ($a->{$options['order'][0]} < $b->{$options['order'][0]} && $options['order'][1] = 'asc') {
                         return -1;
                     }
                     return 0;
