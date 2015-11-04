@@ -5,7 +5,11 @@ return [
     'modules' => [
         'StaticLoader',
         'Ui',
-        'Access'
+        'Db',
+        'View',
+        'Libs',
+        'Server',
+        'Modules',
     ],
     'moduleRouter' => [
         'static' => 'StaticLoader'
