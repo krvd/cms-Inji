@@ -357,15 +357,15 @@ return function ($step = NULL, $params = array()) {
         //Основные параметры
         'cart_info_name' => 'varchar(255) NOT NULL',
         'cart_info_value' => 'varchar(255) NOT NULL',
-        'cart_info_cart_id' => 'int(11) UNSIGNED NOT NUL',
-        'cart_info_useradds_field_id' => 'int(11) UNSIGNED NOT NUL',
+        'cart_info_cart_id' => 'int(11) UNSIGNED NOT NULL',
+        'cart_info_useradds_field_id' => 'int(11) UNSIGNED NOT NULL',
     ]);
-    //Информация в корзине
-    App::$cur->db->createTable('ecommerce_card_item_history_', [
+    //история карты
+    App::$cur->db->createTable('ecommerce_card_item_history', [
         'card_item_history_id' => 'pk',
         //Основные параметры
-        'card_item_history_card_item_id' => 'int(11) UNSIGNED NOT NUL',
-        'card_item_history_amount' => 'DECIMAL(10, 2) UNSIGNED NOT NUL',
+        'card_item_history_card_item_id' => 'int(11) UNSIGNED NOT NULL',
+        'card_item_history_amount' => 'DECIMAL(10, 2) UNSIGNED NOT NULL',
         'card_item_history_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
     ]);
 };
