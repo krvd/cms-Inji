@@ -12,14 +12,16 @@ class Form extends \Model
 {
     static $objectName = 'Форма обращения с сайта';
     static $labels = [
-        'title' => 'Название',
+        'name' => 'Название',
+        'description' => 'Описание',
         'user_id' => 'Пользователь',
         'inputs' => 'Поля формы',
         'date_create' => 'Дата'
     ];
     static $cols = [
-        'title' => ['type' => 'text'],
-        'user_id' => [ 'type' => 'select', 'source' => 'relation', 'relation' => 'user', 'showCol' => 'user_name'],
+        'name' => ['type' => 'text'],
+        'description' => ['type' => 'html'],
+        'user_id' => [ 'type' => 'select', 'source' => 'relation', 'relation' => 'user'],
         'inputs' => [ 'type' => 'dataManager', 'relation' => 'inputs'],
         'date_create' => ['type' => 'dateTime'],
     ];
@@ -36,7 +38,8 @@ class Form extends \Model
         'manager' => [
             'name' => 'Форма приема обращений с сайта',
             'map' => [
-                ['title'],
+                ['name'],
+                ['description'],
                 ['inputs'],
             ]
         ]

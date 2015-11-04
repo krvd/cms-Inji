@@ -5,7 +5,7 @@ return function ($step = NULL, $params = array()) {
     \App::$cur->db->createTable('userforms_form', array(
         'form_id' => 'pk',
         'form_user_id' => 'INT(11) NOT NULL',
-        'form_title' => 'varchar(255) NOT NULL',
+        'form_name' => 'varchar(255) NOT NULL',
         'form_description' => 'text NOT NULL',
         'form_date_create' => 'timestamp DEFAULT CURRENT_TIMESTAMP',
     ));
