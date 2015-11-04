@@ -13,7 +13,7 @@ class Files extends Module
     function upload($file, $options = array())
     {
 
-        $site_path = App::$primary->path;
+        $sitePath = App::$primary->path;
 
         if (!is_uploaded_file($file['tmp_name']))
             return 0;
@@ -36,21 +36,16 @@ class Files extends Module
             if (!$fileObject) {
                 $fileObject = new Files\File();
                 $fileObject->code = $options['file_code'];
-                $fileObject->name = microtime(true);
-            } elseif (!$fileObject->name) {
-                $fileObject->name = microtime(true);
             }
-        } else {
-            $fileObject->name = microtime(true);
         }
+        $fileObject->name = $fileinfo['filename'];
+        $fileObject->path = $type->type_dir . date('Y-m-d') . '/' . microtime(true) . '.' . $fileinfo['extension'];
+        if ($fileObject->id && file_exists($sitePath . $fileObject->path))
+            unlink($sitePath . $fileObject->path);
 
-        $fileObject->path = $type->type_dir . date('Y-m-d') . '/' . $fileObject->name . '.' . $fileinfo['extension'];
-        if ($fileObject->id && file_exists($site_path . $fileObject->path))
-            unlink($site_path . $fileObject->path);
+        Tools::createDir($sitePath . $type->type_dir . date('Y-m-d') . '/');
 
-        Tools::createDir($site_path . $type->type_dir . date('Y-m-d') . '/');
-
-        if (!move_uploaded_file($file['tmp_name'], $site_path . $fileObject->path))
+        if (!move_uploaded_file($file['tmp_name'], $sitePath . $fileObject->path))
             return false;
 
         $fileObject->type_id = $type->pk();
@@ -71,7 +66,7 @@ class Files extends Module
      */
     function uploadFromUrl($url, $options = array())
     {
-        $site_path = App::$primary->path;
+        $sitePath = App::$primary->path;
 
         $fileinfo = pathinfo($url);
         if (empty($fileinfo['extension']))
@@ -91,25 +86,20 @@ class Files extends Module
             if (!$fileObject) {
                 $fileObject = new Files\File();
                 $fileObject->code = $options['file_code'];
-                $fileObject->name = microtime(true);
-            } elseif (!$fileObject->name) {
-                $fileObject->name = microtime(true);
             }
-        } else {
-            $fileObject->name = microtime(true);
         }
+        $fileObject->name = $fileinfo['filename'];
+        $fileObject->path = $type->type_dir . date('Y-m-d') . '/' . microtime(true) . '.' . $fileinfo['extension'];
+        if ($fileObject->id && file_exists($sitePath . $fileObject->path))
+            unlink($sitePath . $fileObject->path);
 
-        $fileObject->path = $type->type_dir . date('Y-m-d') . '/' . $fileObject->name . '.' . $fileinfo['extension'];
-        if ($fileObject->id && file_exists($site_path . $fileObject->path))
-            unlink($site_path . $fileObject->path);
-
-        Tools::createDir($site_path . $type->type_dir . date('Y-m-d') . '/');
+        Tools::createDir($sitePath . $type->type_dir . date('Y-m-d') . '/');
 
         $file = @file_get_contents($url);
         if ($file === false) {
             return 0;
         }
-        file_put_contents($site_path . $fileObject->path, $file);
+        file_put_contents($sitePath . $fileObject->path, $file);
 
         $fileObject->type_id = $type->pk();
         $fileObject->original_name = $fileinfo['basename'];
