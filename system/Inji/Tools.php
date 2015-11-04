@@ -127,7 +127,7 @@ class Tools extends Model
 
         if ($img_type == 'jpeg') {
             imageinterlace($new_res, 1); // чересстрочное формирование изображение
-            imagejpeg($new_res, $img_path, 70);
+            imagejpeg($new_res, $img_path, 85);
         } else {
             $imageX = "image{$img_type}";
             $imageX($new_res, $img_path);
