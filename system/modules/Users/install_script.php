@@ -20,7 +20,7 @@ return function ($step = NULL, $params = array()) {
         $userId = App::$cur->db->insert('users_user', array(
             'user_login' => $params['user']['user_login'],
             'user_mail' => $params['user']['user_mail'],
-            'user_pass' => App::$cur->Users->hashpass($params['user']['user_pass']),
+            'user_pass' => password_hash($params['user']['user_pass'], PASSWORD_DEFAULT),
             'user_group_id' => '3',
             'user_role_id' => '3',
         ));
@@ -28,7 +28,7 @@ return function ($step = NULL, $params = array()) {
         $userId = App::$cur->db->insert('users_user', array(
             'user_login' => 'admin',
             'user_mail' => 'admin@' . INJI_DOMAIN_NAME,
-            'user_pass' => App::$cur->Users->hashpass('admin'),
+            'user_pass' => password_hash('admin', PASSWORD_DEFAULT),
             'user_group_id' => '3',
             'user_role_id' => '3',
         ));
