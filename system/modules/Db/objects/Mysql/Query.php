@@ -124,7 +124,7 @@ class Query extends \Object
 
 
         if (!is_array($order)) {
-            $this->order[] = "`{$order}` {$type}";
+            $this->order[] = "{$order} {$type}";
         } else {
             foreach ($order as $item)
                 if (!is_array($item)) {
