@@ -234,10 +234,12 @@ class View extends \Module
 
         if (!empty($this->template->config['favicon']) && file_exists($this->template->path . "/{$this->template->config['favicon']}")) {
             echo "        <link rel='shortcut icon' href='/templates/{$this->template->name}/{$this->template->config['favicon']}' />";
+        } elseif (!empty($this->template->config['favicon']) && file_exists($this->app->path . "/static/images/{$this->template->config['favicon']}")) {
+            echo "        <link rel='shortcut icon' href='/static/images/{$this->template->config['favicon']}' />";
         } elseif (file_exists($this->app->path . '/static/images/favicon.ico')) {
             echo "        <link rel='shortcut icon' href='/static/images/favicon.ico' />";
         }
-        
+
         foreach ($this->getMetaTags() as $meta) {
             echo "\n        " . Html::el('meta', $meta, '', null);
         }
