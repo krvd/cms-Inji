@@ -16,6 +16,7 @@ class Controller
     public $method = 'index';
     public $module = null;
     public $name = '';
+    public $run = false;
 
     /**
      * Run controller
@@ -31,6 +32,7 @@ class Controller
         if (!$this->checkAccess()) {
             Tools::redirect($this->access->getDeniedRedirect(), 'У вас нет прав доступа');
         }
+        $this->run = true;
         call_user_func_array([$this, $this->method . 'Action'], $this->params);
     }
 
@@ -57,7 +59,10 @@ class Controller
      */
     function checkAccess()
     {
-        return $this->module->app->access->checkAccess($this);
+        if ($this->module->app->access) {
+            return $this->module->app->access->checkAccess($this);
+        }
+        return true;
     }
 
 }
