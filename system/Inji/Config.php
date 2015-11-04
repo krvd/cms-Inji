@@ -129,9 +129,6 @@ class Config
         if (!$app) {
             $app = App::$primary;
         }
-
-        $site_name = $app->name;
-        $app_name = $app->name;
         switch ($type) {
             case 'system':
                 $path = INJI_SYSTEM_DIR . '/config/config.php';
@@ -139,11 +136,11 @@ class Config
                 break;
             case 'app':
                 $path = $app->path . "/config/config.php";
-                self::$_configs['app'][$site_name] = $data;
+                self::$_configs['app'][$app->name] = $data;
                 break;
             case 'module' :
                 $path = $app->path . "/config/modules/{$module}.php";
-                self::$_configs['module'][$site_name][$module] = $data;
+                self::$_configs['module'][$app->name][$module] = $data;
                 break;
             case 'share':
                 if ($module) {
