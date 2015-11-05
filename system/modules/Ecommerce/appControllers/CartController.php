@@ -297,7 +297,7 @@ class CartController extends Controller
             $cart->addItem($item->id, $price->id, $count);
         }
         $cart->calc();
-        $result->successMsg = '<a href="/ecommerce/view/' . $item->id . '">' . $item->name() . '</a> добавлен <a href="/ecommerce/cart">в корзину покупок</a>!';
+        $result->successMsg = '<a href="/ecommerce/view/' . $item->id . '">' . $item->name() . ($price->offer->name() ? ' (' . $price->offer->name() . ')' : '') . '</a> добавлен <a href="/ecommerce/cart">в корзину покупок</a>!';
         $result->send();
     }
 
