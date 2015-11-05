@@ -16,7 +16,10 @@ return function ($step = NULL, $params = array()) {
         'category_tree_path' => 'text NOT NULL',
         'category_user_id' => 'int(11) UNSIGNED NOT NULL',
         'category_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
-    ));
+            ), [
+        'INDEX ' . App::$cur->db->table_prefix . '_ecommerce_category_category_parent_id (category_parent_id)',
+        'INDEX ' . App::$cur->db->table_prefix . '_ecommerce_category_category_tree_path (category_tree_path(255))',
+    ]);
     //Типы товаров
     App::$cur->db->createTable('ecommerce_item_type', array(
         'item_type_id' => 'pk',
@@ -45,8 +48,11 @@ return function ($step = NULL, $params = array()) {
         'item_tree_path' => 'TEXT NOT NULL',
         'item_search_index' => 'TEXT NOT NULL',
         'item_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
+            ], [
+        'INDEX ' . App::$cur->db->table_prefix . '_ecommerce_item_item_category_id (item_category_id)',
+        'INDEX ' . App::$cur->db->table_prefix . '_inji_ecommerce_item_item_tree_path (item_tree_path(255))',
+        'INDEX ' . App::$cur->db->table_prefix . '_ecommerce_item_item_search_index (item_search_index(255))'
     ]);
-
     //Опции товаров
     App::$cur->db->createTable('ecommerce_item_option', array(
         'item_option_id' => 'pk',
@@ -159,7 +165,7 @@ return function ($step = NULL, $params = array()) {
         'item_offer_warehouse_id' => 'pk',
         //Основные параметры
         'item_offer_warehouse_warehouse_id' => 'int(11) UNSIGNED NOT NULL',
-        'item_offer_warehouse_item_offer_price_id' => 'int(11) UNSIGNED NOT NULL',
+        'item_offer_warehouse_item_offer_id' => 'int(11) UNSIGNED NOT NULL',
         'item_offer_warehouse_count' => 'DECIMAL(10, 3) UNSIGNED NOT NULL',
         //Системные
         'item_offer_warehouse_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
@@ -365,7 +371,17 @@ return function ($step = NULL, $params = array()) {
         'card_item_history_id' => 'pk',
         //Основные параметры
         'card_item_history_card_item_id' => 'int(11) UNSIGNED NOT NULL',
-        'card_item_history_amount' => 'DECIMAL(10, 2) UNSIGNED NOT NULL',
+        'card_item_history_amount' => 'DECIMAL(10, 2) NOT NULL',
         'card_item_history_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
+    ]);
+    App::$cur->db->createTable('ecommerce_cart_extra', [
+        'cart_extra_id' => 'pk',
+        //Основные параметры
+        'cart_extra_cart_id' => 'int(11) UNSIGNED NOT NULL',
+        'cart_extra_name' => 'varchar(255) NOT NULL',
+        'cart_extra_info' => 'text NOT NULL',
+        'cart_extra_count' => 'DECIMAL(10, 2) NOT NULL',
+        'cart_extra_price' => 'DECIMAL(10, 2) NOT NULL',
+        'cart_extra_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
     ]);
 };
