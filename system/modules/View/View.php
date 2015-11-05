@@ -272,7 +272,7 @@ class View extends \Module
         }
 
         $timeMd5 = md5($timeStr);
-        if (!file_exists(App::$primary->path . '/static/cache/all' . $timeMd5 . '.css')) {
+        if (file_exists(App::$primary->path . '/static/cache/all' . $timeMd5 . '.css')) {
             foreach ($urls as $primaryUrl => $url) {
                 $source = file_get_contents($url);
                 $matches = [];
@@ -280,7 +280,7 @@ class View extends \Module
                 $levelUpPath = substr($rootPath, 0, strrpos($rootPath, '/'));
                 $source = preg_replace('!url\((\'?"?)[\.]{2}!isU', 'url($1' . $levelUpPath, $source);
                 $source = preg_replace('!url\((\'?"?)[\.]{1}!isU', 'url($1' . $rootPath, $source);
-                $source = preg_replace('#url\(([^/]\'?"?)(?!http|https)([^/]){1}#isU', 'url($1' . $rootPath . '/$2$3', $source);
+                $source = preg_replace('#url\((\'?"?)(?!http|https|/)#isU', 'url($1' . $rootPath . '/$2', $source);
                 $cssAll .= $source;
             }
             Tools::createDir(App::$primary->path . '/static/cache/');
