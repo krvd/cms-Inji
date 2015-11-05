@@ -280,7 +280,7 @@ class View extends \Module
                 $levelUpPath = substr($rootPath, 0, strrpos($rootPath, '/'));
                 $source = preg_replace('!url\((\'?"?)[\.]{2}!isU', 'url($1' . $levelUpPath, $source);
                 $source = preg_replace('!url\((\'?"?)[\.]{1}!isU', 'url($1' . $rootPath, $source);
-                $source = preg_replace('#url\((\'?"?)(?!http|https)([^/]){1}#isU', 'url($1' . $rootPath . '/$2$3', $source);
+                $source = preg_replace('#url\(([^/]\'?"?)(?!http|https)([^/]){1}#isU', 'url($1' . $rootPath . '/$2$3', $source);
                 $cssAll .= $source;
             }
             Tools::createDir(App::$primary->path . '/static/cache/');
@@ -523,7 +523,6 @@ class View extends \Module
 
     function widget($_widgetName, $_params = [], $lineParams = null)
     {
-
         $_paths = $this->getWidgetPaths($_widgetName);
         $find = false;
         foreach ($_paths as $_path) {
