@@ -238,7 +238,7 @@ class DataManagerController extends Controller
             $model = $modelName::get($_GET['key'], $modelName::index(), !empty($_GET['params']) ? $_GET['params'] : []);
             if ($model) {
                 $model->$_GET['col'] = $_GET['col_value'];
-                $model->save();
+                $model->save(!empty($_GET['params']) ? $_GET['params'] : []);
             }
         }
         $result = new Server\Result();
@@ -292,7 +292,7 @@ class DataManagerController extends Controller
                             $models = $modelName::getList(['where' => [[$modelName::index(), $ids, 'IN']]]);
                             foreach ($models as $model) {
                                 $model->{$action['col']} = $action['value'];
-                                $model->save();
+                                $model->save(!empty($_GET['params']) ? $_GET['params'] : []);
                             }
                         }
                         break;
