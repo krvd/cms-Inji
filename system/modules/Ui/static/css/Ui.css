@@ -13,7 +13,10 @@
   padding-left:0px;padding-right:0px;margin-bottom:0;
 }
 span.nav-toggle-icon{
-  font-size:12px !important;top:0px !important;color:#888 !important;cursor:pointer;
+  font-size:12px;
+  top:0px;
+  color:#888;
+  cursor:pointer;
 }
 
 .dataManager {
