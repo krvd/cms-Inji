@@ -161,7 +161,8 @@ class View extends \Module
                     break;
                 case 'WIDGET':
                     $source = $this->cutTag($source, $rawTag);
-                    $this->widget($tag[1], ['params' => array_slice($tag, 2)]);
+                    $params = array_slice($tag, 2);
+                    $this->widget($tag[1], ['params' => $params], ':' . implode(':', $params));
                     break;
                 case 'HEAD':
                     $source = $this->cutTag($source, $rawTag);
@@ -520,7 +521,7 @@ class View extends \Module
         }
     }
 
-    function widget($_widgetName, $_params = [])
+    function widget($_widgetName, $_params = [], $lineParams = null)
     {
 
         $_paths = $this->getWidgetPaths($_widgetName);
@@ -531,18 +532,19 @@ class View extends \Module
                 break;
             }
         }
-        $lineParams = '';
-        if ($_params) {
-            $paramArray = false;
-            foreach ($_params as $param) {
-                if (is_array($param) || is_object($param)) {
-                    $paramArray = true;
+        if ($lineParams === null) {
+            $lineParams = '';
+            if ($_params) {
+                $paramArray = false;
+                foreach ($_params as $param) {
+                    if (is_array($param) || is_object($param)) {
+                        $paramArray = true;
+                    }
                 }
+                if (!$paramArray)
+                    $lineParams = ':' . implode(':', $_params);
             }
-            if (!$paramArray)
-                $lineParams = ':' . implode(':', $_params);
         }
-
         echo "<!--start:{WIDGET:{$_widgetName}{$lineParams}}-->\n";
         if ($find) {
             if ($_params && is_array($_params)) {
