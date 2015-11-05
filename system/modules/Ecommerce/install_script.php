@@ -347,7 +347,9 @@ return function ($step = NULL, $params = array()) {
             'cart_event_type_name' => 'Изменение статуса'
         ],
     ];
-
+    foreach ($types as $type) {
+        App::$cur->db->insert('ecommerce_cart_event_type', $type);
+    }
     //События корзины
     App::$cur->db->createTable('ecommerce_cart_event', array(
         'cart_event_id' => 'pk',
