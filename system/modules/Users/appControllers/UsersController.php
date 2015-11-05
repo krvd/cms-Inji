@@ -9,12 +9,14 @@ class UsersController extends Controller
 
     function profileAction()
     {
+        $bread = [];
+        $bread[] = ['text' => 'Профиль'];
         $this->view->setTitle('Профиль');
         $form = new Ui\ActiveForm(Users\User::$cur->info, 'profile');
         $form->header = false;
         $form->checkRequest();
         $this->view->setTitle('Редактирование профиля');
-        $this->view->page(['data' => compact('form')]);
+        $this->view->page(['data' => compact('form','bread')]);
     }
 
     function loginAction()

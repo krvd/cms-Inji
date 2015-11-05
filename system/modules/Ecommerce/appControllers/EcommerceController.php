@@ -82,8 +82,11 @@ class ecommerceController extends Controller
 
     function cabinetAction()
     {
+        $bread = [];
+        $bread[] = ['text' => 'Каталог', 'href' => '/ecommerce/'];
+        $bread[] = ['text' => 'Кабинет'];
         $this->view->setTitle('Кабинет');
-        $this->view->page();
+        $this->view->page(['data'=>compact('bread')]);
     }
 
     function autoCompleteAction()
@@ -175,15 +178,15 @@ class ecommerceController extends Controller
         }
         $active = $item->category_id;
         $catalog = $item->category;
-
-        $bread[] = array('text' => 'Каталог', 'href' => '/ecommerce');
+        $bread = [];
+        $bread[] = ['text' => 'Каталог', 'href' => '/ecommerce'];
 
         $catalogIds = array_values(array_filter(explode('/', $item->tree_path)));
         foreach ($catalogIds as $id) {
             $cat = Ecommerce\Category::get($id);
-            $bread[] = array('text' => $cat->name, 'href' => '/ecommerce/itemList/' . $cat->id);
+            $bread[] = ['text' => $cat->name, 'href' => '/ecommerce/itemList/' . $cat->id];
         }
-        $bread[] = array('text' => $item->name());
+        $bread[] = ['text' => $item->name()];
         $this->view->setTitle($item->name());
         $options = [
             'data' => compact('item', 'active', 'catalog', 'bread')
