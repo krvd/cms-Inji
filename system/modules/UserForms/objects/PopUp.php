@@ -21,7 +21,7 @@ class PopUp
     static function onClick($userFormId)
     {
         $userForm = Form::get($userFormId);
-        return "popUpForm({$userForm->id},'{$userForm->title}');";
+        return "popUpForm({$userForm->id},'{$userForm->name}');";
     }
 
 }
