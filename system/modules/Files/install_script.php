@@ -5,7 +5,8 @@ return function($step = NULL, $params = []) {
     App::$cur->db->createTable('files_file', array(
         'file_id' => 'pk',
         'file_code' => 'varchar(255) NOT NULL',
-        'file_type_id' => 'int(11) NOT NULL',
+        'file_type_id' => 'int(11) UNSIGNED NOT NULL',
+        'file_folder_id' => 'int(11) UNSIGNED NOT NULL',
         'file_upload_code' => 'varchar(255) NOT NULL',
         'file_path' => 'text NOT NULL',
         'file_name' => 'varchar(255) NOT NULL',
@@ -18,7 +19,7 @@ return function($step = NULL, $params = []) {
         'folder_dir' => 'varchar(255) NOT NULL',
         'folder_name' => 'varchar(255) NOT NULL',
         'folder_alias' => 'varchar(255) NOT NULL',
-        'folder_public' => 'tinyint(1) NOT NULL',
+        'folder_public' => 'tinyint(1) UNSIGNED NOT NULL',
         'folder_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
     ));
     App::$cur->db->createTable('files_type', array(
@@ -26,7 +27,7 @@ return function($step = NULL, $params = []) {
         'type_dir' => 'varchar(255) NOT NULL',
         'type_ext' => 'varchar(255) NOT NULL',
         'type_group' => 'varchar(255) NOT NULL',
-        'type_allow_resize' => 'tinyint(1) NOT NULL',
+        'type_allow_resize' => 'tinyint(1) UNSIGNED NOT NULL',
         'type_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
     ));
     $types = [
