@@ -182,6 +182,48 @@ return function ($step = NULL, $params = array()) {
         //Системные
         'cart_status_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
     ));
+    // стандартыне статусы
+    $statuses = [
+        [
+            'cart_status_id' => 1,
+            'cart_status_name' => 'Оформляется',
+            'cart_status_type' => 'process',
+            'cart_status_code' => 'info',
+        ],
+        [
+            'cart_status_id' => 2,
+            'cart_status_name' => 'Оформлен',
+            'cart_status_type' => 'complete',
+            'cart_status_code' => 'primary',
+        ],
+        [
+            'cart_status_id' => 3,
+            'cart_status_name' => 'Готовится к откгрузке',
+            'cart_status_type' => 'accept',
+            'cart_status_code' => 'success',
+        ],
+        [
+            'cart_status_id' => 4,
+            'cart_status_name' => 'Отменен',
+            'cart_status_type' => 'cancel',
+            'cart_status_code' => 'danger',
+        ],
+        [
+            'cart_status_id' => 5,
+            'cart_status_name' => 'Закрыт',
+            'cart_status_type' => 'close',
+            'cart_status_code' => 'default',
+        ],
+        [
+            'cart_status_id' => 6,
+            'cart_status_name' => 'Обработан',
+            'cart_status_type' => 'read',
+            'cart_status_code' => 'muted',
+        ]
+    ];
+    foreach ($statuses as $status) {
+        App::$cur->db->insert('ecommerce_cart_status', $status);
+    }
     //Адреса доставок
     App::$cur->db->createTable('ecommerce_useradds', array(
         'useradds_id' => 'pk',
@@ -283,18 +325,29 @@ return function ($step = NULL, $params = array()) {
         'cart_event_type_name' => 'varchar(255) NOT NULL',
     ));
     //Стандартные типы событий
-    App::$cur->db->insert('ecommerce_cart_event_type', [
-        'cart_event_type_name' => 'Добавление товара'
-    ]);
-    App::$cur->db->insert('ecommerce_cart_event_type', [
-        'cart_event_type_name' => 'Удаление товара'
-    ]);
-    App::$cur->db->insert('ecommerce_cart_event_type', [
-        'cart_event_type_name' => 'Изменение цены'
-    ]);
-    App::$cur->db->insert('ecommerce_cart_event_type', [
-        'cart_event_type_name' => 'Изменение количества'
-    ]);
+    $types = [
+        [
+            'cart_event_type_id' => 1,
+            'cart_event_type_name' => 'Добавление товара'
+        ],
+        [
+            'cart_event_type_id' => 2,
+            'cart_event_type_name' => 'Удаление товара'
+        ],
+        [
+            'cart_event_type_id' => 3,
+            'cart_event_type_name' => 'Изменение цены'
+        ],
+        [
+            'cart_event_type_id' => 4,
+            'cart_event_type_name' => 'Изменение количества'
+        ],
+        [
+            'cart_event_type_id' => 5,
+            'cart_event_type_name' => 'Изменение статуса'
+        ],
+    ];
+
     //События корзины
     App::$cur->db->createTable('ecommerce_cart_event', array(
         'cart_event_id' => 'pk',
