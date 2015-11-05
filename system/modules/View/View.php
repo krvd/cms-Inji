@@ -272,7 +272,7 @@ class View extends \Module
         }
 
         $timeMd5 = md5($timeStr);
-        if (file_exists(App::$primary->path . '/static/cache/all' . $timeMd5 . '.css')) {
+        if (!file_exists(App::$primary->path . '/static/cache/all' . $timeMd5 . '.css')) {
             foreach ($urls as $primaryUrl => $url) {
                 $source = file_get_contents($url);
                 $matches = [];
