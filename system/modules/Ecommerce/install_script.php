@@ -140,14 +140,9 @@ return function ($step = NULL, $params = array()) {
         'item_offer_price_id' => 'pk',
         //Основные параметры
         'item_offer_price_item_offer_id' => 'int(11) UNSIGNED NOT NULL',
-        'item_offer_price_unit_id' => 'int(11) UNSIGNED NOT NULL',
         'item_offer_price_item_offer_price_type_id' => 'int(11) UNSIGNED NOT NULL',
         'item_offer_price_name' => 'text NOT NULL',
         'item_offer_price_price' => 'decimal(10, 2) NOT NULL',
-        'item_offer_price_delivery_weight' => 'int(11) UNSIGNED NOT NULL',
-        'item_offer_price_article' => 'varchar(255) NOT NULL',
-        'item_offer_price_inpack' => 'int(11) UNSIGNED NOT NULL',
-        'item_offer_price_image_file_id' => 'int(11) UNSIGNED NOT NULL',
         //Системные
         'item_offer_price_weight' => 'int(11) UNSIGNED NOT NULL',
         'item_offer_price_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
@@ -272,6 +267,7 @@ return function ($step = NULL, $params = array()) {
     App::$cur->db->createTable('ecommerce_paytype', [
         'paytype_id' => 'pk',
         'paytype_name' => 'VARCHAR(255) NOT NULL',
+        'paytype_merchants' => 'TINYINT(1) UNSIGNED NOT NULL',
         'paytype_icon_file_id' => 'VARCHAR(255) NOT NULL',
     ]);
     //Корзины
@@ -287,7 +283,7 @@ return function ($step = NULL, $params = array()) {
         'cart_time' => 'VARCHAR(255) NOT NULL',
         //Системные
         'cart_sum' => 'decimal(10,2) NOT NULL',
-        'cart_payid' => 'int(11) UNSIGNED NOT NULL',
+        'cart_pay_id' => 'int(11) UNSIGNED NOT NULL',
         'cart_card_item_id' => 'int(11) UNSIGNED NOT NULL',
         'cart_read' => 'bool NOT NULL',
         'cart_payed' => 'bool NOT NULL',
