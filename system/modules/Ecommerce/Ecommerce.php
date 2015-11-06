@@ -7,6 +7,17 @@ class Ecommerce extends Module
         App::$primary->view->customAsset('js', '/moduleAsset/Ecommerce/js/cart.js');
     }
 
+    function cartPayRecive($data)
+    {
+        if ($data['status'] == 'success') {
+            $cart = Ecommerce\Cart::get($data['pay']->id, 'pay_id');
+            if ($cart) {
+                $cart->payed = true;
+                $cart->save();
+            }
+        }
+    }
+
     function parseFields($data, $cart)
     {
         $fields = \Ecommerce\UserAdds\Field::getList();
