@@ -150,20 +150,22 @@ class Merchants extends Module
             $status = $this->{$result['pay']->callback_module}->{$result['pay']->callback_method}($result);
         }
         if (isset($status) && $result['pay']) {
-            $result['pay']->status = $status;
+            $result['pay']->pay_status_id = $status;
             //TODO
             //$result['pay']->date_recive = date('Y-m-d H:i:s');
             $result['pay']->save();
         }
-
+        if (!empty($result['payId'])) {
+            $mr->pay_id = $result['payId'];
+        }
         if (!empty($result['callback'])) {
             echo $result['callback'];
             $mr->result_callback = json_encode($result['callback']);
-            if (!empty($result['payId'])) {
-                $mr->pay_id = $result['payId'];
-            }
-            $mr->save();
         }
+        if (!empty($result['status'])) {
+            $mr->status = $result['status'];
+        }
+        $mr->save();
     }
 
     function reciverPayeer($data, $status)
