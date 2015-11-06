@@ -119,9 +119,21 @@ class Merchants extends Module
         //Добавление параметра WMI_SIGNATURE в словарь параметров формы
 
         $fields["WMI_SIGNATURE"] = $signature;
+        print "<form action=\"https://wl.walletone.com/checkout/checkout/Index\" method=\"POST\">";
 
+        foreach ($fields as $key => $val) {
+            if (is_array($val)) {
+                foreach ($val as $value) {
+                    print "<input type=\"hidden\" name=\"$key\" value=\"$value\"/>";
+                }
+            } else {
+                print "<input type=\"hidden\" name=\"$key\" value=\"$val\"/>";
+            }
+        }
 
-        return 'https://www.walletone.com/checkout/default.aspx?' . http_build_query($fields);
+        print "<input type=\"submit\"/></form>";
+
+        return 'https://wl.walletone.com/checkout/checkout/Index?' . http_build_query($fields);
     }
 
     function reciver($data, $system, $status, $mr)
@@ -130,11 +142,14 @@ class Merchants extends Module
             $this->Merchants->current = $system;
         }
         $result = $this->{'reciver' . $this->current}($data, $status);
-        $result['pay'] = Pay::get($result['payId']);
+        $result['pay'] = null;
+        if (!empty($result['payId'])) {
+            $result['pay'] = Merchants\Pay::get($result['payId']);
+        }
         if ($result['pay'] && $result['pay']->callback_module && $result['pay']->callback_method) {
             $status = $this->{$result['pay']->callback_module}->{$result['pay']->callback_method}($result);
         }
-        if (isset($status)) {
+        if (isset($status) && $result['pay']) {
             $result['pay']->status = $status;
             //TODO
             //$result['pay']->date_recive = date('Y-m-d H:i:s');
@@ -144,7 +159,9 @@ class Merchants extends Module
         if (!empty($result['callback'])) {
             echo $result['callback'];
             $mr->result_callback = json_encode($result['callback']);
-            $mr->pay_id = $result['payId'];
+            if (!empty($result['payId'])) {
+                $mr->pay_id = $result['payId'];
+            }
             $mr->save();
         }
     }
@@ -217,7 +234,7 @@ class Merchants extends Module
             $result['callback'] = print_answer("Retry", "Отсутствует параметр WMI_ORDER_STATE");
 
         // Извлечение всех параметров POST-запроса, кроме WMI_SIGNATURE
-
+        $params = [];
         foreach ($data as $name => $value) {
             if ($name !== "WMI_SIGNATURE")
                 $params[$name] = $value;
@@ -242,7 +259,7 @@ class Merchants extends Module
 
         //Сравнение полученной подписи с подписью W1
 
-        if ($signature == $data["WMI_SIGNATURE"]) {
+        if (!empty($data["WMI_SIGNATURE"]) && $signature == $data["WMI_SIGNATURE"]) {
             if (strtoupper($data["WMI_ORDER_STATE"]) == "ACCEPTED") {
                 // вызываем функцию обработки в случае успеха
 
@@ -257,7 +274,7 @@ class Merchants extends Module
             }
         } else {
             // Подпись не совпадает, возможно вы поменяли настройки интернет-магазина
-            $result['callback'] = print_answer("Retry", "Неверная подпись " . $data["WMI_SIGNATURE"]);
+            $result['callback'] = print_answer("Retry", "Неверная подпись " . (!empty($data["WMI_SIGNATURE"]) ? $data["WMI_SIGNATURE"] : 'empty'));
         }
         return $result;
     }
