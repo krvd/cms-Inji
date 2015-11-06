@@ -59,6 +59,7 @@ class Orders extends \Object
             }
 
             $this->updateCartItems($cart, $order->Товары->Товар);
+            $cart->payed = $payed;
             if ($payed && $cart->cart_status_id == 5) {
                 
             } elseif ($payed && $cart->cart_status_id == 3) {
