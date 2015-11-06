@@ -44,7 +44,7 @@ class Merchants extends Module
             $result['pay'] = Merchants\Pay::get($result['payId']);
         }
         if ($result['pay'] && $result['pay']->callback_module && $result['pay']->callback_method) {
-            $status = $this->{$result['pay']->callback_module}->{$result['pay']->callback_method}($result);
+            $status = App::$cur->{$result['pay']->callback_module}->{$result['pay']->callback_method}($result);
         }
         if (isset($status) && $result['pay']) {
             $result['pay']->pay_status_id = $status;
