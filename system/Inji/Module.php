@@ -60,9 +60,15 @@ class Module
         return FALSE;
     }
 
-    static function getInstalled($app)
+    static function getInstalled($app, $primary = null)
     {
-        $modules = array_unique(array_merge(!empty(Inji::$config['modules']) ? Inji::$config['modules'] : [], !empty(App::$primary->config['modules']) ? App::$primary->config['modules'] : [], $app !== \App::$primary && !empty($app->config['modules']) ? $app->config['modules'] : []));
+        if (!$primary) {
+            $primary = App::$primary;
+        }
+        $system = !empty(Inji::$config['modules']) ? Inji::$config['modules'] : [];
+        $primary = !empty($primary->config['modules']) ? $primary->config['modules'] : [];
+        $actual = $app !== $primary && !empty($app->config['modules']) ? $app->config['modules'] : [];
+        $modules = array_unique(array_merge($system, $primary, $actual));
         return $modules;
     }
 
