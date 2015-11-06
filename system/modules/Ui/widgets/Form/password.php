@@ -7,7 +7,7 @@ echo $label !== false ? "<label>{$label}" . (!empty($options['required']) ? ' <s
   type ="password" 
   placeholder="Повторите пароль" 
   class="form-control" 
-  name = '<?= $name; ?>[repeat]' 
+  name = '<?= $name; ?>' 
   />
 <?php
 echo!empty($options['helpText']) ? "<div class='help-block'>{$options['helpText']}</div>" : '';
