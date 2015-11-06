@@ -13,7 +13,7 @@ namespace Merchants\MerchantHelper;
 
 class Robokassa extends \Merchants\MerchantHelper
 {
-    function reciver($data, $status)
+    static function reciver($data, $status)
     {
         $config = static::getConfig();
 
@@ -27,7 +27,7 @@ class Robokassa extends \Merchants\MerchantHelper
         return $result;
     }
 
-    function getPayUrl($payId, $amount, $description = '', $success = '/', $false = '/')
+    static function getPayUrl($payId, $amount, $description = '', $success = '/', $false = '/')
     {
         $config = static::getConfig();
 

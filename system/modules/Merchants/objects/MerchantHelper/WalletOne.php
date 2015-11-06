@@ -13,7 +13,7 @@ namespace Merchants\MerchantHelper;
 
 class WalletOne extends \Merchants\MerchantHelper
 {
-    function reciver($data, $status)
+    static function reciver($data, $status)
     {
         $config = static::getConfig();
         $skey = $config['secret'];

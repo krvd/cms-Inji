@@ -13,7 +13,7 @@ namespace Merchants\MerchantHelper;
 
 class Payeer extends \Merchants\MerchantHelper
 {
-    function getPayUrl($payId, $amount, $description = '', $success = '/', $false = '/')
+    static function getPayUrl($payId, $amount, $description = '', $success = '/', $false = '/')
     {
         $config = static::getConfig();
 
@@ -37,7 +37,7 @@ class Payeer extends \Merchants\MerchantHelper
         return 'http://payeer.com/merchant/?' . http_build_query($data);
     }
 
-    function reciverPayeer($data, $status)
+    static function reciverPayeer($data, $status)
     {
         $config = static::getConfig();
         
