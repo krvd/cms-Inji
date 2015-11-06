@@ -39,7 +39,7 @@ class MerchantsController extends Controller
             'status' => $status,
             'system' => $system
         ]);
-        $mr->save();
+        $request->save();
         $this->Merchants->reciver($postData, $system, $status, $request);
     }
 
