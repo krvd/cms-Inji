@@ -78,7 +78,7 @@ class Merchants extends Module
         $fields["WMI_PAYMENT_AMOUNT"] = number_format($amount, 0, '.', '');
         $fields["WMI_CURRENCY_ID"] = "643";
         $fields["WMI_PAYMENT_NO"] = $payId;
-        $fields["WMI_DESCRIPTION"] = "BASE64:" . base64_encode($this->tools->translit($description));
+        $fields["WMI_DESCRIPTION"] = "BASE64:" . base64_encode(\Tools::translit($description));
         $fields["WMI_EXPIRED_DATE"] = "2019-12-31T23:59:59";
         $fields["WMI_SUCCESS_URL"] = $success;
         $fields["WMI_FAIL_URL"] = $false;
