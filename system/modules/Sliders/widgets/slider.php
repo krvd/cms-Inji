@@ -26,7 +26,7 @@ $slider = \Sliders\Slider::get($sliderId);
     foreach ($slider->slides as $item) {
         ?>
         <div class="item <?= !$i ? 'active' : ''; ?>">
-          <img src="<?= $item->image->path; ?>" alt="<?= $item->name; ?>">
+          <img src="<?= Statics::file($item->image->path); ?>" alt="<?= $item->name; ?>">
           <div class="carousel-caption">
             <?= $item->description; ?>
           </div>
