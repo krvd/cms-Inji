@@ -174,7 +174,7 @@ class ecommerceController extends Controller
     {
         $item = \Ecommerce\Item::get((int) $id);
         if (!$item) {
-            $this->url->redirect('/ecommerce/', 'Такой товар не найден');
+            Tools::redirect('/ecommerce/', 'Такой товар не найден');
         }
         $active = $item->category_id;
         $catalog = $item->category;
