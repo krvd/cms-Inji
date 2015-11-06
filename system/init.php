@@ -21,8 +21,9 @@ spl_autoload_register(function($class_name) {
 //load core
 Inji::$inst = new Inji();
 Inji::$config = Config::system();
+spl_autoload_register('Router::findClass');
 
-$apps = Config::custom(INJI_PROGRAM_DIR . '/apps.php');
+$apps = Apps\App::getList();
 //Make default app params
 $finalApp = [
     'name' => INJI_DOMAIN_NAME,
@@ -32,11 +33,11 @@ $finalApp = [
     'route' => INJI_DOMAIN_NAME,
 ];
 foreach ($apps as $app) {
-    if ($app['default']) {
-        $finalApp = $app;
+    if ($app->default) {
+        $finalApp = $app->_params;
     }
-    if (preg_match("!{$app['route']}!i", INJI_DOMAIN_NAME)) {
-        $finalApp = $app;
+    if (preg_match("!{$app->route}!i", INJI_DOMAIN_NAME)) {
+        $finalApp = $app->_params;
         break;
     }
 }
@@ -70,7 +71,6 @@ if (empty($shareConfig['installed']) && App::$cur->name != 'setup' && (empty(App
     Tools::redirect('/setup');
 }
 
-spl_autoload_register('Router::findClass');
 if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
     include_once __DIR__ . '/../vendor/autoload.php';
 }

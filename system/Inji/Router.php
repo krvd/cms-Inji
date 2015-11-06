@@ -16,7 +16,7 @@ class Router
             $classPath = explode('\\', $className);
             $moduleName = $classPath[0];
             $result = Router::loadClass($className);
-            if ($result) {
+            if ($result && App::$cur) {
                 if (!App::$cur->isLoaded($moduleName)) {
                     App::$cur->loadObject($moduleName);
                 }
@@ -35,19 +35,22 @@ class Router
             $classPath = explode('\\', $className);
             $moduleName = $classPath[0];
             $classPath = implode('/', array_slice($classPath, 1));
-
-            if (App::$cur !== App::$primary) {
-                $folders['appModule'] = ['folder' => App::$primary->path . '/modules/' . $moduleName, 'classPath' => $classPath];
+            if (App::$cur) {
+                if (App::$cur !== App::$primary) {
+                    $folders['appModule'] = ['folder' => App::$primary->path . '/modules/' . $moduleName, 'classPath' => $classPath];
+                }
+                $folders['primaryAppModule'] = ['folder' => App::$cur->path . '/modules/' . $moduleName, 'classPath' => $classPath];
             }
-            $folders['primaryAppModule'] = ['folder' => App::$cur->path . '/modules/' . $moduleName, 'classPath' => $classPath];
             $folders['systemModule'] = ['folder' => INJI_SYSTEM_DIR . '/modules/' . $moduleName, 'classPath' => $classPath];
         }
         $classPath = str_replace('\\', '/', $className);
 
-        if (App::$cur !== App::$primary) {
-            $folders['primaryApp'] = ['folder' => App::$primary->path, 'classPath' => $classPath];
+        if (App::$cur) {
+            if (App::$cur !== App::$primary) {
+                $folders['primaryApp'] = ['folder' => App::$primary->path, 'classPath' => $classPath];
+            }
+            $folders['app'] = ['folder' => App::$cur->path, 'classPath' => $classPath];
         }
-        $folders['app'] = ['folder' => App::$cur->path, 'classPath' => $classPath];
         $folders['system'] = ['folder' => INJI_SYSTEM_DIR, 'classPath' => $classPath];
         $paths = [];
         foreach ($folders as $code => $folderParams) {
@@ -84,12 +87,8 @@ class Router
 
     static function getLoadedClassPath($className)
     {
-        $paths = get_included_files();
-        foreach ($paths as $path) {
-            if (preg_match('![/\\\]' . $className . '\.php$!', $path)) {
-                return preg_replace('![/\\\]' . $className . '\.php$!', '', $path);
-            }
-        }
+        $rc = new ReflectionClass($className);
+        return dirname($rc->getFileName());
     }
 
 }
