@@ -170,7 +170,7 @@ return function ($step = NULL, $params = array()) {
         //Системные
         'item_offer_warehouse_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
             ), [
-        'INDEX ' . App::$cur->db->table_prefix . '_ecommerce_warehousePriceIndex (item_offer_warehouse_item_offer_price_id)'
+        'INDEX ' . App::$cur->db->table_prefix . '_ecommerce_warehousePriceIndex (item_offer_warehouse_item_offer_id)'
     ]);
     //Типы статусов корзин
     App::$cur->db->createTable('ecommerce_cart_status', array(
