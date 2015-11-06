@@ -10,6 +10,7 @@ return [
         'Libs',
         'Server',
         'Modules',
+        'Apps',
     ],
     'moduleRouter' => [
         'static' => 'StaticLoader'

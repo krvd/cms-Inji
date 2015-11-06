@@ -66,8 +66,8 @@ if (!empty($params[0]) && file_exists(INJI_SYSTEM_DIR . '/program/' . $params[0]
     App::$cur->config = Config::app(App::$cur);
 }
 $shareConfig = Config::share();
-if (App::$cur->name != 'install' && empty($shareConfig['installed']) && (empty(App::$cur->params[0]) || App::$cur->params[0] != 'static')) {
-    Tools::redirect('/install');
+if (empty($shareConfig['installed']) && App::$cur->name != 'setup' && (empty(App::$cur->params[0]) || App::$cur->params[0] != 'static')) {
+    Tools::redirect('/setup');
 }
 
 spl_autoload_register('Router::findClass');
@@ -111,6 +111,11 @@ if (Controller::$cur === null) {
 }
 if (!empty(App::$primary->config['autoloadModules'])) {
     foreach (App::$primary->config['autoloadModules'] as $module) {
+        App::$cur->$module;
+    }
+}
+if (App::$primary != App::$cur) {
+    foreach (App::$cur->config['autoloadModules'] as $module) {
         App::$cur->$module;
     }
 }
