@@ -13,8 +13,8 @@ class Merchants extends Module
 
     function getPayUrl($data)
     {
-        if (is_array($data['pay']['pay_data'])) {
-            $data['pay']['pay_data'] = json_encode($data['pay']['pay_data']);
+        if (is_array($data['pay']['data'])) {
+            $data['pay']['data'] = json_encode($data['pay']['data']);
         }
         $pay = new Merchants\Pay($data['pay']);
         $pay->save();

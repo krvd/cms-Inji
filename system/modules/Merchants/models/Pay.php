@@ -4,7 +4,7 @@ namespace Merchants;
 
 class Pay extends \Model
 {
-    function relations()
+    static function relations()
     {
         return [
             'status' => [
