@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'name' => 'Сайты',
+    'name' => 'Приложения',
     'systemConfig' => true
 ];
