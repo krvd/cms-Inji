@@ -45,6 +45,36 @@ return function ($step = NULL, $params = array()) {
         'request_result_callback' => 'text NOT NULL',
         'request_pay_id' => 'INT(11) UNSIGNED NOT NULL',
         'request_date_create' => 'timestamp DEFAULT CURRENT_TIMESTAMP',
-            ]
-    );
+    ]);
+    App::$cur->db->createTable('merchants_merchant', [
+        'merchant_id' => 'pk',
+        'merchant_name' => 'varchar(255) NOT NULL',
+        'merchant_image_file_id' => 'INT(11) UNSIGNED NOT NULL',
+        'merchant_active' => 'TINYINT(1) UNSIGNED NOT NULL',
+        'merchant_object_name' => 'varchar(255) NOT NULL',
+        'request_date_create' => 'timestamp DEFAULT CURRENT_TIMESTAMP',
+    ]);
+    $merchants = [
+        [
+            'merchant_name' => 'Wallet One',
+            'merchant_object_name' => 'WalletOne'
+        ],
+        [
+            'merchant_name' => 'Robokassa',
+            'merchant_object_name' => 'Robokassa'
+        ],
+        [
+            'merchant_name' => 'Payeer',
+            'merchant_object_name' => 'Payeer'
+        ],
+    ];
+    foreach ($merchants as $merchant) {
+        App::$cur->db->insert('merchants_merchant', $merchant);
+    }
+    App::$cur->db->createTable('merchants_merchant_config', [
+        'merchant_config_id' => 'pk',
+        'merchant_config_merchant_id' => 'INT(11) UNSIGNED NOT NULL',
+        'merchant_config_name' => 'varchar(255) NOT NULL',
+        'merchant_config_value' => 'varchar(255) NOT NULL',
+    ]);
 };
