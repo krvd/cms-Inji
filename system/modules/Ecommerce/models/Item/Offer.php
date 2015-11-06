@@ -19,19 +19,19 @@ class Offer extends \Model
     static $cols = [
         'name' => ['type' => 'text'],
         'article' => ['type' => 'text'],
-        'warehouses' => ['type' => 'select', 'source' => 'relation', 'relation' => 'warehouses'],
-        'prices' => ['type' => 'select', 'source' => 'relation', 'relation' => 'prices'],
+        'warehouse' => ['type' => 'dataManager', 'relation' => 'warehouses'],
+        'price' => ['type' => 'dataManager', 'relation' => 'prices'],
     ];
     static $labels = [
         'name' => 'Название',
         'article' => 'Артикул',
-        'warehouses' => 'Наличие на складах',
-        'prices' => 'Цены',
+        'warehouse' => 'Наличие на складах',
+        'price' => 'Цены',
     ];
     static $dataManagers = [
         'manager' => [
             'cols' => [
-                'name', 'article', 'warehouses', 'prices'
+                'name', 'article', 'warehouse', 'price'
             ]
         ]
     ];
@@ -39,8 +39,8 @@ class Offer extends \Model
         'manager' => [
             'map' => [
                 ['name', 'article'],
-                ['warehouses'],
-                ['prices']
+                ['warehouse'],
+                ['price']
             ]
         ]
     ];
@@ -101,6 +101,22 @@ class Offer extends \Model
 
         $blocked = \App::$cur->db->select(\Ecommerce\Warehouse\Block::table())->fetch();
         return (float) $warehouse['sum'] - (float) $blocked['sum'];
+    }
+
+    function beforeDelete()
+    {
+        if ($this->id) {
+            if ($this->warehouses) {
+                foreach ($this->warehouses as $warehouse) {
+                    $warehouse->delete();
+                }
+            }
+            if ($this->prices) {
+                foreach ($this->prices as $price) {
+                    $price->delete();
+                }
+            }
+        }
     }
 
 }

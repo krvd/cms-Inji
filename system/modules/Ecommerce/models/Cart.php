@@ -48,6 +48,10 @@ class Cart extends \Model
             'card' => [
                 'model' => 'Ecommerce\Card\Item',
                 'col' => 'card_item_id'
+            ],
+            'pay' => [
+                'model' => 'Merchants\Pay',
+                'col' => 'pay_id'
             ]
         ];
     }
@@ -63,6 +67,7 @@ class Cart extends \Model
         'info' => 'Информация',
         'items' => 'Товары',
         'paytype_id' => 'Способ оплаты',
+        'payed' => 'Оплачен',
         'exported' => 'Выгружено',
         'warehouse_block' => 'Блокировка товаров',
         'extra' => 'Дополнительно',
@@ -75,6 +80,7 @@ class Cart extends \Model
         'items' => ['type' => 'select', 'source' => 'relation', 'relation' => 'cartItems'],
         'sum' => ['type' => 'text'],
         'warehouse_block' => ['type' => 'bool'],
+        'payed' => ['type' => 'bool'],
         'exported' => ['type' => 'bool'],
         'comment' => ['type' => 'textarea'],
         'complete_data' => ['type' => 'dateTime'],
@@ -94,18 +100,21 @@ class Cart extends \Model
                 'sum',
                 'cart_status_id',
                 'delivery_id',
+                'payed',
                 'complete_data',
             ],
             'sortable' => [
                 'sum',
                 'cart_status_id',
                 'delivery_id',
+                'payed',
                 'complete_data',
             ],
             'filters' => [
                 'sum',
                 'cart_status_id',
                 'delivery_id',
+                'payed',
                 'complete_data',
             ],
             'preSort' => [
@@ -120,6 +129,7 @@ class Cart extends \Model
                 ['paytype_id', 'delivery_id'],
                 ['card_item_id', 'comment'],
                 ['warehouse_block', 'complete_data'],
+                ['payed'],
                 ['items'],
                 ['extra']
             ]

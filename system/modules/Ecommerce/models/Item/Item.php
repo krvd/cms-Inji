@@ -64,7 +64,7 @@ class Item extends \Model
 
     function beforeSave()
     {
-        
+
         if ($this->id) {
             $this->search_index = $this->name . ' ';
             if ($this->category) {
@@ -140,6 +140,25 @@ class Item extends \Model
             }
         }
         return $this->name;
+    }
+
+    function beforeDelete()
+    {
+        if ($this->id) {
+            if ($this->options) {
+                foreach ($this->options as $option) {
+                    $option->delete();
+                }
+            }
+            if ($this->offers) {
+                foreach ($this->offers as $offer) {
+                    $offer->delete();
+                }
+            }
+            if ($this->image) {
+                $this->image->delete();
+            }
+        }
     }
 
 }

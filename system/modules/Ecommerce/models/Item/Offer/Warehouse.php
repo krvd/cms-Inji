@@ -27,7 +27,7 @@ class Warehouse extends \Model
     static $forms = [
         'manager' => [
             'map' => [
-                ['item_price_id', 'warehouse_id'],
+                ['item_offer_id', 'warehouse_id'],
                 ['count'],
             ]
     ]];
