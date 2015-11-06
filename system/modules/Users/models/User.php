@@ -22,7 +22,7 @@ class User extends \Model
         'group_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'group'],
         'role_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'role'],
         'parent_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'parent'],
-        'pass' => ['type' => 'password'],
+        'pass' => ['type' => 'changePassword'],
         'blocked' => [
             'type' => 'bool',
         ],

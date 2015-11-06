@@ -114,7 +114,7 @@ if (!empty(App::$primary->config['autoloadModules'])) {
         App::$cur->$module;
     }
 }
-if (App::$primary != App::$cur) {
+if (App::$primary !== App::$cur) {
     foreach (App::$cur->config['autoloadModules'] as $module) {
         App::$cur->$module;
     }
