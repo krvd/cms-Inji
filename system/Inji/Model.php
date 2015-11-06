@@ -513,11 +513,16 @@ class Model
         if (!empty($storage[$classPath[1]])) {
             $items = [];
             $class = get_called_class();
+            if (isset($options['key'])) {
+                $arrayKey = $options['key'];
+            } else {
+                $arrayKey = static::index();
+            }
             foreach ($storage[$classPath[1]] as $key => $item) {
                 if (!empty($options['where']) && !Model::checkWhere($item, $options['where'])) {
                     continue;
                 }
-                $items[$item[static::index()]] = new $class($item);
+                $items[$item[$arrayKey]] = new $class($item);
             }
             if (!empty($options['order'])) {
                 usort($items, function($a, $b) use($options) {
@@ -528,6 +533,13 @@ class Model
                     }
                     return 0;
                 });
+            }
+            if (!empty($options['forSelect'])) {
+                $return = [];
+                foreach ($items as $key => $item) {
+                    $return[$key] = $item->name();
+                }
+                return $return;
             }
             return $items;
         }
