@@ -61,6 +61,8 @@ class CartController extends Controller
                 if (empty($payTypes[$_POST['payType']])) {
                     $error = 1;
                     Msg::add('Ошибка при выборе способа оплаты');
+                } else {
+                    $payType = $payTypes[$_POST['payType']];
                 }
                 $fields = \Ecommerce\UserAdds\Field::getList();
                 foreach ($fields as $field) {
@@ -91,7 +93,7 @@ class CartController extends Controller
                     $cart->comment = htmlspecialchars($_POST['comment']);
                     $cart->date_status = date('Y-m-d H:i:s');
                     $cart->complete_data = date('Y-m-d H:i:s');
-                    $cart->paytype_id = (int) $_POST['payType'];
+                    $cart->paytype_id = $payType->id;
                     $cart->delivery_id = (int) $_POST['delivery'];
                     $cart->warehouse_block = 1;
                     $cart->save();
@@ -115,7 +117,21 @@ class CartController extends Controller
                         $notification->chanel_id = $this->notifications->getChanel('Ecommerce-orders')->id;
                         $notification->save();
                     }
-                    Tools::redirect('/ecommerce/cart/success');
+                    if ($payType->merchants && $this->merchants) {
+                        $pay = new Merchants\Pay([
+                            'data' => '',
+                            'user_id' => \Users\User::$cur->id,
+                            'sum' => '10',
+                            'callback_module' => 'Ecommerce',
+                            'callback_method' => 'cartPayRecive'
+                        ]);
+                        $pay->save();
+                        $cart->pay_id = $pay->id;
+                        $cart->save();
+                        Tools::redirect('/merchants/pay/' . $pay->id);
+                    } else {
+                        Tools::redirect('/ecommerce/cart/success');
+                    }
                 }
             }
         }
