@@ -27,7 +27,7 @@ class MerchantsController extends Controller
     {
         $postData = [];
         foreach ($_POST as $key => $text) {
-            if (!is_array($text) && !mb_detect_encoding($string, array('UTF-8'), TRUE)) {
+            if (!is_array($text) && !mb_detect_encoding($text, array('UTF-8'), TRUE)) {
                 $postData[$key] = iconv('Windows-1251', 'UTF-8', $text);
             } else {
                 $postData[$key] = $text;
