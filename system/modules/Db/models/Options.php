@@ -47,12 +47,12 @@ class Options extends \Model
         'port' => ['type' => 'text', 'default' => '3306'],
     ];
     static $dataManagers = [
-        'manager' => [
+        'setup' => [
             'name' => 'Настройки соединения с БД',
             'options' => [
                 'access' => [
-                    'groups' => [
-                        3
+                    'apps' => [
+                        'setup'
                     ]
                 ]
             ],
@@ -60,6 +60,9 @@ class Options extends \Model
                 'connect_name',
                 'connect_alias',
                 'db_name'
+            ],
+            'rowButtons' => [
+                'edit', 'delete'
             ]
         ]
     ];
@@ -74,6 +77,11 @@ class Options extends \Model
             ]
         ]
     ];
+
+    function name()
+    {
+        return $this->connect_name;
+    }
 
     static function index()
     {
