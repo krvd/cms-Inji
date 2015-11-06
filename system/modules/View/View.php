@@ -280,7 +280,7 @@ class View extends \Module
                 $levelUpPath = substr($rootPath, 0, strrpos($rootPath, '/'));
                 $source = preg_replace('!url\((\'?"?)[\.]{2}!isU', 'url($1' . $levelUpPath, $source);
                 $source = preg_replace('!url\((\'?"?)[\.]{1}!isU', 'url($1' . $rootPath, $source);
-                $source = preg_replace('#url\((\'?"?)([^/h]){1}(?!http|https)([^/]){1}#isU', 'url($1$2' . $rootPath . '/$3$4', $source);
+                $source = preg_replace('#url\(([\'"]){1}(?!http|https|/|data\:)([^/])#isU', 'url($1' . $rootPath . '/$2', $source);
                 $cssAll .= $source;
             }
             Tools::createDir(App::$primary->path . '/static/cache/');
