@@ -9,6 +9,8 @@ return function ($step = NULL, $params = array()) {
         'category_parent_id' => 'int(11) UNSIGNED NOT NULL',
         'category_name' => 'varchar(255) NOT NULL',
         'category_alias' => 'varchar(255) NOT NULL',
+        'category_viewer' => 'varchar(255) NOT NULL',
+        'category_template' => 'varchar(255) NOT NULL',
         'category_description' => 'text NOT NULL',
         'category_image_file_id' => 'int(11) UNSIGNED NOT NULL',
         'category_options_inherit' => 'bool NOT NULL',

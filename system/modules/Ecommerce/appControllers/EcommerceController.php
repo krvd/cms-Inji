@@ -86,7 +86,7 @@ class ecommerceController extends Controller
         $bread[] = ['text' => 'Каталог', 'href' => '/ecommerce/'];
         $bread[] = ['text' => 'Кабинет'];
         $this->view->setTitle('Кабинет');
-        $this->view->page(['data'=>compact('bread')]);
+        $this->view->page(['data' => compact('bread')]);
     }
 
     function autoCompleteAction()
@@ -112,20 +112,43 @@ class ecommerceController extends Controller
 
     function itemListAction($category_id = 0)
     {
+        //search
         if (!empty($_GET['search'])) {
             if (!empty($_GET['inCatalog'])) {
                 $category_id = (int) $_GET['inCatalog'];
             }
             $search = $_GET['search'];
-        } else
+        } else {
             $search = '';
+        }
 
+        //sort
         if (!empty($_GET['sort'])) {
             $sort = $_GET['sort'];
         } else {
             $sort = ['name' => 'asc'];
         }
 
+        //category
+        $category = null;
+        if ($category_id) {
+            if (is_numeric($category_id)) {
+                $category = \Ecommerce\Category::get($category_id);
+            }
+            if (!$category) {
+                $category = \Ecommerce\Category::get($category_id, 'alias');
+            }
+            if ($category) {
+                $category_id = $category->id;
+            } else {
+                $category_id = 0;
+            }
+        } else {
+            $category_id = 0;
+        }
+        $active = $category_id;
+
+        //items pages
         $pages = new \Ui\Pages($_GET, ['count' => $this->ecommerce->getItemsCount([
                 'parent' => $category_id,
                 'search' => trim($search),
@@ -134,16 +157,7 @@ class ecommerceController extends Controller
             'limit' => 18,
         ]);
 
-        $category_id = (int) $category_id;
-
-        if ($category_id < 1)
-            $category_id = '';
-
-        $active = $category_id;
-        $category = null;
-        if ($category_id)
-            $category = Ecommerce\Category::get($category_id);
-
+        //bread
         $bread = [];
         if (!$category || !$category->name) {
             $bread[] = array('text' => 'Каталог');
@@ -158,16 +172,28 @@ class ecommerceController extends Controller
             $this->view->setTitle($category->name);
         }
 
+        //items
         $items = $this->ecommerce->getItems([
-            'parent' => !empty($category_ids) ? $category_ids : $category_id,
+            'parent' => $category_id,
             'start' => $pages->params['start'],
             'count' => $pages->params['limit'],
             'search' => trim($search),
             'sort' => $sort,
             'filters' => !empty($_GET['filters']) ? $_GET['filters'] : []
         ]);
-        $categorys = Ecommerce\Category::getList();
-        $this->view->page(['data' => compact('active', 'category', 'sort', 'search', 'pages', 'items', 'categorys', 'bread')]);
+
+        //child categorys
+        if ($category) {
+            $categorys = $category->catalogs;
+        } else {
+            $categorys = \Ecommerce\Category::getList(['where' => ['parent_id', 0]]);
+        }
+
+        //view content
+        $this->view->page([
+            'page' => $category ? $category->resolveTemplate() : 'current',
+            'content' => $category ? $category->resolveViewer() : (!empty(App::$cur->ecommerce->config['defaultCategoryView']) ? App::$cur->ecommerce->config['defaultCategoryView'] : 'itemList'),
+            'data' => compact('active', 'category', 'sort', 'search', 'pages', 'items', 'categorys', 'bread')]);
     }
 
     function viewAction($id = '')

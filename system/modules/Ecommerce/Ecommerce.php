@@ -230,9 +230,16 @@ class Ecommerce extends Module
         $selectOptions['join'][] = [Ecommerce\Item\Offer::table(), Ecommerce\Item::index() . ' = ' . Ecommerce\Item\Offer::colPrefix() . Ecommerce\Item::index(), 'inner'];
         $selectOptions['join'][] = [Ecommerce\Item\Offer\Price::table(),
             Ecommerce\Item\Offer::index() . ' = ' . Ecommerce\Item\Offer\Price::colPrefix() . Ecommerce\Item\Offer::index() . ' and ' . Ecommerce\Item\Offer\Price::colPrefix() . 'price>0', 'inner'];
-        $selectOptions['join'][] = [Ecommerce\Item\Offer\Price\Type::table(), Ecommerce\Item\Offer\Price::colPrefix() . Ecommerce\Item\Offer\Price\Type::index() . ' = ' . Ecommerce\Item\Offer\Price\Type::index() .
+        $selectOptions['join'][] = [
+            Ecommerce\Item\Offer\Price\Type::table(), Ecommerce\Item\Offer\Price::colPrefix() . Ecommerce\Item\Offer\Price\Type::index() . ' = ' . Ecommerce\Item\Offer\Price\Type::index() .
             ' and (' . Ecommerce\Item\Offer\Price\Type::colPrefix() . 'roles="" || ' . Ecommerce\Item\Offer\Price\Type::colPrefix() . 'roles LIKE "%|' . \Users\User::$cur->role_id . '|%")'
-            , 'inner'];
+        ];
+        $selectOptions['where'][] = [
+            [Ecommerce\Item\Offer\Price::colPrefix() . Ecommerce\Item\Offer\Price\Type::index(), 0],
+            [Ecommerce\Item\Offer\Price\Type::index(), 0, '>', 'OR']
+        ];
+
+
 
         $selectOptions['group'] = Ecommerce\Item::index();
 
@@ -273,6 +280,41 @@ class Ecommerce extends Module
         return $counts;
     }
 
-}
+    function viewsCategoryList($inherit = true)
+    {
+        $return = [];
+        if ($inherit) {
+            $return['inherit'] = 'Как у родителя';
+        }
+        $return['itemList'] = 'Список товаров';
+        $conf = App::$primary->view->template->config;
+        if (!empty($conf['files']['modules']['Ecommerce'])) {
+            foreach ($conf['files']['modules']['Ecommerce'] as $file) {
+                if ($file['type'] == 'Category') {
+                    $return[$file['file']] = $file['name'];
+                }
+            }
+        }
+        return $return;
+    }
 
-?>
+    function templatesCategoryList()
+    {
+        $return = [
+            'inherit' => 'Как у родителя',
+            'current' => 'Текущая тема'
+        ];
+
+        $conf = App::$primary->view->template->config;
+
+        if (!empty($conf['files']['aditionTemplateFiels'])) {
+            foreach ($conf['files']['aditionTemplateFiels'] as $file) {
+                if ($file['type'] == 'Category') {
+                    $return[$file['file']] = '- ' . $file['name'];
+                }
+            }
+        }
+        return $return;
+    }
+
+}

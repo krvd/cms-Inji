@@ -25,6 +25,7 @@ class EcommerceController extends adminController
             $config['sell_empty_warehouse'] = empty($_POST['config']['sell_empty_warehouse']) ? false : true;
             $config['sell_over_warehouse'] = empty($_POST['config']['sell_over_warehouse']) ? false : true;
             $config['notify_mail'] = $_POST['config']['notify_mail'];
+            $config['defaultCategoryView'] = $_POST['config']['defaultCategoryView'];
             Config::save('module', $config, 'Ecommerce');
             Tools::redirect('/admin/ecommerce/configure', 'Настройки были изменены', 'success');
         }

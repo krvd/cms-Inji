@@ -13,7 +13,9 @@ class Category extends \Model
         'image_file_id' => ['type' => 'image'],
         'description' => ['type' => 'html'],
         'options_inherit' => ['type' => 'bool'],
-        'options' => ['type' => 'dynamicList', 'relation' => 'options']
+        'options' => ['type' => 'dynamicList', 'relation' => 'options'],
+        'viewer' => ['type' => 'select', 'source' => 'method', 'method' => 'viewsCategoryList', 'module' => 'Ecommerce'],
+        'template' => ['type' => 'select', 'source' => 'method', 'method' => 'templatesCategoryList', 'module' => 'Ecommerce'],
     ];
     static $labels = [
         'name' => 'Название',
@@ -28,8 +30,10 @@ class Category extends \Model
         'manager' => [
             'map' => [
                 ['name', 'alias'],
-                ['parent_id', 'image_file_id', 'options_inherit'],
-                ['options'],
+                ['parent_id', 'image_file_id'],
+                ['viewer', 'template'],
+                //['options_inherit'],
+                //['options'],
                 ['description']
             ]
         ]
@@ -62,6 +66,28 @@ class Category extends \Model
                 'col' => 'parent_id',
             ]
         ];
+    }
+
+    function resolveTemplate()
+    {
+        if ($this->template !== 'inherit') {
+            return $this->template;
+        } elseif ($this->template == 'inherit' && $this->category) {
+            return $this->category->resolveTemplate(true);
+        } else {
+            return 'current';
+        }
+    }
+
+    function resolveViewer()
+    {
+        if ($this->viewer !== 'inherit') {
+            return $this->viewer;
+        } elseif ($this->viewer == 'inherit' && $this->category) {
+            return $this->category->resolveViewer(true);
+        } else {
+            return (!empty(App::$cur->ecommerce->config['defaultCategoryView']) ? App::$cur->ecommerce->config['defaultCategoryView'] : 'itemList');
+        }
     }
 
 }
