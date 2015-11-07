@@ -10,6 +10,12 @@
  */
 class CallbacksController extends Controller
 {
+    function indexAction()
+    {
+        $this->view->setTitle('Отзывы');
+        $this->view->page();
+    }
+
     function viewAction($callbackId)
     {
         $callback = Callbacks\Callback::get((int) $callbackId);
