@@ -415,7 +415,7 @@ class View extends \Module
         $timeMd5 = md5($timeStr);
         if (!file_exists(App::$primary->path . '/static/cache/all' . $timeMd5 . '.js')) {
             foreach ($urls as $url) {
-                $scriptAll .= file_get_contents($url);
+                $scriptAll .= ' '.file_get_contents($url);
             }
             Tools::createDir(App::$primary->path . '/static/cache/');
             file_put_contents(App::$primary->path . '/static/cache/all' . $timeMd5 . '.js', $scriptAll);
