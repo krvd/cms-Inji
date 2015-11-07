@@ -12,7 +12,3 @@
     ?>
   </div>
 </div>
-<div class="pull-right">
-  <a class="btn btn-primary" href ="/install/main/modules">Далее</a>
-  <div class="clearfix"></div>
-</div>
