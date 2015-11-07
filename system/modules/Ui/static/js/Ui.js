@@ -630,4 +630,4 @@ Forms.prototype.checkAditionals = function (select) {
 }
 Forms.prototype.delRowFromList = function (btn) {
   $(btn).closest('tr').remove();
-}
+};
