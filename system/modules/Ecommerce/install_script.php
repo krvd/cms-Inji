@@ -8,6 +8,7 @@ return function ($step = NULL, $params = array()) {
         //Основные параметры
         'category_parent_id' => 'int(11) UNSIGNED NOT NULL',
         'category_name' => 'varchar(255) NOT NULL',
+        'category_alias' => 'varchar(255) NOT NULL',
         'category_description' => 'text NOT NULL',
         'category_image_file_id' => 'int(11) UNSIGNED NOT NULL',
         'category_options_inherit' => 'bool NOT NULL',
@@ -36,6 +37,7 @@ return function ($step = NULL, $params = array()) {
         'item_category_id' => 'int(11) UNSIGNED NOT NULL',
         'item_image_file_id' => 'int(11) UNSIGNED NOT NULL',
         'item_name' => 'varchar(255) NOT NULL',
+        'item_alias' => 'varchar(255) NOT NULL',
         'item_description' => 'TEXT NOT NULL',
         'item_item_type_id' => 'int(11) UNSIGNED NOT NULL',
         'item_similar' => 'TEXT NOT NULL',

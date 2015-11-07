@@ -4,9 +4,11 @@ namespace Ecommerce;
 
 class Category extends \Model
 {
+    static $objectName = 'Категория магазина';
     static $treeCategory = 'Ecommerce\Item';
     static $cols = [
         'name' => ['type' => 'text'],
+        'alias' => ['type' => 'text'],
         'parent_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'parent'],
         'image_file_id' => ['type' => 'image'],
         'description' => ['type' => 'html'],
@@ -15,6 +17,7 @@ class Category extends \Model
     ];
     static $labels = [
         'name' => 'Название',
+        'alias' => 'Алиас',
         'parent_id' => 'Родитель',
         'image_file_id' => 'Изображение',
         'description' => 'Описание',
@@ -24,8 +27,8 @@ class Category extends \Model
     static $forms = [
         'manager' => [
             'map' => [
-                ['name', 'parent_id'],
-                ['image_file_id', 'options_inherit'],
+                ['name', 'alias'],
+                ['parent_id', 'image_file_id', 'options_inherit'],
                 ['options'],
                 ['description']
             ]

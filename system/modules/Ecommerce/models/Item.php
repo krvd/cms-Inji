@@ -17,6 +17,7 @@ class Item extends \Model
     static $objectName = 'Товар';
     static $labels = [
         'name' => 'Название',
+        'alias' => 'Алиас',
         'category_id' => 'Раздел',
         'description' => 'Описание',
         'item_type_id' => 'Тип товара',
@@ -27,6 +28,7 @@ class Item extends \Model
     ];
     static $cols = [
         'name' => ['type' => 'text'],
+        'alias' => ['type' => 'text'],
         'category_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'category'],
         'description' => ['type' => 'html'],
         'item_type_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'type'],
@@ -54,8 +56,9 @@ class Item extends \Model
     static $forms = [
         'manager' => [
             'map' => [
-                ['name', 'category_id'],
-                ['item_type_id', 'best', 'image_file_id'],
+                ['name', 'alias'],
+                ['category_id', 'item_type_id'],
+                ['best', 'image_file_id'],
                 ['description'],
                 ['options'],
                 ['offers'],
