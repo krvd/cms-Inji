@@ -298,4 +298,35 @@ class Tools extends Model
         return $st;
     }
 
+    /**
+     * get youtube video ID from URL
+     *
+     * @author http://stackoverflow.com/a/6556662
+     * @param string $url
+     * @return string Youtube video id or FALSE if none found. 
+     */
+    static function youtubeIdFromUrl($url)
+    {
+        $pattern = '%^# Match any youtube URL
+        (?:https?://)?  # Optional scheme. Either http or https
+        (?:www\.)?      # Optional www subdomain
+        (?:             # Group host alternatives
+          youtu\.be/    # Either youtu.be,
+        | youtube\.com  # or youtube.com
+          (?:           # Group path alternatives
+            /embed/     # Either /embed/
+          | /v/         # or /v/
+          | /watch\?v=  # or /watch\?v=
+          )             # End path alternatives.
+        )               # End host alternatives.
+        ([\w-]{10,12})  # Allow 10-12 for 11 char youtube id.
+        $%x'
+        ;
+        $result = preg_match($pattern, $url, $matches);
+        if (false !== $result) {
+            return $matches[1];
+        }
+        return false;
+    }
+
 }
