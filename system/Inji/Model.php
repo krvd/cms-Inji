@@ -425,7 +425,7 @@ class Model
         if (!empty($options['forSelect'])) {
             $return = [];
             foreach ($list as $key => $item) {
-                $return[$item->pk()] = $item->name();
+                $return[$key] = $item->name();
             }
             return $return;
         }
