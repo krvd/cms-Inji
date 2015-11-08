@@ -28,6 +28,7 @@ class Item extends \Model
     static $cols = [
         'type' => ['type' => 'select', 'source' => 'array', 'sourceArray' => [
                 'href' => 'Ссылка',
+            /*
                 'materialCategory' => [
                     'text' => 'Категория материалов',
                     'input' => [
@@ -46,6 +47,8 @@ class Item extends \Model
                         'name' => 'aditional'
                     ]
                 ]
+             * 
+             */
             ]
         ],
         'aditional' => ['type' => 'hidden'],
