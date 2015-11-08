@@ -32,9 +32,7 @@ class Materials extends Module
 
         if (!empty($conf['files']['aditionTemplateFiels'])) {
             foreach ($conf['files']['aditionTemplateFiels'] as $file) {
-                if ($file['type'] == 'Material') {
-                    $return[$file['file']] = '- ' . $file['name'];
-                }
+                $return[$file['file']] = '- ' . $file['name'];
             }
         }
         return $return;
@@ -70,9 +68,7 @@ class Materials extends Module
 
         if (!empty($conf['files']['aditionTemplateFiels'])) {
             foreach ($conf['files']['aditionTemplateFiels'] as $file) {
-                if ($file['type'] == 'Category') {
-                    $return[$file['file']] = '- ' . $file['name'];
-                }
+                $return[$file['file']] = '- ' . $file['name'];
             }
         }
         return $return;

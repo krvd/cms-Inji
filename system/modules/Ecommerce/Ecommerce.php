@@ -117,6 +117,7 @@ class Ecommerce extends Module
             'join' => [],
             'order' => [],
             'start' => isset($options['start']) ? (int) $options['start'] : 0,
+            'key' => isset($options['key']) ? $options['key'] : null,
             'limit' => !empty($options['count']) ? (int) $options['count'] : 0,
         ];
         if (!empty($options['sort']) && is_array($options['sort'])) {
@@ -309,9 +310,7 @@ class Ecommerce extends Module
 
         if (!empty($conf['files']['aditionTemplateFiels'])) {
             foreach ($conf['files']['aditionTemplateFiels'] as $file) {
-                if ($file['type'] == 'Category') {
-                    $return[$file['file']] = '- ' . $file['name'];
-                }
+                $return[$file['file']] = '- ' . $file['name'];
             }
         }
         return $return;

@@ -23,15 +23,14 @@
         </div>
         <?php
     }
-    $min = App::$cur->ecommerce->getItems(['sort' => ['price' => 'asc'], 'count' => 1]);
-    $max = App::$cur->ecommerce->getItems(['sort' => ['price' => 'desc'], 'count' => 1]);
+    $min = App::$cur->ecommerce->getItems(['sort' => ['price' => 'asc'], 'count' => 1, 'key' => false]);
+    $max = App::$cur->ecommerce->getItems(['sort' => ['price' => 'desc'], 'count' => 1, 'key' => false]);
     if ($min && $max) {
         ?>
         <h4>Фильтр по цене</h4>
         <div class="row">
-
-          <div class="col-sm-6">от <input type="text" name = 'filters[price][min]' value ="<?= !empty($_GET['filters']['price']['min']) ? $_GET['filters']['price']['min'] : $min[key($min)]->getPrice()->price; ?>" class="form-control" /></div>
-          <div class="col-sm-6">до <input type="text" name = 'filters[price][max]' value ="<?= !empty($_GET['filters']['price']['max']) ? $_GET['filters']['price']['max'] : $max[key($max)]->getPrice()->price; ?>" class="form-control" /></div>
+          <div class="col-sm-6">от <input type="text" name = 'filters[price][min]' value ="<?= !empty($_GET['filters']['price']['min']) ? $_GET['filters']['price']['min'] : $min[0]->getPrice()->price; ?>" class="form-control" /></div>
+          <div class="col-sm-6">до <input type="text" name = 'filters[price][max]' value ="<?= !empty($_GET['filters']['price']['max']) ? $_GET['filters']['price']['max'] : $max[0]->getPrice()->price; ?>" class="form-control" /></div>
         </div>
         <?php
     }

@@ -45,4 +45,39 @@ class Callbacks extends Module
         }
     }
 
+    function viewsCategoryList($inherit = true)
+    {
+        $return = [];
+        if ($inherit) {
+            $return['inherit'] = 'Как у родителя';
+        }
+        $return['index'] = 'Обычная странциа';
+        $conf = App::$primary->view->template->config;
+        if (!empty($conf['files']['modules']['Callbacks'])) {
+            foreach ($conf['files']['modules']['Callbacks'] as $file) {
+                if ($file['type'] == 'Category') {
+                    $return[$file['file']] = $file['name'];
+                }
+            }
+        }
+        return $return;
+    }
+
+    function templatesCategoryList()
+    {
+        $return = [
+            'inherit' => 'Как у родителя',
+            'current' => 'Текущая тема'
+        ];
+
+        $conf = App::$primary->view->template->config;
+
+        if (!empty($conf['files']['aditionTemplateFiels'])) {
+            foreach ($conf['files']['aditionTemplateFiels'] as $file) {
+                $return[$file['file']] = '- ' . $file['name'];
+            }
+        }
+        return $return;
+    }
+
 }

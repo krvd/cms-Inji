@@ -1,5 +1,14 @@
 <?php
 
 return [
-    'name' => 'Отзывы'
+    'name' => 'Отзывы',
+    'menu' => [
+        'appAdmin' => [
+            [
+                'name' => 'Отзывы',
+                'href' => '/admin/callbacks',
+                'childs' => []
+            ]
+        ]
+    ]
 ];

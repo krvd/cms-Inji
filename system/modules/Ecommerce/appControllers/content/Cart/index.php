@@ -6,13 +6,16 @@
         echo "<h1>Ваша корзина пуста</h1>";
     else {
         $cartDelivery = $cart->delivery;
+
         if (!$cartDelivery) {
-            $cartDelivery = $deliverys[key($deliverys)];
+            $cartDelivery = current($deliverys);
         }
-        $deliveryPrice = (($cart->sum >= $cartDelivery->max_cart_price) ? '0' : $cartDelivery->price);
+        if ($cartDelivery) {
+            $deliveryPrice = (($cart->sum >= $cartDelivery->max_cart_price) ? '0' : $cartDelivery->price);
+        }
         $cartPayType = $cart->payType;
         if (!$cartPayType) {
-            $cartPayType = $payTypes[key($payTypes)];
+            $cartPayType = current($payTypes);
         }
 
         $form = new Ui\Form;

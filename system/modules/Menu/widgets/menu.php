@@ -11,5 +11,9 @@ if ($menu)
             $category = \Materials\Category::get($item->aditional);
             $href = $category->alias ? "/materials/{$category->alias}" : "/materials/category/{$category->id}";
         }
-        echo "<li><a href = '{$href}'>{$item->name}</a></li>";
+        if (urldecode($_SERVER['REQUEST_URI']) == $href)
+            $active = ' class = "active" ';
+        else
+            $active = '';
+        echo "<li {$active}><a href = '{$href}'>{$item->name}</a></li>";
     }

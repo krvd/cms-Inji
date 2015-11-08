@@ -10,10 +10,26 @@
  */
 class CallbacksController extends Controller
 {
-    function indexAction()
+    function indexAction($categoryCode = '')
     {
-        $this->view->setTitle('Отзывы');
-        $this->view->page();
+        $category = null;
+        if ($categoryCode) {
+            $category = Callbacks\Category::get($categoryCode, 'alias');
+            if (!$category) {
+                $category = Callbacks\Category::get($categoryCode);
+            }
+        }
+        if ($category) {
+            $callbacks = $category->callbacks;
+        } else {
+            $callbacks = Callbacks\Callback::getList(['where' => [['category_id', 0], ['view', 1]]]);
+        }
+        $this->view->setTitle($category ? $category->name : 'Отзывы');
+        $this->view->page([
+            'page' => $category ? $category->resolveTemplate() : 'current',
+            'content' => $category ? $category->resolveViewer() : 'index',
+            'data' => compact('category', 'callbacks')
+        ]);
     }
 
     function viewAction($callbackId)

@@ -124,7 +124,10 @@ class Item extends \Model
         $curPrice = null;
 
         foreach ($offers[0]->prices as $price) {
-            if (
+            if(!$price->type){
+                $curPrice = $price;
+            }
+            elseif (
                     (!$price->type->roles && !$curPrice) ||
                     ($price->type->roles && !$curPrice && strpos($price->type->roles, "|" . \Users\User::$cur->role_id . "|") !== false)
             ) {

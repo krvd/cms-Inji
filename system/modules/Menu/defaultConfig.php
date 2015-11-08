@@ -9,7 +9,7 @@ return [
                     'ai' => 2
                 ],
                 'Item' => [
-                    'ai' => 5
+                    'ai' => 6
                 ]
             ],
             'Menu' => [
@@ -25,7 +25,7 @@ return [
                     'type' => 'href',
                     'name' => 'Основные настройки',
                     'href' => '/admin/siteConfig',
-                    'Menu_id' => 1
+                    'Menu_id' => 1,
                 ],
                 [
                     'id' => 1,
@@ -46,6 +46,13 @@ return [
                     'type' => 'href',
                     'name' => 'Темы оформления',
                     'href' => '/admin/view',
+                    'Menu_id' => 1
+                ],
+                [
+                    'id' => 5,
+                    'type' => 'href',
+                    'name' => 'Выход',
+                    'href' => '?logout',
                     'Menu_id' => 1
                 ],
             ]
