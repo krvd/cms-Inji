@@ -40,8 +40,11 @@ class Robokassa extends \Merchants\MerchantHelper
             'InvId' => $payId,
             'SignatureValue' => $hash
         ];
-
-        return 'http://test.robokassa.ru/Index.aspx?' . http_build_query($data);
+        if (empty($config['test'])) {
+            return 'https://auth.robokassa.ru/Merchant/Index.aspx?' . http_build_query($data);
+        } else {
+            return 'http://test.robokassa.ru/Index.aspx?' . http_build_query($data);
+        }
     }
 
 }
