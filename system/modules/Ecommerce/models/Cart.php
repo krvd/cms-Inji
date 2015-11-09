@@ -163,14 +163,18 @@ class Cart extends \Model
         return 0;
     }
 
-    function allSum()
+    function discountSun()
     {
-        return $this->sum + $this->deliverySum();
+        $discountSum = 0;
+        foreach ($this->cartItems as $cartItem) {
+            $discountSum += $cartItem->discount();
+        }
+        return $discountSum;
     }
 
-    function allSumBonus()
+    function finalSum()
     {
-        return $this->sum + $this->deliverySum() - $this->bonus_used;
+        return $this->sum + $this->deliverySum() - $this->disountSum();
     }
 
     function itemSum()
