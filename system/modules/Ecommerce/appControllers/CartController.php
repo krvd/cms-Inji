@@ -54,15 +54,23 @@ class CartController extends Controller
                         }
                     }
                 }
-                if (empty($deliverys[$_POST['delivery']])) {
+                if ($deliverys && empty($deliverys[$_POST['delivery']])) {
                     $error = 1;
                     Msg::add('Ошибка при выборе способа доставки');
+                } elseif ($deliverys && !empty($deliverys[$_POST['delivery']])) {
+                    $delivery = $deliverys[$_POST['delivery']];
                 }
-                if (empty($payTypes[$_POST['payType']])) {
+                else {
+                    $delivery = null;
+                }
+                if ($payTypes && empty($payTypes[$_POST['payType']])) {
                     $error = 1;
                     Msg::add('Ошибка при выборе способа оплаты');
-                } else {
+                } elseif($payTypes && !empty($payTypes[$_POST['payType']])) {
                     $payType = $payTypes[$_POST['payType']];
+                }
+                else {
+                    $payType = null;
                 }
                 $fields = \Ecommerce\UserAdds\Field::getList();
                 foreach ($fields as $field) {
@@ -93,8 +101,8 @@ class CartController extends Controller
                     $cart->comment = htmlspecialchars($_POST['comment']);
                     $cart->date_status = date('Y-m-d H:i:s');
                     $cart->complete_data = date('Y-m-d H:i:s');
-                    $cart->paytype_id = $payType->id;
-                    $cart->delivery_id = (int) $_POST['delivery'];
+                    $cart->paytype_id = $payType ? $payType->id : 0;
+                    $cart->delivery_id = $delivery ? $delivery->id : 0;
                     $cart->warehouse_block = 1;
                     $cart->save();
 
@@ -117,7 +125,7 @@ class CartController extends Controller
                         $notification->chanel_id = $this->notifications->getChanel('Ecommerce-orders')->id;
                         $notification->save();
                     }
-                    if ($payType->merchants && $this->merchants) {
+                    if ($payType && $payType->merchants && $this->merchants) {
                         $pay = new Merchants\Pay([
                             'data' => '',
                             'user_id' => \Users\User::$cur->id,

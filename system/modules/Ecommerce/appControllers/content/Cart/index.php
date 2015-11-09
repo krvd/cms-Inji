@@ -6,7 +6,7 @@
         echo "<h1>Ваша корзина пуста</h1>";
     else {
         $cartDelivery = $cart->delivery;
-
+        $deliveryPrice = 0;
         if (!$cartDelivery) {
             $cartDelivery = current($deliverys);
         }
@@ -200,11 +200,15 @@
                       <td colspan="<?= $colspan; ?>" class="text-right">Сумма:</td>
                       <td colspan="2" class="text-right"><?= number_format($cart->sum, 2, '.', ' '); ?>&nbsp;руб.</td>
                     </tr>
-                    <tr class="order_page-deliverySum">
-                      <td colspan="<?= $colspan; ?>" class="text-right"><?= $cartDelivery->name; ?>:</td>
-                      <td colspan="2" class="text-right"><?= number_format($deliveryPrice, 2, '.', ' '); ?>&nbsp;руб.</td>
-                    </tr>
                     <?php
+                    if ($cartDelivery) {
+                        ?>
+                        <tr class="order_page-deliverySum">
+                          <td colspan="<?= $colspan; ?>" class="text-right"><?= $cartDelivery->name; ?>:</td>
+                          <td colspan="2" class="text-right"><?= number_format($deliveryPrice, 2, '.', ' '); ?>&nbsp;руб.</td>
+                        </tr>
+                        <?php
+                    }
                     if ($packItem) {
                         if ($packchecked) {
                             $packSum = ceil(($cart->sum + $deliveryPrice) / 1000) * (float) $packItem->price->price;

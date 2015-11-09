@@ -5,7 +5,6 @@
         <thead>
             <tr>
                 <td class="text-right">№ Заказа</td>
-                <td class="text-right">Клиент</td>
                 <td class="text-left">Статус</td>
                 <td class="text-left">Добавлено</td>
                 <td class="text-right">Товары</td>
@@ -20,7 +19,6 @@
 
                 <tr>
                     <td class="text-right">#<?= $cart->id; ?></td>
-                    <td class="text-left"><?= $cart->userAdds ? $cart->userAdds->name : 'Не указано'; ?></td>
                     <td class="text-left"><?= $cart->status ? $cart->status->name : 'Наполняется'; ?></td>
 
                     <td class="text-left"><?= $cart->complete_data; ?></td>
