@@ -393,7 +393,6 @@ class View extends \Module
         $urls = [];
         $nativeUrl = [];
         $timeStr = '';
-        var_dump($scripts);
         foreach ($scripts as $script) {
             if (is_string($script)) {
                 if (!empty($urls[$script]))
