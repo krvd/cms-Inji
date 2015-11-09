@@ -1,4 +1,5 @@
 <?php
+App::$cur->libs->loadLib('jquery-ui');
 echo empty($options['noContainer']) ? '<div class="form-group">' : '';
 echo $label !== false ? "<label>{$label}</label>" : '';
 $uid = Tools::randomString();
