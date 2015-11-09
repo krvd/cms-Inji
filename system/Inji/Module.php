@@ -168,4 +168,23 @@ class Module
         return [];
     }
 
+    function getSnippets($snippetsPath)
+    {
+        $modulePaths = Module::getModulePaths($this->moduleName);
+        $snippets = [];
+        foreach ($modulePaths as $path) {
+            if (file_exists($path . '/snippets/' . $snippetsPath)) {
+                $snippetsPaths = array_slice(scandir($path . '/snippets/' . $snippetsPath), 2);
+                foreach ($snippetsPaths as $snippetPath) {
+                    if (is_dir($path . '/snippets/' . $snippetsPath . '/' . $snippetPath)) {
+                        $snippets[$snippetPath] = include $path . '/snippets/' . $snippetsPath . '/' . $snippetPath . '/info.php';
+                    } else {
+                        $snippets[$snippetPath] = include $path . '/snippets/' . $snippetsPath . '/' . $snippetPath . '.php';
+                    }
+                }
+            }
+        }
+        return $snippets;
+    }
+
 }
