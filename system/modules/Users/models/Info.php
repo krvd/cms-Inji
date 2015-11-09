@@ -33,6 +33,9 @@ class Info extends \Model
         'phone' => [
             'type' => 'text'
         ],
+        'country' => [
+            'type' => 'text'
+        ],
         'city' => [
             'type' => 'text'
         ],
@@ -45,16 +48,9 @@ class Info extends \Model
     ];
     static $forms = [
         'manager' => [
-            'options' => [
-                'access' => [
-                    'groups' => [
-                        3
-                    ],
-                ]
-            ],
             'map' => [
-                ['first_name', 'last_name'],
-                ['middle_name', 'city'],
+                ['first_name', 'middle_name', 'last_name'],
+                ['country', 'city'],
                 ['sex', 'photo_file_id'],
                 ['bday', 'phone']
             ]
@@ -69,8 +65,8 @@ class Info extends \Model
                 ]
             ],
             'map' => [
-                ['first_name', 'last_name'],
-                ['middle_name', 'city'],
+                ['first_name', 'middle_name', 'last_name'],
+                ['country', 'city'],
                 ['sex', 'photo_file_id'],
                 ['bday', 'phone']
             ]
@@ -84,6 +80,7 @@ class Info extends \Model
         'photo_file_id' => 'Фото',
         'bday' => 'Дата рождения',
         'phone' => 'Мобильный телефон',
+        'country' => 'Страна',
         'city' => 'Город',
         'user_id' => 'Пользователь'
     ];

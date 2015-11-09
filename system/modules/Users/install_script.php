@@ -57,6 +57,7 @@ return function ($step = NULL, $params = array()) {
         'info_last_name' => 'varchar(255) NOT NULL',
         'info_middle_name' => 'varchar(255) NOT NULL',
         'info_phone' => 'varchar(255) NOT NULL',
+        'info_country' => 'varchar(255) NOT NULL',
         'info_city' => 'varchar(255) NOT NULL',
         'info_user_id' => 'int(11) UNSIGNED NOT NULL',
         'info_sex' => 'int(1) UNSIGNED NOT NULL',
