@@ -129,7 +129,7 @@ class CartController extends Controller
                         $pay = new Merchants\Pay([
                             'data' => '',
                             'user_id' => \Users\User::$cur->id,
-                            'sum' => '10',
+                            'sum' => $cart->sum,
                             'callback_module' => 'Ecommerce',
                             'callback_method' => 'cartPayRecive'
                         ]);
