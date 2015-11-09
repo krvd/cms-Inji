@@ -54,6 +54,12 @@ return function ($step = NULL, $params = array()) {
         'merchant_object_name' => 'varchar(255) NOT NULL',
         'request_date_create' => 'timestamp DEFAULT CURRENT_TIMESTAMP',
     ]);
+    App::$cur->db->createTable('merchants_merchant_config', [
+        'merchant_config_id' => 'pk',
+        'merchant_config_merchant_id' => 'INT(11) UNSIGNED NOT NULL',
+        'merchant_config_name' => 'varchar(255) NOT NULL',
+        'merchant_config_value' => 'varchar(255) NOT NULL',
+    ]);
     $merchants = [
         [
             'merchant_name' => 'Wallet One',
@@ -68,13 +74,47 @@ return function ($step = NULL, $params = array()) {
             'merchant_object_name' => 'Payeer'
         ],
     ];
-    foreach ($merchants as $merchant) {
-        App::$cur->db->insert('merchants_merchant', $merchant);
+    $merchantsConfig = [
+        [
+            [
+                'merchant_config_name' => 'shopId',
+                'merchant_config_value' => ''
+            ],
+            [
+                'merchant_config_name' => 'secret',
+                'merchant_config_value' => ''
+            ]
+        ],
+        [
+            [
+                'merchant_config_name' => 'login',
+                'merchant_config_value' => ''
+            ],
+            [
+                'merchant_config_name' => 'pass1',
+                'merchant_config_value' => ''
+            ],
+            [
+                'merchant_config_name' => 'pass2',
+                'merchant_config_value' => ''
+            ]
+        ],
+        [
+            [
+                'merchant_config_name' => 'shopId',
+                'merchant_config_value' => ''
+            ],
+            [
+                'merchant_config_name' => 'secret',
+                'merchant_config_value' => ''
+            ]
+        ],
+    ];
+    foreach ($merchants as $key => $merchant) {
+        $id = App::$cur->db->insert('merchants_merchant', $merchant);
+        foreach ($merchantsConfig[$key] as $config) {
+            $config['merchant_config_merchant_id'] = $id;
+            App::$cur->db->insert('merchants_merchant_config', $config);
+        }
     }
-    App::$cur->db->createTable('merchants_merchant_config', [
-        'merchant_config_id' => 'pk',
-        'merchant_config_merchant_id' => 'INT(11) UNSIGNED NOT NULL',
-        'merchant_config_name' => 'varchar(255) NOT NULL',
-        'merchant_config_value' => 'varchar(255) NOT NULL',
-    ]);
 };
