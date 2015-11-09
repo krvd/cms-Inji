@@ -252,41 +252,6 @@ class View extends \Module
         }
 
         $this->checkNeedLibs();
-
-        $css = $this->getCss();
-        $nativeUrl = [];
-        $urls = [];
-        $timeStr = '';
-        $cssAll = '';
-        $exclude = ['^http:', '^https:', '^//'];
-        foreach ($css as $href) {
-            foreach ($exclude as $item) {
-                if (preg_match("!{$item}!", $href)) {
-                    echo "\n        <link href='{$href}' rel='stylesheet' type='text/css' />";
-                    continue;
-                }
-            }
-            $nativeUrl[$href] = $href;
-            $urls[$href] = $path = $this->app->staticLoader->parsePath($href);
-            $timeStr.=filemtime($path);
-        }
-
-        $timeMd5 = md5($timeStr);
-        if (!file_exists(App::$primary->path . '/static/cache/all' . $timeMd5 . '.css')) {
-            foreach ($urls as $primaryUrl => $url) {
-                $source = file_get_contents($url);
-                $matches = [];
-                $rootPath = substr($primaryUrl, 0, strrpos($primaryUrl, '/'));
-                $levelUpPath = substr($rootPath, 0, strrpos($rootPath, '/'));
-                $source = preg_replace('!url\((\'?"?)[\.]{2}!isU', 'url($1' . $levelUpPath, $source);
-                $source = preg_replace('!url\((\'?"?)[\.]{1}!isU', 'url($1' . $rootPath, $source);
-                $source = preg_replace('#url\(([\'"]){1}(?!http|https|/|data\:)([^/])#isU', 'url($1' . $rootPath . '/$2', $source);
-                $cssAll .= $source;
-            }
-            Tools::createDir(App::$primary->path . '/static/cache/');
-            file_put_contents(App::$primary->path . '/static/cache/all' . $timeMd5 . '.css', $cssAll);
-        }
-        echo "\n        <link href='" . Statics::file("/static/cache/all{$timeMd5}.css") . "' rel='stylesheet' type='text/css' />";
         echo "\n        <script src='" . Statics::file(($this->app->type != 'app' ? '/' . $this->app->name : '' ) . "/static/system/js/Inji.js") . "'></script>";
     }
 
@@ -387,12 +352,48 @@ class View extends \Module
     function bodyEnd()
     {
         $this->checkNeedLibs();
+        $css = $this->getCss();
+        $nativeUrl = [];
+        $urls = [];
+        $timeStr = '';
+        $cssAll = '';
+        $exclude = ['^http:', '^https:', '^//'];
+        foreach ($css as $href) {
+            foreach ($exclude as $item) {
+                if (preg_match("!{$item}!", $href)) {
+                    echo "\n        <link href='{$href}' rel='stylesheet' type='text/css' />";
+                    continue;
+                }
+            }
+            $nativeUrl[$href] = $href;
+            $urls[$href] = $path = $this->app->staticLoader->parsePath($href);
+            $timeStr.=filemtime($path);
+        }
+
+        $timeMd5 = md5($timeStr);
+        if (!file_exists(App::$primary->path . '/static/cache/all' . $timeMd5 . '.css')) {
+            foreach ($urls as $primaryUrl => $url) {
+                $source = file_get_contents($url);
+                $matches = [];
+                $rootPath = substr($primaryUrl, 0, strrpos($primaryUrl, '/'));
+                $levelUpPath = substr($rootPath, 0, strrpos($rootPath, '/'));
+                $source = preg_replace('!url\((\'?"?)[\.]{2}!isU', 'url($1' . $levelUpPath, $source);
+                $source = preg_replace('!url\((\'?"?)[\.]{1}!isU', 'url($1' . $rootPath, $source);
+                $source = preg_replace('#url\(([\'"]){1}(?!http|https|/|data\:)([^/])#isU', 'url($1' . $rootPath . '/$2', $source);
+                $cssAll .= $source;
+            }
+            Tools::createDir(App::$primary->path . '/static/cache/');
+            file_put_contents(App::$primary->path . '/static/cache/all' . $timeMd5 . '.css', $cssAll);
+        }
+        echo "\n        <link href='" . Statics::file("/static/cache/all{$timeMd5}.css") . "' rel='stylesheet' type='text/css' />";
+
         $scripts = $this->getScripts();
         $onLoadModules = [];
         $scriptAll = '';
         $urls = [];
         $nativeUrl = [];
         $timeStr = '';
+        var_dump($scripts);
         foreach ($scripts as $script) {
             if (is_string($script)) {
                 if (!empty($urls[$script]))
@@ -415,7 +416,7 @@ class View extends \Module
         $timeMd5 = md5($timeStr);
         if (!file_exists(App::$primary->path . '/static/cache/all' . $timeMd5 . '.js')) {
             foreach ($urls as $url) {
-                $scriptAll .= ' '.file_get_contents($url);
+                $scriptAll .= ' ' . file_get_contents($url);
             }
             Tools::createDir(App::$primary->path . '/static/cache/');
             file_put_contents(App::$primary->path . '/static/cache/all' . $timeMd5 . '.js', $scriptAll);
