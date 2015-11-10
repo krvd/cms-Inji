@@ -80,15 +80,6 @@ class ecommerceController extends Controller
         $this->view->page(['data' => compact('bread')]);
     }
 
-    function cabinetAction()
-    {
-        $bread = [];
-        $bread[] = ['text' => 'Каталог', 'href' => '/ecommerce/'];
-        $bread[] = ['text' => 'Кабинет'];
-        $this->view->setTitle('Кабинет');
-        $this->view->page(['data' => compact('bread')]);
-    }
-
     function autoCompleteAction()
     {
         $return = Cache::get('itemsAutocomplete');

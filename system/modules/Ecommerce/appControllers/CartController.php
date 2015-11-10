@@ -156,30 +156,6 @@ class CartController extends Controller
         $this->view->page(['data' => compact('cart', 'items', 'deliverys', 'payTypes', 'packItem', 'bread')]);
     }
 
-    function historyAction()
-    {
-        $this->view->setTitle('История');
-        if (!Users\User::$cur->id)
-            $this->url->redirect('/', 'Вы должны войти или зарегистрироваться');
-
-        $pages = new Ui\Pages($_GET, ['count' => Ecommerce\Cart::getCount(['where' => ['user_id', Users\User::$cur->id]]), 'limit' => 10]);
-        $carts = Ecommerce\Cart::getList(['where' => ['user_id', Users\User::$cur->id], 'order' => ['date_create', 'desc'], 'start' => $pages->params['start'], 'limit' => $pages->params['limit']]);
-        $bread = [];
-        $bread[] = [
-            'text' => 'Каталог',
-            'href' => '/ecommerce'
-        ];
-        $bread[] = [
-            'text' => 'Корзина',
-            'href' => '/ecommerce/cart'
-        ];
-        $bread[] = [
-            'text' => 'История заказов',
-            'href' => '/ecommerce/cart/history'
-        ];
-        $this->view->page(['data' => compact('carts', 'pages', 'bread')]);
-    }
-
     function orderDetailAction($id = 0)
     {
         $cart = Ecommerce\Cart::get((int) $id);
