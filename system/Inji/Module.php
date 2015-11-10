@@ -168,23 +168,35 @@ class Module
         return [];
     }
 
-    function getSnippets($snippetsPath)
+    static function getSnippets($snippetsPath, $moduleName = '', $dir = '/snippets')
     {
-        $modulePaths = Module::getModulePaths($this->moduleName);
+        $moduleName = $moduleName ? $moduleName : get_called_class();
+        $modulePaths = Module::getModulePaths($moduleName);
         $snippets = [];
         foreach ($modulePaths as $path) {
-            if (file_exists($path . '/snippets/' . $snippetsPath)) {
-                $snippetsPaths = array_slice(scandir($path . '/snippets/' . $snippetsPath), 2);
+            if (file_exists($path . $dir . '/' . $snippetsPath)) {
+                $snippetsPaths = array_slice(scandir($path . $dir . '/' . $snippetsPath), 2);
                 foreach ($snippetsPaths as $snippetPath) {
-                    if (is_dir($path . '/snippets/' . $snippetsPath . '/' . $snippetPath)) {
-                        $snippets[$snippetPath] = include $path . '/snippets/' . $snippetsPath . '/' . $snippetPath . '/info.php';
+                    if (is_dir($path . $dir . '/' . $snippetsPath . '/' . $snippetPath)) {
+                        $snippets[$snippetPath] = include $path . $dir . '/' . $snippetsPath . '/' . $snippetPath . '/info.php';
                     } else {
-                        $snippets[$snippetPath] = include $path . '/snippets/' . $snippetsPath . '/' . $snippetPath . '.php';
+                        $snippets[pathinfo($snippetPath, PATHINFO_FILENAME)] = include $path . $dir . '/' . $snippetsPath . '/' . $snippetPath;
                     }
                 }
             }
         }
         return $snippets;
+    }
+
+    static function getExtensions($moduleName, $extensionType, $request)
+    {
+        $moduleName = $moduleName ? $moduleName : $this->moduleName;
+        $extensions = [];
+        foreach (Module::getInstalled(App::$cur) as $module) {
+            $method = 'get' . ucfirst($extensionType);
+            $extensions = array_merge($extensions, Module::{$method}($request, $module, "/extensions/{$moduleName}/" . $extensionType));
+        }
+        return $extensions;
     }
 
 }
