@@ -4,19 +4,20 @@ class UsersController extends Controller
 {
     function indexAction()
     {
-        Tools::redirect('/users/profile');
+        Tools::redirect('/users/cabinet/profile');
     }
 
-    function profileAction()
+    function cabinetAction($activeSection = '')
     {
-        $bread = [];
-        $bread[] = ['text' => 'Профиль'];
-        $this->view->setTitle('Профиль');
-        $form = new Ui\ActiveForm(Users\User::$cur->info, 'profile');
-        $form->header = false;
-        $form->checkRequest();
-        $this->view->setTitle('Редактирование профиля');
-        $this->view->page(['data' => compact('form','bread')]);
+        $sections = $this->module->getSnippets('cabinetSection');
+        $extends = Module::getExtensions('Users', 'snippets', 'cabinetSection');
+        $sections = array_merge($sections, $extends);
+        if (!empty($sections[$activeSection]['name'])) {
+            $this->view->setTitle($sections[$activeSection]['name'] . ' - Личный кабинет');
+        } else {
+            $this->view->setTitle('Личный кабинет');
+        }
+        $this->view->page(['data' => compact('widgets', 'sections', 'activeSection')]);
     }
 
     function loginAction()
