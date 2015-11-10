@@ -20,10 +20,15 @@ return [
                     'passre' => [
                         '_access' => [1]
                     ],
-                    'vkAuth' => [
-                        '_access' => [1]
-                    ]
                 ],
+                'Social' => [
+                    'auth' => [
+                        '_access' => []
+                    ],
+                    'disconnect' => [
+                        '_access' => [2, 3]
+                    ]
+                ]
             ],
             'appAdmin' => [
                 'Users' => [

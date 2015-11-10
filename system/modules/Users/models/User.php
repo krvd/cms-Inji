@@ -97,6 +97,11 @@ class User extends \Model
                 'model' => 'Users\Info',
                 'col' => 'user_id'
             ],
+            'socials' => [
+                'type' => 'many',
+                'model' => 'Users\User\Social',
+                'col' => 'user_id'
+            ],
             'parent' => [
                 'model' => 'Users\User',
                 'col' => 'parent_id'
@@ -130,7 +135,7 @@ class User extends \Model
         foreach ($sessions as $session) {
             $session->delete();
         }
-        /*$socials = Social::getList(['where' => ['user_id' , $this->id]]);
+        /* $socials = Social::getList(['where' => ['user_id' , $this->id]]);
           foreach ($socials as $social) {
           $social->delete();
           } */

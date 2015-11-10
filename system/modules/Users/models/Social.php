@@ -1,0 +1,62 @@
+<?php
+
+/**
+ * Social
+ *
+ * @author Alexey Krupskiy <admin@inji.ru>
+ * @link http://inji.ru/
+ * @copyright 2015 Alexey Krupskiy
+ * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
+ */
+
+namespace Users;
+
+class Social extends \Model
+{
+    public static $objectName = "Коннектор с социальной сетью";
+    public static $cols = [
+        'name' => ['type' => 'text'],
+        'code' => ['type' => 'text'],
+        'active' => ['type' => 'bool'],
+        'object_name' => ['type' => 'text'],
+        'config' => ['type' => 'dataManager', 'relation' => 'configs'],
+        'date_create' => ['type' => 'dateTime']
+    ];
+    public static $labels = [
+        'name' => 'Название',
+        'code' => 'Код',
+        'config' => 'Настройки',
+        'active' => 'Активна',
+        'object_name' => 'Название обработчика',
+        'date_create' => 'Дата создания'
+    ];
+    static $dataManagers = [
+        'manager' => [
+            'name' => "Коннекторы с социальными сетями",
+            'cols' => [
+                'name', 'active', 'code', 'object_name', 'config', 'date_create'
+            ]
+        ]
+    ];
+    static $forms = [
+        'manager' => [
+            'map' => [
+                ['name', 'code'],
+                ['object_name', 'active'],
+                ['config']
+            ]
+        ]
+    ];
+
+    static function relations()
+    {
+        return [
+            'configs' => [
+                'type' => 'many',
+                'model' => 'Users\Social\Config',
+                'col' => 'social_id'
+            ]
+        ];
+    }
+
+}

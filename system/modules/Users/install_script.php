@@ -33,6 +33,54 @@ return function ($step = NULL, $params = array()) {
             'user_role_id' => '3',
         ));
     }
+    //users socials
+    App::$cur->db->createTable('users_social', array(
+        'social_id' => 'pk',
+        'social_name' => 'varchar(255) NOT NULL',
+        'social_code' => 'varchar(255) NOT NULL',
+        'social_active' => 'tinyint(1) UNSIGNED NOT NULL',
+        'social_object_name' => 'varchar(255) NOT NULL',
+        'social_date_create' => 'timestamp DEFAULT CURRENT_TIMESTAMP',
+    ));
+    //users socials config
+    App::$cur->db->createTable('users_social_config', array(
+        'social_config_id' => 'pk',
+        'social_config_name' => 'varchar(255) NOT NULL',
+        'social_config_value' => 'varchar(255) NOT NULL',
+        'social_config_social_id' => 'int(11) UNSIGNED NOT NULL',
+        'social_config_date_create' => 'timestamp DEFAULT CURRENT_TIMESTAMP',
+    ));
+    $socials = [
+        [
+            'social_name' => 'Вконтакте',
+            'social_code' => 'vk',
+            'social_object_name' => 'Vk'
+        ],
+    ];
+    $socialsConfig = [
+        [
+            [
+                'social_config_name' => 'appId'
+            ],
+            [
+                'social_config_name' => 'secret'
+            ]
+        ]
+    ];
+    foreach ($socials as $key => $social) {
+        $id = App::$cur->db->insert('users_social', $social);
+        foreach ($socialsConfig[$key] as $config) {
+            App::$cur->db->insert('users_social_config', $config);
+        }
+    }
+    //users links social
+    App::$cur->db->createTable('users_user_social', [
+        'user_social_id' => 'pk',
+        'user_social_social_id' => 'int(11) UNSIGNED NOT NULL',
+        'user_social_uid' => 'varchar(255) NOT NULL',
+        'user_social_user_id' => 'int(11) UNSIGNED NOT NULL',
+        'user_social_date_create' => 'timestamp DEFAULT CURRENT_TIMESTAMP',
+    ]);
     //users session
     App::$cur->db->createTable('users_session', array(
         'session_id' => 'pk',
