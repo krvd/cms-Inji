@@ -4,6 +4,7 @@ class Model
 {
     static $storage = ['type' => 'db'];
     static $objectName = '';
+    public $appType = 'app';
     public $_params = [];
     public $loadedRelations = [];
     static $treeCategory = '';
@@ -485,7 +486,9 @@ class Model
                     if (!empty($options['array'])) {
                         return $item;
                     }
-                    return new $class($item);
+                    $item = new $class($item);
+                    $item->appType = $appType;
+                    return $item;
                 }
             }
         }
@@ -981,11 +984,13 @@ class Model
     {
         $relation = static::getRelation($name);
         if ($relation) {
-            if (!isset($relation['type']))
+            if (!isset($relation['type'])) {
                 $type = 'to';
-            else
+            } else {
                 $type = $relation['type'];
-
+            }
+            $getCol = null;
+            $getParams = [];
             switch ($type) {
                 case 'relModel':
                     if (!$this->pk()) {
@@ -1040,12 +1045,12 @@ class Model
                         return NULL;
                     $getType = 'get';
                     $options = $this->$relation['col'];
+                    $getParams['appType'] = $this->appType;
             }
-
             if (!empty($params['count'])) {
                 return $relation['model']::getCount($options);
             } else {
-                $this->loadedRelations[$name][json_encode($params)] = $relation['model']::$getType($options);
+                $this->loadedRelations[$name][json_encode($params)] = $relation['model']::$getType($options, $getCol, $getParams);
             }
             return $this->loadedRelations[$name][json_encode($params)];
         }
