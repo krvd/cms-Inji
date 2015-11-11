@@ -16,24 +16,24 @@ class DataManagerController extends Controller
     {
         $result = new Server\Result();
         ob_start();
+        $params = [];
+        if (!empty($_GET['params']['appType'])) {
+            $params['appType'] = $_GET['params']['appType'];
+        }
         if (strpos($_GET['item'], ':')) {
             $raw = explode(':', $_GET['item']);
             $modelName = $raw[0];
             $id = $raw[1];
-            $model = $modelName::get($id);
+            $model = $modelName::get($id, $modelName::index(), $params);
         } else {
             $modelName = $_GET['item'];
             $id = null;
             $model = null;
         }
-        if (!empty($_GET['params'])) {
-            $params = $_GET['params'];
-            if (!empty($params['relation'])) {
-                $relations = $modelName::relations();
-                $modelName = $relations[$params['relation']]['model'];
-            }
-        } else {
-            $params = [];
+        if (!empty($_GET['params']['relation'])) {
+            $params['relation'] = $_GET['params']['relation'];
+            $relations = $modelName::relations();
+            $modelName = $relations[$_GET['params']['relation']]['model'];
         }
         $dataManager = new Ui\DataManager($modelName, 'manager');
         $dataManager->draw($params, $model);
@@ -49,26 +49,25 @@ class DataManagerController extends Controller
         $result = new Server\Result();
         $result->content = [];
         ob_start();
+        $params = [];
+        if (!empty($_GET['params']['appType'])) {
+            $params['appType'] = $_GET['params']['appType'];
+        }
         if (strpos($_GET['modelName'], ':')) {
             $raw = explode(':', $_GET['modelName']);
             $modelName = $raw[0];
             $id = $raw[1];
-            $model = $modelName::get($id);
+            $model = $modelName::get($id, $modelName::index(), $params);
         } else {
             $modelName = $_GET['modelName'];
             $id = null;
             $model = null;
         }
-        if (!empty($_GET['params'])) {
-            $params = $_GET['params'];
-            if (!empty($params['relation'])) {
-                $relations = $modelName::relations();
-                $modelName = $relations[$params['relation']]['model'];
-            }
-        } else {
-            $params = [];
+        if (!empty($_GET['params']['relation'])) {
+            $params['relation'] = $_GET['params']['relation'];
+            $relations = $modelName::relations();
+            $modelName = $relations[$_GET['params']['relation']]['model'];
         }
-
         if (!empty($_GET['filters'])) {
             $params['filters'] = $_GET['filters'];
         }
@@ -223,22 +222,23 @@ class DataManagerController extends Controller
             $id = null;
             $model = null;
         }
+        $params = [];
         if (!empty($_GET['params'])) {
-            $params = $_GET['params'];
-            if (!empty($params['relation'])) {
+            if (!empty($_GET['params']['relation'])) {
                 $relations = $modelName::relations();
 
-                $modelName = $relations[$params['relation']]['model'];
+                $modelName = $relations[$_GET['params']['relation']]['model'];
             }
-        } else {
-            $params = [];
+            if (!empty($_GET['params']['appType'])) {
+                $params['appType'] = $_GET['params']['appType'];
+            }
         }
         $dataManager = new Ui\DataManager($modelName, $_GET['managerName']);
         if ($dataManager->checkAccess()) {
             $model = $modelName::get($_GET['key'], $modelName::index(), !empty($_GET['params']) ? $_GET['params'] : []);
             if ($model) {
                 $model->$_GET['col'] = $_GET['col_value'];
-                $model->save(!empty($_GET['params']) ? $_GET['params'] : []);
+                $model->save($params);
             }
         }
         $result = new Server\Result();

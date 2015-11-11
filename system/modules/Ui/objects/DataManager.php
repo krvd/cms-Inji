@@ -306,14 +306,15 @@ class DataManager extends \Object
                 case'many':
                     $managerParams = ['relation' => $modelName::$cols[$colName]['relation']];
                     $count = $item->{$modelName::$cols[$colName]['relation']}(array_merge($params, ['count' => 1]));
-                    return "<a class = 'btn btn-xs btn-primary' onclick = 'inji.Ui.dataManagers.popUp(\"" . str_replace('\\', '\\\\', $modelName) . ":" . $item->pk() . "\"," . json_encode(array_merge($params, $managerParams)) . ")'>{$count} Элементы</a>";
+                    return "<a class = 'btn btn-xs btn-primary' onclick = 'inji.Ui.dataManagers.popUp(\"" . str_replace('\\', '\\\\', $modelName) . ":" . $item->pk() . "\"," . json_encode(array_merge($params, $managerParams)) . ")'>{$count} " . \Tools::getNumEnding($count, ['Элемент', 'Элемента', 'Элементов']) . "</a>";
                     break;
                 default :
-                    if (\App::$cur->name=='admin' && $item->{$modelName::$cols[$colName]['relation']}) {
+                    if (\App::$cur->name == 'admin' && $item->{$modelName::$cols[$colName]['relation']}) {
                         $href = "<a href ='/admin/" . str_replace('\\', '/view/', $relations[$modelName::$cols[$colName]['relation']]['model']) . "/" . $item->{$modelName::$cols[$colName]['relation']}->pk() . "'>";
                         if (!empty($modelName::$cols[$colName]['showCol'])) {
                             $href .= $item->{$modelName::$cols[$colName]['relation']}->{$modelName::$cols[$colName]['showCol']};
                         } else {
+
                             $href .= $item->{$modelName::$cols[$colName]['relation']}->name();
                         }
                         $href .= '</a>';
@@ -335,17 +336,17 @@ class DataManager extends \Object
                     case'many':
                         $managerParams = ['relation' => $modelName::$cols[$colName]['relation']];
                         $count = $item->{$modelName::$cols[$colName]['relation']}(array_merge($params, ['count' => 1]));
-                        return "<a class = 'btn btn-xs btn-primary' onclick = 'inji.Ui.dataManagers.popUp(\"" . str_replace('\\', '\\\\', $modelName) . ":" . $item->pk() . "\"," . json_encode(array_merge($params, $managerParams)) . ")'>{$count} Элементы</a>";
+                        return "<a class = 'btn btn-xs btn-primary' onclick = 'inji.Ui.dataManagers.popUp(\"" . str_replace('\\', '\\\\', $modelName) . ":" . $item->pk() . "\"," . json_encode(array_merge($params, $managerParams)) . ")'>{$count} ".\Tools::getNumEnding($count, ['Элемент', 'Элемента', 'Элементов'])."</a>";
                         break;
                     default:
                         return $item->$colName;
                 }
             } elseif (!empty($modelName::$cols[$colName]['type'])) {
-                if (\App::$cur->name=='admin' && $originalCol == 'name' || ( $dataManager && !empty($dataManager->managerOptions['colToView']) && $dataManager->managerOptions['colToView'] == $originalCol)) {
+                if (\App::$cur->name == 'admin' && $originalCol == 'name' || ( $dataManager && !empty($dataManager->managerOptions['colToView']) && $dataManager->managerOptions['colToView'] == $originalCol)) {
                     $formName = $dataManager && !empty($dataManager->managerOptions['editForm']) ? $dataManager->managerOptions['editForm'] : 'manager';
                     $redirectUrl = !empty($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/admin/' . str_replace('\\', '/', get_class($originalItem));
                     return "<a href ='/admin/" . str_replace('\\', '/view/', get_class($originalItem)) . "/{$originalItem->id}?formName={$formName}&redirectUrl={$redirectUrl}'>{$item->$colName}</a>";
-                } elseif (\App::$cur->name=='admin' && $colName == 'name') {
+                } elseif (\App::$cur->name == 'admin' && $colName == 'name') {
                     $redirectUrl = !empty($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/admin/' . str_replace('\\', '/', get_class($originalItem));
                     return "<a href ='/admin/" . str_replace('\\', '/view/', get_class($item)) . "/{$item->id}?redirectUrl={$redirectUrl}'>{$item->$colName}</a>";
                 } else {

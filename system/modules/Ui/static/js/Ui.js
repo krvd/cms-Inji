@@ -228,7 +228,7 @@ DataManagers.prototype.get = function (element) {
 }
 DataManagers.prototype.popUp = function (item, params) {
   var code = item;
-
+  
   if (typeof (params.relation) != 'undefined') {
     code += params.relation;
   }

@@ -22,14 +22,17 @@ class UiController extends Controller
             $id = null;
             $model = new $modelName();
         }
+        $params = [];
         if (!empty($_GET['params'])) {
             $params = $_GET['params'];
             if (!empty($params['preset'])) {
                 $model->setParams($params['preset']);
             }
-        } else {
-            $params = [];
         }
+        if (!empty($_GET['params']['dataManagerParams']['appType'])) {
+            $params['appType'] = $_GET['params']['dataManagerParams']['appType'];
+        }
+
         $formName = !empty($_GET['formName']) ? $_GET['formName'] : 'manager';
         $form = new Ui\ActiveForm($model, $formName);
         if (!empty($_GET['_']) || !empty($_POST['_'])) {

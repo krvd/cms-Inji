@@ -237,9 +237,11 @@ class ActiveForm extends \Object
                     return [];
                 }
                 $relation = $modelName::getRelation($inputParams['relation']);
-                $selectParams = !empty($params['dataManagerParams']) ? $params['dataManagerParams'] : [];
-                $filters = $relation['model']::managerFilters();
                 $options = [];
+                if (!empty($params['dataManagerParams']['appType'])) {
+                    $options['appType'] = $params['dataManagerParams']['appType'];
+                }
+                $filters = $relation['model']::managerFilters();
                 if (!empty($filters['getRows']['where'])) {
                     $options['where'] = $filters['getRows']['where'];
                 }
