@@ -146,9 +146,11 @@ class Tools extends Model
         return mail($to, $subject, $text, $headers);
     }
 
-    static function redirect($href = '/', $text = false, $status = 'info')
+    static function redirect($href = null, $text = false, $status = 'info')
     {
-
+        if ($href === null) {
+            $href = $_SERVER['REQUEST_URI'];
+        }
         if ($text !== false) {
             Msg::add($text, $status);
         }
