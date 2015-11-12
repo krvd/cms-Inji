@@ -105,6 +105,11 @@ class User extends \Model
             'parent' => [
                 'model' => 'Users\User',
                 'col' => 'parent_id'
+            ],
+            'users' => [
+                'type' => 'many',
+                'model' => 'Users\User',
+                'col' => 'parent_id'
             ]
         ];
     }
@@ -112,7 +117,7 @@ class User extends \Model
     function name()
     {
         if ($this->info) {
-            return $this->info->name();
+            return trim($this->info->name());
         } else {
             $this->id;
         }
