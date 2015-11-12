@@ -13,6 +13,9 @@
           }
       }
       ?>
+      <li role="presentation">
+        <a href="?logout">Выход</a>
+      </li>
     </ul>
   </div>
   <div class="col-sm-9">
