@@ -71,15 +71,4 @@ class UsersController extends Controller
         Tools::redirect('/', 'Вы успешно активировали ваш аккаунт, теперь вы можете войти');
     }
 
-    function logoutAction()
-    {
-        setcookie("user_login", '', 0, "/");
-        setcookie("user_mail", '', 0, "/");
-        setcookie("user_pass", '', 0, "/");
-        $accesses = $this->Config->module('Access');
-        Tools::redirect($accesses['site']['denied_redirect'], 'Вы вышли из профиля');
-    }
-
 }
-
-?>
