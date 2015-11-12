@@ -34,14 +34,16 @@ class Router
         if (strpos($className, '\\')) {
             $classPath = explode('\\', $className);
             $moduleName = $classPath[0];
-            $classPath = implode('/', array_slice($classPath, 1));
-            if (App::$cur) {
-                if (App::$cur !== App::$primary) {
-                    $folders['appModule'] = ['folder' => App::$primary->path . '/modules/' . $moduleName, 'classPath' => $classPath];
+            if (Module::installed($moduleName, App::$cur)) {
+                $classPath = implode('/', array_slice($classPath, 1));
+                if (App::$cur) {
+                    if (App::$cur !== App::$primary) {
+                        $folders['appModule'] = ['folder' => App::$primary->path . '/modules/' . $moduleName, 'classPath' => $classPath];
+                    }
+                    $folders['primaryAppModule'] = ['folder' => App::$cur->path . '/modules/' . $moduleName, 'classPath' => $classPath];
                 }
-                $folders['primaryAppModule'] = ['folder' => App::$cur->path . '/modules/' . $moduleName, 'classPath' => $classPath];
+                $folders['systemModule'] = ['folder' => INJI_SYSTEM_DIR . '/modules/' . $moduleName, 'classPath' => $classPath];
             }
-            $folders['systemModule'] = ['folder' => INJI_SYSTEM_DIR . '/modules/' . $moduleName, 'classPath' => $classPath];
         }
         $classPath = str_replace('\\', '/', $className);
 
