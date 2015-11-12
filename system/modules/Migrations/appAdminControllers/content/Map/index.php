@@ -49,7 +49,7 @@ function drawParam($param, $form, $models, $objects, $parent = 0)
     if (empty($objectsCols[$param->object_id])) {
         $modelName = $param->object->model;
         foreach (array_keys($modelName::$cols) as $colName) {
-            $objectsCols[$param->object_id][$colName] = $modelName::$labels[$colName];
+            $objectsCols[$param->object_id][$colName] = !empty($modelName::$labels[$colName])?$modelName::$labels[$colName]:$colName;
         }
     }
     $modelName = $param->object->model;
@@ -126,6 +126,16 @@ function drawParam($param, $form, $models, $objects, $parent = 0)
                     'sourceArray' => $models,
                     'options' => [
                         'value' => $param->type == 'newObject' ? $param->value : ''
+                    ]
+                ]
+            ],
+            'custom' => [
+                'text' => 'Свой класс обработки',
+                'input' => [
+                    'name' => 'paramOptions[' . $param->id . ']',
+                    'type' => 'text',
+                    'options' => [
+                        'value' => $param->value
                     ]
                 ]
             ]
