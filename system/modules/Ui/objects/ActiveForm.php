@@ -241,15 +241,17 @@ class ActiveForm extends \Object
                 if (!empty($params['dataManagerParams']['appType'])) {
                     $options['appType'] = $params['dataManagerParams']['appType'];
                 }
-                $filters = $relation['model']::managerFilters();
-                if (!empty($filters['getRows']['where'])) {
-                    $options['where'] = $filters['getRows']['where'];
+                $items = [];
+                if (class_exists($relation['model'])) {
+                    $filters = $relation['model']::managerFilters();
+                    if (!empty($filters['getRows']['where'])) {
+                        $options['where'] = $filters['getRows']['where'];
+                    }
+                    if (!empty($relation['order'])) {
+                        $options['order'] = $relation['order'];
+                    }
+                    $items = $relation['model']::getList($options);
                 }
-                if (!empty($relation['order'])) {
-                    $options['order'] = $relation['order'];
-                }
-                $items = $relation['model']::getList($options);
-
                 $values = [0 => 'Не задано'];
                 foreach ($items as $key => $item) {
                     if (!empty($inputParams['showCol'])) {
