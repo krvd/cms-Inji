@@ -14,8 +14,8 @@ class UsersController extends adminController
     function loginAsAction($userId)
     {
         $user = Users\User::get($userId);
-        $this->users->autorization($user->user_mail, $user->user_pass, 'mail');
-        Tools::redirect('/', 'Теперь вы на сайте под пользователем ' . $user->user_mail);
+        App::$cur->users->newSession($user);
+        Tools::redirect('/', 'Теперь вы на сайте под пользователем ' . $user->name());
     }
 
 }
