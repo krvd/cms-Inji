@@ -52,7 +52,8 @@ class Slide extends \Model
             'cols' => [
                 'name',
                 'date_create'
-            ]
+            ],
+            'sortMode' => true
         ],
     ];
     static $forms = [

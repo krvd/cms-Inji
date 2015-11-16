@@ -3,17 +3,17 @@ if (!empty($params[0])) {
     $sliderId = $params[0];
 }
 $slider = \Sliders\Slider::get($sliderId);
+$slides = $slider->slides(['order' => ['weight', 'ASC']]);
 ?>
 <div id="sliderWidget-<?= $slider; ?>" class="carousel slide" data-ride="carousel">
   <!-- Indicators -->
   <ol class="carousel-indicators">
     <?php
     $i = 0;
-    foreach ($slider->slides as $item) {
+    for ($i = 0; $i < count($slides); $i++) {
         ?>
         <li data-target="#sliderWidget-<?= $slider; ?>" data-slide-to="<?= $i; ?>" <?= !$i ? 'class="active"' : ''; ?>></li>
         <?php
-        $i++;
     }
     ?>
 
@@ -23,7 +23,7 @@ $slider = \Sliders\Slider::get($sliderId);
   <div class="carousel-inner" role="listbox">
     <?php
     $i = 0;
-    foreach ($slider->slides as $item) {
+    foreach ($slides as $item) {
         ?>
         <div class="item <?= !$i ? 'active' : ''; ?>">
           <img src="<?= Statics::file($item->image->path); ?>" alt="<?= $item->name; ?>">
