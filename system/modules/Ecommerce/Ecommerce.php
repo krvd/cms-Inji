@@ -9,12 +9,10 @@ class Ecommerce extends Module
 
     function cartPayRecive($data)
     {
-        if ($data['status'] == 'success') {
-            $cart = Ecommerce\Cart::get($data['pay']->id, 'pay_id');
-            if ($cart) {
-                $cart->payed = true;
-                $cart->save();
-            }
+        $cart = Ecommerce\Cart::get($data['pay']->data);
+        if ($cart) {
+            $cart->payed = true;
+            $cart->save();
         }
     }
 

@@ -59,17 +59,15 @@ class CartController extends Controller
                     Msg::add('Ошибка при выборе способа доставки');
                 } elseif ($deliverys && !empty($deliverys[$_POST['delivery']])) {
                     $delivery = $deliverys[$_POST['delivery']];
-                }
-                else {
+                } else {
                     $delivery = null;
                 }
                 if ($payTypes && empty($payTypes[$_POST['payType']])) {
                     $error = 1;
                     Msg::add('Ошибка при выборе способа оплаты');
-                } elseif($payTypes && !empty($payTypes[$_POST['payType']])) {
+                } elseif ($payTypes && !empty($payTypes[$_POST['payType']])) {
                     $payType = $payTypes[$_POST['payType']];
-                }
-                else {
+                } else {
                     $payType = null;
                 }
                 $fields = \Ecommerce\UserAdds\Field::getList();
@@ -125,18 +123,34 @@ class CartController extends Controller
                         $notification->chanel_id = $this->notifications->getChanel('Ecommerce-orders')->id;
                         $notification->save();
                     }
-                    if ($payType && $payType->merchants && $this->merchants) {
-                        $pay = new Merchants\Pay([
-                            'data' => '',
-                            'user_id' => \Users\User::$cur->id,
-                            'sum' => $cart->finalSum(),
-                            'callback_module' => 'Ecommerce',
-                            'callback_method' => 'cartPayRecive'
-                        ]);
-                        $pay->save();
-                        $cart->pay_id = $pay->id;
-                        $cart->save();
-                        Tools::redirect('/merchants/pay/' . $pay->id);
+                    if ($payType && $payType->merchants && $this->money) {
+                        $sums = [];
+                        foreach ($cart->cartItems as $cartItem) {
+                            $currency_id = $cartItem->price->currency ? $cartItem->price->currency->id : \App::$cur->ecommerce->config['defaultCurrency'];
+                            if (empty($sums[$currency_id])) {
+                                $sums[$currency_id] = $cartItem->final_price;
+                            } else {
+                                $sums[$currency_id] += $cartItem->final_price;
+                            }
+                        }
+                        foreach ($sums as $currency_id => $sum) {
+                            if (!$currency_id) {
+                                continue;
+                            }
+                            $pay = new Money\Pay([
+                                'data' => $cart->id,
+                                'currency_id' => $currency_id,
+                                'user_id' => \Users\User::$cur->id,
+                                'sum' => $cart->finalSum(),
+                                'description' => 'Оплата заказа №' . $cart->id . ' в онлайн-магазине',
+                                'type' => 'pay',
+                                'pay_status_id' => 1,
+                                'callback_module' => 'Ecommerce',
+                                'callback_method' => 'cartPayRecive'
+                            ]);
+                            $pay->save();
+                        }
+                        Tools::redirect('/money/merchants/pay/');
                     } else {
                         Tools::redirect('/ecommerce/cart/success');
                     }

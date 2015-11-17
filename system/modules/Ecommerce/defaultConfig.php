@@ -6,5 +6,6 @@ return [
     'sell_empty_warehouse' => true,
     'sell_over_warehouse' => true,
     'notify_mail' => '',
-    'defaultCategoryView' => 'itemList'
+    'defaultCategoryView' => 'itemList',
+    'defaultCurrency' => 0
 ];

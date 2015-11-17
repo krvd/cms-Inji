@@ -147,6 +147,7 @@ return function ($step = NULL, $params = array()) {
         'item_offer_price_item_offer_price_type_id' => 'int(11) UNSIGNED NOT NULL',
         'item_offer_price_name' => 'text NOT NULL',
         'item_offer_price_price' => 'decimal(10, 2) NOT NULL',
+        'item_offer_price_currency_id' => 'int(11) UNSIGNED NOT NULL',
         //Системные
         'item_offer_price_weight' => 'int(11) UNSIGNED NOT NULL',
         'item_offer_price_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',

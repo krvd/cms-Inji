@@ -21,7 +21,10 @@
     $form->input('checkbox', 'config[view_empty_image]', 'Показывать товары без изображения', ['value' => App::$cur->ecommerce->config['view_empty_image']]);
     $form->input('checkbox', 'config[sell_empty_warehouse]', 'Продавать отсутствующие товары', ['value' => App::$cur->ecommerce->config['sell_empty_warehouse']]);
     $form->input('checkbox', 'config[sell_over_warehouse]', 'Продавать сверх остатоков на складе', ['value' => App::$cur->ecommerce->config['sell_over_warehouse']]);
-    $form->input('select', 'config[defaultCategoryView]', 'Стандартный вид категории', ['value' => App::$cur->ecommerce->config['defaultCategoryView'],'values'=>  App::$cur->ecommerce->viewsCategoryList()]);
+    $form->input('select', 'config[defaultCategoryView]', 'Стандартный вид категории', ['value' => App::$cur->ecommerce->config['defaultCategoryView'], 'values' => App::$cur->ecommerce->viewsCategoryList()]);
+    if (App::$cur->money) {
+        $form->input('select', 'config[defaultCurrency]', 'Валюта по умолчанию', ['value' => App::$cur->ecommerce->config['defaultCurrency'], 'values' => ['' => 'Выберите'] + \Money\Currency::getList()]);
+    }
     $form->input('text', 'config[notify_mail]', 'E-mail оповещений о новых заказах', ['value' => App::$cur->ecommerce->config['notify_mail']]);
     $form->input('hidden', 'config[save]', '', ['value' => 1]);
     $form->end('Сохранить');

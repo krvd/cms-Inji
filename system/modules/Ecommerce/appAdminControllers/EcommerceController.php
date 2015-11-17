@@ -26,6 +26,7 @@ class EcommerceController extends adminController
             $config['sell_over_warehouse'] = empty($_POST['config']['sell_over_warehouse']) ? false : true;
             $config['notify_mail'] = $_POST['config']['notify_mail'];
             $config['defaultCategoryView'] = $_POST['config']['defaultCategoryView'];
+            $config['defaultCurrency'] = $_POST['config']['defaultCurrency'];
             Config::save('module', $config, 'Ecommerce');
             Tools::redirect('/admin/ecommerce/configure', 'Настройки были изменены', 'success');
         }
@@ -48,12 +49,11 @@ class EcommerceController extends adminController
     function reBlockIndexAction()
     {
         set_time_limit(0);
-        $carts = Cart::get_list();
-        Inji::app()->Log->stop();
+        $carts = Cart::getList();
         foreach ($carts as $cart) {
             $cart->save();
         }
-        $this->url->redirect($this->url->module() . '/configure', 'Данные о блокировках обновлены');
+        Tools::redirect('/admin/ecommerce/configure', 'Данные о блокировках обновлены');
     }
 
     function reSearchIndexAction($i = 0)
