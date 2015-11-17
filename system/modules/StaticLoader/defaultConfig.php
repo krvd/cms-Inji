@@ -11,7 +11,7 @@ return [
         '323' => 'text/h323',
         'acx' => 'application/internet-property-stream',
         'aiff' => 'audio/x-aiff',
-        'application/pkix-crl' => '0',
+        'crl' => 'application/pkix-crl',
         'asx' => 'video/x-ms-asf',
         'avi' => 'video/x-msvideo',
         'axs' => 'application/olescript',
