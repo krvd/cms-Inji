@@ -7,5 +7,5 @@ return [
     'sell_over_warehouse' => true,
     'notify_mail' => '',
     'defaultCategoryView' => 'itemList',
-    'defaultCurrency' => 0
+    'defaultCurrency' => 1
 ];

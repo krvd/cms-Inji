@@ -20,8 +20,8 @@ return function ($step = NULL, $params = array()) {
         'category_user_id' => 'int(11) UNSIGNED NOT NULL',
         'category_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
             ), [
-        'INDEX ' . App::$cur->db->table_prefix . '_ecommerce_category_category_parent_id (category_parent_id)',
-        'INDEX ' . App::$cur->db->table_prefix . '_ecommerce_category_category_tree_path (category_tree_path(255))',
+        'INDEX ' . App::$cur->db->table_prefix . 'ecommerce_category_category_parent_id (category_parent_id)',
+        'INDEX ' . App::$cur->db->table_prefix . 'ecommerce_category_category_tree_path (category_tree_path(255))',
     ]);
     //Типы товаров
     App::$cur->db->createTable('ecommerce_item_type', array(
@@ -53,9 +53,9 @@ return function ($step = NULL, $params = array()) {
         'item_search_index' => 'TEXT NOT NULL',
         'item_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
             ], [
-        'INDEX ' . App::$cur->db->table_prefix . '_ecommerce_item_item_category_id (item_category_id)',
-        'INDEX ' . App::$cur->db->table_prefix . '_inji_ecommerce_item_item_tree_path (item_tree_path(255))',
-        'INDEX ' . App::$cur->db->table_prefix . '_ecommerce_item_item_search_index (item_search_index(255))'
+        'INDEX ' . App::$cur->db->table_prefix . 'ecommerce_item_item_category_id (item_category_id)',
+        'INDEX ' . App::$cur->db->table_prefix . 'inji_ecommerce_item_item_tree_path (item_tree_path(255))',
+        'INDEX ' . App::$cur->db->table_prefix . 'ecommerce_item_item_search_index (item_search_index(255))'
     ]);
     //Опции товаров
     App::$cur->db->createTable('ecommerce_item_option', array(
@@ -85,9 +85,9 @@ return function ($step = NULL, $params = array()) {
         //Системные
         'item_param_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
             ), [
-        'INDEX ' . App::$cur->db->table_prefix . '_ecommerce_itemOptionRelation (item_param_item_id, item_param_item_option_id)',
-        'INDEX ' . App::$cur->db->table_prefix . '_ecommerce_paramItemIndex (item_param_item_id)',
-        'INDEX ' . App::$cur->db->table_prefix . '_ecommerce_paramOptionIndex (item_param_item_option_id)'
+        'INDEX ' . App::$cur->db->table_prefix . 'ecommerce_itemOptionRelation (item_param_item_id, item_param_item_option_id)',
+        'INDEX ' . App::$cur->db->table_prefix . 'ecommerce_paramItemIndex (item_param_item_id)',
+        'INDEX ' . App::$cur->db->table_prefix . 'ecommerce_paramOptionIndex (item_param_item_option_id)'
     ]);
     //связи опций с каталогами
     App::$cur->db->createTable('ecommerce_item_option_relation', array(
@@ -170,7 +170,7 @@ return function ($step = NULL, $params = array()) {
         //Системные
         'item_offer_warehouse_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
             ), [
-        'INDEX ' . App::$cur->db->table_prefix . '_ecommerce_warehousePriceIndex (item_offer_warehouse_item_offer_id)'
+        'INDEX ' . App::$cur->db->table_prefix . 'ecommerce_warehousePriceIndex (item_offer_warehouse_item_offer_id)'
     ]);
     //Типы статусов корзин
     App::$cur->db->createTable('ecommerce_cart_status', array(
@@ -300,9 +300,9 @@ return function ($step = NULL, $params = array()) {
         'cart_date_last_activ' => 'timestamp DEFAULT 0',
         'cart_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
             ), [
-        'INDEX ' . App::$cur->db->table_prefix . '_ecommerce_cartStatusBlock (cart_cart_status_id, cart_warehouse_block)',
-        'INDEX ' . App::$cur->db->table_prefix . '_ecommerce_cartStats (cart_cart_status_id)',
-        'INDEX ' . App::$cur->db->table_prefix . '_ecommerce_cartBlock (cart_warehouse_block)'
+        'INDEX ' . App::$cur->db->table_prefix . 'ecommerce_cartStatusBlock (cart_cart_status_id, cart_warehouse_block)',
+        'INDEX ' . App::$cur->db->table_prefix . 'ecommerce_cartStats (cart_cart_status_id)',
+        'INDEX ' . App::$cur->db->table_prefix . 'ecommerce_cartBlock (cart_warehouse_block)'
     ]);
     //товары в корзинe
     App::$cur->db->createTable('ecommerce_cart_item', array(
@@ -317,7 +317,7 @@ return function ($step = NULL, $params = array()) {
         //Системные
         'cart_item_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
             ), [
-        'INDEX ' . App::$cur->db->table_prefix . '_ecommerce_cartItemCart (cart_item_cart_id)'
+        'INDEX ' . App::$cur->db->table_prefix . 'ecommerce_cartItemCart (cart_item_cart_id)'
     ]);
     //Типы событий корзины
     App::$cur->db->createTable('ecommerce_cart_event_type', array(
@@ -362,8 +362,8 @@ return function ($step = NULL, $params = array()) {
         //Системные
         'cart_event_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
             ), [
-        'INDEX ' . App::$cur->db->table_prefix . '_ecommerce_cartEventCart (cart_event_cart_id)',
-        'INDEX ' . App::$cur->db->table_prefix . '_ecommerce_cartEventDate (cart_event_date_create)'
+        'INDEX ' . App::$cur->db->table_prefix . 'ecommerce_cartEventCart (cart_event_cart_id)',
+        'INDEX ' . App::$cur->db->table_prefix . 'ecommerce_cartEventDate (cart_event_date_create)'
     ]);
     //Блокировки товара
     App::$cur->db->createTable('ecommerce_warehouse_block', [
@@ -373,8 +373,8 @@ return function ($step = NULL, $params = array()) {
         'warehouse_block_item_offer_id' => 'int(11) UNSIGNED NOT NULL',
         'warehouse_block_count' => 'DECIMAL(10, 3) NOT NULL',
             ], [
-        'INDEX ' . App::$cur->db->table_prefix . '_ecommerce_warehousesBlockCart (warehouse_block_cart_id)',
-        'INDEX ' . App::$cur->db->table_prefix . '_ecommerce_warehousesBlockItem (warehouse_block_item_offer_id)'
+        'INDEX ' . App::$cur->db->table_prefix . 'ecommerce_warehousesBlockCart (warehouse_block_cart_id)',
+        'INDEX ' . App::$cur->db->table_prefix . 'ecommerce_warehousesBlockItem (warehouse_block_item_offer_id)'
             ]
     );
     //Карты
