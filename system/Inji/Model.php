@@ -150,7 +150,6 @@ class Model
                 }
                 break;
             case 'first':
-
                 if (isset($array[0]) && is_string($array[0])) {
                     if (!isset($cols[$array[0]]) && isset($cols[static::colPrefix() . $array[0]])) {
                         $array[0] = static::colPrefix() . $array[0];
@@ -1149,10 +1148,7 @@ class Model
 
     public function __toString()
     {
-        if (!empty($this->_params['name'])) {
-            return $this->_params['name'];
-        }
-        return $this->pk();
+        return $this->name();
     }
 
 }
