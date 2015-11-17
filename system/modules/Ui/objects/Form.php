@@ -15,6 +15,7 @@ namespace Ui;
 
 class Form extends \Object
 {
+    public $id = null;
     public $method = 'POST';
     public $action = '';
     public $inputs = [];
