@@ -111,4 +111,61 @@ class Money extends Module
         return $result;
     }
 
+    function rewardTrigger($event)
+    {
+        $item = Money\Reward\Condition\Item::get([['type', 'event'], ['value', $event['eventName']]]);
+
+        if ($item) {
+            $reward = $item->condition->reward;
+            $sums = [];
+            foreach ($event['eventObject']->cartItems as $cartItem) {
+                $currency_id = $cartItem->price->currency ? $cartItem->price->currency->id : \App::$cur->ecommerce->config['defaultCurrency'];
+                if (empty($sums[$currency_id])) {
+                    $sums[$currency_id] = $cartItem->final_price * $cartItem->count;
+                } else {
+                    $sums[$currency_id] += $cartItem->final_price * $cartItem->count;
+                }
+            }
+            foreach ($reward->levels(['order' => ['level', 'asc']]) as $level) {
+                $user = $event['eventObject']->user;
+                for ($i = 0; $i < $level->level; $i++) {
+                    $user = $user ? $user->parent : false;
+                    if (!$user) {
+                        break;
+                    }
+                }
+                if (!$user) {
+                    break;
+                }
+                $wallets = $this->getUserWallets($user->id);
+                if (!empty($wallets[$level->currency_id])) {
+                    switch ($level->type) {
+                        case 'procent':
+                            $finalSum = 0;
+                            foreach ($sums as $currency_id => $sum) {
+                                if ($currency_id != $level->currency_id) {
+                                    $rate = \Money\Currency\ExchangeRate::get([
+                                                ['currency_id', $currency_id],
+                                                ['target_currency_id', $level->currency_id],
+                                    ]);
+                                } else {
+                                    $finalSum += $sum;
+                                }
+                                if ($rate) {
+                                    $finalSum += $sum * $rate->rate;
+                                }
+                            }
+                            $finalSum = floor($finalSum);
+                            $amount = floor($finalSum / 100 * $level->amount);
+                            $wallets[$level->currency_id]->amount += $amount;
+                            break;
+                        case 'amount':
+                            $wallets[$level->currency_id]->amount += $level->amount;
+                    }
+                    $wallets[$level->currency_id]->save();
+                }
+            }
+        }
+    }
+
 }

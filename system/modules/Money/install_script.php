@@ -208,6 +208,8 @@ return function ($step = NULL, $params = []) {
                 'merchant_currency_code' => '643'
             ],
             [
+                'merchant_currency_currency_id' => 2,
+                'merchant_currency_code' => 'RUB'
             ],
             [
             ],
@@ -228,4 +230,8 @@ return function ($step = NULL, $params = []) {
             App::$cur->db->insert('money_merchant_currency', $currency);
         }
     }
+    Inji::$inst->listen('ecommerceCartClosed', 'Money-rewardTrigger', [
+        'module' => 'Money',
+        'method' => 'rewardTrigger'
+            ], true);
 };

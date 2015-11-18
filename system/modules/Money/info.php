@@ -14,7 +14,7 @@ return [
                     ],
                     [
                         'name' => 'Курсы обмена',
-                        'href' => '/admin/money/currency\ExchangeRate'
+                        'href' => '/admin/money/currency%5CExchangeRate'
                     ]
                 ]
             ]

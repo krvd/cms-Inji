@@ -39,6 +39,12 @@ foreach ($rates as $rate) {
           $('#<?= $form->id; ?> input[name="exchange[get][amount]"]').keyup(function () {
             $('#<?= $form->id; ?> input[name="exchange[give][amount]"]').val(($(this).val() /<?= $rate->rate; ?>).toFixed(4));
           });
+          $('#<?= $form->id; ?> input[name="exchange[give][amount]"]').change(function () {
+            $('#<?= $form->id; ?> input[name="exchange[get][amount]"]').val(($(this).val() *<?= $rate->rate; ?>).toFixed(4));
+          });
+          $('#<?= $form->id; ?> input[name="exchange[get][amount]"]').change(function () {
+            $('#<?= $form->id; ?> input[name="exchange[give][amount]"]').val(($(this).val() /<?= $rate->rate; ?>).toFixed(4));
+          });
         });
     </script>
     <?php

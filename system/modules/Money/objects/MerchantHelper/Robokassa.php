@@ -16,11 +16,15 @@ class Robokassa extends \Money\MerchantHelper
     static function reciver($data, $status)
     {
         $config = static::getConfig();
-
+        $result = [];
+        $result['status'] = 'error';
+        if (empty($data['InvId'])) {
+            return $result;
+        }
         $hashGenerated = md5("{$data['OutSum']}:{$data['InvId']}:{$config['pass2']}");
 
         $result['payId'] = $data["InvId"];
-        $result['status'] = 'error';
+
         if (strtolower($data['SignatureValue']) == $hashGenerated)
             $result['status'] = 'success';
 
@@ -30,7 +34,7 @@ class Robokassa extends \Money\MerchantHelper
     static function goToMerchant($payId, $amount, $currency, $description = '', $success = '/', $false = '/')
     {
         $config = static::getConfig();
-        
+
         $amount = (float) $amount;
         $hash = md5("{$config['login']}:{$amount}:{$payId}:{$config['pass1']}");
         $data = [
