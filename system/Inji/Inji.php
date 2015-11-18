@@ -20,10 +20,17 @@ class Inji
      * @param string $eventName
      * @param string $listenCode
      * @param array|function $callback
+     * @param bool $save
      */
-    function listen($eventName, $listenCode, $callback)
+    function listen($eventName, $listenCode, $callback, $save = false)
     {
-        $this->_listeners[$eventName][$listenCode] = $callback;
+        if ($save) {
+            $config = Config::custom(App::$primary->path . '/config/events.php');
+            $config[$eventName][$listenCode] = serialize($callback);
+            Config::save(App::$primary->path . '/config/events.php', $config);
+        } else {
+            $this->_listeners[$eventName][$listenCode] = $callback;
+        }
     }
 
     /**
@@ -39,18 +46,29 @@ class Inji
             'eventName' => $eventName,
             'eventObject' => $eventObject,
         ];
+
+        $listeners = [];
         if (!empty($this->_listeners[$eventName])) {
+            $listeners = $this->_listeners[$eventName];
+        }
+        $config = Config::custom(App::$primary->path . '/config/events.php');
+        if (!empty($config[$eventName])) {
+            foreach ($config[$eventName] as $listenCode => $callback) {
+                $listeners[$listenCode] = (@unserialize($callback) !== false) ? unserialize($callback) : $callback;
+            }
+        }
+        if ($listeners) {
             $iteration = 0;
             $calledBefore = [];
-            foreach ($this->_listeners[$eventName] as $listenCode => $callback) {
+            foreach ($listeners as $listenCode => $callback) {
                 $event['iteration'] = ++$iteration;
                 $event['calledBefore'] = $calledBefore;
                 if (is_callable($callback)) {
                     $eventObject = $callback($event);
                 } elseif (is_array($callback) && isset($callback['callback'])) {
-                    $eventObject = $callback($event, $callback);
+                    $eventObject = $callback['callback']($event, $callback);
                 } else {
-                    $eventObject = $this->{$callback['module']}->{$callback['method']}($event, $callback);
+                    $eventObject = App::$cur->{$callback['module']}->{$callback['method']}($event, $callback);
                 }
                 $calledBefore[$iteration] = $listenCode;
             }
@@ -63,9 +81,17 @@ class Inji
      * 
      * @param string $eventName
      * @param string $listenCode
+     * @param bool $save
      */
-    function unlisten($eventName, $listenCode)
+    function unlisten($eventName, $listenCode, $save = false)
     {
+        if ($save) {
+            $config = Config::custom(App::$primary->path . '/config/events.php');
+            if (!empty($config[$eventName][$listenCode])) {
+                unset($config[$eventName][$listenCode]);
+                Config::save(App::$primary->path . '/config/events.php', $config);
+            }
+        }
         if (!empty($this->_listeners[$eventName][$listenCode])) {
             unset($this->_listeners[$eventName][$listenCode]);
         }

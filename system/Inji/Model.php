@@ -6,6 +6,7 @@ class Model
     static $objectName = '';
     public $appType = 'app';
     public $_params = [];
+    public $_changedParams = [];
     public $loadedRelations = [];
     static $treeCategory = '';
     static $categoryModel = '';
@@ -840,6 +841,9 @@ class Model
         if ($class::$treeCategory) {
             $this->changeCategoryTree();
         }
+        if (!empty($this->_changedParams) && $this->pk()) {
+            Inji::$inst->event('modelItemParamsChanged-' . get_called_class(), $this);
+        }
         $this->beforeSave();
 
         $values = array();
@@ -851,7 +855,8 @@ class Model
         if (!$values && empty($options['empty']))
             return false;
 
-        if (!empty($this->_params[$this->index()])) {
+        if ($this->pk()) {
+            $new = false;
             if ($this->get($this->_params[$this->index()])) {
                 App::$cur->db->where($this->index(), $this->_params[$this->index()]);
                 App::$cur->db->update($this->table(), $values);
@@ -860,11 +865,15 @@ class Model
                 $this->_params[$this->index()] = App::$cur->db->insert($this->table(), $values);
             }
         } else {
+            $new = true;
             $this->_params[$this->index()] = App::$cur->db->insert($this->table(), $values);
         }
         App::$cur->db->where($this->index(), $this->_params[$this->index()]);
         $result = App::$cur->db->select($this->table());
         $this->_params = $result->fetch();
+        if ($new) {
+            Inji::$inst->event('modelCreatedItem-' . get_called_class(), $this);
+        }
         $this->afterSave();
         return $this->{$this->index()};
     }
@@ -1137,6 +1146,9 @@ class Model
     function __set($name, $value)
     {
         static::fixPrefix($name);
+        if ((isset($this->_params[$name]) && $this->_params[$name] != $value) && !isset($this->_changedParams[$name])) {
+            $this->_changedParams[$name] = $this->_params[$name];
+        }
         $this->_params[$name] = $value;
     }
 
