@@ -314,4 +314,35 @@ class Ecommerce extends Module
         return $return;
     }
 
+    function cartStatusDetector($event)
+    {
+        $item = $event['eventObject'];
+        if (!empty($item->_changedParams['cart_cart_status_id'])) {
+            $item->date_status = date('Y-m-d H:i:s');
+            $event = new Ecommerce\Cart\Event(['cart_id' => $item->id, 'user_id' => \Users\User::$cur->id, 'cart_event_type_id' => 5, 'info' => $item->cart_status_id]);
+            $event->save();
+
+            if ($item->cart_status_id == 5) {
+                Inji::$inst->event('ecommerceCartClosed', $item);
+            }
+        }
+    }
+
+    function cardTrigger($event)
+    {
+        $item = $event['eventObject'];
+        if ($item->card) {
+            $sum = 0;
+            foreach ($item->cartItems as $cartItem) {
+                $sum += $cartItem->final_price * $cartItem->count;
+            }
+            $cardItemHistory = new Ecommerce\Card\Item\History();
+            $cardItemHistory->amount = $sum;
+            $cardItemHistory->card_item_id = $item->card_item_id;
+            $cardItemHistory->save();
+            $item->card->sum += $sum;
+            $item->card->save();
+        }
+    }
+
 }

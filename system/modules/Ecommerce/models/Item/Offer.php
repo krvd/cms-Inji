@@ -58,6 +58,11 @@ class Offer extends \Model
                 'model' => 'Ecommerce\Item\Offer\Price',
                 'col' => 'item_offer_id',
             ],
+            'bonuses' => [
+                'type' => 'many',
+                'model' => 'Ecommerce\Item\Offer\Bonus',
+                'col' => 'item_offer_id',
+            ],
             'item' => [
                 'model' => 'Ecommerce\Item',
                 'col' => 'item_id'

@@ -97,4 +97,18 @@ class EcommerceController extends adminController
         $this->Notifications->subscribe('Ecommerce-orders');
     }
 
+    function closeCartAction($cartId = 0)
+    {
+        $cart = Ecommerce\Cart::get((int) $cartId);
+        $result = new Server\Result();
+        if ($cart) {
+            $cart->cart_status_id = 5;
+            $cart->save();
+            $result->successMsg = 'Заказ был завершен';
+            $result->send();
+        }
+        $result->success = false;
+        $result->content = 'Такая корзина не найдена';
+    }
+
 }

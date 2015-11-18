@@ -119,7 +119,8 @@ class Cart extends \Model
             ],
             'preSort' => [
                 'complete_data' => 'desc'
-            ]
+            ],
+            'rowButtonsWidget'=>'Ecommerce\cart/adminButtons'
         ]
     ];
     static $forms = [
@@ -238,38 +239,6 @@ class Cart extends \Model
 
     function beforeSave()
     {
-        //$event = false;
-        if ($this->id) {
-            $cur = Cart::get($this->id);
-            if (!$cur) {
-                return;
-            }
-            if ($cur->cart_status_id != $this->cart_status_id) {
-                $this->date_status = date('Y-m-d H:i:s');
-                if ($this->cart_status_id == 5 && $cur->cart_status_id == 3) {
-                    if ($this->card) {
-                        $sum = 0;
-                        foreach ($this->cartItems as $cartItem) {
-                            $sum += ($cartItem->price->price - $cartItem->discont()) * $cartItem->count;
-                        }
-                        $cardItemHistory = new Card\Item\History();
-                        $cardItemHistory->amount = $sum;
-                        $cardItemHistory->card_item_id = $this->card_item_id;
-                        $cardItemHistory->save();
-                        $this->card->sum += $sum;
-                        $this->card->save();
-                    }
-                }
-                $event = new Cart\Event(['cart_id' => $this->id, 'user_id' => \Users\User::$cur->id, 'cart_event_type_id' => 5, 'info' => $this->cart_status_id]);
-                $event->save();
-            }
-            //$events = $cur->events(['order' => [['id', 'desc']], 'limit' => 1, 'key' => false]);
-            //if ($events) {
-            //$event = $events[0];
-            //}
-        }
-        // if ($event)
-        //$this->date_last_activ = $event->date_create;
         $this->calc(false);
     }
 
