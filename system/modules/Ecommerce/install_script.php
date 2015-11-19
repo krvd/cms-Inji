@@ -139,6 +139,15 @@ return function ($step = NULL, $params = array()) {
         'item_offer_weight' => 'int(11) UNSIGNED NOT NULL',
         'item_offer_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
     ));
+    //Бонусы для торговых предложений
+    App::$cur->db->createTable('ecommerce_item_offer_bonus', array(
+        'item_offer_bonus_id' => 'pk',
+        //Основные параметры
+        'item_offer_bonus_item_offer_id' => 'int(11) UNSIGNED NOT NULL',
+        'item_offer_bonus_type' => 'varchar(255) NOT NULL',
+        'item_offer_bonus_value' => 'varchar(255) NOT NULL',
+        'item_offer_bonus_count' => 'decimal(8, 2) NOT NULL',
+    ));
     //Цены
     App::$cur->db->createTable('ecommerce_item_offer_price', array(
         'item_offer_price_id' => 'pk',

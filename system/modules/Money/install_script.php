@@ -131,6 +131,33 @@ return function ($step = NULL, $params = []) {
         'merchant_currency_currency_id' => 'INT(11) UNSIGNED NOT NULL',
         'merchant_currency_code' => 'varchar(255) NOT NULL',
     ]);
+    App::$cur->db->createTable('money_reward', [
+        'reward_id' => 'pk',
+        'reward_name' => 'varchar(255) NOT NULL',
+        'reward_active' => 'tinyint(1) UNSIGNED NOT NULL',
+        'reward_date_create' => 'timestamp DEFAULT CURRENT_TIMESTAMP',
+    ]);
+    App::$cur->db->createTable('money_reward_condition', [
+        'reward_condition_id' => 'pk',
+        'reward_condition_reward_id' => 'INT(11) UNSIGNED NOT NULL',
+        'reward_condition_name' => 'varchar(255) NOT NULL',
+        'reward_condition_active' => 'tinyint(1) UNSIGNED NOT NULL',
+    ]);
+    App::$cur->db->createTable('money_reward_condition_item', [
+        'reward_condition_item_id' => 'pk',
+        'reward_condition_item_reward_condition_id' => 'INT(11) UNSIGNED NOT NULL',
+        'reward_condition_item_type' => 'varchar(255) NOT NULL',
+        'reward_condition_item_value' => 'varchar(255) NOT NULL',
+    ]);
+    App::$cur->db->createTable('money_reward_level', [
+        'reward_level_id' => 'pk',
+        'reward_level_reward_id' => 'INT(11) UNSIGNED NOT NULL',
+        'reward_level_level' => 'INT(11) NOT NULL',
+        'reward_level_currency_id' => 'INT(11) UNSIGNED NOT NULL',
+        'reward_level_type' => 'varchar(255) NOT NULL',
+        'reward_level_amount' => 'decimal(8, 2) NOT NULL',
+        'reward_level_date_create' => 'timestamp DEFAULT CURRENT_TIMESTAMP',
+    ]);
     $merchants = [
         [
             'merchant_name' => 'Wallet One',
