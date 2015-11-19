@@ -440,14 +440,18 @@ return function ($step = NULL, $params = array()) {
         'cart_extra_price' => 'DECIMAL(10, 2) NOT NULL',
         'cart_extra_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
     ]);
-    
+
     Inji::$inst->listen('modelItemParamsChanged-Ecommerce\Cart', 'Ecommerce-cartStatusDetector', [
         'module' => 'Ecommerce',
         'method' => 'cartStatusDetector'
             ], true);
-    
+
     Inji::$inst->listen('ecommerceCartClosed', 'Ecommerce-cardTrigger', [
         'module' => 'Ecommerce',
         'method' => 'cardTrigger'
+            ], true);
+    Inji::$inst->listen('ecommerceCartClosed', 'Ecommerce-bonusTrigger', [
+        'module' => 'Ecommerce',
+        'method' => 'bonusTrigger'
             ], true);
 };

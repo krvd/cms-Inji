@@ -330,18 +330,36 @@ class Ecommerce extends Module
 
     function cardTrigger($event)
     {
-        $item = $event['eventObject'];
-        if ($item->card) {
+        $cart = $event['eventObject'];
+        if ($cart->card) {
             $sum = 0;
-            foreach ($item->cartItems as $cartItem) {
+            foreach ($cart->cartItems as $cartItem) {
                 $sum += $cartItem->final_price * $cartItem->count;
             }
             $cardItemHistory = new Ecommerce\Card\Item\History();
             $cardItemHistory->amount = $sum;
-            $cardItemHistory->card_item_id = $item->card_item_id;
+            $cardItemHistory->card_item_id = $cart->card_item_id;
             $cardItemHistory->save();
-            $item->card->sum += $sum;
-            $item->card->save();
+            $cart->card->sum += $sum;
+            $cart->card->save();
+        }
+    }
+
+    function bonusTrigger($event)
+    {
+        
+        $cart = $event['eventObject'];
+        foreach ($cart->cartItems as $cartItem) {
+            foreach ($cartItem->price->offer->bonuses as $bonus) {
+                switch ($bonus->type) {
+                    case'currency':
+                        $currency = \Money\Currency::get($bonus->value);
+                        $wallets = App::$cur->money->getUserWallets($cart->user->id);
+                        $wallets[$currency->id]->amount += $bonus->count;
+                        $wallets[$currency->id]->save();
+                        break;
+                }
+            }
         }
     }
 
