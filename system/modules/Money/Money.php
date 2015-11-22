@@ -116,7 +116,6 @@ class Money extends Module
         $item = Money\Reward\Condition\Item::get([['type', 'event'], ['value', $event['eventName']]]);
 
         if ($item) {
-            $reward = $item->condition->reward;
             $sums = [];
             foreach ($event['eventObject']->cartItems as $cartItem) {
                 $currency_id = $cartItem->price->currency ? $cartItem->price->currency->id : \App::$cur->ecommerce->config['defaultCurrency'];
@@ -126,44 +125,63 @@ class Money extends Module
                     $sums[$currency_id] += $cartItem->final_price * $cartItem->count;
                 }
             }
-            foreach ($reward->levels(['order' => ['level', 'asc']]) as $level) {
-                $user = $event['eventObject']->user;
-                for ($i = 0; $i < $level->level; $i++) {
-                    $user = $user ? $user->parent : false;
-                    if (!$user) {
-                        break;
-                    }
-                }
-                if (!$user) {
+            $this->reward($item->condition->reward_id, $sums, $event['eventObject']->user);
+        }
+    }
+
+    function reward($reward_id, $sums, $rootUser = null)
+    {
+        $reward = \Money\Reward::get($reward_id);
+        foreach ($reward->levels(['order' => ['level', 'asc']]) as $level) {
+            $user = $rootUser ? $rootUser : \Users\User::$cur;
+            for ($i = 0; $i < $level->level; $i++) {
+                $next = $user && $user->parent ? $user->parent : false;
+                if (!$next && $reward->lasthaveall) {
                     break;
                 }
-                $wallets = $this->getUserWallets($user->id);
-                if (!empty($wallets[$level->currency_id])) {
-                    switch ($level->type) {
-                        case 'procent':
-                            $finalSum = 0;
-                            foreach ($sums as $currency_id => $sum) {
-                                if ($currency_id != $level->currency_id) {
-                                    $rate = \Money\Currency\ExchangeRate::get([
-                                                ['currency_id', $currency_id],
-                                                ['target_currency_id', $level->currency_id],
-                                    ]);
-                                } else {
-                                    $finalSum += $sum;
-                                }
+                $user = $next;
+            }
+            if (!$user) {
+                break;
+            }
+            $wallets = $this->getUserWallets($user->id);
+            if (!empty($wallets[$level->currency_id])) {
+                switch ($level->type) {
+                    case 'procent':
+                        $finalSum = 0;
+                        foreach ($sums as $currency_id => $sum) {
+                            if ($currency_id != $level->currency_id) {
+                                $rate = \Money\Currency\ExchangeRate::get([
+                                            ['currency_id', $currency_id],
+                                            ['target_currency_id', $level->currency_id],
+                                ]);
                                 if ($rate) {
                                     $finalSum += $sum * $rate->rate;
                                 }
+                            } else {
+                                $finalSum += $sum;
                             }
-                            $finalSum = floor($finalSum);
-                            $amount = floor($finalSum / 100 * $level->amount);
-                            $wallets[$level->currency_id]->amount += $amount;
-                            break;
-                        case 'amount':
-                            $wallets[$level->currency_id]->amount += $level->amount;
-                    }
-                    $wallets[$level->currency_id]->save();
+                        }
+                        switch ($reward->round_type) {
+                            case 'round':
+                                $finalSum = round($finalSum, $reward->round_precision);
+                                $amount = round($finalSum / 100 * $level->amount, $reward->round_precision);
+                                break;
+                            case 'floor':
+                                $finalSum = floor($finalSum);
+                                $amount = floor($finalSum / 100 * $level->amount);
+                                break;
+                            default:
+                                $amount = $finalSum / 100 * $level->amount;
+                        }
+
+
+                        $wallets[$level->currency_id]->amount += $amount;
+                        break;
+                    case 'amount':
+                        $wallets[$level->currency_id]->amount += $level->amount;
                 }
+                $wallets[$level->currency_id]->save();
             }
         }
     }

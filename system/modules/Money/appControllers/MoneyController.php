@@ -86,4 +86,31 @@ class MoneyController extends Controller
         $this->view->page(['data' => compact('rates', 'currency', 'targetCurrency', 'wallets')]);
     }
 
+    function walletPayAction($payId, $walletId)
+    {
+        $pay = Money\Pay::get((int) $payId);
+        if (!$pay || $pay->user_id != \Users\User::$cur->id) {
+            Tools::redirect('/money/merchants/pay/', 'Такой счет не найден');
+        }
+        $wallet = Money\Wallet::get((int) $walletId);
+        if (!$wallet || $wallet->user_id != \Users\User::$cur->id) {
+            Tools::redirect('/money/merchants/pay/' . $pay->id, 'Такой кошелек не найден');
+        }
+        if ($pay->sum > $wallet->amount) {
+            Tools::redirect('/money/merchants/pay/' . $pay->id, 'На вашем счете недостаточно средств');
+        }
+        $wallet->amount -=$pay->sum;
+        $wallet->save();
+        $statuses = \Money\Pay\Status::getList(['key' => 'code']);
+        if (!empty($statuses['success'])) {
+            $pay->pay_status_id = $statuses['success']->id;
+        }
+        $pay->date_recive = date('Y-m-d H:i:s');
+        $pay->save();
+        if ($pay->callback_module && $pay->callback_method) {
+            App::$cur->{$pay->callback_module}->{$pay->callback_method}(['status' => 'success', 'payId' => $pay->id, 'pay' => $pay]);
+        }
+        Tools::redirect('/users/cabinet', 'Вы успешно оплатили счет', 'success');
+    }
+
 }

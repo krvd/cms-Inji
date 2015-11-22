@@ -57,11 +57,11 @@ class ExchangeRate extends \Model
     {
         if ($this->pk()) {
             $cur = ExchangeRate::get($this->pk());
-            if ($cur->amount != $this->amount) {
+            if ($cur->rate != $this->rate) {
                 $history = new ExchangeRate\History();
                 $history->currency_exchangerate_id = $this->pk();
-                $history->old = $cur->amount;
-                $history->new = $this->amount;
+                $history->old = $cur->rate;
+                $history->new = $this->rate;
                 $history->save();
             }
         }

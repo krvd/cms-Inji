@@ -3,6 +3,21 @@
 <h3>Выберите удобный способ оплаты и валюту</h3>
 <div class="row">
   <?php
+  $wallets = App::$cur->money->getUserWallets();
+  if (!empty($wallets[$pay->currency_id])) {
+      ?>
+      <div class="col-xs-2 text-center">
+        <img src="/static/system/images/no-image.png" class="img-responsive" />
+        <h4>Личный счет</h4>
+      </div>
+      <div class="col-xs-10 text-left">
+        <a class="btn btn-default btn-lg" href ="/money/walletPay/<?= $pay->id; ?>/<?= $wallets[$pay->currency_id]->id; ?>"><?= $pay->sum; ?> <?= $pay->currency->acronym(); ?></a>
+      </div>
+    </div>
+    <div class="row">
+
+      <?php
+  }
   foreach ($merchants as $merchant) {
       $allowCurrencies = $merchant->allowCurrencies($pay);
       if (!$allowCurrencies) {
@@ -25,7 +40,7 @@
                     break;
             }
             ?>
-            <a class="btn btn-default btn-lg" href ="/money/merchants/go/<?= $pay->id; ?>/<?= $merchant->id; ?>/<?= $allowCurrency['currency']->id; ?>"><?=$sum;?> <?= $allowCurrency['currency']->acronym(); ?></a>
+            <a class="btn btn-default btn-lg" href ="/money/merchants/go/<?= $pay->id; ?>/<?= $merchant->id; ?>/<?= $allowCurrency['currency']->id; ?>"><?= $sum; ?> <?= $allowCurrency['currency']->acronym(); ?></a>
             <?php
         }
         ?>

@@ -135,6 +135,9 @@ return function ($step = NULL, $params = []) {
         'reward_id' => 'pk',
         'reward_name' => 'varchar(255) NOT NULL',
         'reward_active' => 'tinyint(1) UNSIGNED NOT NULL',
+        'reward_lasthaveall' => 'tinyint(1) UNSIGNED NOT NULL',
+        'reward_round_type' => 'varchar(255) NOT NULL',
+        'reward_round_precision' => 'varchar(255) NOT NULL',
         'reward_date_create' => 'timestamp DEFAULT CURRENT_TIMESTAMP',
     ]);
     App::$cur->db->createTable('money_reward_condition', [
