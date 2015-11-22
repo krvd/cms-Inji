@@ -218,6 +218,7 @@ class Users extends Module
         if (empty($user_phone)) {
             $user_phone = '';
         }
+        $invite_code = (!empty($data['invite_code']) ? $data['invite_code'] : (!empty($_POST['invite_code']) ? $_POST['invite_code'] : ((!empty($_COOKIE['invite_code']) ? $_COOKIE['invite_code'] : ((!empty($_GET['invite_code']) ? $_GET['invite_code'] : ''))))));
         if (!empty($invite_code)) {
             $invite = Users\User\Invite::get($invite_code, 'code');
             if (!$invite) {
@@ -231,6 +232,9 @@ class Users extends Module
             $parent_id = $invite->user_id;
             $invite->count++;
             $invite->save();
+        }
+        if (empty($parent_id) && !empty($this->config['defaultPartner'])) {
+            $parent_id = $this->config['defaultPartner'];
         }
 
 

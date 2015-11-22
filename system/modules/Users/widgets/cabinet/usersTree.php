@@ -65,6 +65,13 @@ App::$cur->libs->loadLib('typeahead');
     $form->input('text', 'partnerInvite[email]', 'E-mail', ['required' => true]);
     $form->end('Пригласить');
     ?>
+    <h3>Постоянные ссылки</h3>
+    <?php
+    $links = Module::getExtensions('Users', 'snippets', 'partnerLink');
+    foreach ($links as $link) {
+        echo "<a href = '{$link}'>$link</a><br/>";
+    }
+    ?>
   </div>
 </div>
 <?php

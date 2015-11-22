@@ -36,7 +36,7 @@ class Social extends \Model
             ],
             'social' => [
                 'model' => 'Users\Social',
-                'col' => 'user_id'
+                'col' => 'social_id'
             ],
         ];
     }
