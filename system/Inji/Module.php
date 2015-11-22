@@ -98,7 +98,7 @@ class Module
     {
         $paths = [];
         if (App::$cur != App::$primary) {
-            if (!empty($this->params[0])) {
+            if (!empty($this->params[0]) && strtolower($this->params[0]) != strtolower($this->moduleName)) {
                 $paths['primaryAppAppTypePath_slice'] = App::$primary->path . '/modules/' . $this->moduleName . '/' . $this->app->type . 'Controllers/' . ucfirst($this->params[0]) . 'Controller.php';
                 if (App::$primary->{$this->moduleName}) {
                     $paths['primaryAppAppTypePath_slice'] = App::$primary->{$this->moduleName}->path . '/' . $this->app->type . 'Controllers/' . ucfirst($this->params[0]) . 'Controller.php';
@@ -111,14 +111,14 @@ class Module
             $paths['curAppAppTypePath'] = $this->app->{$this->moduleName}->path . '/' . $this->app->type . 'Controllers/' . $this->moduleName . 'Controller.php';
         }
 
-        if (!empty($this->params[0])) {
+        if (!empty($this->params[0]) && strtolower($this->params[0]) != strtolower($this->moduleName)) {
             $paths['appAppTypePath_slice'] = $this->app->path . '/modules/' . $this->moduleName . '/' . $this->app->type . 'Controllers/' . ucfirst($this->params[0]) . 'Controller.php';
             $paths['appTypePath_slice'] = $this->path . '/' . $this->app->type . 'Controllers/' . ucfirst($this->params[0]) . 'Controller.php';
         }
         $paths['appAppTypePath'] = $this->app->path . '/modules/' . $this->moduleName . '/' . $this->app->type . 'Controllers/' . $this->moduleName . 'Controller.php';
         $paths['appTypePath'] = $this->path . '/' . $this->app->type . 'Controllers/' . $this->moduleName . 'Controller.php';
 
-        if (!empty($this->params[0])) {
+        if (!empty($this->params[0]) && strtolower($this->params[0]) != strtolower($this->moduleName)) {
             $paths['appUniversalPath_slice'] = $this->app->path . '/modules/' . $this->moduleName . '/Controllers/' . ucfirst($this->params[0]) . 'Controller.php';
             $paths['universalPath_slice'] = $this->path . '/Controllers/' . ucfirst($this->params[0]) . 'Controller.php';
         }
