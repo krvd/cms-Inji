@@ -691,6 +691,7 @@ class Model
 
     static function update($params, $where = [])
     {
+        static::fixPrefix($params);
 
         $cols = self::cols();
 
@@ -702,7 +703,7 @@ class Model
         if (!$values)
             return false;
 
-        static::fixPrefix($values, 'key');
+
         if ($where) {
             static::fixPrefix($where, 'key');
 
