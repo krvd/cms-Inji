@@ -468,10 +468,9 @@ class Model
         } else {
             $moduleConfig = Config::module($classPath[0], strpos(static::$storage['type'], 'system') !== false);
         }
+        $appType = App::$cur->type;
         if (!empty($moduleConfig['storage']['appTypeSplit'])) {
-            if (empty($options['appType'])) {
-                $appType = App::$cur->type;
-            } else {
+            if (!empty($options['appType'])) {
                 $appType = $options['appType'];
             }
             $storage = !empty($moduleConfig['storage'][$appType]) ? $moduleConfig['storage'][$appType] : [];
