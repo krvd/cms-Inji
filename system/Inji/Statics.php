@@ -18,7 +18,7 @@
  */
 class Statics
 {
-    static function file($path, $resize = '', $resizeCrop = '')
+    static function file($path, $resize = '', $resizeCrop = '', $resizePos = '')
     {
         $absolutePath = App::$cur->staticLoader->parsePath($path);
         $convet = FALSE;
@@ -35,12 +35,11 @@ class Statics
                 $options = ['resize' => ['x' => $resize[0], 'y' => $resize[1]]];
             }
             $options['crop'] = $resizeCrop;
+            $options['pos'] = $resizePos;
             $path = Cache::file($absolutePath, $options);
             $path = $convet ? mb_convert_encoding($path, 'UTF-8', 'Windows-1251') : $path;
             return '/' . $path;
         }
     }
-
-
 
 }
