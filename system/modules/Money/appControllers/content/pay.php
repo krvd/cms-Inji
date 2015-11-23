@@ -4,7 +4,7 @@
 <div class="row">
   <?php
   $wallets = App::$cur->money->getUserWallets();
-  if (!empty($wallets[$pay->currency_id])) {
+  if (!empty($wallets[$pay->currency_id]) && $pay->type != 'refill') {
       ?>
       <div class="col-xs-2 text-center">
         <img src="/static/system/images/no-image.png" class="img-responsive" />
