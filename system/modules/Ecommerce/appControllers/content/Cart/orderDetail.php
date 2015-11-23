@@ -38,9 +38,9 @@
         <tr>
             <td class="text-left">
                 <?php
-                if ($cart->userAdds && $cart->userAdds->values) {
-                    foreach ($cart->userAdds->values as $value) {
-                        echo "<b>{$value->field->name}</b> " . $value->value . "<br>";
+                if ($cart->infos) {
+                    foreach ($cart->infos as $info) {
+                        echo "<b>{$info->field->name()}</b> " . $info->value . "<br>";
                     }
                 }
                 ?>
@@ -104,7 +104,7 @@
         </tfoot>
     </table>
 </div>
-<h3>История заказов</h3>
+<h3>История заказа</h3>
 <table class="table table-bordered table-hover list">
     <thead>
         <tr>
