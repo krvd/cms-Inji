@@ -78,6 +78,20 @@ class User extends \Model
                 ['pass'],
                 ['form:info:manager']
             ]
+        ],
+        'profile' => [
+            'options' => [
+                'access' => [
+                    'groups' => [
+                        3
+                    ],
+                    'self' => true
+                ]
+            ],
+            'map' => [
+                ['pass'],
+                ['form:info:manager']
+            ]
         ]
     ];
 
