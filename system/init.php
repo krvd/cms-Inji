@@ -23,6 +23,17 @@ Inji::$inst = new Inji();
 Inji::$config = Config::system();
 spl_autoload_register('Router::findClass');
 
+if (!function_exists('idn_to_utf8')) {
+    function idn_to_utf8($domain)
+    {
+        if (empty(Inji::$storage['IdnaConvert'])) {
+            Inji::$storage['IdnaConvert'] = new IdnaConvert();
+        }
+        return Inji::$storage['IdnaConvert']->decode($domain);
+    }
+
+}
+
 $apps = Apps\App::getList();
 //Make default app params
 $finalApp = [
