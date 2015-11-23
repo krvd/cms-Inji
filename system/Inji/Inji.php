@@ -10,9 +10,10 @@
  */
 class Inji
 {
-    static $inst = NULL;
+    public static $inst = NULL;
     private static $_listeners = [];
     public static $config = [];
+    public static $storage = [];
 
     /**
      * Add event listener
