@@ -9,15 +9,20 @@ class UsersController extends Controller
 
     function cabinetAction($activeSection = '')
     {
+        $bread = [];
+
         $sections = $this->module->getSnippets('cabinetSection');
         $extends = Module::getExtensions('Users', 'snippets', 'cabinetSection');
         $sections = array_merge($sections, $extends);
         if (!empty($sections[$activeSection]['name'])) {
             $this->view->setTitle($sections[$activeSection]['name'] . ' - Личный кабинет');
+            $bread[] = ['text' => 'Личный кабинет', 'href' => '/users/cabinet'];
+            $bread[] = ['text' => $sections[$activeSection]['name']];
         } else {
             $this->view->setTitle('Личный кабинет');
+            $bread[] = ['text' => 'Личный кабинет'];
         }
-        $this->view->page(['data' => compact('widgets', 'sections', 'activeSection')]);
+        $this->view->page(['data' => compact('widgets', 'sections', 'activeSection', 'bread')]);
     }
 
     function loginAction()
