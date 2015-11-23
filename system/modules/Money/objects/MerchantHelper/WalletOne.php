@@ -87,7 +87,7 @@ class WalletOne extends \Money\MerchantHelper
         $merchantCurrency = static::getMerchantCurrency($currency);
         
         if (!$description)
-            $description = "Оплата заказа на сайте " . INJI_DOMAIN_NAME;
+            $description = "Оплата заказа на сайте " . idn_to_utf8(INJI_DOMAIN_NAME);
 
         //Секретный ключ интернет-магазина
         $key = $config['secret'];

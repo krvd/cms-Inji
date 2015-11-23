@@ -25,7 +25,7 @@ class PerfectMoney extends \Money\MerchantHelper
         $request['PAYMENT_AMOUNT'] = $amount;
         $request['PAYMENT_UNITS'] = $merchantCurrency->code;
         $request['SUGGESTED_MEMO'] = $description;
-        $request['STATUS_URL'] = 'http://' . INJI_DOMAIN_NAME . '/money/merchants/reciver/PerfectMoney';
+        $request['STATUS_URL'] = 'http://' . idn_to_utf8(INJI_DOMAIN_NAME) . '/money/merchants/reciver/PerfectMoney';
         $request['PAYMENT_URL'] = $success;
         $request['NOPAYMENT_URL'] = $false;
         $request['PAYMENT_METHOD'] = 'PerfectMoney account';

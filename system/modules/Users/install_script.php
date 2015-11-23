@@ -27,7 +27,7 @@ return function ($step = NULL, $params = array()) {
     } else {
         $userId = App::$cur->db->insert('users_user', array(
             'user_login' => 'admin',
-            'user_mail' => 'admin@' . INJI_DOMAIN_NAME,
+            'user_mail' => 'admin@' . idn_to_utf8(INJI_DOMAIN_NAME),
             'user_pass' => password_hash('admin', PASSWORD_DEFAULT),
             'user_group_id' => '3',
             'user_role_id' => '3',

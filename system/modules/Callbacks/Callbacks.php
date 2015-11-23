@@ -37,8 +37,8 @@ class Callbacks extends Module
                 $callback->save();
                 if (!empty(App::$cur->config['site']['email'])) {
                     $subject = 'Новый отзыв';
-                    $text = 'Вы можете его посмотреть по этому адресу: <a href = "http://' . INJI_DOMAIN_NAME . '/admin/callbacks">http://' . INJI_DOMAIN_NAME . '/admin/callbacks</a>';
-                    Tools::sendMail('noreply@' . INJI_DOMAIN_NAME, App::$cur->config['site']['email'], $subject, $text);
+                    $text = 'Вы можете его посмотреть по этому адресу: <a href = "http://' . idn_to_utf8(INJI_DOMAIN_NAME) . '/admin/callbacks">http://' . idn_to_utf8(INJI_DOMAIN_NAME) . '/admin/callbacks</a>';
+                    Tools::sendMail('noreply@' . idn_to_utf8(INJI_DOMAIN_NAME), App::$cur->config['site']['email'], $subject, $text);
                 }
                 Tools::redirect('/', 'Ваш отзыв был получен и появится после обработки администратором', 'success');
             }
