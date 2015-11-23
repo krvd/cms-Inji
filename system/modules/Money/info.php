@@ -9,6 +9,10 @@ return [
                 'href' => '#',
                 'childs' => [
                     [
+                        'name' => 'Платежные системы',
+                        'href' => '/admin/money/merchant'
+                    ],
+                    [
                         'name' => 'Валюты',
                         'href' => '/admin/money/currency'
                     ],
