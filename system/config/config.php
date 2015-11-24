@@ -11,7 +11,8 @@ return [
         'Server',
         'Modules',
         'Apps',
-        'Menu'
+        'Menu',
+        'Events'
     ],
     'moduleRouter' => [
         'static' => 'StaticLoader'
