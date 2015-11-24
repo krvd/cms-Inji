@@ -79,6 +79,21 @@ class Vk extends \Users\SocialHelper
                 }
                 $user->group_id = 2;
                 $user->role_id = 2;
+                $invite_code = (!empty($_POST['invite_code']) ? $_POST['invite_code'] : ((!empty($_COOKIE['invite_code']) ? $_COOKIE['invite_code'] : ((!empty($_GET['invite_code']) ? $_GET['invite_code'] : '')))));
+                if (!empty($invite_code)) {
+                    $invite = Users\User\Invite::get($invite_code, 'code');
+                    if (!$invite) {
+                        Msg::add('Такой код пришлашения не найден', 'danger');
+                        return false;
+                    }
+                    if ($invite->limit && !($invite->limit - $invite->count)) {
+                        Msg::add('Лимит приглашений для данного кода исчерпан', 'danger');
+                        return false;
+                    }
+                    $user->parent_id = $invite->user_id;
+                    $invite->count++;
+                    $invite->save();
+                }
                 $user->save();
                 $userInfo = new \Users\Info();
                 $userInfo->user_id = $user->id;
