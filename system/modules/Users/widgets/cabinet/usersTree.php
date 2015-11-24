@@ -69,7 +69,7 @@ App::$cur->libs->loadLib('typeahead');
     <?php
     $links = Module::getExtensions('Users', 'snippets', 'partnerLink');
     foreach ($links as $link) {
-        echo "<a href = '{$link}'>$link</a><br/>";
+        echo "{$link['name']}:<pre>{$link['href']}</pre><br/>";
     }
     ?>
   </div>
