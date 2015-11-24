@@ -11,9 +11,12 @@ class MaterialsController extends Controller
         if ($alias) {
             $material = Materials\Material::get($alias, 'alias');
             if (!$material) {
-                $category = Materials\Category::get($alias, 'alias');
-                if ($category) {
-                    $this->categoryAction($category->id);
+                $material = Materials\Material::get((int) $alias);
+                if (!$material) {
+                    $category = Materials\Category::get($alias, 'alias');
+                    if ($category) {
+                        $this->categoryAction($category->id);
+                    }
                 }
             }
         } else {
