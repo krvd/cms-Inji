@@ -125,6 +125,7 @@
                   </thead>
                   <tbody>
                     <?php
+                    $defaultCurrency = Money\Currency::get(\App::$cur->ecommerce->config['defaultCurrency']);
                     $discountSum = 0;
                     foreach ($cart->cartItems as $cartItem) {
                         $path = $cartItem->item->image ? $cartItem->item->image->path : '/static/system/images/no-image.png';
@@ -175,11 +176,11 @@
                             ?>
 
                           </td>
-                          <td class="text-right price"><?= number_format($cartItem->price->price, 2, '.', '&nbsp;'); ?>&nbsp;руб.</td>
+                          <td class="text-right price"><?= number_format($cartItem->price->price, 2, '.', '&nbsp;'); ?>&nbsp;<?= $cartItem->price->currency ? $cartItem->price->currency->acronym() : $defaultCurrency->acronym(); ?></td>
                           <?php if ($cart->card) { ?>
-                              <td class="text-right discount"><?= number_format($discount, 2, '.', '&nbsp;'); ?>&nbsp;руб.</td>
+                              <td class="text-right discount"><?= number_format($discount, 2, '.', '&nbsp;'); ?>&nbsp;<?= $cartItem->price->currency ? $cartItem->price->currency->acronym() : $defaultCurrency->acronym(); ?></td>
                           <?php } ?>
-                          <td class="text-right total"><?= number_format($cartItem->price->price * $cartItem->count - $discount, 2, '.', '&nbsp;'); ?>&nbsp;руб.</td>
+                          <td class="text-right total"><?= number_format($cartItem->price->price * $cartItem->count - $discount, 2, '.', '&nbsp;'); ?>&nbsp;<?= $cartItem->price->currency ? $cartItem->price->currency->acronym() : $defaultCurrency->acronym(); ?></td>
                           <td class="text-right actions">
                             <div class="btn-group-vertical" role="group" aria-label="...">
                               <a type="button" class="btn btn-primary btn-update btn-sm" onclick="inji.Ecommerce.Cart.calcSum();"><i class="glyphicon glyphicon-refresh"></i></a>
