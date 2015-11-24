@@ -11,16 +11,17 @@
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
 
-namespace Money\Reward;
+namespace Money\Reward\Condition\Item;
 
-class Condition extends \Model
+class Recive extends \Model
 {
+
     static function relations()
     {
         return [
-            'reward' => [
-                'model' => 'Money\Reward',
-                'col' => 'reward_id'
+            'item' => [
+                'model' => 'Money\Reward\Condition\Item',
+                'col' => 'reward_condition_item_id'
             ]
         ];
     }

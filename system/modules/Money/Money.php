@@ -113,19 +113,31 @@ class Money extends Module
 
     function rewardTrigger($event)
     {
-        $item = Money\Reward\Condition\Item::get([['type', 'event'], ['value', $event['eventName']]]);
+        $trigger = Money\Reward\Trigger::get([['type', 'event'], ['value', $event['eventName']]]);
 
+        if ($trigger) {
+            $handlers = $this->getSnippets('rewardTriggerHandler');
+            $extends = Module::getExtensions('Money', 'snippets', 'rewardTriggerHandler');
+            $handlers = array_merge($handlers, $extends);
+            if (!empty($handlers[$trigger->handler])) {
+                $handlers[$trigger->handler]['handler']($event['eventObject'], $trigger);
+            }
+        }
+    }
+
+    function rewardConditionTrigger($event)
+    {
+        $item = Money\Reward\Condition\Item::get([['type', 'event'], ['value', $event['eventName']]]);
         if ($item) {
-            $sums = [];
-            foreach ($event['eventObject']->cartItems as $cartItem) {
-                $currency_id = $cartItem->price->currency ? $cartItem->price->currency->id : \App::$cur->ecommerce->config['defaultCurrency'];
-                if (empty($sums[$currency_id])) {
-                    $sums[$currency_id] = $cartItem->final_price * $cartItem->count;
-                } else {
-                    $sums[$currency_id] += $cartItem->final_price * $cartItem->count;
+            $recivers = $this->getSnippets('rewardConditionItemReciver');
+            $extends = Module::getExtensions('Money', 'snippets', 'rewardConditionItemReciver');
+            $recivers = array_merge($recivers, $extends);
+            if (!empty($recivers[$item->reciver])) {
+                $recivers[$item->reciver]['reciver']($event['eventObject'], $item);
+                if ($item->condition->reward->block) {
+                    $item->condition->reward->checkBlocked();
                 }
             }
-            $this->reward($item->condition->reward_id, $sums, $event['eventObject']->user);
         }
     }
 
@@ -143,6 +155,25 @@ class Money extends Module
             }
             if (!$user) {
                 break;
+            }
+            $rewardGet = true;
+            foreach ($reward->conditions as $condition) {
+                if (!$rewardGet) {
+                    break;
+                }
+                foreach ($condition->items as $item) {
+                    $count = 0;
+                    foreach ($item->recives(['where' => ['user_id', $user->id]]) as $recive) {
+                        $count += $recive->count;
+                    }
+                    if ($count < $item->count) {
+                        $rewardGet = false;
+                        break;
+                    }
+                }
+            }
+            if (!$rewardGet && !$reward->block) {
+                continue;
             }
             $wallets = $this->getUserWallets($user->id);
             if (!empty($wallets[$level->currency_id])) {
@@ -165,23 +196,39 @@ class Money extends Module
                         switch ($reward->round_type) {
                             case 'round':
                                 $finalSum = round($finalSum, $reward->round_precision);
-                                $amount = round($finalSum / 100 * $level->amount, $reward->round_precision);
+                                $amount = $finalSum / 100 * $level->amount;
                                 break;
                             case 'floor':
                                 $finalSum = floor($finalSum);
-                                $amount = floor($finalSum / 100 * $level->amount);
+                                $amount = $finalSum / 100 * $level->amount;
                                 break;
                             default:
                                 $amount = $finalSum / 100 * $level->amount;
                         }
-
-
-                        $wallets[$level->currency_id]->amount += $amount;
                         break;
                     case 'amount':
-                        $wallets[$level->currency_id]->amount += $level->amount;
+                        $amount = $level->amount;
                 }
-                $wallets[$level->currency_id]->save();
+                if (!$rewardGet && $reward->block) {
+                    $block = new \Money\Wallet\Block();
+                    $block->wallet_id = $wallets[$level->currency_id]->id;
+                    $block->amount = $amount;
+                    $block->data = 'reward:' . $reward->id;
+                    switch ($reward->date_expired) {
+                        case 'dayStart':
+                            $block->date_expired = mktime(0, 0, 0, date('n'), date("j") + 1, date("Y"));
+                            $block->expired_type = 'burn';
+                            break;
+                        case 'monthStart':
+                            $block->date_expired = mktime(0, 0, 0, date('n') + 1, 1, date("Y"));
+                            $block->expired_type = 'burn';
+                            break;
+                    }
+                    $block->save();
+                } else {
+                    $wallets[$level->currency_id]->amount += $amount;
+                    $wallets[$level->currency_id]->save();
+                }
             }
         }
     }

@@ -136,9 +136,19 @@ return function ($step = NULL, $params = []) {
         'reward_name' => 'varchar(255) NOT NULL',
         'reward_active' => 'tinyint(1) UNSIGNED NOT NULL',
         'reward_lasthaveall' => 'tinyint(1) UNSIGNED NOT NULL',
+        'reward_block' => 'tinyint(1) UNSIGNED NOT NULL',
+        'reward_block_date_expired' => 'varchar(255) NOT NULL',
         'reward_round_type' => 'varchar(255) NOT NULL',
         'reward_round_precision' => 'varchar(255) NOT NULL',
         'reward_date_create' => 'timestamp DEFAULT CURRENT_TIMESTAMP',
+    ]);
+    App::$cur->db->createTable('money_reward_trigger', [
+        'reward_trigger_id' => 'pk',
+        'reward_trigger_reward_id' => 'INT(11) UNSIGNED NOT NULL',
+        'reward_trigger_type' => 'varchar(255) NOT NULL',
+        'reward_trigger_value' => 'varchar(255) NOT NULL',
+        'reward_trigger_handler' => 'varchar(255) NOT NULL',
+        'reward_trigger_date_create' => 'timestamp DEFAULT CURRENT_TIMESTAMP',
     ]);
     App::$cur->db->createTable('money_reward_condition', [
         'reward_condition_id' => 'pk',
@@ -151,6 +161,17 @@ return function ($step = NULL, $params = []) {
         'reward_condition_item_reward_condition_id' => 'INT(11) UNSIGNED NOT NULL',
         'reward_condition_item_type' => 'varchar(255) NOT NULL',
         'reward_condition_item_value' => 'varchar(255) NOT NULL',
+        'reward_condition_item_reciver' => 'varchar(255) NOT NULL',
+        'reward_condition_item_count' => 'INT(11) UNSIGNED NOT NULL',
+        'reward_condition_item_expired' => 'varchar(255) NOT NULL',
+    ]);
+    App::$cur->db->createTable('money_reward_condition_item_recive', [
+        'reward_condition_item_recive_id' => 'pk',
+        'reward_condition_item_recive_reward_condition_item_id' => 'INT(11) UNSIGNED NOT NULL',
+        'reward_condition_item_recive_user_id' => 'INT(11) UNSIGNED NOT NULL',
+        'reward_condition_item_recive_count' => 'INT(11) UNSIGNED NOT NULL',
+        'reward_condition_item_recive_data' => 'varchar(255) NOT NULL',
+        'reward_condition_item_recive_date_create' => 'timestamp DEFAULT CURRENT_TIMESTAMP',
     ]);
     App::$cur->db->createTable('money_reward_level', [
         'reward_level_id' => 'pk',
