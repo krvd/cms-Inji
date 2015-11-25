@@ -73,20 +73,29 @@ class Cache
         $crop = !empty($options['crop']) ? $options['crop'] : '';
         $pos = !empty($options['pos']) ? $options['pos'] : 'center';
         $fileinfo = pathinfo($file);
-        $fileCheckSum = md5($fileinfo['dirname'].filemtime($file));
-        $path = 'cache/' . App::$primary->dir . '/' . $fileCheckSum . '_' . $fileinfo['filename'];
+        $fileCheckSum = md5($fileinfo['dirname'] . filemtime($file));
+        $path = static::getDir() . '/' . $fileCheckSum . '_' . $fileinfo['filename'];
         if ($sizes) {
             $path .= '.' . $sizes['x'] . 'x' . $sizes['y'] . $crop . $pos;
         }
         $path .= '.' . $fileinfo['extension'];
         if (!file_exists($path)) {
-            Tools::createDir('cache/' . App::$primary->dir . '/');
             copy($file, $path);
             if ($sizes) {
                 Tools::resizeImage($path, $sizes['x'], $sizes['y'], $crop, $pos);
             }
         }
 
+        return $path;
+    }
+
+    static function getDir($app = null)
+    {
+        if (!$app) {
+            $app = App::$primary;
+        }
+        $path = 'cache/' . $app->dir;
+        Tools::createDir($path);
         return $path;
     }
 
