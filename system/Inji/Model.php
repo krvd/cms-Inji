@@ -1058,7 +1058,11 @@ class Model
             if (!empty($params['count'])) {
                 return $relation['model']::getCount($options);
             } else {
-                $this->loadedRelations[$name][json_encode($params)] = $relation['model']::$getType($options, $getCol, $getParams);
+                if (class_exists($relation['model'])) {
+                    $this->loadedRelations[$name][json_encode($params)] = $relation['model']::$getType($options, $getCol, $getParams);
+                } else {
+                    $this->loadedRelations[$name][json_encode($params)] = [];
+                }
             }
             return $this->loadedRelations[$name][json_encode($params)];
         }
