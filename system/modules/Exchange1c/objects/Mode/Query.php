@@ -41,7 +41,7 @@ class Query extends \Exchange1c\Mode
         $root->setAttribute("ДатаФормирования", date('Y-m-d'));
         $root = $xml->appendChild($root);
 
-        $carts = \Ecommerce\Cart::getList(['where' => ['cart_status_id', empty(App::$cur->Exchange1c->config['uploadStatusId']) ? '3' : App::$cur->Exchange1c->config['uploadStatusId'], 'IN']]);
+        $carts = \Ecommerce\Cart::getList(['where' => ['cart_status_id', empty(\App::$cur->Exchange1c->config['uploadStatusId']) ? '3' : \App::$cur->Exchange1c->config['uploadStatusId'], 'IN']]);
         foreach ($carts as $cart) {
             $doc = $xml->createElement('Документ');
             $statusDateTime = new \DateTime($cart->complete_data);
