@@ -14,12 +14,16 @@ function Inji() {
   this.listeners = {};
   this.loadedScripts = {};
 }
-Inji.prototype.onLoad = function (callback) {
+Inji.prototype.onLoad = function (callback, start) {
   if (typeof callback == 'function') {
     if (this.loaded) {
       callback();
     } else {
-      this.onLoadCallbacks.push(callback);
+      if (start) {
+        this.onLoadCallbacks.unshift(callback);
+      } else {
+        this.onLoadCallbacks.push(callback);
+      }
     }
   }
 }
@@ -57,7 +61,7 @@ Inji.prototype.start = function (options) {
           }
         }
       }
-    })
+    }, true)
   }
   this.loadScripts(options.scripts, 0);
 }
@@ -169,6 +173,31 @@ Inji.prototype.numberFormat = function (number, decimals, dec_point, thousands_s
 
   return km + kw + kd;
 }
-
+Inji.prototype.get = function (query) {
+  var element = document.querySelector(query);
+  if (element) {
+    return new function () {
+      this.element = element;
+      this.attr = function (name) {
+        for (var key in this.element.attributes) {
+          var attr = element.attributes[key];
+          if (attr.name == name) {
+            return attr.value;
+          }
+        }
+        return null;
+      }
+      this.data = function (name) {
+        var data = this.attr('data-' + name);
+        try {
+          return JSON.parse(data);
+        } catch (e) {
+          return data;
+        }
+        
+      }
+    }
+  }
+}
 var inji = new Inji();
 
