@@ -18,30 +18,51 @@ $carts = Ecommerce\Cart::getList(['where' => ['user_id', Users\User::$cur->id], 
     <tbody>
       <?php
       foreach ($carts as $cart) {
+          $sums = [];
+          foreach ($cart->cartItems as $cartItem) {
+              $currency_id = $cartItem->price->currency ? $cartItem->price->currency->id : \App::$cur->ecommerce->config['defaultCurrency'];
+              if (empty($sums[$currency_id])) {
+                  $sums[$currency_id] = $cartItem->final_price * $cartItem->count;
+              } else {
+                  $sums[$currency_id] += $cartItem->final_price * $cartItem->count;
+              }
+          }
           ?>
-
           <tr>
             <td class="text-right">#<?= $cart->id; ?></td>
             <td class="text-left"><?= $cart->status ? $cart->status->name : 'Наполняется'; ?></td>
 
             <td class="text-left"><?= $cart->complete_data; ?></td>
             <td class="text-right"><?= count($cart->cartItems); ?></td>
-            <td class="text-right"><?= $cart->sum; ?>р.</td>
-            <td class="text-right">
-              <a data-original-title="Просмотр" href="/ecommerce/cart/orderDetail/<?= $cart->id; ?>" data-toggle="tooltip" title="" class="btn btn-info btn-primary"><i class="glyphicon glyphicon-eye-open"></i></a>
-                <?php
-                /*
-                  if ($cart->cc_status <= 1) {
-                  echo "<a class = 'btn btn-success btn-sm' href = '/ecommerce/cart/continue/{$cart->cc_id}'>Продолжить покупки</a>";
-                  echo "<a class = 'btn btn-danger btn-sm' href = '/ecommerce/cart/delete/{$cart->cc_id}'>Удалить корзину</a>";
+            <td class="text-right"><?php
+              foreach ($sums as $currency_id => $sum) {
+                  echo $sum . ' ';
+                  if (App::$cur->money) {
+                      $currency = Money\Currency::get($currency_id);
+                      if ($currency) {
+                          echo $currency->acronym();
+                      } else {
+                          echo 'руб.';
+                      }
                   } else {
-                  echo "<a class = 'btn btn-primary btn-sm' href = '/ecommerce/cart/refill/{$cart->cc_id}'>Повторить покупку</a>";
+                      echo 'руб.';
                   }
-                  if (in_array($cart->cc_status, [4])) {
-                  echo "<a class = 'btn btn-danger btn-sm' href = '/ecommerce/cart/delete/{$cart->cc_id}'>Удалить корзину</a>";
-                  }
-                 * 
-                 */
+              }
+              ?></td>
+            <td class="text-right">
+              <?php
+              if ($cart->cart_status_id < 2) {
+                  ?>
+                  <a title="Продолжить покупки" href="/ecommerce/cart/continue/<?= $cart->id; ?>" data-toggle="tooltip" title="" class="btn btn-success"><i class="glyphicon glyphicon-chevron-right"></i></a>
+                  <a title="Удалить заказ" href="/ecommerce/cart/delete/<?= $cart->id; ?>" data-toggle="tooltip" title="" class="btn btn-danger"><i class="glyphicon glyphicon-trash"></i></a>
+                  <?php
+              }
+              if ($cart->cart_status_id >= 2) {
+                  ?>
+                  <a title="Просмотр" href="/ecommerce/cart/orderDetail/<?= $cart->id; ?>" data-toggle="tooltip" title="" class="btn btn-info "><i class="glyphicon glyphicon-eye-open"></i></a>
+                  <a title="Заказать повторно" href="/ecommerce/cart/refill/<?= $cart->id; ?>" data-toggle="tooltip" title="" class="btn btn-primary "><i class="glyphicon glyphicon-refresh"></i></a>
+                    <?php
+                }
                 ?>
             </td>
           </tr>

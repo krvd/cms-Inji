@@ -194,51 +194,50 @@ class CartController extends Controller
 
     function continueAction($id = 0)
     {
-        $cart = Cart::get((int) $id);
+        $cart = \Ecommerce\Cart::get((int) $id);
         if ($cart->user_id != Users\User::$cur->id) {
-            $this->url->redirect('/', 'Это не ваша корзина');
+            Tools::redirect('/', 'Это не ваша корзина');
         }
-        if ($cart->status > 1) {
-            $this->url->redirect('/', 'Корзина уже оформлена');
+        if ($cart->cart_status_id > 1) {
+            Tools::redirect('/', 'Корзина уже оформлена');
         }
         $_SESSION['cart']['cart_id'] = $cart->id;
-        $this->url->redirect('/ecommerce/cart');
+        Tools::redirect('/ecommerce/cart');
     }
 
     function deleteAction($id = 0)
     {
-        $cart = Cart::get((int) $id);
+        $cart = \Ecommerce\Cart::get((int) $id);
         if ($cart->user_id != Users\User::$cur->id) {
-            $this->url->redirect('/', 'Это не ваша корзина');
+            Tools::redirect('/', 'Это не ваша корзина');
         }
-        if ($cart->status > 1 && $cart->status != 4) {
-            $this->url->redirect('/', 'Корзина уже оформлена');
+        if ($cart->cart_status_id > 1) {
+            Tools::redirect('/', 'Корзина уже оформлена');
+        }
+        if (!empty($_SESSION['cart']['cart_id']) && $_SESSION['cart']['cart_id'] == $cart->id) {
+            unset($_SESSION['cart']['cart_id']);
         }
         $cart->delete();
-        $this->url->redirect('/ecommerce/cart/history', 'Корзина была удалена', 'success');
+        Tools::redirect('/users/cabinet/ecommerceOrdersHistory', 'Корзина была удалена', 'success');
     }
 
     function refillAction($id = 0)
     {
-        $cart = Cart::get((int) $id);
+        $cart = \Ecommerce\Cart::get((int) $id);
         if ($cart->user_id != Users\User::$cur->id) {
-            $this->url->redirect('/', 'Это не ваша корзина');
+            Tools::redirect('/', 'Это не ваша корзина');
         }
-        if ($cart->status <= 1) {
-            $this->url->redirect('/', 'Корзина ещё не оформлена');
+        if (!empty($_SESSION['cart']['cart_id'])) {
+            unset($_SESSION['cart']['cart_id']);
         }
-        $newCart = new Cart();
-        $newCart->user_id = Users\User::$cur->id;
-        $newCart->status = 1;
-        $newCart->save();
+        $newCart = $this->ecommerce->getCurCart();
         foreach ($cart->cartItems as $cartitem) {
-            $newCart->addItem($cartitem->cci_ci_id, $cartitem->cci_ciprice_id, $cartitem->cci_count);
+            $newCart->addItem($cartitem->item_id, $cartitem->item_offer_price_id, $cartitem->count);
         }
 
         $newCart->save();
-        $_SESSION['cart']['cart_id'] = $newCart->id;
 
-        $this->url->redirect('/ecommerce/cart/');
+        Tools::redirect('/ecommerce/cart/');
     }
 
     function successAction()
