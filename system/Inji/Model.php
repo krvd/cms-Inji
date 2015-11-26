@@ -74,7 +74,11 @@ class Model
                         return $item->$colName ? 'Да' : 'Нет';
                         break;
                     case 'method':
-                        $values = $colInfo['colParams']['module']->$colInfo['colParams']['method']();
+                        if (!empty($colInfo['colParams']['params'])) {
+                            $values = call_user_func_array([$colInfo['colParams']['module'], $colInfo['colParams']['method']], $colInfo['colParams']['params']);
+                        } else {
+                            $values = $colInfo['colParams']['module']->$colInfo['colParams']['method']();
+                        }
                         $value = !empty($values[$item->$colName]) ? $values[$item->$colName] : 'Не задано';
                         break;
                     case 'void':
@@ -1144,6 +1148,20 @@ class Model
 
     static function managerFilters()
     {
+        return [];
+    }
+
+    static function validators()
+    {
+        return [];
+    }
+
+    static function validator($name)
+    {
+        $validators = static::validators();
+        if (!empty($validators[$name])) {
+            return $validators[$name];
+        }
         return [];
     }
 
