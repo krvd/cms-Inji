@@ -10,6 +10,74 @@
  */
 class MoneyController extends Controller
 {
+    function transferAction()
+    {
+        $transfer = new Money\Transfer();
+        $form = new Ui\ActiveForm($transfer, 'transfer');
+        $transferId = $form->checkRequest();
+        if ($transferId) {
+            $transfer = Money\Transfer::get($transferId);
+            $transfer->user_id = \Users\User::$cur->id;
+            $transfer->code = Tools::randomString();
+            $transfer->save();
+            $wallets = $this->money->getUserWallets();
+            $block = new Money\Wallet\Block();
+            $block->wallet_id = $wallets[$transfer->currency_id]->id;
+            $block->amount = $transfer->amount;
+            $block->data = 'Money\Transfer:' . $transfer->id;
+            $wallets[$transfer->currency_id]->amount-=$transfer->amount;
+            $wallets[$transfer->currency_id]->save();
+            $block->save();
+            $from = 'noreply@' . INJI_DOMAIN_NAME;
+            $to = \Users\User::$cur->mail;
+            $subject = 'Подтверждение перевода';
+            $text = 'Чтобы подтвержить перевод №' . $transfer->id . ' введите код <b>' . $transfer->code . '</b> на <a href = "http://' . INJI_DOMAIN_NAME . '/money/confirmTransfer/' . $transfer->id . '?code=' . $transfer->code . '">странице</a> перевода';
+            Tools::sendMail($from, $to, $subject, $text);
+            Tools::redirect('/money/confirmTransfer/' . $transfer->id);
+        }
+        $this->view->setTitle('Перевод средств');
+        $this->view->page(['data' => compact('form')]);
+    }
+
+    function confirmTransferAction($transferId = 0)
+    {
+        $transfer = Money\Transfer::get((int) $transferId);
+        if (!$transfer || $transfer->user_id != \Users\User::$cur->id || $transfer->complete || $transfer->canceled) {
+            Tools::redirect('/', 'Такой перевод не найден');
+        }
+        if (!empty($_POST['code'])) {
+            if ($transfer->code != $_POST['code']) {
+                Msg::add('Код не совпадает', 'danger');
+            } else {
+                $transfer->complete = true;
+                $block = Money\Wallet\Block::get('Money\Transfer:' . $transfer->id, 'data');
+                $block->delete();
+                $wallets = $this->money->getUserWallets($transfer->to_user_id);
+                $wallets[$transfer->currency_id]->amount += $transfer->amount;
+                $wallets[$transfer->currency_id]->save();
+                Tools::redirect('/users/cabinet', 'Перевод был успешно завершен', 'success');
+            }
+        }
+        $this->view->setTitle('Подтверждение перевода средств');
+        $this->view->page(['data' => compact('transfer')]);
+    }
+
+    function cancelTransferAction($transferId = 0)
+    {
+        $transfer = Money\Transfer::get((int) $transferId);
+        if (!$transfer || $transfer->user_id != \Users\User::$cur->id || $transfer->complete || $transfer->canceled) {
+            Tools::redirect('/', 'Такой перевод не найден');
+        }
+        $transfer->canceled = true;
+        $block = Money\Wallet\Block::get('Money\Transfer:' . $transfer->id, 'data');
+        $block->delete();
+        $wallets = $this->money->getUserWallets();
+        $wallets[$transfer->currency_id]->amount += $transfer->amount;
+        $wallets[$transfer->currency_id]->save();
+        $transfer->save();
+        Tools::redirect('/users/cabinet', 'Перевод был успешно отменен', 'success');
+    }
+
     function refillAction($currencyId = 0)
     {
         $currency = null;
@@ -30,6 +98,7 @@ class MoneyController extends Controller
             Tools::redirect('/money/merchants/pay/' . $pay->id);
         } else {
             $currencies = Money\Currency::getList(['where' => ['refill', 1], 'forSelect' => true]);
+            $this->view->setTitle('Пополнение счета');
             $this->view->page(['data' => compact('currencies')]);
         }
     }
@@ -82,7 +151,7 @@ class MoneyController extends Controller
                 Tools::redirect('/users/cabinet', 'Обмен был успешно проведен');
             }
         }
-
+        $this->view->setTitle('Обмен валюты');
         $this->view->page(['data' => compact('rates', 'currency', 'targetCurrency', 'wallets')]);
     }
 

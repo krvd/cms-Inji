@@ -88,7 +88,7 @@ class Money extends Module
         $mr->save();
     }
 
-    function getUserWallets($userId = null)
+    function getUserWallets($userId = null, $walletIdasKey = false, $forSelect = false)
     {
         $userId = $userId ? $userId : \Users\User::$cur->id;
         if (!$userId) {
@@ -103,9 +103,9 @@ class Money extends Module
                 $wallet->user_id = $userId;
                 $wallet->currency_id = $currency->id;
                 $wallet->save();
-                $result[$currency->id] = $wallet;
+                $result[$walletIdasKey ? $wallet->id : $currency->id] = $forSelect ? $wallet->name() : $wallet;
             } else {
-                $result[$currency->id] = $wallets[$currency->id];
+                $result[$walletIdasKey ? $wallets[$currency->id]->id : $currency->id] = $forSelect ? $wallets[$currency->id]->name() : $wallets[$currency->id];
             }
         }
         return $result;
