@@ -324,10 +324,6 @@ class DataManager extends \Object
                     }
             }
         } else {
-            if ($colName == 'values') {
-                //var_dump($href)
-                //exit();
-            }
             if (!empty($modelName::$cols[$colName]['view']['type'])) {
                 switch ($modelName::$cols[$colName]['view']['type']) {
                     case 'moduleMethod':

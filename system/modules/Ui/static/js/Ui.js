@@ -9,6 +9,7 @@ function Ui() {
 Ui.prototype.init = function () {
   this.modals = new Modals();
   this.forms = new Forms();
+  this.activeForms = new ActiveForms();
   this.editors = new Editors();
   this.dataManagers = new DataManagers();
   inji.onLoad(function () {
@@ -228,7 +229,7 @@ DataManagers.prototype.get = function (element) {
 }
 DataManagers.prototype.popUp = function (item, params) {
   var code = item;
-  
+
   if (typeof (params.relation) != 'undefined') {
     code += params.relation;
   }
@@ -631,3 +632,78 @@ Forms.prototype.checkAditionals = function (select) {
 Forms.prototype.delRowFromList = function (btn) {
   $(btn).closest('tr').remove();
 };
+function ActiveForms() {
+  this.activeForms = [];
+}
+ActiveForms.prototype.get = function (selector) {
+  var element = inji.get(selector);
+  if (element && element.data('activeFormIndex') !== null) {
+    return this.activeForms[element.data('activeFormIndex')];
+  }
+  this.initial(element);
+};
+ActiveForms.prototype.initial = function (element) {
+  var activeForm = new ActiveForm();
+  this.activeForms.push(activeForm);
+  element.element.setAttribute('activeFormIndex', this.activeForms.length - 1);
+
+  activeForm.modelName = element.data('modelname');
+  activeForm.formName = element.data('formname');
+  activeForm.inputs = element.data('inputs');
+  activeForm.load();
+};
+function ActiveForm() {
+  this.modelName;
+  this.formName;
+  this.inputs = {};
+  this.load = function () {
+    for (var inputName in this.inputs) {
+      var inputParams = this.inputs[inputName];
+      if (this.inputHandlers[inputParams.type]) {
+        var query = '[name="query-ActiveForm_' + this.formName + '[' + this.modelName.replace('\\', '\\\\') + '][' + inputName + ']"]';
+        this.inputHandlers[inputParams.type](inji.get(query), inputName, this)
+      }
+    }
+  };
+  this.inputHandlers = {
+    search: function (element, inputName, activeForm) {
+      element.element.onkeyup = function () {
+        inji.Server.request({
+          url: 'ui/activeForm/search',
+          data: {
+            modelName: activeForm.modelName,
+            formName: activeForm.formName,
+            inputName: inputName,
+            search: this.value
+          },
+          success: function (results) {
+            var inputContainer = element.element.parentNode;
+            var resultsDiv = inputContainer.querySelector('.form-search-results');
+            resultsDiv.innerHTML = '';
+            for (var key in results) {
+              var result = results[key];
+              var resultElement = document.createElement("div");
+              resultElement.setAttribute('objectid', key);
+              resultElement.appendChild(document.createTextNode(result));
+              resultElement.onclick = function () {
+                var value = 0;
+                for (key in this.attributes) {
+                  if (this.attributes[key].name == 'objectid') {
+                    value = this.attributes[key].value;
+                    break;
+                  }
+                }
+                console.log(value);
+                inputContainer.querySelector('[type="hidden"]').value = value;
+                inputContainer.querySelector('[type="text"]').value = this.innerHTML;
+                resultsDiv.innerHTML = '';
+              }
+              resultsDiv.appendChild(resultElement);
+            }
+            resultsDiv.style.display = 'block';
+          }
+        })
+      };
+    }
+  };
+}

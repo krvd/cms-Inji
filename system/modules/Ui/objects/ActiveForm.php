@@ -20,6 +20,7 @@ class ActiveForm extends \Object
     public $header = "";
     public $action = "";
     public $form = [];
+    public $inputs = [];
     public $formName = 'noNameForm';
     public $requestFormName = '';
     public $requestFullFormName = '';
@@ -40,7 +41,7 @@ class ActiveForm extends \Object
             } else {
                 $this->formName = $form;
                 $this->form = \App::$cur->ui->getModelForm($this->modelName, $form);
-                $this->form['inputs'] = $this->getInputs();
+                $this->inputs = $this->getInputs();
             }
         }
         $this->requestFormName = "ActiveForm_{$this->formName}";
@@ -57,11 +58,11 @@ class ActiveForm extends \Object
 
     function getInputs()
     {
-        $inputs = [];
+        $inputs = !empty($this->form['inputs']) ? $this->form['inputs'] : [];
         $modelName = $this->modelName;
         foreach ($this->form['map'] as $row) {
             foreach ($row as $col) {
-                if (!$col) {
+                if (!$col || !empty($inputs[$col])) {
                     continue;
                 }
                 if (strpos($col, 'form:') === 0) {
@@ -77,7 +78,7 @@ class ActiveForm extends \Object
                         $inputs[$col] = new ActiveForm(new $relOptions['model']([ $relOptions['col'] => &$this->model->_params[$modelName::index()]]), $colPath[2]);
                     }
                     $inputs[$col]->parent = $this;
-                } else {
+                } elseif (!empty($modelName::$cols[$col])) {
                     $inputs[$col] = $modelName::$cols[$col];
                 }
             }
@@ -92,6 +93,7 @@ class ActiveForm extends \Object
             return [];
         }
         $modelName = $this->modelName;
+        $successId = 0;
         if (!empty($_POST[$this->requestFormName][$this->modelName])) {
             $request = $_POST[$this->requestFormName][$this->modelName];
             if ($this->model) {
@@ -100,7 +102,8 @@ class ActiveForm extends \Object
                     $presets = array_merge($presets, $this->form['userGroupPreset'][\Users\User::$cur->group_id]);
                 }
                 $afterSave = [];
-                foreach ($this->form['inputs'] as $col => $param) {
+                $error = false;
+                foreach ($this->inputs as $col => $param) {
                     if (!empty($presets[$col])) {
                         continue;
                     }
@@ -118,37 +121,51 @@ class ActiveForm extends \Object
                     $input->modelName = $this->modelName;
                     $input->colName = $col;
                     $input->colParams = $param;
-                    $input->parseRequest($request);
-                }
-
-                foreach ($presets as $col => $preset) {
-                    if (!empty($preset['value'])) {
-                        $this->model->$col = $preset['value'];
-                    } elseif (!empty($preset['userCol'])) {
-                        if (strpos($preset['userCol'], ':')) {
-                            $rel = substr($preset['userCol'], 0, strpos($preset['userCol'], ':'));
-                            $param = substr($preset['userCol'], strpos($preset['userCol'], ':') + 1);
-                            $this->model->$col = \Users\User::$cur->$rel->$param;
-                        } else {
-                            $this->model->$col = \Users\User::$cur->{$preset['userCol']};
-                        }
+                    try {
+                        $input->validate($request);
+                        $input->parseRequest($request);
+                    } catch (\Exception $exc) {
+                        \Msg::add($exc->getMessage(), 'danger');
+                        $error = true;
                     }
                 }
-                \Msg::add($this->model->pk() ? 'Изменения были успешно сохранены' : 'Новый элемент был успешно добавлен', 'success');
-                $this->model->save(!empty($params['dataManagerParams']) ? $params['dataManagerParams'] : []);
-                foreach ($afterSave as $form) {
-                    $form->checkRequest();
-                }
-                if ($ajax) {
-                    \Msg::show();
-                } elseif (!empty($_GET['redirectUrl'])) {
-                    \Tools::redirect($_GET['redirectUrl']);
+                if (!$error) {
+                    foreach ($presets as $col => $preset) {
+                        if (!empty($preset['value'])) {
+                            $this->model->$col = $preset['value'];
+                        } elseif (!empty($preset['userCol'])) {
+                            if (strpos($preset['userCol'], ':')) {
+                                $rel = substr($preset['userCol'], 0, strpos($preset['userCol'], ':'));
+                                $param = substr($preset['userCol'], strpos($preset['userCol'], ':') + 1);
+                                $this->model->$col = \Users\User::$cur->$rel->$param;
+                            } else {
+                                $this->model->$col = \Users\User::$cur->{$preset['userCol']};
+                            }
+                        }
+                    }
+                    if (!empty($this->form['successText'])) {
+                        $text = $this->form['successText'];
+                    } else {
+                        $text = $this->model->pk() ? 'Изменения были успешно сохранены' : 'Новый элемент был успешно добавлен';
+                    }
+                    \Msg::add($text, 'success');
+                    $this->model->save(!empty($params['dataManagerParams']) ? $params['dataManagerParams'] : []);
+                    foreach ($afterSave as $form) {
+                        $form->checkRequest();
+                    }
+                    if ($ajax) {
+                        \Msg::show();
+                    } elseif (!empty($_GET['redirectUrl'])) {
+                        \Tools::redirect($_GET['redirectUrl']);
+                    }
+                    $successId = $this->model->pk();
                 }
             }
             if (!is_array($params) && is_callable($params)) {
                 $params($request);
             }
         }
+        return $successId;
     }
 
     function draw($params = [], $ajax = false)
@@ -158,37 +175,7 @@ class ActiveForm extends \Object
             return [];
         }
         $form = new Form(!empty($this->form['formOptions']) ? $this->form['formOptions'] : []);
-        if ($this->parent === null) {
-            $form->action = $this->action;
-            $form->begin($this->header, ['onsubmit' => $ajax ? 'inji.Ui.forms.submitAjax(this);return false;' : '']);
-        } elseif ($this->header) {
-            echo "<h3>{$this->header}</h3>";
-        }
-        if (empty($this->form['noMapCell'])) {
-            foreach ($this->form['map'] as $row) {
-                $colSize = 12 / count($row);
-                echo "<div class ='row'>";
-                foreach ($row as $col) {
-                    echo "<div class = 'col-sm-{$colSize}'>";
-                    if ($col) {
-                        $this->drawCol($col, $this->form['inputs'][$col], $form, $params);
-                    }
-                    echo '</div>';
-                }
-                echo '</div>';
-            }
-        } else {
-            foreach ($this->form['map'] as $row) {
-                foreach ($row as $col) {
-                    if ($col) {
-                        $this->drawCol($col, $this->form['inputs'][$col], $form, $params);
-                    }
-                }
-            }
-        }
-        if ($this->parent === null) {
-            $form->end($this->model ? ($this->model->pk() ? 'Сохранить' : 'Создать') : 'Отправить');
-        }
+        \App::$cur->view->widget('Ui\ActiveForm', ['form' => $form, 'activeForm' => $this, 'ajax' => $ajax, 'params' => $params]);
     }
 
     function drawCol($colName, $options, $form, $params = [])
@@ -219,7 +206,7 @@ class ActiveForm extends \Object
         }
     }
 
-    static function getOptionsList($inputParams, $params = [], $modelName = false, $aditionalInputNamePrefix = 'aditional')
+    static function getOptionsList($inputParams, $params = [], $modelName = false, $aditionalInputNamePrefix = 'aditional', $options = [])
     {
         $values = [];
         switch ($inputParams['source']) {
@@ -230,14 +217,17 @@ class ActiveForm extends \Object
                 $values = $inputParams['sourceArray'];
                 break;
             case 'method':
-                $values = \App::$cur->$inputParams['module']->$inputParams['method']();
+                if (!empty($inputParams['params'])) {
+                    $values = call_user_func_array([\App::$cur->$inputParams['module'], $inputParams['method']], $inputParams['params']);
+                } else {
+                    $values = \App::$cur->$inputParams['module']->$inputParams['method']();
+                }
                 break;
             case 'relation':
                 if (!$modelName) {
                     return [];
                 }
                 $relation = $modelName::getRelation($inputParams['relation']);
-                $options = [];
                 if (!empty($params['dataManagerParams']['appType'])) {
                     $options['appType'] = $params['dataManagerParams']['appType'];
                 }
@@ -245,14 +235,18 @@ class ActiveForm extends \Object
                 if (class_exists($relation['model'])) {
                     $filters = $relation['model']::managerFilters();
                     if (!empty($filters['getRows']['where'])) {
-                        $options['where'] = $filters['getRows']['where'];
+                        $options['where'][] = $filters['getRows']['where'];
                     }
                     if (!empty($relation['order'])) {
                         $options['order'] = $relation['order'];
                     }
                     $items = $relation['model']::getList($options);
                 }
-                $values = [0 => 'Не задано'];
+                if (!empty($params['noEmptyValue'])) {
+                    $values = [];
+                } else {
+                    $values = [0 => 'Не задано'];
+                }
                 foreach ($items as $key => $item) {
                     if (!empty($inputParams['showCol'])) {
                         $values[$key] = $item->$inputParams['showCol'];

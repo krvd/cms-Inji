@@ -34,3 +34,22 @@ span.nav-toggle-icon{
 .dataManager th.sorted-desc a{
   background-position:0 -56px
 }
+.form-search-results {
+  position: absolute;
+  width:auto;
+  max-height: 200px;
+  overflow-y: auto;
+  background: #fff;
+  z-index: 1000000000000000;
+  border:1px solid #ccc;
+}
+
+.form-search-results>div{
+  padding: 5px;
+  cursor:pointer;
+}
+.form-search-results>div:hover{
+  font-weight: bold;
+  padding: 4px;
+  border:1px solid #ccc;
+}

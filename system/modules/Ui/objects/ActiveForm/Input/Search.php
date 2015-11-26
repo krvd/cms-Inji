@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Select input
+ * Search input
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/
@@ -11,7 +11,7 @@
 
 namespace Ui\ActiveForm\Input;
 
-class Select extends \Ui\ActiveForm\Input
+class Search extends \Ui\ActiveForm\Input
 {
     function draw()
     {
@@ -23,6 +23,7 @@ class Select extends \Ui\ActiveForm\Input
             'disabled' => $this->readOnly(),
             'values' => \Ui\ActiveForm::getOptionsList($this->colParams, $this->activeFormParams, $this->activeForm->modelName, $inputName)
         ];
+
         if (!empty($inputOptions['values'][$this->activeForm->model->{$this->colName}]) &&
                 is_array($inputOptions['values'][$this->activeForm->model->{$this->colName}]) &&
                 !empty($inputOptions['values'][$this->activeForm->model->{$this->colName}]['input'])) {
@@ -37,7 +38,7 @@ class Select extends \Ui\ActiveForm\Input
             $this->form->input('hidden', $inputName, '', $inputOptions);
             return true;
         }
-        $this->form->input('select', $inputName, $inputLabel, $inputOptions);
+        $this->form->input('search', $inputName, $inputLabel, $inputOptions);
         return true;
     }
 

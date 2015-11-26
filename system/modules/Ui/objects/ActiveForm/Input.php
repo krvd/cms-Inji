@@ -44,11 +44,12 @@ class Input extends \Object
 
     function parseRequest($request)
     {
+        $colName = empty($this->colParams['col']) ? $this->colName : $this->colParams['col'];
         if (isset($request[$this->colName])) {
-            $this->activeForm->model->{$this->colName} = $request[$this->colName];
+            $this->activeForm->model->{$colName} = $request[$this->colName];
         } else {
-            $this->activeForm->model->{$this->colName} = 0;
-            $this->activeForm->model->{$this->colName} = '';
+            $this->activeForm->model->{$colName} = 0;
+            $this->activeForm->model->{$colName} = '';
         }
     }
 
@@ -91,12 +92,24 @@ class Input extends \Object
     function colLabel()
     {
         $modelName = $this->modelName;
-        return ($this->activeForm->model && !empty($modelName::$labels[$this->colName])) ? $modelName::$labels[$this->colName] : $this->colName;
+        return ($this->activeForm->model && !empty($modelName::$labels[$this->colName])) ? $modelName::$labels[$this->colName] : (!empty($this->colParams['label']) ? $this->colParams['label'] : $this->colName);
     }
 
     function readOnly()
     {
         return !empty($this->activeForm->form['userGroupReadonly'][\Users\User::$cur->group_id]) && in_array($this->colName, $this->activeForm->form['userGroupReadonly'][\Users\User::$cur->group_id]);
+    }
+
+    function validate($request)
+    {
+        if (empty($request[$this->colName]) && $this->colParams['required']) {
+            throw new \Exception('Вы не заполнили: ' . $this->colLabel());
+        }
+        if (!empty($this->colParams['validator'])) {
+            $modelName = $this->modelName;
+            $validator = $modelName::validator($this->colParams['validator']);
+            $validator($this->activeForm, $request);
+        }
     }
 
 }
