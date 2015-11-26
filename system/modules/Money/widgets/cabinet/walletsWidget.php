@@ -9,3 +9,4 @@ foreach ($wallets as $wallet) {
 ?>
 <a href ='/money/refill'>Пополнить</a>
 <a href ='/money/exchange'>Обменять</a>
+<a href ='/money/transfer'>Перевести</a>
