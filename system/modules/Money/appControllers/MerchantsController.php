@@ -45,7 +45,7 @@ class MerchantsController extends Controller
         }
         $request = new Money\Merchant\Request([
             'get' => json_encode($_GET),
-            'post' => json_encode($postData),
+            'post' => json_encode($_POST),
             'status' => $status,
             'system' => $system,
             'merchant_id' => $merchant ? $merchant->id : 0,
