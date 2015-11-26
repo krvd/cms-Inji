@@ -20,10 +20,6 @@ class Value extends \Migrations\Parser
         $options = $this->param->options ? json_decode($this->param->options, true) : [];
         $modelName = get_class($this->model);
         $cols = $modelName::$cols;
-        if (get_class($this->model) == 'Ecommerce\Item\Param') {
-            //var_dump($cols);
-            //exit();
-        }
         $value = (string) $this->reader;
         if (!empty($cols[$this->param->value])) {
             $col = $cols[$this->param->value];
