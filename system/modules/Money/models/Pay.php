@@ -8,7 +8,7 @@ class Pay extends \Model
     {
         return [
             'currency' => [
-                'model' => 'Money\currency',
+                'model' => 'Money\Currency',
                 'col' => 'currency_id'
             ],
             'status' => [
