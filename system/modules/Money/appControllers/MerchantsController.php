@@ -28,6 +28,13 @@ class MerchantsController extends Controller
                 $postData[$key] = $text;
             }
         }
+        foreach ($_GET as $key => $text) {
+            if (!is_array($text) && !mb_detect_encoding($text, array('UTF-8'), TRUE)) {
+                $postData[$key] = iconv('Windows-1251', 'UTF-8', $text);
+            } else {
+                $postData[$key] = $text;
+            }
+        }
         $merchant = false;
 
         if ($system) {
