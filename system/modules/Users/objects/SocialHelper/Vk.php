@@ -81,7 +81,7 @@ class Vk extends \Users\SocialHelper
                 $user->role_id = 2;
                 $invite_code = (!empty($_POST['invite_code']) ? $_POST['invite_code'] : ((!empty($_COOKIE['invite_code']) ? $_COOKIE['invite_code'] : ((!empty($_GET['invite_code']) ? $_GET['invite_code'] : '')))));
                 if (!empty($invite_code)) {
-                    $invite = Users\User\Invite::get($invite_code, 'code');
+                    $invite = \Users\User\Invite::get($invite_code, 'code');
                     $inveiteError = false;
                     if (!$invite) {
                         Msg::add('Такой код пришлашения не найден', 'danger');
