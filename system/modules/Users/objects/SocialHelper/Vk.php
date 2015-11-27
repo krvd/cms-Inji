@@ -69,38 +69,38 @@ class Vk extends \Users\SocialHelper
                 $userSocial->delete();
             }
             if (!\Users\User::$cur->id) {
-                $user = new \Users\User();
+                $user = false;
                 if (!empty($result['email'])) {
-                    $mailFind = \Users\User::get($result['email'], 'mail');
-                    if ($mailFind) {
-                        \Tools::redirect('/', 'E-mail ' . $result['email'] . ' уже зарегистрирован в системе, но к данному аккаунту нет привязки вашей страницы в соц сети. Вход через соц сеть невозможен', 'danger');
-                    }
+                    $user = \Users\User::get($result['email'], 'mail');
+                }
+                if (!$user) {
+                    $user = new \Users\User();
+                    $user->group_id = 2;
+                    $user->role_id = 2;
                     $user->login = $user->mail = $result['email'];
+                    $invite_code = (!empty($_POST['invite_code']) ? $_POST['invite_code'] : ((!empty($_COOKIE['invite_code']) ? $_COOKIE['invite_code'] : ((!empty($_GET['invite_code']) ? $_GET['invite_code'] : '')))));
+                    if (!empty($invite_code)) {
+                        $invite = \Users\User\Invite::get($invite_code, 'code');
+                        $inveiteError = false;
+                        if (!$invite) {
+                            Msg::add('Такой код пришлашения не найден', 'danger');
+                            $inveiteError = true;
+                        }
+                        if ($invite->limit && !($invite->limit - $invite->count)) {
+                            Msg::add('Лимит приглашений для данного кода исчерпан', 'danger');
+                            $inveiteError = true;
+                        }
+                        if (!$inveiteError) {
+                            $user->parent_id = $invite->user_id;
+                            $invite->count++;
+                            $invite->save();
+                        }
+                    }
+                    $user->save();
+                    $userInfo = new \Users\Info();
+                    $userInfo->user_id = $user->id;
+                    $userInfo->save();
                 }
-                $user->group_id = 2;
-                $user->role_id = 2;
-                $invite_code = (!empty($_POST['invite_code']) ? $_POST['invite_code'] : ((!empty($_COOKIE['invite_code']) ? $_COOKIE['invite_code'] : ((!empty($_GET['invite_code']) ? $_GET['invite_code'] : '')))));
-                if (!empty($invite_code)) {
-                    $invite = \Users\User\Invite::get($invite_code, 'code');
-                    $inveiteError = false;
-                    if (!$invite) {
-                        Msg::add('Такой код пришлашения не найден', 'danger');
-                        $inveiteError = true;
-                    }
-                    if ($invite->limit && !($invite->limit - $invite->count)) {
-                        Msg::add('Лимит приглашений для данного кода исчерпан', 'danger');
-                        $inveiteError = true;
-                    }
-                    if (!$inveiteError) {
-                        $user->parent_id = $invite->user_id;
-                        $invite->count++;
-                        $invite->save();
-                    }
-                }
-                $user->save();
-                $userInfo = new \Users\Info();
-                $userInfo->user_id = $user->id;
-                $userInfo->save();
             } else {
                 $user = \Users\User::$cur;
             }
@@ -119,7 +119,7 @@ class Vk extends \Users\SocialHelper
             if (!$user->info->sex && !empty($userDetail['response'][0]['sex'])) {
                 $user->info->sex = $userDetail['response'][0]['sex'] == 2 ? 1 : ($userDetail['response'][0]['sex'] == 2 ? 1 : 0);
             }
-            if($user->info->bday == '0000-00-00' && !empty($userDetail['response'][0]['bdate'])){
+            if ($user->info->bday == '0000-00-00' && !empty($userDetail['response'][0]['bdate'])) {
                 $user->info->bday = substr_count($userDetail['response'][0]['bdate'], '.') == 2 ? \DateTime::createFromFormat('d.m.Y', $userDetail['response'][0]['bdate'])->format('Y-m-d') : (substr_count($userDetail['response'][0]['bdate'], '.') == 1 ? \DateTime::createFromFormat('d.m', $userDetail['response'][0]['bdate'])->format('Y-m-1') : '0000-00-00');
             }
             $user->info->save();
