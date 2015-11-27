@@ -102,7 +102,7 @@ class Input extends \Object
 
     function validate($request)
     {
-        if (empty($request[$this->colName]) && $this->colParams['required']) {
+        if (empty($request[$this->colName]) && !empty($this->colParams['required'])) {
             throw new \Exception('Вы не заполнили: ' . $this->colLabel());
         }
         if (!empty($this->colParams['validator'])) {
