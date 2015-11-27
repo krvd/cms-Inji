@@ -49,11 +49,23 @@ class Cart extends \Model
                 'model' => 'Ecommerce\Card\Item',
                 'col' => 'card_item_id'
             ],
-            'pay' => [
-                'model' => 'Merchants\Pay',
-                'col' => 'pay_id'
-            ]
         ];
+    }
+
+    function beforeDelete()
+    {
+        foreach ($this->cartItems as $cartItem) {
+            $cartItem->delete();
+        }
+        foreach ($this->infos as $info) {
+            $info->delete();
+        }
+        foreach ($this->extras as $extra) {
+            $extra->delete();
+        }
+        foreach ($this->events as $event) {
+            $event->delete();
+        }
     }
 
     static $labels = [
@@ -120,7 +132,7 @@ class Cart extends \Model
             'preSort' => [
                 'complete_data' => 'desc'
             ],
-            'rowButtonsWidget'=>'Ecommerce\cart/adminButtons'
+            'rowButtonsWidget' => 'Ecommerce\cart/adminButtons'
         ]
     ];
     static $forms = [
