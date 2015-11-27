@@ -85,7 +85,7 @@ class Item extends \Model
         'item_id' => 'Товар',
         'item_offer_price_id' => 'Цена',
         'count' => 'Количество',
-        'cart_id' => 'Корзина'
+        'cart_id' => 'Корзина',
     ];
     static $cols = [
         'item_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'item'],
@@ -99,6 +99,7 @@ class Item extends \Model
             'cols' => [
                 'item_id',
                 'item_offer_price_id',
+                'price:currency' => ['label' => 'Валюта'],
                 'count',
             ],
         ],
