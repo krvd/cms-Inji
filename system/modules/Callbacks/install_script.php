@@ -35,6 +35,7 @@ return function ($step = NULL, $params = array()) {
         'callback_user_id' => 'int(11) UNSIGNED NOT NULL',
         'callback_original_url' => 'text NOT NULL',
         'callback_text' => 'text NOT NULL',
+        'callback_weight' => 'int(11) UNSIGNED NOT NULL',
         'callback_tree_path' => 'TEXT NOT NULL',
         'callback_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
     ]);

@@ -19,7 +19,8 @@ class Callback extends \Model
         'callback_type_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'type'],
         'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
         'text' => ['type' => 'html'],
-        'date_create' => ['type' => 'dateTime',]
+        'weight' => ['type' => 'number'],
+        'date_create' => ['type' => 'dateTime']
     ];
     public static $labels = [
         'name' => 'Имя',
