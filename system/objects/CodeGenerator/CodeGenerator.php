@@ -39,8 +39,6 @@ class CodeGenerator
 
         try {
             $stmts = $parser->parse($code);
-            //var_dump($stmts);
-
             $class = new CodeGenerator\ClassGenerator();
             $class->name = $stmts[0]->name;
             $class->extends = implode(',', $stmts[0]->extends->parts);
