@@ -35,6 +35,15 @@ class Users extends Module
 
     function logOut($redirect = true)
     {
+        if (!empty($_COOKIE[$this->cookiePrefix . "_user_session_hash"]) && !empty($_COOKIE[$this->cookiePrefix . "_user_id"])) {
+            $session = Users\Session::get([
+                        ['user_id', $_COOKIE[$this->cookiePrefix . "_user_id"]],
+                        ['hash', $_COOKIE[$this->cookiePrefix . "_user_session_hash"]]
+            ]);
+            if($session){
+                $session->delete();
+            }
+        }
         if (!headers_sent()) {
             setcookie($this->cookiePrefix . "_user_session_hash", '', 0, "/");
             setcookie($this->cookiePrefix . "_user_id", '', 0, "/");
