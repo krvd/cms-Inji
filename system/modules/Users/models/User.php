@@ -154,10 +154,10 @@ class User extends \Model
         foreach ($sessions as $session) {
             $session->delete();
         }
-        /* $socials = Social::getList(['where' => ['user_id' , $this->id]]);
-          foreach ($socials as $social) {
-          $social->delete();
-          } */
+        $socials = Social::getList(['where' => ['user_id', $this->id]]);
+        foreach ($socials as $social) {
+            $social->delete();
+        }
     }
 
 }
