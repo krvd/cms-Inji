@@ -63,7 +63,9 @@ class Vk extends \Users\SocialHelper
         $userSocial = \Users\User\Social::get([['uid', $result['user_id']], ['social_id', $social->id]]);
         if ($userSocial && $userSocial->user) {
             \App::$cur->users->newSession($userSocial->user);
-            \Tools::redirect('/');
+            if (!empty(\App::$cur->users->config['loginUrl'][\App::$cur->type])) {
+                \Tools::redirect(\App::$cur->users->config['loginUrl'][\App::$cur->type]);
+            }
         } else {
             if ($userSocial && !$userSocial->user) {
                 $userSocial->delete();
