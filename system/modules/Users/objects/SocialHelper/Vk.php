@@ -25,7 +25,7 @@ class Vk extends \Users\SocialHelper
                 'scope' => 'email',
                 'response_type' => 'code',
                 'display' => 'page',
-                'redirect_uri' => 'http://' . idn_to_utf8(INJI_DOMAIN_NAME) . '/users/social/auth/vk'
+                'redirect_uri' => 'http://' . INJI_DOMAIN_NAME . '/users/social/auth/vk'
             ];
             \Tools::redirect("https://oauth.vk.com/authorize?" . http_build_query($query));
         }
@@ -36,7 +36,7 @@ class Vk extends \Users\SocialHelper
             'client_id' => $config['appId'],
             'client_secret' => $config['secret'],
             'code' => $_GET['code'],
-            'redirect_uri' => 'http://' . idn_to_utf8(INJI_DOMAIN_NAME) . '/users/social/auth/vk'
+            'redirect_uri' => 'http://' . INJI_DOMAIN_NAME . '/users/social/auth/vk'
         ];
         $result = @file_get_contents("https://oauth.vk.com/access_token?" . http_build_query($query));
         if ($result === false) {
@@ -82,34 +82,47 @@ class Vk extends \Users\SocialHelper
                 $invite_code = (!empty($_POST['invite_code']) ? $_POST['invite_code'] : ((!empty($_COOKIE['invite_code']) ? $_COOKIE['invite_code'] : ((!empty($_GET['invite_code']) ? $_GET['invite_code'] : '')))));
                 if (!empty($invite_code)) {
                     $invite = Users\User\Invite::get($invite_code, 'code');
+                    $inveiteError = false;
                     if (!$invite) {
                         Msg::add('Такой код пришлашения не найден', 'danger');
-                        return false;
+                        $inveiteError = true;
                     }
                     if ($invite->limit && !($invite->limit - $invite->count)) {
                         Msg::add('Лимит приглашений для данного кода исчерпан', 'danger');
-                        return false;
+                        $inveiteError = true;
                     }
-                    $user->parent_id = $invite->user_id;
-                    $invite->count++;
-                    $invite->save();
+                    if (!$inveiteError) {
+                        $user->parent_id = $invite->user_id;
+                        $invite->count++;
+                        $invite->save();
+                    }
                 }
                 $user->save();
                 $userInfo = new \Users\Info();
                 $userInfo->user_id = $user->id;
-                $userInfo->agency_id = 59;
-                if (!empty($userDetail['response'][0]['photo_max_orig'])) {
-                    $userInfo->photo_file_id = \App::$cur->files->uploadFromUrl($userDetail['response'][0]['photo_max_orig']);
-                }
-                $userInfo->first_name = $userDetail['response'][0]['first_name'];
-                $userInfo->last_name = $userDetail['response'][0]['last_name'];
-                $userInfo->city = $userDetail['response'][0]['home_town'];
-                $userInfo->sex = $userDetail['response'][0]['sex'] == 2 ? 1 : ($userDetail['response'][0]['sex'] == 2 ? 1 : 0);
-                $userInfo->bday = substr_count($userDetail['response'][0]['bdate'], '.') == 2 ? \DateTime::createFromFormat('d.m.Y', $userDetail['response'][0]['bdate'])->format('Y-m-d') : (substr_count($userDetail['response'][0]['bdate'], '.') == 1 ? \DateTime::createFromFormat('d.m', $userDetail['response'][0]['bdate'])->format('Y-m-1') : '0000-00-00');
                 $userInfo->save();
             } else {
                 $user = \Users\User::$cur;
             }
+            if (!$user->info->photo_file_id && !empty($userDetail['response'][0]['photo_max_orig'])) {
+                $user->info->photo_file_id = \App::$cur->files->uploadFromUrl($userDetail['response'][0]['photo_max_orig']);
+            }
+            if (!$user->info->first_name && !empty($userDetail['response'][0]['first_name'])) {
+                $user->info->first_name = $userDetail['response'][0]['first_name'];
+            }
+            if (!$user->info->last_name && !empty($userDetail['response'][0]['last_name'])) {
+                $user->info->last_name = $userDetail['response'][0]['last_name'];
+            }
+            if (!$user->info->city && !empty($userDetail['response'][0]['home_town'])) {
+                $user->info->city = $userDetail['response'][0]['home_town'];
+            }
+            if (!$user->info->sex && !empty($userDetail['response'][0]['sex'])) {
+                $user->info->sex = $userDetail['response'][0]['sex'] == 2 ? 1 : ($userDetail['response'][0]['sex'] == 2 ? 1 : 0);
+            }
+            if($user->info->bday == '0000-00-00' && !empty($userDetail['response'][0]['bdate'])){
+                $user->info->bday = substr_count($userDetail['response'][0]['bdate'], '.') == 2 ? \DateTime::createFromFormat('d.m.Y', $userDetail['response'][0]['bdate'])->format('Y-m-d') : (substr_count($userDetail['response'][0]['bdate'], '.') == 1 ? \DateTime::createFromFormat('d.m', $userDetail['response'][0]['bdate'])->format('Y-m-1') : '0000-00-00');
+            }
+            $user->info->save();
             $userSocial = new \Users\User\Social();
             $userSocial->uid = $result['user_id'];
             $userSocial->social_id = $social->id;
