@@ -2,5 +2,5 @@
 <?php
 $form = new Ui\ActiveForm(Users\User::$cur, 'profile');
 $form->header = false;
-$form->checkRequest();
+$form->checkRequest([], true);
 $form->draw();
