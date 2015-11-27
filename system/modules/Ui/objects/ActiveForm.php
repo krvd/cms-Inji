@@ -143,12 +143,15 @@ class ActiveForm extends \Object
                             }
                         }
                     }
-                    if (!empty($this->form['successText'])) {
-                        $text = $this->form['successText'];
-                    } else {
-                        $text = $this->model->pk() ? 'Изменения были успешно сохранены' : 'Новый элемент был успешно добавлен';
+                    if (!$this->parent) {
+                        if (!empty($this->form['successText'])) {
+                            $text = $this->form['successText'];
+                        } else {
+                            $text = $this->model->pk() ? 'Изменения были успешно сохранены' : 'Новый элемент был успешно добавлен';
+                        }
+                        \Msg::add($text, 'success');
                     }
-                    \Msg::add($text, 'success');
+                    
                     $this->model->save(!empty($params['dataManagerParams']) ? $params['dataManagerParams'] : []);
                     foreach ($afterSave as $form) {
                         $form->checkRequest();
