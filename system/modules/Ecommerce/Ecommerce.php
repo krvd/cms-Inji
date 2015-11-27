@@ -70,13 +70,13 @@ class Ecommerce extends Module
         return $userAdds;
     }
 
-    function getCurCart()
+    function getCurCart($create = true)
     {
         $cart = false;
         if (!empty($_SESSION['cart']['cart_id'])) {
             $cart = Ecommerce\Cart::get((int) $_SESSION['cart']['cart_id']);
         }
-        if (!$cart) {
+        if (!$cart && $create) {
             $cart = new Ecommerce\Cart();
             $cart->cart_status_id = 1;
             $cart->user_id = Users\User::$cur->id;
@@ -347,7 +347,7 @@ class Ecommerce extends Module
 
     function bonusTrigger($event)
     {
-        
+
         $cart = $event['eventObject'];
         foreach ($cart->cartItems as $cartItem) {
             foreach ($cartItem->price->offer->bonuses as $bonus) {
