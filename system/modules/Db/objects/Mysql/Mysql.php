@@ -83,7 +83,7 @@ class Mysql extends \Object
         return (bool) $query->query("SHOW TABLES FROM `{$this->db_name}` LIKE '{$this->table_prefix}{$tableName}'")->getArray();
     }
 
-    function add_col($table = false, $name = false, $param = 'TEXT NOT NULL')
+    function addCol($table = false, $name = false, $param = 'TEXT NOT NULL')
     {
         if (!$table || !$name) {
             return false;
@@ -95,7 +95,7 @@ class Mysql extends \Object
         return $query->query("ALTER TABLE `{$this->db_name}`.`{$this->table_prefix}{$table}` ADD `{$name}` {$param}");
     }
 
-    function del_col($table = false, $name = false)
+    function delCol($table = false, $name = false)
     {
         if (!$table || !$name) {
             return false;

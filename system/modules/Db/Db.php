@@ -52,6 +52,9 @@ class Db extends Module
 
         return false;
     }
+    function newQuery(){
+        return new $this->QueryClassName($this->connection);
+    }
 
     function __get($name)
     {
@@ -59,7 +62,7 @@ class Db extends Module
             return $this->connection->$name;
         }
         if (!is_object($this->curQuery)) {
-            $this->curQuery = new $this->QueryClassName($this->connection);
+            $this->curQuery = $this->newQuery();
         }
         if (isset($this->curQuery->$name)) {
             return $this->curQuery->$name;
@@ -72,7 +75,7 @@ class Db extends Module
             return $this->connection->$name = $value;
         }
         if (!is_object($this->curQuery)) {
-            $this->curQuery = new $this->QueryClassName($this->connection);
+            $this->curQuery = $this->newQuery();
         }
         if (isset($this->curQuery->$name)) {
             return $this->curQuery->$name = $value;
