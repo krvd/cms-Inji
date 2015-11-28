@@ -172,6 +172,7 @@ class Module
     {
         $moduleName = $moduleName ? $moduleName : get_called_class();
         $modulePaths = Module::getModulePaths($moduleName);
+        $modulePaths['templatePath'] = App::$cur->view->template->path.'/modules/'.ucfirst($moduleName);
         $snippets = [];
         foreach ($modulePaths as $path) {
             if (file_exists($path . $dir . '/' . $snippetsPath)) {
@@ -192,7 +193,8 @@ class Module
     {
         $moduleName = $moduleName ? $moduleName : $this->moduleName;
         $extensions = [];
-        foreach (Module::getInstalled(App::$cur) as $module) {
+        $modules = Module::getInstalled(App::$cur);
+        foreach ($modules as $module) {
             $method = 'get' . ucfirst($extensionType);
             $extensions = array_merge($extensions, Module::{$method}($request, $module, "/extensions/{$moduleName}/" . $extensionType));
         }

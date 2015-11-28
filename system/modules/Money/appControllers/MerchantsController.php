@@ -13,8 +13,8 @@ class MerchantsController extends Controller
             'callback_method' => ''
                 ], null, [
             'description' => 'Тестовый платеж',
-            'success' => 'http://' . idn_to_utf8(INJI_DOMAIN_NAME) . '/',
-            'false' => 'http://' . idn_to_utf8(INJI_DOMAIN_NAME) . '/'
+            'success' => 'http://' . INJI_DOMAIN_NAME . '/',
+            'false' => 'http://' . INJI_DOMAIN_NAME . '/'
         ]);
     }
 
@@ -100,8 +100,8 @@ class MerchantsController extends Controller
         }
         $merchantOptions = [
             'description' => $pay->description ? '#' . $pay->id . ' ' . $pay->description : 'Оплата счета №' . $pay->id . ' на сайте: ' . idn_to_utf8(INJI_DOMAIN_NAME),
-            'success' => 'http://' . idn_to_utf8(INJI_DOMAIN_NAME) . '/',
-            'false' => 'http://' . idn_to_utf8(INJI_DOMAIN_NAME) . '/'
+            'success' => 'http://' . INJI_DOMAIN_NAME . '/',
+            'false' => 'http://' . INJI_DOMAIN_NAME . '/'
         ];
 
         $this->Money->goToMerchant($pay, $merchant, $method, $merchantOptions);

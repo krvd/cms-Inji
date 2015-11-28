@@ -24,8 +24,10 @@
       if (empty($activeSection) || empty($sections[$activeSection]['fullWidget'])) {
           foreach ($sections as $section) {
               if (!empty($section['smallWidget'])) {
+                  $widgetName = is_array($section['smallWidget']) ? $section['smallWidget']['widget'] : $section['smallWidget'];
+                  $widgetSize = !empty($section['smallWidget']['size']) ? $section['smallWidget']['size'] : 1;
                   ?>
-                  <div class="col-sm-4"><?= $this->widget($section['smallWidget']); ?></div>
+                  <div class="col-sm-<?= $widgetSize * 4; ?>" style="margin-bottom: 10px;"><?= $this->widget($widgetName); ?></div>
                   <?php
               }
           }

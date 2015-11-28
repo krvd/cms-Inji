@@ -40,7 +40,7 @@ class UserForms extends \Module
                 }
                 if ($text) {
                     $text = 'Дата получения по серверному времени: ' . date('Y-m-d H:i:s') . '<br />Заполненые поля:<br />' . $text;
-                    Tools::sendMail('noreply@' . idn_to_utf8(INJI_DOMAIN_NAME), App::$cur->config['site']['email'], $form->name, $text);
+                    Tools::sendMail('noreply@' . INJI_DOMAIN_NAME, App::$cur->config['site']['email'], $form->name, $text);
                 }
             }
             Tools::redirect($_SERVER['REQUEST_URI'], 'Ваша форма была успешно отправлена', 'success');

@@ -17,7 +17,7 @@ if (!empty($_POST['partnerInvite']['email'])) {
     $invite->save();
     $text = "<h3>{$title}</h3>";
     $text .= '<p>Чтобы принять приглашение, перейдите по <a href = "http://' . idn_to_utf8(INJI_DOMAIN_NAME) . '/users/registration?invite_code=' . $inviteCode . '">этой ссылке</a> и завершите процедуру регистрации</p>';
-    Tools::sendMail('noreply@' . idn_to_utf8(INJI_DOMAIN_NAME), $_POST['partnerInvite']['email'], $title, $text);
+    Tools::sendMail('noreply@' . INJI_DOMAIN_NAME, $_POST['partnerInvite']['email'], $title, $text);
     Tools::redirect(null, 'Приглашение было отправлено', 'success');
 }
 $ii = 8;

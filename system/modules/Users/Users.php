@@ -95,7 +95,7 @@ class Users extends Module
         $hash = $user->id . '_' . Tools::randomString(50);
         $passre = new Users\Passre(['user_id' => $user->id, 'status' => 1, 'hash' => $hash]);
         $passre->save();
-        Tools::sendMail('noreply@' . idn_to_utf8(INJI_DOMAIN_NAME), $user_mail, 'Восстановление пароля на сайте ' . idn_to_utf8(INJI_DOMAIN_NAME), 'Было запрошено восстановление пароля на сайте ' . idn_to_utf8(INJI_DOMAIN_NAME) . '<br />для продолжения восстановления пароля перейдите по ссылке: <a href = "http://' . idn_to_utf8(INJI_DOMAIN_NAME) . '/?passrecont=1&hash=' . $hash . '">' . idn_to_utf8(INJI_DOMAIN_NAME) . '/?passrecont=1&hash=' . $hash . '</a>');
+        Tools::sendMail('noreply@' . INJI_DOMAIN_NAME, $user_mail, 'Восстановление пароля на сайте ' . idn_to_utf8(INJI_DOMAIN_NAME), 'Было запрошено восстановление пароля на сайте ' . idn_to_utf8(INJI_DOMAIN_NAME) . '<br />для продолжения восстановления пароля перейдите по ссылке: <a href = "http://' . idn_to_utf8(INJI_DOMAIN_NAME) . '/?passrecont=1&hash=' . $hash . '">' . idn_to_utf8(INJI_DOMAIN_NAME) . '/?passrecont=1&hash=' . $hash . '</a>');
         Tools::redirect('/', 'На указанный почтовый ящик была выслана инструкция по восстановлению пароля', 'success');
     }
 
@@ -113,7 +113,7 @@ class Users extends Module
             $user->pass = $this->hashpass($pass);
             $user->save();
             $this->autorization($user->mail, $user->pass, 'mail');
-            Tools::sendMail('noreply@' . idn_to_utf8(INJI_DOMAIN_NAME), $user->mail, 'Новый пароль на сайте ' . idn_to_utf8(INJI_DOMAIN_NAME), 'Было запрошено восстановление пароля на сайте ' . idn_to_utf8(INJI_DOMAIN_NAME) . '<br />Ваш новый пароль: ' . $pass);
+            Tools::sendMail('noreply@' . INJI_DOMAIN_NAME, $user->mail, 'Новый пароль на сайте ' . idn_to_utf8(INJI_DOMAIN_NAME), 'Было запрошено восстановление пароля на сайте ' . idn_to_utf8(INJI_DOMAIN_NAME) . '<br />Ваш новый пароль: ' . $pass);
             Tools::redirect('/', 'На указанный почтовый ящик был выслан новый пароль', 'success');
         }
     }
@@ -273,7 +273,7 @@ class Users extends Module
             $this->autorization($user_mail, $pass, 'mail');
         }
 
-        $from = 'noreply@' . idn_to_utf8(INJI_DOMAIN_NAME);
+        $from = 'noreply@' . INJI_DOMAIN_NAME;
         $to = $user_mail;
         $subject = 'Регистрация на сайте ' . idn_to_utf8(INJI_DOMAIN_NAME);
         $text = 'Вы были зарегистрированы на сайте ' . idn_to_utf8(INJI_DOMAIN_NAME) . '<br />для входа используйте ваш почтовый ящик в качестве логина и пароль: ' . $pass;

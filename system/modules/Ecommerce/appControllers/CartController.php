@@ -114,7 +114,7 @@ class CartController extends Controller
                     if (!empty(\App::$cur->ecommerce->config['notify_mail'])) {
                         $text = 'Перейдите в админ панель чтобы просмотреть новый заказ <a href = "http://' . idn_to_utf8(INJI_DOMAIN_NAME) . '/admin/ecommerce/Cart">Админ панель</a>';
                         $title = 'Новый заказ в интернет магазине на сайте ' . idn_to_utf8(INJI_DOMAIN_NAME);
-                        \Tools::sendMail('noreply@' . idn_to_utf8(INJI_DOMAIN_NAME), \App::$cur->ecommerce->config['notify_mail'], $title, $text);
+                        \Tools::sendMail('noreply@' . INJI_DOMAIN_NAME, \App::$cur->ecommerce->config['notify_mail'], $title, $text);
                     }
                     if ($this->notifications) {
                         $notification = new Notifications\Notification();
