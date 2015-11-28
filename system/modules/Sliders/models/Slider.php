@@ -23,7 +23,7 @@ class Slider extends \Model
         'date_create' => [
             'type' => 'dateTime'
         ],
-        'slides' => [
+        'slide' => [
             'type' => 'select',
             'source' => 'relation',
             'relation' => 'slides'
@@ -32,7 +32,7 @@ class Slider extends \Model
     public static $labels = [
         'name' => 'Название',
         'date_create' => 'Дата создания слайдера',
-        'slides' => 'Слайды',
+        'slide' => 'Слайды',
         'description' => 'Описание',
         'user_id' => 'Создатель',
         'image_file_id' => 'Изображение',
@@ -41,7 +41,7 @@ class Slider extends \Model
         'manager' => [
             'name' => 'Слайдеры',
             'cols' => [
-                'name', 'slides', 'user_id', 'date_create'
+                'name', 'slide', 'user_id', 'date_create'
             ]
         ]
     ];
