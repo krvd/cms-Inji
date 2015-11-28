@@ -49,6 +49,11 @@ class Cart extends \Model
                 'model' => 'Ecommerce\Card\Item',
                 'col' => 'card_item_id'
             ],
+            'pays' => [
+                'type' => 'many',
+                'model' => 'Money\Pay',
+                'col' => 'data'
+            ]
         ];
     }
 
@@ -85,6 +90,7 @@ class Cart extends \Model
         'extra' => 'Дополнительно',
         'card_item_id' => 'Дисконтная карта',
         'info' => 'Информация',
+        'pay' => 'Счета оплаты',
     ];
     static $cols = [
         'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
@@ -102,6 +108,7 @@ class Cart extends \Model
         'paytype_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'payType'],
         'card_item_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'card'],
         'extra' => ['type' => 'dataManager', 'relation' => 'extras'],
+        'pay' => ['type' => 'dataManager', 'relation' => 'pays'],
     ];
     static $dataManagers = [
         'manager' => [
@@ -113,6 +120,7 @@ class Cart extends \Model
                 'cart_status_id',
                 'delivery_id',
                 'payed',
+                'pay',
                 'complete_data',
             ],
             'sortable' => [
@@ -144,7 +152,8 @@ class Cart extends \Model
                 ['warehouse_block', 'complete_data'],
                 ['payed'],
                 ['items'],
-                ['extra']
+                ['extra'],
+                ['pay']
             ]
         ],
     ];

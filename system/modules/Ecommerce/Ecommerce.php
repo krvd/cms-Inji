@@ -11,7 +11,14 @@ class Ecommerce extends Module
     {
         $cart = Ecommerce\Cart::get($data['pay']->data);
         if ($cart) {
-            $cart->payed = true;
+            $payed = true;
+            foreach ($cart->pays as $pay) {
+                if (!$pay->pay_status_id != 2) {
+                    $payed = false;
+                    break;
+                }
+            }
+            $cart->payed = $payed;
             $cart->save();
         }
     }
