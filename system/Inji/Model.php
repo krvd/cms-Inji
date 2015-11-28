@@ -1163,14 +1163,18 @@ class Model
                     $options = [$relation['col'], $this->pk()];
                     break;
                 default:
-                    if ($this->$relation['col'] === NULL)
-                        return NULL;
+                    if ($this->$relation['col'] === NULL) {
+                        return null;
+                    }
                     $getType = 'get';
                     $options = $this->$relation['col'];
                     $getParams['appType'] = $this->appType;
             }
             if (!empty($params['count'])) {
-                return $relation['model']::getCount($options);
+                if (class_exists($relation['model'])) {
+                    return $relation['model']::getCount($options);
+                }
+                return 0;
             } else {
                 if (class_exists($relation['model'])) {
                     $this->loadedRelations[$name][json_encode($params)] = $relation['model']::$getType($options, $getCol, $getParams);
