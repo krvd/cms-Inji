@@ -132,6 +132,10 @@ class Model
             return;
         }
         if (!is_array($array)) {
+            if (!isset($cols[static::colPrefix() . $array]) && isset(static::$cols[$array])) {
+                static::createCol($array);
+                $cols = static::cols(true);
+            }
             if (!isset($cols[$array]) && isset($cols[static::colPrefix() . $array])) {
                 $array = static::colPrefix() . $array;
             } else {
@@ -142,6 +146,10 @@ class Model
         switch ($searchtype) {
             case 'key':
                 foreach ($array as $key => $item) {
+                    if (!isset($cols[static::colPrefix() . $key]) && isset(static::$cols[$key])) {
+                        static::createCol($key);
+                        $cols = static::cols(true);
+                    }
                     if (!isset($cols[$key]) && isset($cols[static::colPrefix() . $key])) {
                         $array[static::colPrefix() . $key] = $item;
                         unset($array[$key]);
@@ -156,6 +164,10 @@ class Model
                 break;
             case 'first':
                 if (isset($array[0]) && is_string($array[0])) {
+                    if (!isset($cols[static::colPrefix() . $array[0]]) && isset(static::$cols[$array[0]])) {
+                        static::createCol($array[0]);
+                        $cols = static::cols(true);
+                    }
                     if (!isset($cols[$array[0]]) && isset($cols[static::colPrefix() . $array[0]])) {
                         $array[0] = static::colPrefix() . $array[0];
                     } else {
@@ -251,16 +263,67 @@ class Model
         return $info;
     }
 
-    static function cols()
+    static function cols($refresh = false)
     {
         if (static::$storage['type'] == 'moduleConfig') {
             return [];
         }
-        if (empty(Model::$cols[static::table()])) {
-
+        if (empty(Model::$cols[static::table()]) || $refresh) {
+            Model::$cols[static::table()] = App::$cur->db->getTableCols(static::table());
+        }
+        if (!Model::$cols[static::table()]) {
+            $query = App::$cur->db->newQuery();
+            $query->createTable(static::table(), [
+                static::colPrefix() . 'id' => 'pk',
+                static::colPrefix() . 'date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,',
+            ]);
             Model::$cols[static::table()] = App::$cur->db->getTableCols(static::table());
         }
         return Model::$cols[static::table()];
+    }
+
+    static function createCol($colName)
+    {
+        if (empty(static::$cols[$colName]) || static::$storage['type'] == 'moduleConfig') {
+            return false;
+        }
+
+        $params = '';
+        switch (static::$cols[$colName]['type']) {
+            case 'select':
+                switch (static::$cols[$colName]['source']) {
+                    case 'relation':
+                        $params = 'int(11) UNSIGNED NOT NULL';
+                        break;
+                    default:
+                        $params = 'varchar(255) NOT NULL';
+                }
+                break;
+            case 'image':
+                $params = 'int(11) UNSIGNED NOT NULL';
+                break;
+            case 'number':
+                $params = 'int(11) NOT NULL';
+                break;
+            case 'text':
+                $params = 'varchar(255) NOT NULL';
+                break;
+            case 'html':
+            case 'textarea':
+                $params = 'text NOT NULL';
+                break;
+            case 'bool':
+                $params = 'tinyint(1) UNSIGNED NOT NULL';
+                break;
+            case 'decimal':
+                $params = 'decimal(8, 2) NOT NULL';
+                break;
+        }
+
+        if (!$params) {
+            return false;
+        }
+        App::$cur->db->addCol(static::table(), static::colPrefix() . $colName, $params);
     }
 
     static function table()
@@ -351,7 +414,18 @@ class Model
         if (!App::$cur->db->where) {
             return false;
         }
-        $result = App::$cur->db->select(static::table());
+        try {
+            $result = App::$cur->db->select(static::table());
+        } catch (PDOException $exc) {
+            if ($exc->getCode() == '42S02') {
+                $query = App::$cur->db->newQuery();
+                $query->createTable(static::table(), [
+                    static::colPrefix() . 'id' => 'pk',
+                    static::colPrefix() . 'date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,',
+                ]);
+            }
+            $result = App::$cur->db->select(static::table());
+        }
         if (!$result) {
             return false;
         }
@@ -422,7 +496,19 @@ class Model
         } else {
             $key = static::index();
         }
-        $result = App::$cur->db->select(static::table());
+        try {
+            $result = App::$cur->db->select(static::table());
+        } catch (PDOException $exc) {
+            if ($exc->getCode() == '42S02') {
+                $query = App::$cur->db->newQuery();
+                $query->createTable(static::table(), [
+                    static::colPrefix() . 'id' => 'pk',
+                    static::colPrefix() . 'date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,',
+                ]);
+            }
+            $result = App::$cur->db->select(static::table());
+        }
+
         if (!empty($options['array'])) {
             return $result->getArray($key);
         }
@@ -680,14 +766,27 @@ class Model
             $cols .= '*';
         }
         $cols .=') as `count`' . (!empty($options['cols']) ? ',' . $options['cols'] : '');
+        App::$cur->db->cols = $cols;
         if (!empty($options['group'])) {
             App::$cur->db->group($options['group']);
-            App::$cur->db->cols = $cols;
-            $count = App::$cur->db->select(static::table())->getArray();
+        }
+        try {
+            $result = App::$cur->db->select(static::table());
+        } catch (PDOException $exc) {
+            if ($exc->getCode() == '42S02') {
+                $query = App::$cur->db->newQuery();
+                $query->createTable(static::table(), [
+                    static::colPrefix() . 'id' => 'pk',
+                    static::colPrefix() . 'date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,',
+                ]);
+            }
+            $result = App::$cur->db->select(static::table());
+        }
+        if (!empty($options['group'])) {
+            $count = $result->getArray();
             return $count;
         } else {
-            App::$cur->db->cols = $cols;
-            $count = App::$cur->db->select(static::table())->fetch();
+            $count = $result->fetch();
             return $count['count'];
         }
     }
@@ -873,7 +972,18 @@ class Model
             $this->_params[$this->index()] = App::$cur->db->insert($this->table(), $values);
         }
         App::$cur->db->where($this->index(), $this->_params[$this->index()]);
-        $result = App::$cur->db->select($this->table());
+        try {
+            $result = App::$cur->db->select($this->table());
+        } catch (PDOException $exc) {
+            if ($exc->getCode() == '42S02') {
+                $query = App::$cur->db->newQuery();
+                $query->createTable($this->table(), [
+                    $this->colPrefix() . 'id' => 'pk',
+                    $this->colPrefix() . 'date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,',
+                ]);
+            }
+            $result = App::$cur->db->select($this->table());
+        }
         $this->_params = $result->fetch();
         if ($new) {
             Inji::$inst->event('modelCreatedItem-' . get_called_class(), $this);
