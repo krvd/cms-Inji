@@ -16,10 +16,10 @@ namespace Ecommerce;
 class UserAdds extends \Model
 {
     static $labels = [
-        'values' => 'Информация'
+        'value' => 'Информация'
     ];
     static $cols = [
-        'values' => ['type' => 'select', 'source' => 'relation', 'relation' => 'values'],
+        'value' => ['type' => 'dataManager', 'relation' => 'values'],
     ];
 
     static function relations()

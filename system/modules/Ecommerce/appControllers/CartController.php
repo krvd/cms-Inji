@@ -110,7 +110,6 @@ class CartController extends Controller
                         $cartItem->final_price = $cartItem->price->price - $cartItem->discount;
                         $cartItem->save();
                     }
-                    unset($_SESSION['cart']['cart_id']);
                     if (!empty(\App::$cur->ecommerce->config['notify_mail'])) {
                         $text = 'Перейдите в админ панель чтобы просмотреть новый заказ <a href = "http://' . idn_to_utf8(INJI_DOMAIN_NAME) . '/admin/ecommerce/Cart">Админ панель</a>';
                         $title = 'Новый заказ в интернет магазине на сайте ' . idn_to_utf8(INJI_DOMAIN_NAME);
@@ -133,6 +132,14 @@ class CartController extends Controller
                                 $sums[$currency_id] += $cartItem->final_price * $cartItem->count;
                             }
                         }
+                        if ($cart->delivery && $cart->delivery->price) {
+                            $currency_id = $cart->delivery->currency_id;
+                            if (empty($sums[$currency_id])) {
+                                $sums[$currency_id] = $cart->delivery->price;
+                            } else {
+                                $sums[$currency_id] += $cart->delivery->price;
+                            }
+                        }
                         foreach ($sums as $currency_id => $sum) {
                             if (!$currency_id) {
                                 continue;
@@ -141,7 +148,7 @@ class CartController extends Controller
                                 'data' => $cart->id,
                                 'currency_id' => $currency_id,
                                 'user_id' => \Users\User::$cur->id,
-                                'sum' => $cart->finalSum(),
+                                'sum' => $sum,
                                 'description' => 'Оплата заказа №' . $cart->id . ' в онлайн-магазине',
                                 'type' => 'pay',
                                 'pay_status_id' => 1,
@@ -150,8 +157,10 @@ class CartController extends Controller
                             ]);
                             $pay->save();
                         }
+                        unset($_SESSION['cart']['cart_id']);
                         Tools::redirect('/money/merchants/pay/');
                     } else {
+                        unset($_SESSION['cart']['cart_id']);
                         Tools::redirect('/ecommerce/cart/success');
                     }
                 }

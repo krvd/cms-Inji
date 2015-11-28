@@ -14,6 +14,7 @@ if (\Users\User::$cur->id) {
         inji.onLoad(function () {
           $('[name="userAddsId"]').change(function () {
             var values = userAddsValues[$(this).val()];
+            console.log(values);
             for (key in values) {
               var value = values[key];
               $('[name="userAdds[fields][' + value.useradds_value_useradds_field_id + ']"]').val(value.useradds_value_value);

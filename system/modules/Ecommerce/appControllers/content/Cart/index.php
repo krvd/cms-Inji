@@ -88,8 +88,21 @@
                         } else {
                             $checked = '';
                         }
-                        $form->input('radio', "delivery", $delivery->name . ' - ' . $delivery->price . ' руб.', ['value' => $delivery->id, 'checked' => $checked,
-                            'helpText' => (float) $delivery->max_cart_price ? 'При заказе товаров на сумму от ' . $delivery->max_cart_price . ' руб - бесплатно' : '']);
+                        $helpText = '';
+                        if ((float) $delivery->max_cart_price) {
+                            $helpText.= 'При заказе товаров на сумму от ' . $delivery->max_cart_price . ' руб - бесплатно';
+                        }
+                        if ($delivery->info) {
+                            if ($helpText) {
+                                $helpText .= '<br />';
+                            }
+                            $helpText .= nl2br($delivery->info);
+                        }
+                        $form->input('radio', "delivery", $delivery->name . ((float) $delivery->price ? ' - ' . $delivery->price . ' ' . ($delivery->currency ? $delivery->currency->acronym() : 'руб.') : ''), [
+                            'value' => $delivery->id,
+                            'checked' => $checked,
+                            'helpText' => $helpText
+                        ]);
                     }
                     ?>
                   </div>
@@ -127,8 +140,7 @@
                     <?php
                     if (class_exists('Money\Currency')) {
                         $defaultCurrency = Money\Currency::get(\App::$cur->ecommerce->config['defaultCurrency']);
-                    }
-                    else {
+                    } else {
                         $defaultCurrency = '';
                     }
                     $discountSum = 0;
@@ -181,11 +193,11 @@
                             ?>
 
                           </td>
-                          <td class="text-right price"><?= number_format($cartItem->price->price, 2, '.', '&nbsp;'); ?>&nbsp;<?= $cartItem->price->currency ? $cartItem->price->currency->acronym() : ($defaultCurrency?$defaultCurrency->acronym():'Руб.'); ?></td>
+                          <td class="text-right price"><?= number_format($cartItem->price->price, 2, '.', '&nbsp;'); ?>&nbsp;<?= $cartItem->price->currency ? $cartItem->price->currency->acronym() : ($defaultCurrency ? $defaultCurrency->acronym() : 'Руб.'); ?></td>
                           <?php if ($cart->card) { ?>
-                              <td class="text-right discount"><?= number_format($discount, 2, '.', '&nbsp;'); ?>&nbsp;<?= $cartItem->price->currency ? $cartItem->price->currency->acronym() : ($defaultCurrency?$defaultCurrency->acronym():'Руб.'); ?></td>
+                              <td class="text-right discount"><?= number_format($discount, 2, '.', '&nbsp;'); ?>&nbsp;<?= $cartItem->price->currency ? $cartItem->price->currency->acronym() : ($defaultCurrency ? $defaultCurrency->acronym() : 'Руб.'); ?></td>
                           <?php } ?>
-                          <td class="text-right total"><?= number_format($cartItem->price->price * $cartItem->count - $discount, 2, '.', '&nbsp;'); ?>&nbsp;<?= $cartItem->price->currency ? $cartItem->price->currency->acronym() : ($defaultCurrency?$defaultCurrency->acronym():'Руб.'); ?></td>
+                          <td class="text-right total"><?= number_format($cartItem->price->price * $cartItem->count - $discount, 2, '.', '&nbsp;'); ?>&nbsp;<?= $cartItem->price->currency ? $cartItem->price->currency->acronym() : ($defaultCurrency ? $defaultCurrency->acronym() : 'Руб.'); ?></td>
                           <td class="text-right actions">
                             <div class="btn-group-vertical" role="group" aria-label="...">
                               <a type="button" class="btn btn-primary btn-update btn-sm" onclick="inji.Ecommerce.Cart.calcSum();"><i class="glyphicon glyphicon-refresh"></i></a>
