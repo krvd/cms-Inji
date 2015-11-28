@@ -64,14 +64,15 @@ class Callback extends \Model
         'manager' => [
             'name' => 'Отзывы',
             'cols' => [
-                'name', 'category_id', 'user_id', 'view', 'date_create'
+                'name', 'category_id', 'user_id', 'view','youtube_url', 'date_create'
             ],
             'filters' => [
                 'name', 'profession', 'phone', 'text', 'view', 'user_id', 'date_create'
             ],
             'categorys' => [
                 'model' => 'Callbacks\Category',
-            ]
+            ],
+            'sortMode'=>true
         ]
     ];
     static $forms = [

@@ -16,6 +16,7 @@ return function ($step = NULL, $params = array()) {
         //Системные
         'category_tree_path' => 'text NOT NULL',
         'category_user_id' => 'int(11) UNSIGNED NOT NULL',
+        'category_weight' => 'int(11) UNSIGNED NOT NULL',
         'category_date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
             ], [
         'INDEX ' . App::$cur->db->table_prefix . '_callbacks_category_category_parent_id (category_parent_id)',

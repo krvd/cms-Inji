@@ -20,9 +20,9 @@ class CallbacksController extends Controller
             }
         }
         if ($category) {
-            $callbacks = $category->callbacks;
+            $callbacks = $category->callbacks(['where' => [['view', 1]], 'order' => ['weight', 'asc']]);
         } else {
-            $callbacks = Callbacks\Callback::getList(['where' => [['category_id', 0], ['view', 1]]]);
+            $callbacks = Callbacks\Callback::getList(['where' => [['category_id', 0], ['view', 1]], 'order' => ['weight', 'asc']]);
         }
         $this->view->setTitle($category ? $category->name : 'Отзывы');
         $this->view->page([
