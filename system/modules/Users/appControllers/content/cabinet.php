@@ -3,6 +3,9 @@
   <div class = "row">
     <div class = "col-sm-3">
       <ul class = "nav nav-pills nav-stacked">
+        <li role="presentation" <?= !$activeSection ? 'class="active"' : ''; ?>>
+          <a href="/users/cabinet">Мой кабинет</a>
+        </li>
         <?php
         foreach ($sections as $sectionName => $section) {
             if (!empty($section['fullWidget']) || !empty($section['href'])) {
