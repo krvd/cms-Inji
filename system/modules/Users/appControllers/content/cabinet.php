@@ -1,5 +1,5 @@
 <div class="users-cabinet">
-  <h2>Добро Пожаловать в личный кабинет, <?= \Users\User::$cur->name(); ?></h2>
+  <h2 class ='users-cabinet-welcome'>Добро Пожаловать в личный кабинет, <?= \Users\User::$cur->name(); ?></h2>
   <div class = "row">
     <div class = "col-sm-3">
       <ul class = "nav nav-pills nav-stacked">
