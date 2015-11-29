@@ -30,6 +30,9 @@ class Pay extends \Model
         'type' => ['type' => 'text'],
         'callback_module' => ['type' => 'text'],
         'callback_method' => ['type' => 'text'],
+        'description' => ['type' => 'textarea'],
+        'data' => ['type' => 'text'],
+        'date_recive' => ['type' => 'dateTime']
     ];
     static $labels = [
         'currency_id' => 'Валюта',
@@ -37,8 +40,12 @@ class Pay extends \Model
         'sum' => 'Сумма',
         'user_id' => 'Пользователь',
         'type' => 'Тип',
+        'description' => 'Описание',
         'callback_module' => 'Модуль обработчика',
-        'callback_method' => 'Метод обработчика'
+        'callback_method' => 'Метод обработчика',
+        'data' => 'Данные обработчика',
+        'date_recive' => 'Дата получения',
+        'date_create' => 'Дата создания'
     ];
     static $dataManagers = [
         'manager' => [
@@ -47,6 +54,7 @@ class Pay extends \Model
                 'sum',
                 'currency_id',
                 'pay_status_id',
+                'date_recive',
                 'date_create'
             ]
         ]
@@ -56,9 +64,10 @@ class Pay extends \Model
             'name' => 'Счет оплаты',
             'map' => [
                 ['sum', 'currency_id'],
-                ['user_id'],
+                ['user_id', 'date_recive'],
                 ['pay_status_id', 'type'],
-                ['callback_module', 'callback_method']
+                ['description'],
+                ['callback_module', 'callback_method', 'data']
             ]
         ]
     ];
