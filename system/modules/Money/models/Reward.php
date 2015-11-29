@@ -25,7 +25,7 @@ class Reward extends \Model
         $blocked = Wallet\Block::getList(['where' => ['data', 'reward:' . $this->id]]);
         $usersCompleted = [];
         foreach ($blocked as $block) {
-            if (\DateTime::createFromFormat('Y-m-d H:i:s', $block->date_expired) <= new \DateTime()) {
+            if ($block->date_expired != '0000-00-00 00:00:00' && \DateTime::createFromFormat('Y-m-d H:i:s', $block->date_expired) <= new \DateTime()) {
                 if ($block->expired_type == 'burn') {
                     $block->delete();
                 }

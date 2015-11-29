@@ -18,7 +18,9 @@ class Transfer extends \Model
         'to_user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'toUser'],
         'currency_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'currency'],
         'amount' => ['type' => 'number'],
-        'code' => ['type' => 'text']
+        'code' => ['type' => 'text'],
+        'complete' => ['type' => 'bool'],
+        'canceled' => ['type' => 'bool'],
     ];
     static $labels = [
         'amount' => 'Сумма'

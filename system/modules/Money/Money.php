@@ -214,7 +214,7 @@ class Money extends Module
                     $block->wallet_id = $wallets[$level->currency_id]->id;
                     $block->amount = $amount;
                     $block->data = 'reward:' . $reward->id;
-                    switch ($reward->date_expired) {
+                    switch ($reward->block_date_expired) {
                         case 'dayStart':
                             $block->date_expired = mktime(0, 0, 0, date('n'), date("j") + 1, date("Y"));
                             $block->expired_type = 'burn';
