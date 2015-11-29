@@ -14,7 +14,7 @@ return array(
                     ],
                     [
                         'name' => 'Заказы',
-                        'href' => '/admin/ecommerce/Cart'
+                        'href' => '/admin/ecommerce/Cart?datamanagerFilters[cart_status_id][value]=2'
                     ],
                     [
                         'name' => 'Конфигурация',
