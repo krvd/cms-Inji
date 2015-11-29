@@ -5,13 +5,20 @@
     if (!$cart || !$cart->cartItems)
         echo "<h1>Ваша корзина пуста</h1>";
     else {
+        $sums = [];
         $cartDelivery = $cart->delivery;
         $deliveryPrice = 0;
+        $deliveryCurrency = 0;
         if (!$cartDelivery) {
             $cartDelivery = current($deliverys);
         }
         if ($cartDelivery) {
-            $deliveryPrice = (($cart->sum >= $cartDelivery->max_cart_price) ? '0' : $cartDelivery->price);
+            if ($cartDelivery->max_cart_price) {
+                $deliveryPrice = (($cart->sum >= $cartDelivery->max_cart_price) ? '0' : $cartDelivery->price);
+            } else {
+                $deliveryPrice = $cartDelivery->price;
+            }
+            $deliveryCurrency = $cartDelivery->currency_id;
         }
         $cartPayType = $cart->payType;
         if (!$cartPayType) {
@@ -149,6 +156,11 @@
                         $discount = $cartItem->discount();
                         $discountSum += $discount;
                         $itemName = $cartItem->item->name();
+                        if (!isset($sums[$cartItem->price->currency_id])) {
+                            $sums[$cartItem->price->currency_id] = $cartItem->price->price;
+                        } else {
+                            $sums[$cartItem->price->currency_id] += $cartItem->price->price;
+                        }
                         ?>
                         <tr class="cart_item_id<?= $cartItem->id; ?> item" data-cart_item_id = '<?php echo $cartItem->id; ?>' data-priceam = '<?php echo $cartItem->price->price; ?>' data-item_offer_price_id = '<?php echo $cartItem->price->id; ?>'>
                           <td class="text-center image">                            
@@ -216,14 +228,44 @@
                     ?>
                     <tr class="order_page-sum">
                       <td colspan="<?= $colspan; ?>" class="text-right">Сумма:</td>
-                      <td colspan="2" class="text-right"><?= number_format($cart->sum, 2, '.', ' '); ?>&nbsp;руб.</td>
+                      <td colspan="2" class="text-right"><?php
+                        foreach ($sums as $currency_id => $sum) {
+                            if (!$sum) {
+                                continue;
+                            }
+                            echo number_format($sum, 2, '.', ' ');
+                            if (App::$cur->money) {
+                                $currency = Money\Currency::get($currency_id);
+                                if ($currency) {
+                                    echo '&nbsp;' . $currency->acronym();
+                                } else {
+                                    echo '&nbsp;руб.';
+                                }
+                            } else {
+                                echo '&nbsp;руб.';
+                            }
+                            echo '<br />';
+                        }
+                        ?></td>
                     </tr>
                     <?php
                     if ($cartDelivery) {
                         ?>
                         <tr class="order_page-deliverySum">
                           <td colspan="<?= $colspan; ?>" class="text-right"><?= $cartDelivery->name; ?>:</td>
-                          <td colspan="2" class="text-right"><?= number_format($deliveryPrice, 2, '.', ' '); ?>&nbsp;руб.</td>
+                          <td colspan="2" class="text-right"><?php
+                            echo number_format($deliveryPrice, 2, '.', ' ');
+                            if ($deliveryCurrency && App::$cur->money) {
+                                $currency = Money\Currency::get($deliveryCurrency);
+                                if ($currency) {
+                                    echo '&nbsp;' . $currency->acronym();
+                                } else {
+                                    echo '&nbsp;руб.';
+                                }
+                            } else {
+                                echo '&nbsp;руб.';
+                            }
+                            ?></td>
                         </tr>
                         <?php
                     }
@@ -240,16 +282,41 @@
                         </tr>
                         <?php
                     }
-                    ?>
-                    <?php if ($cart->card) { ?>
+                    if ($cart->card) {
+                        ?>
                         <tr class="order_page-discountSum">
                           <td colspan="<?= $colspan; ?>" class="text-right">Скидка:</td>
                           <td colspan="2" class="text-right"><?= number_format($discountSum, 2, '.', ' '); ?>&nbsp;руб.</td>
                         </tr>
-                    <?php } ?>
+                        <?php
+                    }
+                    if (!isset($sums[$deliveryCurrency])) {
+                        $sums[$deliveryCurrency] = $deliveryPrice;
+                    } else {
+                        $sums[$deliveryCurrency] += $deliveryPrice;
+                    }
+                    ?>
                     <tr class="order_page-total">
                       <td colspan="<?= $colspan; ?>" class="text-right">Итого:</td>
-                      <td colspan="2" class="text-right"><?= number_format($cart->sum + $deliveryPrice + $packSum - $discountSum, 2, '.', ' '); ?>&nbsp;руб.</td>
+                      <td colspan="2" class="text-right"><?php
+                        foreach ($sums as $currency_id => $sum) {
+                            if (!$sum) {
+                                continue;
+                            }
+                            echo number_format($sum, 2, '.', ' ');
+                            if (App::$cur->money) {
+                                $currency = Money\Currency::get($currency_id);
+                                if ($currency) {
+                                    echo '&nbsp;' . $currency->acronym();
+                                } else {
+                                    echo '&nbsp;руб.';
+                                }
+                            } else {
+                                echo '&nbsp;руб.';
+                            }
+                            echo '<br />';
+                        }
+                        ?></td>
                     </tr>
                   </tfoot>
                 </table>
