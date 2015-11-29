@@ -1093,6 +1093,23 @@ class Model
     function setParams($params)
     {
         static::fixPrefix($params);
+        $className = get_called_class();
+        foreach ($params as $paramName => $value) {
+            $shortName = preg_replace('!' . $this->colPrefix() . '!', '', $paramName);
+            if (!empty($className::$cols[$shortName])) {
+                switch ($className::$cols[$shortName]['type']) {
+                    case 'decimal':
+                        $params[$paramName] = (float) $value;
+                        break;
+                    case 'number':
+                        $params[$paramName] = (int) $value;
+                        break;
+                    case 'bool':
+                        $params[$paramName] = (bool) $value;
+                        break;
+                }
+            }
+        }
         $this->_params = array_merge($this->_params, $params);
     }
 
@@ -1282,9 +1299,25 @@ class Model
     function __set($name, $value)
     {
         static::fixPrefix($name);
+        $className = get_called_class();
+        $shortName = preg_replace('!' . $this->colPrefix() . '!', '', $name);
+        if (!empty($className::$cols[$shortName])) {
+            switch ($className::$cols[$shortName]['type']) {
+                case 'decimal':
+                    $value = (float) $value;
+                    break;
+                case 'number':
+                    $value = (int) $value;
+                    break;
+                case 'bool':
+                    $value = (bool) $value;
+                    break;
+            }
+        }
         if ((isset($this->_params[$name]) && $this->_params[$name] != $value) && !isset($this->_changedParams[$name])) {
             $this->_changedParams[$name] = $this->_params[$name];
         }
+
         $this->_params[$name] = $value;
     }
 
