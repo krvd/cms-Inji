@@ -23,6 +23,7 @@ class Category extends \Model
         'description' => ['type' => 'html'],
         'viewer' => ['type' => 'select', 'source' => 'method', 'method' => 'viewsCategoryList', 'module' => 'Callbacks'],
         'template' => ['type' => 'select', 'source' => 'method', 'method' => 'templatesCategoryList', 'module' => 'Callbacks'],
+        'weight' => ['type' => 'number'],
     ];
     static $labels = [
         'name' => 'Название',
