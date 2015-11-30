@@ -57,9 +57,9 @@ class MaterialsController extends Controller
         $args = func_get_args();
         $alias = trim(implode('/', $args));
         if ($alias) {
-            $material = Materials\Material::get($alias, 'alias');
+            $material = Materials\Material::get((int) $alias);
             if (!$material) {
-                $material = Materials\Material::get((int) $alias);
+                $material = Materials\Material::get($alias, 'alias');
                 if (!$material) {
                     Tools::header('404');
                     $this->view->page([
