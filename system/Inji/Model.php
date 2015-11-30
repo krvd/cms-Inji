@@ -318,6 +318,12 @@ class Model
             case 'decimal':
                 $params = 'decimal(8, 2) NOT NULL';
                 break;
+            case 'date':
+                $params = 'date NOT NULL DEFAULT 0';
+                break;
+            case 'dateTime':
+                $params = 'timestamp NOT NULL DEFAULT 0';
+                break;
         }
 
         if (!$params) {
