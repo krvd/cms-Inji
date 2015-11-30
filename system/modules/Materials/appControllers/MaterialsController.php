@@ -54,38 +54,45 @@ class MaterialsController extends Controller
 
     function viewAction($material_id = 0)
     {
-        $material = \Materials\Material::get((int) $material_id);
-        if (!$material) {
-            Tools::header('404');
-            $this->view->page([
-                'content' => '404',
-                'data' => ['text' => 'Такой страницы не найдено']
-            ]);
-        } else {
-            if ($material->keywords) {
-                $this->view->addMetaTag(['name' => 'keywords', 'content' => $material->keywords]);
+        $args = func_get_args();
+        $alias = trim(implode('/', $args));
+        if ($alias) {
+            $material = Materials\Material::get($alias, 'alias');
+            if (!$material) {
+                $material = Materials\Material::get((int) $alias);
+                if (!$material) {
+                    Tools::header('404');
+                    $this->view->page([
+                        'content' => '404',
+                        'data' => ['text' => 'Такой страницы не найдено']
+                    ]);
+                    exit();
+                }
             }
-            if ($material->description) {
-                $this->view->addMetaTag(['name' => 'description', 'content' => $material->description]);
-            }
-            $this->view->addMetaTag(['property' => 'og:title', 'content' => $material->name . ' ' . $material->keywords]);
-            $this->view->addMetaTag(['property' => 'og:url', 'content' => 'http://' . idn_to_utf8(INJI_DOMAIN_NAME) . '/' . $material->alias]);
-            if ($material->description) {
-                $this->view->addMetaTag(['property' => 'og:description', 'content' => 'http://' . idn_to_utf8(INJI_DOMAIN_NAME) . '/' . $material->description]);
-            }
-            if ($material->image) {
-                $this->view->addMetaTag(['property' => 'og:image', 'content' => 'http://' . idn_to_utf8(INJI_DOMAIN_NAME) . $material->image->path]);
-            } elseif ($logo = Files\File::get('site_logo', 'code')) {
-                $this->view->addMetaTag(['property' => 'og:image', 'content' => 'http://' . idn_to_utf8(INJI_DOMAIN_NAME) . $logo->path]);
-            }
-            $this->view->setTitle($material->name . ' ' . $material->keywords);
-            $bread[] = ['text' => $material->name, 'href' => '/' . $material->alias];
-            $this->view->page([
-                'page' => $material->resolveTemplate(),
-                'content' => $material->resolveViewer(),
-                'data' => compact('material', 'bread'),
-            ]);
         }
+        if ($material->keywords) {
+            $this->view->addMetaTag(['name' => 'keywords', 'content' => $material->keywords]);
+        }
+        if ($material->description) {
+            $this->view->addMetaTag(['name' => 'description', 'content' => $material->description]);
+        }
+        $this->view->addMetaTag(['property' => 'og:title', 'content' => $material->name . ' ' . $material->keywords]);
+        $this->view->addMetaTag(['property' => 'og:url', 'content' => 'http://' . idn_to_utf8(INJI_DOMAIN_NAME) . '/' . $material->alias]);
+        if ($material->description) {
+            $this->view->addMetaTag(['property' => 'og:description', 'content' => 'http://' . idn_to_utf8(INJI_DOMAIN_NAME) . '/' . $material->description]);
+        }
+        if ($material->image) {
+            $this->view->addMetaTag(['property' => 'og:image', 'content' => 'http://' . idn_to_utf8(INJI_DOMAIN_NAME) . $material->image->path]);
+        } elseif ($logo = Files\File::get('site_logo', 'code')) {
+            $this->view->addMetaTag(['property' => 'og:image', 'content' => 'http://' . idn_to_utf8(INJI_DOMAIN_NAME) . $logo->path]);
+        }
+        $this->view->setTitle($material->name . ' ' . $material->keywords);
+        $bread[] = ['text' => $material->name, 'href' => '/' . $material->alias];
+        $this->view->page([
+            'page' => $material->resolveTemplate(),
+            'content' => $material->resolveViewer(),
+            'data' => compact('material', 'bread'),
+        ]);
     }
 
 }
