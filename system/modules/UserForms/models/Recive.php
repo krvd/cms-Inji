@@ -20,7 +20,7 @@ class Recive extends \Model
         'data' => 'Данные',
     ];
     static $cols = [
-        'form_id' => ['relation' => 'form', 'showCol' => 'form_title'],
+        'form_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'form'],
         'data' => [
             'type' => 'json',
             'view' => [
@@ -29,7 +29,6 @@ class Recive extends \Model
                 'method' => 'formData'
             ],
         ],
-        'date_create' => [],
     ];
     static $dataManagers = [
         'manager' => [
