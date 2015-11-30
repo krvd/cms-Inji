@@ -11,7 +11,9 @@ class MaterialsController extends Controller
         if ($alias) {
             $material = Materials\Material::get($alias, 'alias');
             if (!$material) {
-                $material = Materials\Material::get((int) $alias);
+                if (is_numeric($alias)) {
+                    $material = Materials\Material::get($alias);
+                }
                 if (!$material) {
                     $category = Materials\Category::get($alias, 'alias');
                     if ($category) {
@@ -56,8 +58,11 @@ class MaterialsController extends Controller
     {
         $args = func_get_args();
         $alias = trim(implode('/', $args));
+        $material = false;
         if ($alias) {
-            $material = Materials\Material::get((int) $alias);
+            if (is_numeric($alias)) {
+                $material = Materials\Material::get($alias);
+            }
             if (!$material) {
                 $material = Materials\Material::get($alias, 'alias');
                 if (!$material) {
