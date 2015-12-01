@@ -214,15 +214,17 @@ class Money extends Module
                     $block->wallet_id = $wallets[$level->currency_id]->id;
                     $block->amount = $amount;
                     $block->data = 'reward:' . $reward->id;
-                    switch ($reward->block_date_expired) {
-                        case 'dayStart':
-                            $block->date_expired = mktime(0, 0, 0, date('n'), date("j") + 1, date("Y"));
-                            $block->expired_type = 'burn';
-                            break;
-                        case 'monthStart':
-                            $block->date_expired = mktime(0, 0, 0, date('n') + 1, 1, date("Y"));
-                            $block->expired_type = 'burn';
-                            break;
+                    $dateGenerators = $this->getSnippets('expiredDateGenerator');
+                    $extends = Module::getExtensions('Money', 'snippets', 'expiredDateGenerator');
+                    $dateGenerators = array_merge($dateGenerators, $extends);
+                    if ($reward->block_date_expired && !empty($dateGenerators[$reward->block_date_expired])) {
+                        $date = $dateGenerators[$reward->block_date_expired]($reward, $user);
+                        if(!empty($date['date'])){
+                            $block->date_expired = $date['date'];
+                        }
+                        if(!empty($date['type'])){
+                            $block->expired_type = $date['type'];
+                        }
                     }
                     $block->save();
                 } else {
