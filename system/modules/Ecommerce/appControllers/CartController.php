@@ -22,29 +22,33 @@ class CartController extends Controller
                     $user = Users\User::$cur;
                 }
                 $ids = [];
-                foreach ($_POST['cartItems'] as $cartItemId => $cartItemCont) {
-                    $cartItem = \Ecommerce\Cart\Item::get((int) $cartItemId);
-                    if (!$cartItem) {
-                        continue;
+                if (!empty($_POST['cartItems'])) {
+                    foreach ($_POST['cartItems'] as $cartItemId => $cartItemCont) {
+                        $cartItem = \Ecommerce\Cart\Item::get((int) $cartItemId);
+                        if (!$cartItem) {
+                            continue;
+                        }
+                        if ($cartItem->cart_id != $cart->id) {
+                            continue;
+                        }
+                        $count = (float) $cartItemCont;
+                        if ($count < 0.001) {
+                            $count = 1;
+                        }
+                        $cartItem->count = $count;
+                        $cartItem->save();
+                        $ids[] = $cartItemId;
                     }
-                    if ($cartItem->cart_id != $cart->id) {
-                        continue;
-                    }
-                    $count = (float) $cartItemCont;
-                    if ($count < 0.001) {
-                        $count = 1;
-                    }
-                    $cartItem->count = $count;
-                    $cartItem->save();
-                    $ids[] = $cartItemId;
-                }
-                foreach ($cart->cartItems as $cartItem) {
-                    if (!in_array($cartItem->id, $ids)) {
-                        $cartItem->delete();
+                    foreach ($cart->cartItems as $cartItem) {
+                        if (!in_array($cartItem->id, $ids)) {
+                            $cartItem->delete();
+                        }
                     }
                 }
                 $cart = Ecommerce\Cart::get($cart->id);
-
+                if (!$cart->cartItems) {
+                    Tools::redirect('/ecommerce', 'Ваша корзина пуста');
+                }
                 if (empty($this->module->config['sell_over_warehouse'])) {
                     foreach ($cart->cartItems as $cartitem) {
                         $warecount = $cartitem->price->offer->warehouseCount($cart->id);
@@ -158,7 +162,7 @@ class CartController extends Controller
                             $pay->save();
                         }
                         unset($_SESSION['cart']['cart_id']);
-                        Tools::redirect('/money/merchants/pay/');
+                        Tools::redirect('/money/merchants/pay/', 'Ваш заказ был создан. Вам необходимо оплатить счета, после чего с вами свяжется администратор для уточнения дополнительной информации');
                     } else {
                         unset($_SESSION['cart']['cart_id']);
                         Tools::redirect('/ecommerce/cart/success');
