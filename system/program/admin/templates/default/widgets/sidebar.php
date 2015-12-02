@@ -9,10 +9,10 @@
     if (Users\User::$cur->isAdmin()) {
         App::$cur->ui;
         ?>
-    <hr />
+        <hr />
         <div class="row userWidget">
           <div class="col-xs-4">
-            <img src="<?= Users\User::$cur->info->photo ? Users\User::$cur->info->photo->path : '/static/admin/images/no-image.png'; ?>" class="img-responsive" />
+            <img src="<?= Users\User::$cur->info->photo ? Users\User::$cur->info->photo->path : '/static/system/images/no-image.png'; ?>" class="img-responsive" />
           </div>
           <div class="col-xs-8">
             <?= Users\User::$cur->name(); ?><br />
@@ -24,7 +24,7 @@
             <a href = "?logout">Выйти</a>
           </div>
         </div>
-    <hr />
+        <hr />
         <li>
           <a href = "/admin">Панель управления</a>
         </li>
