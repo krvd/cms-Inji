@@ -76,4 +76,9 @@ class Item extends \Model
         ];
     }
 
+    function name()
+    {
+        return $this->code ? $this->code : $this->id . ' - ' . $this->user->name();
+    }
+
 }

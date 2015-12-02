@@ -145,10 +145,40 @@ class Cart extends \Model
     ];
     static $forms = [
         'manager' => [
+            'inputs' => [
+                'userSearch' => [
+                    'type' => 'search',
+                    'source' => 'relation',
+                    'relation' => 'user',
+                    'label' => 'Покупатель',
+                    'cols' => [
+                        'info:first_name',
+                        'info:last_name',
+                        'info:middle_name',
+                        'mail'
+                    ],
+                    'col' => 'user_id',
+                    'required' => true,
+                ],
+                'cardSearch' => [
+                    'type' => 'search',
+                    'source' => 'relation',
+                    'relation' => 'card',
+                    'label' => 'Дисконтная карта',
+                    'cols' => [
+                        'code',
+                        'user:info:first_name',
+                        'user:info:last_name',
+                        'user:info:middle_name',
+                        'user:mail'
+                    ],
+                    'col' => 'card_item_id',
+                ],
+            ],
             'map' => [
-                ['user_id', 'cart_status_id'],
+                ['userSearch', 'cart_status_id'],
                 ['paytype_id', 'delivery_id'],
-                ['card_item_id', 'comment'],
+                ['cardSearch', 'comment'],
                 ['warehouse_block', 'complete_data'],
                 ['payed'],
                 ['items'],
@@ -157,7 +187,6 @@ class Cart extends \Model
             ]
         ],
     ];
-
     function addPacks($count = 1)
     {
         $this->addItem(Inji::app()->ecommerce->modConf['packItem']['ci_id'], Inji::app()->ecommerce->modConf['packItem']['ciprice_id'], $count);
