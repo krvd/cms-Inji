@@ -30,7 +30,10 @@ class Ui extends Module
 
     function getModelManagers($modelName)
     {
-        return $modelName::$dataManagers;
+        if (class_exists($modelName)) {
+            return $modelName::$dataManagers;
+        }
+        return [];
     }
 
     function getModelForm($modelName, $formName = '')

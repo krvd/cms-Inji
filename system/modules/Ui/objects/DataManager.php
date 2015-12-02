@@ -37,7 +37,7 @@ class DataManager extends \Object
 
         if (!empty($this->managerOptions['name'])) {
             $this->name = $this->managerOptions['name'];
-        } elseif ($modelName && isset($modelName::$objectName)) {
+        } elseif ($modelName && class_exists($modelName) && isset($modelName::$objectName)) {
             $this->name = $modelName::$objectName;
         } else {
             $this->name = $modelName;
@@ -52,6 +52,10 @@ class DataManager extends \Object
      */
     function getButtons($params = [], $model = null)
     {
+        $modelName = $this->modelName;
+        if (!class_exists($modelName)) {
+            return false;
+        }
         $formModelName = $modelName = $this->modelName;
         $formParams = [
             'dataManagerParams' => $params
@@ -90,6 +94,10 @@ class DataManager extends \Object
     function getCols()
     {
         $modelName = $this->modelName;
+        if (!class_exists($modelName)) {
+            return false;
+        }
+        $modelName = $this->modelName;
         $cols = [];
         if (!empty($this->managerOptions['groupActions'])) {
             $cols[] = ['label' => '<input type="checkbox" />'];
@@ -126,6 +134,10 @@ class DataManager extends \Object
      */
     function getRows($params = [], $model = null)
     {
+        $modelName = $this->modelName;
+        if (!class_exists($modelName)) {
+            return false;
+        }
         if (!$this->checkAccess()) {
             $this->drawError('you not have access to "' . $this->modelName . '" manager with name: "' . $this->managerName . '"');
             return [];
@@ -282,6 +294,10 @@ class DataManager extends \Object
 
     static function drawCol($item, $colName, $params = [], $dataManager = null, $originalCol = '', $originalItem = null)
     {
+        $modelName = get_class($item);
+        if (!class_exists($modelName)) {
+            return false;
+        }
 
         if (!$originalCol) {
             $originalCol = $colName;
@@ -289,7 +305,7 @@ class DataManager extends \Object
         if (!$originalItem) {
             $originalItem = $item;
         }
-        $modelName = get_class($item);
+        
         $relations = $modelName::relations();
         if (strpos($colName, ':') !== false && !empty($relations[substr($colName, 0, strpos($colName, ':'))])) {
             $rel = substr($colName, 0, strpos($colName, ':'));
@@ -332,7 +348,7 @@ class DataManager extends \Object
                     case'many':
                         $managerParams = ['relation' => $modelName::$cols[$colName]['relation']];
                         $count = $item->{$modelName::$cols[$colName]['relation']}(array_merge($params, ['count' => 1]));
-                        return "<a class = 'btn btn-xs btn-primary' onclick = 'inji.Ui.dataManagers.popUp(\"" . str_replace('\\', '\\\\', $modelName) . ":" . $item->pk() . "\"," . json_encode(array_merge($params, $managerParams)) . ")'>{$count} ".\Tools::getNumEnding($count, ['Элемент', 'Элемента', 'Элементов'])."</a>";
+                        return "<a class = 'btn btn-xs btn-primary' onclick = 'inji.Ui.dataManagers.popUp(\"" . str_replace('\\', '\\\\', $modelName) . ":" . $item->pk() . "\"," . json_encode(array_merge($params, $managerParams)) . ")'>{$count} " . \Tools::getNumEnding($count, ['Элемент', 'Элемента', 'Элементов']) . "</a>";
                         break;
                     default:
                         return $item->$colName;
@@ -356,6 +372,10 @@ class DataManager extends \Object
 
     function rowButtons($item, $params)
     {
+        $modelName = $this->modelName;
+        if (!class_exists($modelName)) {
+            return false;
+        }
         ob_start();
         $widgetName = !empty($this->managerOptions['rowButtonsWidget']) ? $this->managerOptions['rowButtonsWidget'] : 'Ui\DataManager/rowButtons';
         \App::$cur->view->widget($widgetName, [
@@ -370,6 +390,10 @@ class DataManager extends \Object
 
     function getPages($params = [], $model = null)
     {
+        $modelName = $this->modelName;
+        if (!class_exists($modelName)) {
+            return false;
+        }
         if (!$this->checkAccess()) {
             $this->drawError('you not have access to "' . $this->modelName . '" manager with name: "' . $this->managerName . '"');
             return [];
@@ -489,6 +513,10 @@ class DataManager extends \Object
 
     function preDraw($params = [], $model = null)
     {
+        $modelName = $this->modelName;
+        if (!class_exists($modelName)) {
+            return false;
+        }
         $this->managerId = str_replace('\\', '_', 'dataManager_' . $this->modelName . '_' . $this->managerName . '_' . \Tools::randomString());
         $this->predraw = true;
         $modelName = $this->modelName;
@@ -513,6 +541,10 @@ class DataManager extends \Object
 
     function draw($params = [], $model = null)
     {
+        $modelName = $this->modelName;
+        if (!class_exists($modelName)) {
+            return false;
+        }
         if (!$this->predraw) {
             $this->preDraw($params, $model);
         }
@@ -526,6 +558,10 @@ class DataManager extends \Object
 
     function drawCategorys()
     {
+        $modelName = $this->modelName;
+        if (!class_exists($modelName)) {
+            return false;
+        }
         ?>
         <ul class="nav nav-list-categorys" data-col='tree_path'>
           <?php
@@ -604,6 +640,9 @@ class DataManager extends \Object
     function checkAccess()
     {
         $modelName = $this->modelName;
+        if (!class_exists($modelName)) {
+            return false;
+        }
         if (empty($this->managerOptions)) {
             $this->drawError('"' . $this->modelName . '" manager with name: "' . $this->managerName . '" not found');
             return false;
