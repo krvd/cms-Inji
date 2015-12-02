@@ -54,7 +54,7 @@ class DataManager extends \Object
     {
         $modelName = $this->modelName;
         if (!class_exists($modelName)) {
-            return false;
+            return [];
         }
         $formModelName = $modelName = $this->modelName;
         $formParams = [
@@ -95,7 +95,7 @@ class DataManager extends \Object
     {
         $modelName = $this->modelName;
         if (!class_exists($modelName)) {
-            return false;
+            return [];
         }
         $modelName = $this->modelName;
         $cols = [];
@@ -136,7 +136,7 @@ class DataManager extends \Object
     {
         $modelName = $this->modelName;
         if (!class_exists($modelName)) {
-            return false;
+            return [];
         }
         if (!$this->checkAccess()) {
             $this->drawError('you not have access to "' . $this->modelName . '" manager with name: "' . $this->managerName . '"');
@@ -392,7 +392,7 @@ class DataManager extends \Object
     {
         $modelName = $this->modelName;
         if (!class_exists($modelName)) {
-            return false;
+            return [];
         }
         if (!$this->checkAccess()) {
             $this->drawError('you not have access to "' . $this->modelName . '" manager with name: "' . $this->managerName . '"');
