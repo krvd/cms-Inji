@@ -42,8 +42,7 @@ Server.prototype.request = function (options, btn) {
     }
     if (ajaxOptions.dataType != 'json') {
       callback(data, textStatus, jqXHR);
-    }
-    else {
+    } else {
       if (data.success) {
         if (data.successMsg) {
           noty({text: data.successMsg, type: 'success', timeout: 3500, layout: 'center'});
@@ -56,14 +55,12 @@ Server.prototype.request = function (options, btn) {
             });
           }
           inji.loadScripts(data.scripts, 0);
-        }
-        else {
+        } else {
           if (callback !== null) {
             callback(data.content, textStatus, jqXHR);
           }
         }
-      }
-      else {
+      } else {
         noty({text: data.error, type: 'warning', timeout: 3500, layout: 'center'});
       }
     }
@@ -78,9 +75,9 @@ Server.prototype.request = function (options, btn) {
     }
     if (errorCallback != null) {
       errorCallback(jqXHR, textStatus, errorThrown);
-    } else {
+    } else if (textStatus != 'abort') {
       noty({text: 'Во время запроса произошла ошибка: ' + textStatus, type: 'warning', timeout: 3500, layout: 'center'});
     }
   }
-  $.ajax(ajaxOptions);
+  return $.ajax(ajaxOptions);
 };
