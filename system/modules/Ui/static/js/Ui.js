@@ -655,6 +655,7 @@ ActiveForms.prototype.initial = function (element) {
 function ActiveForm() {
   this.modelName;
   this.formName;
+  this.reqestProcess;
   this.inputs = {};
   this.load = function () {
     for (var inputName in this.inputs) {
@@ -668,7 +669,14 @@ function ActiveForm() {
   this.inputHandlers = {
     search: function (element, inputName, activeForm) {
       element.element.onkeyup = function () {
-        inji.Server.request({
+        var inputContainer = element.element.parentNode;
+        var selectedDiv = inputContainer.querySelector('.form-search-cur');
+        var resultsDiv = inputContainer.querySelector('.form-search-results');
+        resultsDiv.innerHTML = '<div class = "text-center"><img src = "' + inji.options.appRoot + 'static/moduleAsset/Ui/images/ajax-loader.gif" /></div>';
+        if(this.reqestProcess){
+          this.reqestProcess.abort()
+        }
+        this.reqestProcess = inji.Server.request({
           url: 'ui/activeForm/search',
           data: {
             modelName: activeForm.modelName,
@@ -677,8 +685,6 @@ function ActiveForm() {
             search: this.value
           },
           success: function (results) {
-            var inputContainer = element.element.parentNode;
-            var resultsDiv = inputContainer.querySelector('.form-search-results');
             resultsDiv.innerHTML = '';
             for (var key in results) {
               var result = results[key];
@@ -690,12 +696,11 @@ function ActiveForm() {
                 for (key in this.attributes) {
                   if (this.attributes[key].name == 'objectid') {
                     value = this.attributes[key].value;
-                    break;
                   }
                 }
-                console.log(value);
                 inputContainer.querySelector('[type="hidden"]').value = value;
                 inputContainer.querySelector('[type="text"]').value = this.innerHTML;
+                selectedDiv.innerHTML = 'Выбрано: ' + this.innerHTML;
                 resultsDiv.innerHTML = '';
               }
               resultsDiv.appendChild(resultElement);

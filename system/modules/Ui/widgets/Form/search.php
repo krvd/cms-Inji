@@ -9,13 +9,16 @@ $value = !empty($options['value']) ? addcslashes($options['value'], "'") : (!emp
   placeholder="<?= !empty($options['placeholder']) ? $options['placeholder'] : ''; ?>" 
   class="form-control" 
   name = 'query-<?= $name; ?>' 
-  value = '<?=!empty($options['values'][$value])?$options['values'][$value]:'';?>'
+  value = '<?= !empty($options['values'][$value]) ? $options['values'][$value] : ''; ?>'
   />
+
+<div class="form-search-cur">Выбрано: <?= !empty($options['values'][$value]) ? $options['values'][$value]->name() : ''; ?></div>
 <input 
   type="hidden" 
   name = '<?= $name; ?>'
   value = '<?= $value; ?>'
   />
+
 <div class="form-search-results"></div>
 <?php
 echo!empty($options['helpText']) ? "<div class='help-block'>{$options['helpText']}</div>" : '';

@@ -38,6 +38,7 @@ $id = 'activeForm-' . Tools::randomString();
 </div>
 <script>
     inji.onLoad(function () {
+        console.log('--------------------<?= $id; ?>');
       inji.Ui.activeForms.get('#<?= $id; ?>');
     })
 </script>

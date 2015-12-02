@@ -17,12 +17,17 @@ class Search extends \Ui\ActiveForm\Input
     {
         $inputName = $this->colName();
         $inputLabel = $this->colLabel();
+        $modelName = $this->activeForm->modelName;
 
         $inputOptions = [
             'value' => $this->value(),
             'disabled' => $this->readOnly(),
-            'values' => \Ui\ActiveForm::getOptionsList($this->colParams, $this->activeFormParams, $this->activeForm->modelName, $inputName)
+            'values' => []
         ];
+        $relation = $modelName::getRelation($this->colParams['relation']);
+        if ($relation && class_exists($relation['model']) && $inputOptions['value']) {
+            $inputOptions['values'][$this->value()] = $relation['model']::get($inputOptions['value']);
+        }
 
         if (!empty($inputOptions['values'][$this->activeForm->model->{$this->colName}]) &&
                 is_array($inputOptions['values'][$this->activeForm->model->{$this->colName}]) &&

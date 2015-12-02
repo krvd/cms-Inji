@@ -57,15 +57,19 @@ class ActiveFormController extends Controller
         $first = true;
         $searchStr = preg_replace('![^A-zА-я0-9@-_\. ]!iSu', ' ', $_GET['search']);
         $searchArr = [];
-        $first = true;
+        $colWhere = [];
         foreach (explode(' ', $searchStr) as $part) {
-            $part = trim($part);
-            if ($part && strlen($part) > 2) {
-
-                foreach ($inputs[$_GET['inputName']]['cols'] as $col) {
-                    $searchArr[] = [$col, '%' . $part . '%', 'LIKE', $first ? 'AND' : 'OR'];
+            $colWhere = [];
+            $first = true;
+            foreach ($inputs[$_GET['inputName']]['cols'] as $col) {
+                $part = trim($part);
+                if ($part && strlen($part) > 2) {
+                    $colWhere[] = [$col, '%' . $part . '%', 'LIKE', $first ? 'AND' : 'OR'];
                     $first = false;
                 }
+            }
+            if ($colWhere) {
+                $searchArr[] = $colWhere;
             }
         }
         if ($searchArr) {
