@@ -9,7 +9,7 @@ return [
             <p>Новых сегодня: <?= Materials\Material::getCount(['where' => ['date_create', date('Y-m-d 00:00:00'), '>']]); ?></p>
           </div>
           <div class="panel-footer">
-            <a href ="/admin/Materials/Material">Просмотр</a>
+            <a href ="/admin/Materials/Material">Управление</a>
           </div>
         </div>
         <?php
