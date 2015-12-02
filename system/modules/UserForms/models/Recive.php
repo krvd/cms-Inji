@@ -53,7 +53,7 @@ class Recive extends \Model
     {
         return [
             'form' => [
-                'model' => '\userForms\Form',
+                'model' => '\UserForms\Form',
                 'col' => 'form_id'
             ],
         ];
