@@ -13,7 +13,7 @@ class Ecommerce extends Module
         if ($cart) {
             $payed = true;
             foreach ($cart->pays as $pay) {
-                if (!$pay->pay_status_id != 2) {
+                if ($pay->pay_status_id != 2) {
                     $payed = false;
                     break;
                 }
