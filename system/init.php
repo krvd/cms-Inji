@@ -21,6 +21,9 @@ spl_autoload_register(function($class_name) {
 //load core
 Inji::$inst = new Inji();
 Inji::$config = Config::system();
+Inji::$inst->listen('Config-change-system', 'systemConfig', function($event) {
+    Inji::$config = $event['eventObject'];
+});
 spl_autoload_register('Router::findClass');
 
 if (!function_exists('idn_to_utf8')) {
@@ -76,7 +79,14 @@ if (!empty($params[0]) && file_exists(INJI_SYSTEM_DIR . '/program/' . $params[0]
     App::$cur->installed = true;
     App::$cur->params = array_slice($params, 1);
     App::$cur->config = Config::app(App::$cur);
+
+    Inji::$inst->listen('Config-change-app-' . App::$primary->name, 'primaryAppConfig', function($event) {
+        App::$primary->config = $event['eventObject'];
+    });
 }
+Inji::$inst->listen('Config-change-app-' . App::$cur->name, 'curAppConfig', function($event) {
+    App::$cur->config = $event['eventObject'];
+});
 $shareConfig = Config::share();
 if (empty($shareConfig['installed']) && App::$cur->name != 'setup' && (empty(App::$cur->params[0]) || App::$cur->params[0] != 'static')) {
     Tools::redirect('/setup');

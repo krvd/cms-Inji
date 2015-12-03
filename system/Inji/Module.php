@@ -25,6 +25,10 @@ class Module
         $this->path = Router::getLoadedClassPath($this->moduleName);
         $this->info = $this->getInfo();
         $this->config = Config::module($this->moduleName, !empty($this->info['systemConfig']));
+        $that = $this;
+        Inji::$inst->listen('Config-change-module-' . $this->app->name . '-' . $this->moduleName, $this->app->name . '-' . $this->moduleName . 'config', function($event) use ($that) {
+            $that->config = $event['eventObject'];
+        });
     }
 
     static function getModulePaths($moduleName)
@@ -172,7 +176,7 @@ class Module
     {
         $moduleName = $moduleName ? $moduleName : get_called_class();
         $modulePaths = Module::getModulePaths($moduleName);
-        $modulePaths['templatePath'] = App::$cur->view->template->path.'/modules/'.ucfirst($moduleName);
+        $modulePaths['templatePath'] = App::$cur->view->template->path . '/modules/' . ucfirst($moduleName);
         $snippets = [];
         foreach ($modulePaths as $path) {
             if (file_exists($path . $dir . '/' . $snippetsPath)) {

@@ -133,22 +133,27 @@ class Config
             case 'system':
                 $path = INJI_SYSTEM_DIR . '/config/config.php';
                 self::$_configs['system'] = $data;
+                Inji::$inst->event('Config-change-system', $data);
                 break;
             case 'app':
                 $path = $app->path . "/config/config.php";
                 self::$_configs['app'][$app->name] = $data;
+                Inji::$inst->event('Config-change-app-' . $app->name, $data);
                 break;
             case 'module' :
                 $path = $app->path . "/config/modules/{$module}.php";
                 self::$_configs['module'][$app->name][$module] = $data;
+                Inji::$inst->event('Config-change-module-' . $app->name . '-' . $module, $data);
                 break;
             case 'share':
                 if ($module) {
                     $path = INJI_PROGRAM_DIR . "/config/modules/{$module}.php";
                     self::$_configs['shareModules'][$module] = $data;
+                    Inji::$inst->event('Config-change-shareModules-' . $module, $data);
                 } else {
                     $path = INJI_PROGRAM_DIR . "/config/config.php";
                     self::$_configs['share'] = $data;
+                    Inji::$inst->event('Config-change-share', $data);
                 }
                 break;
             default:

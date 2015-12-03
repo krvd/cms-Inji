@@ -11,7 +11,7 @@
 class Inji
 {
     public static $inst = NULL;
-    private static $_listeners = [];
+    private $_listeners = [];
     public static $config = [];
     public static $storage = [];
 
