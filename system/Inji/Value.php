@@ -41,7 +41,11 @@ class Value
                     case 'array':
                         return !empty($colInfo['colParams']['sourceArray'][$this->model->{$this->valueKey}]) ? $colInfo['colParams']['sourceArray'][$this->model->{$this->valueKey}] : 'Не задано';
                     case 'method':
-                        $values = $colInfo['colParams']['module']->$inputParams['method']();
+                        if (!empty($colInfo['colParams']['params'])) {
+                            $values = call_user_func_array([App::$cur->$colInfo['colParams']['module'], $colInfo['colParams']['method']], $colInfo['colParams']['params']);
+                        } else {
+                            $values = $colInfo['colParams']['module']-> $colInfo['colParams']['method']();
+                        }
                         return !empty($values[$this->model->{$this->valueKey}]) ? $values[$this->model->{$this->valueKey}] : 'Не задано';
                     case 'relation':
                         $relations = $colInfo['modelName']::relations();
@@ -51,9 +55,9 @@ class Value
                 $value = !empty($_GET['datamanagerFilters'][$col]['value']) ? $_GET['datamanagerFilters'][$col]['value'] : '';
                 ?>
                 <div class="filter_form_field filter_select">
-                    <?php
-                    $form->input('select', "datamanagerFilters[{$col}][value]", $colInfo['label'], ['value' => $value, 'values' => $values, 'noContainer' => true])
-                    ?>
+                  <?php
+                  $form->input('select', "datamanagerFilters[{$col}][value]", $colInfo['label'], ['value' => $value, 'values' => $values, 'noContainer' => true])
+                  ?>
                 </div>
                 <?php
                 break;
