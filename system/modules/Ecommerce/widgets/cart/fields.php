@@ -24,7 +24,7 @@ if (\Users\User::$cur->id) {
     </script>
     <?php
 }
-foreach (Ecommerce\UserAdds\Field::getList() as $field) {
+foreach (Ecommerce\UserAdds\Field::getList(['order'=>['weight','asc']]) as $field) {
     $form->input($field->type, "userAdds[fields][{$field->id}]", $field->name, ['required' => $field->required]);
 }
 ?>
