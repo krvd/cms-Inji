@@ -19,6 +19,7 @@ class Field extends \Model
         'type' => ['type' => 'text'],
         'required' => ['type' => 'bool'],
         'save' => ['type' => 'bool'],
+        'weight' => ['type' => 'number'],
     ];
     static $labels = [
         'name' => 'Название',
@@ -30,7 +31,8 @@ class Field extends \Model
         'manager' => [
             'cols' => [
                 'name', 'type', 'required', 'save'
-            ]
+            ],
+            'sortMode'=>true
         ]
     ];
     static $forms = [
