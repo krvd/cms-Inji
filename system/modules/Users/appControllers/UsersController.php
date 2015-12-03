@@ -12,8 +12,6 @@ class UsersController extends Controller
         $bread = [];
 
         $sections = $this->module->getSnippets('cabinetSection');
-        $extends = Module::getExtensions('Users', 'snippets', 'cabinetSection');
-        $sections = array_merge($sections, $extends);
         if (!empty($sections[$activeSection]['name'])) {
             $this->view->setTitle($sections[$activeSection]['name'] . ' - Личный кабинет');
             $bread[] = ['text' => 'Личный кабинет', 'href' => '/users/cabinet'];

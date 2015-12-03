@@ -117,8 +117,6 @@ class Money extends Module
 
         if ($trigger) {
             $handlers = $this->getSnippets('rewardTriggerHandler');
-            $extends = Module::getExtensions('Money', 'snippets', 'rewardTriggerHandler');
-            $handlers = array_merge($handlers, $extends);
             if (!empty($handlers[$trigger->handler])) {
                 $handlers[$trigger->handler]['handler']($event['eventObject'], $trigger);
             }
@@ -130,8 +128,6 @@ class Money extends Module
         $item = Money\Reward\Condition\Item::get([['type', 'event'], ['value', $event['eventName']]]);
         if ($item) {
             $recivers = $this->getSnippets('rewardConditionItemReciver');
-            $extends = Module::getExtensions('Money', 'snippets', 'rewardConditionItemReciver');
-            $recivers = array_merge($recivers, $extends);
             if (!empty($recivers[$item->reciver])) {
                 $recivers[$item->reciver]['reciver']($event['eventObject'], $item);
                 if ($item->condition->reward->block) {
@@ -215,8 +211,6 @@ class Money extends Module
                     $block->amount = $amount;
                     $block->data = 'reward:' . $reward->id;
                     $dateGenerators = $this->getSnippets('expiredDateGenerator');
-                    $extends = Module::getExtensions('Money', 'snippets', 'expiredDateGenerator');
-                    $dateGenerators = array_merge($dateGenerators, $extends);
                     if ($reward->block_date_expired && !empty($dateGenerators[$reward->block_date_expired])) {
                         $date = $dateGenerators[$reward->block_date_expired]($reward, $user);
                         if(!empty($date['date'])){

@@ -13,8 +13,6 @@ class DashboardController extends adminController
     function indexAction()
     {
         $sections = $this->module->getSnippets('adminDashboardWidget');
-        $extends = Module::getExtensions('Dashboard', 'snippets', 'adminDashboardWidget');
-        $sections = array_merge($sections, $extends);
         $this->view->setTitle('Панель управления');
         $this->view->page(['data' => compact('sections')]);
     }
