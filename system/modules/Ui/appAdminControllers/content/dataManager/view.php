@@ -14,7 +14,11 @@ foreach ($modelName::$cols as $colName => $options) {
                     $value = !empty($colInfo['colParams']['sourceArray'][$item->$colName]) ? $colInfo['colParams']['sourceArray'][$item->$colName] : 'Не задано';
                     break;
                 case 'method':
-                    $values = App::$primary->$colInfo['colParams']['module']->$colInfo['colParams']['method']();
+                    if (!empty($colInfo['colParams']['params'])) {
+                        $values = call_user_func_array([App::$cur->$colInfo['colParams']['module'], $colInfo['colParams']['method']], $colInfo['colParams']['params']);
+                    } else {
+                        $values = App::$primary->$colInfo['colParams']['module']->$colInfo['colParams']['method']();
+                    }
                     $value = !empty($values[$item->$colName]) ? $values[$item->$colName] : 'Не задано';
                     break;
                 case 'relation':
@@ -47,36 +51,36 @@ foreach ($modelName::$cols as $colName => $options) {
 $table->draw();
 ?>
 <div>
-    <h3>Комментарии (<?=
-        \Dashboard\Comment::getCount(['where' => [
-                ['item_id', $item->id],
-                ['model', $modelName],
-        ]]);
-        ?>)</h3>
-    <?php
-    foreach (\Dashboard\Comment::getList([ 'where' => [
+  <h3>Комментарии (<?=
+    \Dashboard\Comment::getCount(['where' => [
             ['item_id', $item->id],
             ['model', $modelName],
-        ], 'order' => ['date', 'desc']]) as $comment) {
-        ?>
-        <div class="row">
-            <div class="col-sm-3" style="max-width: 300px;">
-                <a href='/admin/Users/view/User/<?= $comment->user->pk(); ?>'><?= $comment->user->name(); ?></a><br />
-                <?= $comment->date; ?>
-            </div>
-            <div class="col-sm-9">
-                <?= $comment->text; ?>
-            </div>
+    ]]);
+    ?>)</h3>
+  <?php
+  foreach (\Dashboard\Comment::getList([ 'where' => [
+          ['item_id', $item->id],
+          ['model', $modelName],
+      ], 'order' => ['date', 'desc']]) as $comment) {
+      ?>
+      <div class="row">
+        <div class="col-sm-3" style="max-width: 300px;">
+          <a href='/admin/Users/view/User/<?= $comment->user->pk(); ?>'><?= $comment->user->name(); ?></a><br />
+          <?= $comment->date; ?>
         </div>
-        <?php
-    }
-    ?>
+        <div class="col-sm-9">
+          <?= $comment->text; ?>
+        </div>
+      </div>
+      <?php
+  }
+  ?>
 </div>
 <div>
-    <?php
-    $form = new \Ui\Form();
-    $form->begin();
-    $form->input('textarea', 'comment', 'Комментарий');
-    $form->end();
-    ?>
+  <?php
+  $form = new \Ui\Form();
+  $form->begin();
+  $form->input('textarea', 'comment', 'Комментарий');
+  $form->end();
+  ?>
 </div>
