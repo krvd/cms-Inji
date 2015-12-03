@@ -75,7 +75,7 @@ class Model
                         break;
                     case 'method':
                         if (!empty($colInfo['colParams']['params'])) {
-                            $values = call_user_func_array([$colInfo['colParams']['module'], $colInfo['colParams']['method']], $colInfo['colParams']['params']);
+                            $values = call_user_func_array([App::$cur->$colInfo['colParams']['module'], $colInfo['colParams']['method']], $colInfo['colParams']['params']);
                         } else {
                             $values = $colInfo['colParams']['module']->$colInfo['colParams']['method']();
                         }
@@ -310,6 +310,7 @@ class Model
                 break;
             case 'html':
             case 'textarea':
+            case 'json':
                 $params = 'text NOT NULL';
                 break;
             case 'bool':
