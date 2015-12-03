@@ -143,11 +143,11 @@ class Modules extends Module
                 $this->addInMenu($items, $appType);
             }
         }
+        Config::save('app', $config, null, App::$primary);
         if (file_exists($path . $module . '/install_script.php')) {
             $installFunction = include $path . $module . '/install_script.php';
             $installFunction(1, $params);
         }
-        Config::save('app', $config, null, App::$primary ? App::$primary : App::$cur);
     }
 
     function addInMenu($items, $appType, $parent = 0)
