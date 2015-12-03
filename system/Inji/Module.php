@@ -172,10 +172,11 @@ class Module
         return [];
     }
 
-    function getSnippets($snippetsPath, $extensions = true, $dir = '/snippets')
+    function getSnippets($snippetsPath, $extensions = true, $dir = '/snippets', $moduleName = '')
     {
-        $modulePaths = Module::getModulePaths($this->moduleName);
-        $modulePaths['templatePath'] = App::$cur->view->template->path . '/modules/' . ucfirst($this->moduleName);
+        $moduleName = $moduleName ? $moduleName : $this->moduleName;
+        $modulePaths = Module::getModulePaths($moduleName);
+        $modulePaths['templatePath'] = App::$cur->view->template->path . '/modules/' . ucfirst($moduleName);
         $snippets = [];
         foreach ($modulePaths as $path) {
             if (file_exists($path . $dir . '/' . $snippetsPath)) {
@@ -199,9 +200,9 @@ class Module
     {
         $extensions = [];
         $modules = Module::getInstalled(App::$cur);
+        $method = 'get' . ucfirst($extensionType);
         foreach ($modules as $module) {
-            $method = 'get' . ucfirst($extensionType);
-            $extensions = array_merge($extensions, App::$cur->{$module}->{$method}($request, false, "/extensions/{$this->moduleName}/" . $extensionType));
+            $extensions = array_merge($extensions, $this->{$method}($request, false, "/extensions/{$this->moduleName}/" . $extensionType, $module));
         }
         return $extensions;
     }
