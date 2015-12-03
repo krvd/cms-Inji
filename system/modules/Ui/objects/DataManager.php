@@ -342,6 +342,13 @@ class DataManager extends \Object
         } else {
             if (!empty($modelName::$cols[$colName]['view']['type'])) {
                 switch ($modelName::$cols[$colName]['view']['type']) {
+                    case 'widget':
+                        ob_start();
+                        \App::$cur->view->widget($modelName::$cols[$colName]['view']['widget'],['item'=> $item,'colName'=> $colName, 'colParams'=>$modelName::$cols[$colName]]);
+                        $content = ob_get_contents();
+                        ob_end_clean();
+                        return $content;
+                        break;
                     case 'moduleMethod':
                         return \App::$cur->{$modelName::$cols[$colName]['view']['module']}->{$modelName::$cols[$colName]['view']['method']}($item, $colName, $modelName::$cols[$colName]);
                         break;
