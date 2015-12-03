@@ -7,19 +7,25 @@ class PayType extends \Model
     static $objectName = 'Оплата';
     static $labels = [
         'name' => 'Название',
-        'merchants' => 'Платежные системы',
+        'handler' => 'Обработчик',
         'icon_file_id' => 'Иконка',
     ];
     static $cols = [
         'name' => ['type' => 'text'],
-        'merchants' => ['type' => 'bool'],
+        'handler' => [
+            'type' => 'select',
+            'source' => 'method',
+            'module' => 'Ecommerce',
+            'method' => 'getPayTypeHandlers',
+            'params' => [true]
+        ],
         'icon_file_id' => ['type' => 'image'],
     ];
     static $dataManagers = [
         'manager' => [
             'name' => 'Способы оплаты',
             'cols' => [
-                'name', 'merchants'
+                'name', 'handler'
             ],
         ],
     ];
@@ -27,7 +33,7 @@ class PayType extends \Model
         'manager' => [
             'map' => [
                 ['name', 'icon_file_id'],
-                ['merchants']
+                ['handler']
             ]
     ]];
 

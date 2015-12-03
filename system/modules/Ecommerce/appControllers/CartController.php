@@ -62,15 +62,14 @@ class CartController extends Controller
                     $error = 1;
                     Msg::add('Ошибка при выборе способа доставки');
                 } elseif ($deliverys && !empty($deliverys[$_POST['delivery']])) {
-                    $delivery = $deliverys[$_POST['delivery']];
-                } else {
-                    $delivery = null;
+                    $cart->delivery_id = $_POST['delivery'];
                 }
                 if ($payTypes && empty($payTypes[$_POST['payType']])) {
                     $error = 1;
                     Msg::add('Ошибка при выборе способа оплаты');
                 } elseif ($payTypes && !empty($payTypes[$_POST['payType']])) {
                     $payType = $payTypes[$_POST['payType']];
+                    $cart->paytype_id = $payType->id;
                 } else {
                     $payType = null;
                 }
@@ -103,8 +102,6 @@ class CartController extends Controller
                     $cart->comment = htmlspecialchars($_POST['comment']);
                     $cart->date_status = date('Y-m-d H:i:s');
                     $cart->complete_data = date('Y-m-d H:i:s');
-                    $cart->paytype_id = $payType ? $payType->id : 0;
-                    $cart->delivery_id = $delivery ? $delivery->id : 0;
                     $cart->warehouse_block = 1;
                     $cart->save();
 
@@ -126,47 +123,16 @@ class CartController extends Controller
                         $notification->chanel_id = $this->notifications->getChanel('Ecommerce-orders')->id;
                         $notification->save();
                     }
-                    if ($payType && $payType->merchants && $this->money) {
-                        $sums = [];
-                        foreach ($cart->cartItems as $cartItem) {
-                            $currency_id = $cartItem->price->currency ? $cartItem->price->currency->id : \App::$cur->ecommerce->config['defaultCurrency'];
-                            if (empty($sums[$currency_id])) {
-                                $sums[$currency_id] = $cartItem->final_price * $cartItem->count;
-                            } else {
-                                $sums[$currency_id] += $cartItem->final_price * $cartItem->count;
-                            }
+                    $handlers = $this->ecommerce->getSnippets('payTypeHandler');
+                    $redirect = ['/ecommerce/cart/success'];
+                    if ($payType && !empty($handlers[$payType->handler]['handler'])) {
+                        $newRedirect = $handlers[$payType->handler]['handler']($cart);
+                        if (!empty($newRedirect)) {
+                            $redirect = $newRedirect;
                         }
-                        if ($cart->delivery && $cart->delivery->price) {
-                            $currency_id = $cart->delivery->currency_id;
-                            if (empty($sums[$currency_id])) {
-                                $sums[$currency_id] = $cart->delivery->price;
-                            } else {
-                                $sums[$currency_id] += $cart->delivery->price;
-                            }
-                        }
-                        foreach ($sums as $currency_id => $sum) {
-                            if (!$currency_id) {
-                                continue;
-                            }
-                            $pay = new Money\Pay([
-                                'data' => $cart->id,
-                                'currency_id' => $currency_id,
-                                'user_id' => \Users\User::$cur->id,
-                                'sum' => $sum,
-                                'description' => 'Оплата заказа №' . $cart->id . ' в онлайн-магазине',
-                                'type' => 'pay',
-                                'pay_status_id' => 1,
-                                'callback_module' => 'Ecommerce',
-                                'callback_method' => 'cartPayRecive'
-                            ]);
-                            $pay->save();
-                        }
-                        unset($_SESSION['cart']['cart_id']);
-                        Tools::redirect('/money/merchants/pay/', 'Ваш заказ был создан. Вам необходимо оплатить счета, после чего с вами свяжется администратор для уточнения дополнительной информации');
-                    } else {
-                        unset($_SESSION['cart']['cart_id']);
-                        Tools::redirect('/ecommerce/cart/success');
                     }
+                    unset($_SESSION['cart']['cart_id']);
+                    call_user_func_array(['Tools', 'redirect'], $redirect);
                 }
             }
         }
@@ -181,6 +147,12 @@ class CartController extends Controller
             'href' => '/ecommerce/cart'
         ];
         $this->view->page(['data' => compact('cart', 'items', 'deliverys', 'payTypes', 'packItem', 'bread')]);
+    }
+
+    function primaryAction()
+    {
+        $this->view->setTitle('Прямой перевод');
+        $this->view->page();
     }
 
     function orderDetailAction($id = 0)

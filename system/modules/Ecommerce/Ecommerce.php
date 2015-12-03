@@ -7,6 +7,21 @@ class Ecommerce extends Module
         App::$primary->view->customAsset('js', '/moduleAsset/Ecommerce/js/cart.js');
     }
 
+    function getPayTypeHandlers($forSelect = false)
+    {
+        if (!$forSelect) {
+            return $this->getSnippets('payTypeHandler');
+        }
+        $handlers = [];
+        foreach ($this->getSnippets('payTypeHandler') as $key => $handler) {
+            if (empty($handler)) {
+                continue;
+            }
+            $handlers[$key] = $handler['name'];
+        }
+        return $handlers;
+    }
+
     function cartPayRecive($data)
     {
         $cart = Ecommerce\Cart::get($data['pay']->data);

@@ -91,6 +91,7 @@ class Cart extends \Model
         'card_item_id' => 'Дисконтная карта',
         'info' => 'Информация',
         'pay' => 'Счета оплаты',
+        'sums' => 'Суммы',
     ];
     static $cols = [
         'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
@@ -109,6 +110,13 @@ class Cart extends \Model
         'card_item_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'card'],
         'extra' => ['type' => 'dataManager', 'relation' => 'extras'],
         'pay' => ['type' => 'dataManager', 'relation' => 'pays'],
+        'sums' => [
+            'type' => 'void',
+            'view' => [
+                'type' => 'widget',
+                'widget' => 'Ecommerce\adminSums',
+            ],
+        ],
     ];
     static $dataManagers = [
         'manager' => [
@@ -116,7 +124,7 @@ class Cart extends \Model
                 'info',
                 'items',
                 'extra',
-                'sum',
+                'sums',
                 'cart_status_id',
                 'delivery_id',
                 'payed',
@@ -124,14 +132,12 @@ class Cart extends \Model
                 'complete_data',
             ],
             'sortable' => [
-                'sum',
                 'cart_status_id',
                 'delivery_id',
                 'payed',
                 'complete_data',
             ],
             'filters' => [
-                'sum',
                 'cart_status_id',
                 'delivery_id',
                 'payed',
@@ -187,6 +193,7 @@ class Cart extends \Model
             ]
         ],
     ];
+
     function addPacks($count = 1)
     {
         $this->addItem(Inji::app()->ecommerce->modConf['packItem']['ci_id'], Inji::app()->ecommerce->modConf['packItem']['ciprice_id'], $count);

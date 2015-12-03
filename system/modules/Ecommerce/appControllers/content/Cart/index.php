@@ -108,25 +108,30 @@
                         $form->input('radio', "delivery", $delivery->name . ((float) $delivery->price ? ' - ' . $delivery->price . ' ' . ($delivery->currency ? $delivery->currency->acronym() : 'руб.') : ''), [
                             'value' => $delivery->id,
                             'checked' => $checked,
-                            'helpText' => $helpText
+                            'helpText' => $helpText,
+                            'attributes' => [
+                                'onclick' => "inji.Ecommerce.Cart.calcSum();"
+                            ]
                         ]);
                     }
                     ?>
                   </div>
                 </div>
-                <div class="checkout-content checkout-payment-methods">
-                  <h4>Способ оплаты</h4>
-                  <?php
-                  foreach ($payTypes as $payType) {
-                      if ((!empty($_POST['payType']) && $_POST['payType'] == $payType->id) || $payType == $cartPayType) {
-                          $checked = 'checked';
-                      } else {
-                          $checked = '';
-                      }
-                      $form->input('radio', "payType", $payType->name, ['value' => $payType->id, 'checked' => $checked]);
-                  }
-                  ?>            
-                </div>                        
+                <div class="col-sm-6">
+                  <div class="checkout-content checkout-payment-methods">
+                    <h4>Способ оплаты</h4>
+                    <?php
+                    foreach ($payTypes as $payType) {
+                        if ((!empty($_POST['payType']) && $_POST['payType'] == $payType->id) || $payType == $cartPayType) {
+                            $checked = 'checked';
+                        } else {
+                            $checked = '';
+                        }
+                        $form->input('radio', "payType", $payType->name, ['value' => $payType->id, 'checked' => $checked]);
+                    }
+                    ?>            
+                  </div>                        
+                </div>
               </div>
             </div>
             <div class="order_page-details">
