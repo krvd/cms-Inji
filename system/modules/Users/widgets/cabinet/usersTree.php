@@ -67,7 +67,7 @@ App::$cur->libs->loadLib('typeahead');
     ?>
     <h3>Постоянные ссылки</h3>
     <?php
-    $links = Module::getExtensions('Users', 'snippets', 'partnerLink');
+    $links = App::$cur->users->getSnippets('partnerLink');
     foreach ($links as $link) {
         echo "{$link['name']}:<pre>{$link['href']}</pre><br/>";
     }
