@@ -12,7 +12,7 @@ class Role extends \Model
     ];
     static $cols = [
         'name' => ['type' => 'text'],
-        'user' => ['type' => 'select', 'source' => 'relation', 'relation' => 'users'],
+        'user' => ['type' => 'dataManager', 'relation' => 'users'],
         'group_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'group'],
     ];
     static $dataManagers = [
