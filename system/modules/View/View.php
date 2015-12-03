@@ -425,7 +425,7 @@ class View extends \Module
         $cacheDir = Cache::getDir();
         if (!file_exists($cacheDir . '/all' . $timeMd5 . '.js')) {
             foreach ($urls as $url) {
-                $scriptAll .= ' ' . file_get_contents($url);
+                $scriptAll .= ';' . file_get_contents($url);
             }
             file_put_contents($cacheDir . '/all' . $timeMd5 . '.js', $scriptAll);
         }
