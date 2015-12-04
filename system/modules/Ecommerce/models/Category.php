@@ -16,6 +16,7 @@ class Category extends \Model
         'options' => ['type' => 'dynamicList', 'relation' => 'options'],
         'viewer' => ['type' => 'select', 'source' => 'method', 'method' => 'viewsCategoryList', 'module' => 'Ecommerce'],
         'template' => ['type' => 'select', 'source' => 'method', 'method' => 'templatesCategoryList', 'module' => 'Ecommerce'],
+        'weight' => ['type' => 'number']
     ];
     static $labels = [
         'name' => 'Название',

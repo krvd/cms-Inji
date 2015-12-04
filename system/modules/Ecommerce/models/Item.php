@@ -36,6 +36,7 @@ class Item extends \Model
         'best' => ['type' => 'bool'],
         'options' => ['type' => 'dataManager', 'relation' => 'options'],
         'offers' => ['type' => 'dataManager', 'relation' => 'offers'],
+        'weight' => ['type' => 'number']
     ];
     static $dataManagers = [
         'manager' => [
@@ -50,7 +51,8 @@ class Item extends \Model
             ],
             'categorys' => [
                 'model' => 'Ecommerce\Category',
-            ]
+            ],
+            'sortMode'=>true
         ]
     ];
     static $forms = [
@@ -124,10 +126,9 @@ class Item extends \Model
         $curPrice = null;
 
         foreach ($offers[0]->prices as $price) {
-            if(!$price->type){
+            if (!$price->type) {
                 $curPrice = $price;
-            }
-            elseif (
+            } elseif (
                     (!$price->type->roles && !$curPrice) ||
                     ($price->type->roles && !$curPrice && strpos($price->type->roles, "|" . \Users\User::$cur->role_id . "|") !== false)
             ) {
