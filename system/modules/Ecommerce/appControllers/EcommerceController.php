@@ -116,6 +116,8 @@ class ecommerceController extends Controller
         //sort
         if (!empty($_GET['sort'])) {
             $sort = $_GET['sort'];
+        } elseif (!empty($this->ecommerce->config['defaultSort'])) {
+            $sort = $this->ecommerce->config['defaultSort'];
         } else {
             $sort = ['name' => 'asc'];
         }

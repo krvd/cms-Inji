@@ -150,12 +150,13 @@ class Ecommerce extends Module
                         $selectOptions['order'][] = ['name', strtolower($direction) == 'desc' ? 'desc' : 'asc'];
                         break;
                     case 'sales':
-                        $selectOptions['sales'][] = ['name', strtolower($direction) == 'desc' ? 'desc' : 'asc'];
+                        $selectOptions['order'][] = ['sales', strtolower($direction) == 'desc' ? 'desc' : 'asc'];
+                        break;
+                    case 'weight':
+                        $selectOptions['order'][] = ['weight', strtolower($direction) == 'desc' ? 'desc' : 'asc'];
                         break;
                 }
             }
-        } elseif (!empty($options['sort'])) {
-            //echo $options['sort'];
         }
 
         if (empty($this->config['view_empty_image'])) {

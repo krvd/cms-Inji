@@ -7,5 +7,6 @@ return [
     'sell_over_warehouse' => true,
     'notify_mail' => '',
     'defaultCategoryView' => 'itemList',
-    'defaultCurrency' => 1
+    'defaultCurrency' => 1,
+    'defaultSort' => ['name' => 'asc']
 ];
