@@ -5,7 +5,7 @@
     </a>
   </h4>
   <a href="/ecommerce/view/<?= $item->id; ?>">
-    <img src="<?= Statics::file($item->image ? $item->image->path : '/static/system/images/no-image.png', '200x200', 'q'); ?>" class="img-responsive"/>
+    <img src="<?= Statics::file($item->image ? $item->image->path : '/static/system/images/no-image.png', '200x200', 'q'); ?>" class="img-responsive" style = 'margin:0 auto;'/>
   </a>
   <div class="item-actions">
     <div class="btn-group btn-group-justified">

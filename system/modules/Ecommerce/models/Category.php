@@ -87,7 +87,7 @@ class Category extends \Model
         } elseif ($this->viewer == 'inherit' && $this->category) {
             return $this->category->resolveViewer(true);
         } else {
-            return (!empty(App::$cur->ecommerce->config['defaultCategoryView']) ? App::$cur->ecommerce->config['defaultCategoryView'] : 'itemList');
+            return (!empty(\App::$cur->ecommerce->config['defaultCategoryView']) ? \App::$cur->ecommerce->config['defaultCategoryView'] : 'itemList');
         }
     }
 

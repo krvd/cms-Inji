@@ -11,7 +11,7 @@ return [
         $extra->currency_id = 3;
         $extra->save();
         return [
-            '/ecommerce/cart/primary'
+            '/ecommerce/cart/primary/' . $cart->id
         ];
     }
         ];

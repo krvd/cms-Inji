@@ -1,6 +1,6 @@
 <div class="ecommerce">
   <div class="row">
-    <div class="col-xs-3 category-sidebar">
+    <div class="col-md-3 category-sidebar">
       <div class="sidebar-block">
         <div class="head">Категории</div>
         <div class="items">
@@ -14,7 +14,7 @@
         </div>
       </div>
     </div>
-    <div class="col-xs-9">
+    <div class="col-md-9">
       <h2 class="category-name"><?= $category ? $category->name : 'Каталог продукции'; ?></h2>
       <div class="items-icons">	
         <div class="row">	
