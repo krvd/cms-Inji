@@ -24,9 +24,9 @@ class MoneyController extends Controller
             $block = new Money\Wallet\Block();
             $block->wallet_id = $wallets[$transfer->currency_id]->id;
             $block->amount = $transfer->amount;
+            $block->comment = 'Заблокированно на перевод средств для ' . $transfer->toUser->name();
             $block->data = 'Money\Transfer:' . $transfer->id;
-            $wallets[$transfer->currency_id]->amount-=$transfer->amount;
-            $wallets[$transfer->currency_id]->save();
+            $wallets[$transfer->currency_id]->diff(-$transfer->amount, 'Перевод средств для ' . $transfer->toUser->name());
             $block->save();
             $from = 'noreply@' . INJI_DOMAIN_NAME;
             $to = \Users\User::$cur->mail;
@@ -53,8 +53,7 @@ class MoneyController extends Controller
                 $block = Money\Wallet\Block::get('Money\Transfer:' . $transfer->id, 'data');
                 $block->delete();
                 $wallets = $this->money->getUserWallets($transfer->to_user_id);
-                $wallets[$transfer->currency_id]->amount += $transfer->amount;
-                $wallets[$transfer->currency_id]->save();
+                $wallets[$transfer->currency_id]->diff($transfer->amount, 'Перевод средств от ' . $transfer->user->name());
                 Tools::redirect('/users/cabinet', 'Перевод был успешно завершен', 'success');
             }
         }
@@ -72,8 +71,7 @@ class MoneyController extends Controller
         $block = Money\Wallet\Block::get('Money\Transfer:' . $transfer->id, 'data');
         $block->delete();
         $wallets = $this->money->getUserWallets();
-        $wallets[$transfer->currency_id]->amount += $transfer->amount;
-        $wallets[$transfer->currency_id]->save();
+        $wallets[$transfer->currency_id]->dif($transfer->amount, 'Отмена перевода средств');
         $transfer->save();
         Tools::redirect('/users/cabinet', 'Перевод был успешно отменен', 'success');
     }
@@ -144,10 +142,8 @@ class MoneyController extends Controller
                 $error = true;
             }
             if (!$error) {
-                $wallets[$currency->id]->amount -= $amount;
-                $wallets[$currency->id]->save();
-                $wallets[$targetCurrency->id]->amount += $amount * $rate->rate;
-                $wallets[$targetCurrency->id]->save();
+                $wallets[$currency->id]->diff(-$amount, 'Обмен валюты на ' . $targetCurrency->name());
+                $wallets[$targetCurrency->id]->diff($amount * $rate->rate, 'Обмне валюты с ' . $currency->name());
                 Tools::redirect('/users/cabinet', 'Обмен был успешно проведен');
             }
         }
@@ -168,8 +164,7 @@ class MoneyController extends Controller
         if ($pay->sum > $wallet->amount) {
             Tools::redirect('/money/merchants/pay/' . $pay->id, 'На вашем счете недостаточно средств');
         }
-        $wallet->amount -=$pay->sum;
-        $wallet->save();
+        $wallet->diff(-$pay->sum, 'Оплата счета №' . $payId);
         $statuses = \Money\Pay\Status::getList(['key' => 'code']);
         if (!empty($statuses['success'])) {
             $pay->pay_status_id = $statuses['success']->id;

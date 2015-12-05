@@ -38,9 +38,25 @@ class Wallet extends \Model
                 $history->wallet_id = $this->pk();
                 $history->old = $cur->amount;
                 $history->new = $this->amount;
+                $history->amount = $this->amount - $cur->amount;
                 $history->save();
             }
         }
+    }
+
+    function diff($amount, $comment = '')
+    {
+        $amount = (float) $amount;
+        $query = \App::$cur->db->newQuery();
+        $string = 'UPDATE ' . \App::$cur->db->table_prefix . $this->table() . ' SET `' . $this->colPrefix() . 'amount`=`' . $this->colPrefix() . 'amount`+' . $amount . ' where `' . $this->index() . '` = ' . $this->id;
+        $query->query($string);
+        $history = new Wallet\History();
+        $history->wallet_id = $this->pk();
+        $history->old = $this->amount;
+        $history->new = $this->amount + $amount;
+        $history->amount = $amount;
+        $history->comment = $comment;
+        $history->save();
     }
 
     function name()

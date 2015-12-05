@@ -15,5 +15,22 @@ namespace Money\Wallet;
 
 class History extends \Model
 {
-    //put your code here
+    static $cols = [
+        'wallet_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'wallet'],
+        'new' => ['type' => 'decimal'],
+        'old' => ['type' => 'decimal'],
+        'amount' => ['type' => 'decimal'],
+        'comment' => ['type' => 'text'],
+    ];
+
+    static function relations()
+    {
+        return [
+            'wallet' => [
+                'model' => 'Money\Wallet',
+                'col' => 'wallet_id'
+            ]
+        ];
+    }
+
 }

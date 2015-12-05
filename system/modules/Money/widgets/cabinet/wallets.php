@@ -30,7 +30,9 @@
                 break;
             }
         }
-        echo " <a href ='/money/transfer?currency_id={$wallet->currency_id}'>Перевести</a>";
+        echo " <a href ='/money/transfer?currency_id={$wallet->currency_id}'>Перевести</a><br />";
+        echo " <a href ='/users/cabinet/walletHistory?currency_id={$wallet->currency_id}'>История</a>";
+        echo " <a href ='/users/cabinet/walletBlocked?currency_id={$wallet->currency_id}'>Блокировки</a>";
         ?>
       </div>
       <?php

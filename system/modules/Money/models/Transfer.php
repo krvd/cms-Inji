@@ -17,7 +17,7 @@ class Transfer extends \Model
         'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
         'to_user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'toUser'],
         'currency_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'currency'],
-        'amount' => ['type' => 'number'],
+        'amount' => ['type' => 'decimal'],
         'code' => ['type' => 'text'],
         'complete' => ['type' => 'bool'],
         'canceled' => ['type' => 'bool'],

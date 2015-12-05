@@ -46,8 +46,7 @@ class Reward extends \Model
                 }
             }
             if ($usersCompleted[$block->wallet->user_id]) {
-                $block->wallet->amount += $block->amount;
-                $block->wallet->save();
+                $block->wallet->diff($block->amount, $block->comment);
                 $block->delete();
             }
         }

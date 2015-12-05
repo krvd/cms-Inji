@@ -24,7 +24,7 @@ class Money extends Module
         $wallets = $this->getUserWallets($data['pay']->user_id);
         foreach ($wallets as $wallet) {
             if ($wallet->currency_id == $data['pay']->currency_id) {
-                $wallet->amount += $data['pay']->sum;
+                $wallet->diff($data['pay']->sum, 'Пополнение');
                 $wallet->save();
                 break;
             }
@@ -139,9 +139,10 @@ class Money extends Module
 
     function reward($reward_id, $sums, $rootUser = null)
     {
+        $rootUser = $rootUser ? $rootUser : \Users\User::$cur;
         $reward = \Money\Reward::get($reward_id);
         foreach ($reward->levels(['order' => ['level', 'asc']]) as $level) {
-            $user = $rootUser ? $rootUser : \Users\User::$cur;
+            $user = $rootUser;
             for ($i = 0; $i < $level->level; $i++) {
                 $next = $user && $user->parent ? $user->parent : false;
                 if (!$next && $reward->lasthaveall) {
@@ -209,21 +210,21 @@ class Money extends Module
                     $block = new \Money\Wallet\Block();
                     $block->wallet_id = $wallets[$level->currency_id]->id;
                     $block->amount = $amount;
+                    $block->comment = 'Партнерское вознаграждение от ' . $rootUser->name();
                     $block->data = 'reward:' . $reward->id;
                     $dateGenerators = $this->getSnippets('expiredDateGenerator');
                     if ($reward->block_date_expired && !empty($dateGenerators[$reward->block_date_expired])) {
                         $date = $dateGenerators[$reward->block_date_expired]($reward, $user);
-                        if(!empty($date['date'])){
+                        if (!empty($date['date'])) {
                             $block->date_expired = $date['date'];
                         }
-                        if(!empty($date['type'])){
+                        if (!empty($date['type'])) {
                             $block->expired_type = $date['type'];
                         }
                     }
                     $block->save();
                 } else {
-                    $wallets[$level->currency_id]->amount += $amount;
-                    $wallets[$level->currency_id]->save();
+                    $wallets[$level->currency_id]->diff($amount, 'Партнерское вознаграждение от ' . $rootUser->name());
                 }
             }
         }

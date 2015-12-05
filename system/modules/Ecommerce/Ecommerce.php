@@ -378,8 +378,7 @@ class Ecommerce extends Module
                     case'currency':
                         $currency = \Money\Currency::get($bonus->value);
                         $wallets = App::$cur->money->getUserWallets($cart->user->id);
-                        $wallets[$currency->id]->amount += $bonus->count;
-                        $wallets[$currency->id]->save();
+                        $wallets[$currency->id]->diff($bonus->count, 'Бонус за покупку');
                         break;
                 }
             }
