@@ -1,9 +1,7 @@
 <?php
 
 /**
- * Item name
- *
- * Info
+ * Comment
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/
@@ -21,7 +19,6 @@ class Comment extends \Model
         'item_id' => 'Ресурс',
         'user_id' => 'Автор',
         'text' => 'Текст',
-        'date' => 'Дата',
     ];
     static $cols = [
         'user_id' => [
@@ -29,6 +26,8 @@ class Comment extends \Model
             'relation' => 'user',
             'showCol' => 'mail'
         ],
+        'model' => ['type' => 'text'],
+        'text' => ['type' => 'html'],
         'item_id' => [
             'type' => 'void',
             'value' => [
@@ -40,32 +39,21 @@ class Comment extends \Model
     ];
     static $dataManagers = [
         'manager' => [
-            'options' => [
-                'access' => [
-                    'groups' => [
-                        3, 4
-                    ]
-                ],
-                'formOnPage' => true
-            ],
             'cols' => [
                 'model',
                 'item_id',
                 'user_id',
                 'text',
-                'date'
+                'date_create'
             ],
             'sortable' => [
                 'user_id',
                 'text',
-                'date'
+                'date_create'
             ],
             'preSort' => [
-                'date' => 'desc'
+                'date_create' => 'desc'
             ],
-            'rowButtons' => [
-                'open'
-            ]
         ],
     ];
 

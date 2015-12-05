@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Callbacks Category
+ * Callback Category
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/
@@ -66,6 +66,7 @@ class Category extends \Model
             ]
         ];
     }
+
     function resolveTemplate()
     {
         if ($this->template !== 'inherit') {

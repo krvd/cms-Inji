@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Callback
+ *
+ * @author Alexey Krupskiy <admin@inji.ru>
+ * @link http://inji.ru/
+ * @copyright 2015 Alexey Krupskiy
+ * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
+ */
+
 namespace Callbacks;
 
 class Callback extends \Model
@@ -64,7 +73,7 @@ class Callback extends \Model
         'manager' => [
             'name' => 'Отзывы',
             'cols' => [
-                'name', 'category_id', 'user_id', 'view','youtube_url', 'date_create'
+                'name', 'category_id', 'user_id', 'view', 'youtube_url', 'date_create'
             ],
             'filters' => [
                 'name', 'profession', 'phone', 'text', 'view', 'user_id', 'date_create'
@@ -72,7 +81,7 @@ class Callback extends \Model
             'categorys' => [
                 'model' => 'Callbacks\Category',
             ],
-            'sortMode'=>true
+            'sortMode' => true
         ]
     ];
     static $forms = [

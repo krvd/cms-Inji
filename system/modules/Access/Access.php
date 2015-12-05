@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Access module
+ *
+ * @author Alexey Krupskiy <admin@inji.ru>
+ * @link http://inji.ru/
+ * @copyright 2015 Alexey Krupskiy
+ * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
+ */
 class Access extends Module
 {
     function getDeniedRedirect($app = false)
@@ -25,11 +33,11 @@ class Access extends Module
             ];
             if (isset($element->module->config['access'])) {
                 $accesses = $element->module->config['access'];
-                $access = $this->resovePath($accesses, $path, '_access');
+                $access = $this->resolvePath($accesses, $path, '_access');
             }
             if (is_null($access) && isset($this->config['access'])) {
                 $accesses = $this->config['access'];
-                $access = $this->resovePath($accesses, $path, '_access');
+                $access = $this->resolvePath($accesses, $path, '_access');
             }
         }
         if (is_null($access)) {
@@ -42,14 +50,13 @@ class Access extends Module
             return true;
         }
 
-
-        if ((!$user->group_id && !empty($access)) || ($user->group_id && !empty($access) && !in_array($user->user_group_id, $access)))
+        if ((!$user->group_id && !empty($access)) || ($user->group_id && !empty($access) && !in_array($user->group_id, $access)))
             return false;
 
         return true;
     }
 
-    function resovePath($array, $path, $element)
+    function resolvePath($array, $path, $element)
     {
         while ($path) {
             $result = $this->pathWalker($array, array_merge($path, [$element]));

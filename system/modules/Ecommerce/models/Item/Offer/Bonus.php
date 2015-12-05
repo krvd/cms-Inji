@@ -1,9 +1,7 @@
 <?php
 
 /**
- * Item name
- *
- * Info
+ * Item offer bonus
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/
@@ -13,12 +11,7 @@
 
 namespace Ecommerce\Item\Offer;
 
-/**
- * Description of Bonus
- *
- * @author inji
- */
 class Bonus extends \Model
 {
-    //put your code here
+    
 }

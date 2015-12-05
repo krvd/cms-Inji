@@ -1,9 +1,7 @@
 <?php
 
 /**
- * Item name
- *
- * Info
+ * Parser Object Param
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/

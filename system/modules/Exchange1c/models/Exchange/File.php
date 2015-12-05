@@ -1,9 +1,7 @@
 <?php
 
 /**
- * Item name
- *
- * Info
+ * Exchange File
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * List input
+ * Active form input dynamic list
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/

@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * User
+ *
+ * @author Alexey Krupskiy <admin@inji.ru>
+ * @link http://inji.ru/
+ * @copyright 2015 Alexey Krupskiy
+ * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
+ */
+
 namespace Users;
 
 class User extends \Model
@@ -64,12 +73,20 @@ class User extends \Model
     ];
     static $forms = [
         'manager' => [
-            'options' => [
-                'access' => [
-                    'groups' => [
-                        3
-                    ]
-                ]
+            'inputs' => [
+                'userSearch' => [
+                    'type' => 'search',
+                    'source' => 'relation',
+                    'relation' => 'parent',
+                    'label' => 'Пригласивший',
+                    'cols' => [
+                        'info:first_name',
+                        'info:last_name',
+                        'info:middle_name',
+                        'mail'
+                    ],
+                    'col' => 'parent_id',
+                ],
             ],
             'map' => [
                 ['login', 'mail',],

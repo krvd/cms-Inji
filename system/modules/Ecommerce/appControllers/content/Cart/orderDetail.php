@@ -1,4 +1,3 @@
-
 <h1 class="heading-title">Заказ</h1>
 <table class="table table-bordered table-hover list">
   <thead>
@@ -105,7 +104,7 @@
               ?></td>
             <td class="text-right" style="white-space: nowrap;">
               <a onclick = 'inji.Ecommerce.Cart.addItem(<?= $item->getPrice()->id; ?>, 1);
-                    return false;' data-original-title="Добавить в корзину" href="#" data-toggle="tooltip" title="" class="btn btn-primary"><i class="glyphicon glyphicon-shopping-cart"></i></a>
+                        return false;' data-original-title="Добавить в корзину" href="#" data-toggle="tooltip" title="" class="btn btn-primary"><i class="glyphicon glyphicon-shopping-cart"></i></a>
           </tr>
           <?php
       }

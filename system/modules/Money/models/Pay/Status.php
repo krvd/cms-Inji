@@ -13,5 +13,5 @@ namespace Money\Pay;
 
 class Status extends \Model
 {
-    //put your code here
+    
 }

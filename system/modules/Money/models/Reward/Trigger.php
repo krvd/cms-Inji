@@ -1,9 +1,7 @@
 <?php
 
 /**
- * Item name
- *
- * Info
+ * Reward trigger
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/
@@ -13,12 +11,7 @@
 
 namespace Money\Reward;
 
-/**
- * Description of Trigger
- *
- * @author inji
- */
 class Trigger extends \Model
 {
-    //put your code here
+    
 }

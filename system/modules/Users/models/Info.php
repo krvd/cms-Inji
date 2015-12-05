@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Info
+ *
+ * @author Alexey Krupskiy <admin@inji.ru>
+ * @link http://inji.ru/
+ * @copyright 2015 Alexey Krupskiy
+ * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
+ */
+
 namespace Users;
 
 class Info extends \Model
@@ -102,7 +111,7 @@ class Info extends \Model
     function name()
     {
         if ($this->first_name . $this->last_name . $this->middle_name) {
-            return trim($this->first_name . ' ' .$this->middle_name .' '. $this->last_name);
+            return trim($this->first_name . ' ' . $this->middle_name . ' ' . $this->last_name);
         } else {
             return $this->user_id;
         }

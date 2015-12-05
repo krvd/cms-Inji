@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Html input
+ * Active form input date
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/

@@ -1,9 +1,7 @@
 <?php
 
 /**
- * Item name
- *
- * Info
+ * Migration object
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/
@@ -13,30 +11,30 @@
 
 namespace Migrations\Migration;
 
-class Map extends \Model
+class Object extends \Model
 {
-    static $objectName = 'Карта миграции данных';
+    static $objectName = 'Объект миграции';
     static $labels = [
         'name' => 'Название',
         'migration_id' => 'Миграция данных'
     ];
     static $cols = [
         'name' => ['type' => 'text'],
+        'code' => ['type' => 'text'],
+        'type' => ['type' => 'text'],
         'migration_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'migration'],
     ];
     static $dataManagers = [
         'manager' => [
-            'name' => 'Карты миграции данных',
-            'cols' => ['name', 'migration_id'],
-            'rowButtons' => [
-                'open', ['href' => '/admin/migrations/map', 'text' => '<i class = "glyphicon glyphicon-cog"></i>'], 'edit', 'delete'
-            ],
+            'name' => 'Объекты миграции',
+            'cols' => ['name', 'code', 'type', 'migration_id']
         ]
     ];
     static $forms = [
         'manager' => [
             'map' => [
-                ['name', 'migration_id']
+                ['name', 'migration_id'],
+                ['code', 'type'],
             ]
         ]
     ];
@@ -48,10 +46,13 @@ class Map extends \Model
                 'model' => 'Migrations\Migration',
                 'col' => 'migration_id'
             ],
-            'paths' => [
+            'params' => [
                 'type' => 'many',
-                'model' => 'Migrations\Migration\Map\Path',
-                'col' => 'migration_map_id'
+                'model' => 'Migrations\Migration\Object\Param',
+                'col' => 'object_id',
+                'where' => [
+                    ['parent_id', 0]
+                ]
             ]
         ];
     }

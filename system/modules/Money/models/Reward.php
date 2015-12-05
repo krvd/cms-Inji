@@ -1,9 +1,7 @@
 <?php
 
 /**
- * Item name
- *
- * Info
+ * Reward
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/
@@ -13,11 +11,6 @@
 
 namespace Money;
 
-/**
- * Description of Reward
- *
- * @author inji
- */
 class Reward extends \Model
 {
     function checkBlocked()

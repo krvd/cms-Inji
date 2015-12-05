@@ -1,8 +1,6 @@
 <?php
 /**
- * Item name
- *
- * Info
+ * Tree
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/

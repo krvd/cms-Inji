@@ -1,6 +1,5 @@
 <?php
 
-return array(
+return [
     'name' => 'Сервер',
-        )
-?>
+];

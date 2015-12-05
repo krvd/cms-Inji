@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Money Controller
+ * Money admin Controller
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/
@@ -10,5 +10,5 @@
  */
 class MoneyController extends adminController
 {
-    //put your code here
+    
 }

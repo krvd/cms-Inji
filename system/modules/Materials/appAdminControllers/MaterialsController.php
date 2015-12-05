@@ -1,12 +1,14 @@
 <?php
 
+/**
+ * Materials  admin controller
+ *
+ * @author Alexey Krupskiy <admin@inji.ru>
+ * @link http://inji.ru/
+ * @copyright 2015 Alexey Krupskiy
+ * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
+ */
 class MaterialsController extends adminController
 {
-    function get_list_ajaxAction()
-    {
-        echo json_encode(Material::get_list(array('array' => true)));
-    }
-
+    
 }
-
-?>

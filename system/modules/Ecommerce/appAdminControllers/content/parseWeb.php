@@ -1,7 +1,6 @@
 <?php $this->helper->start_box('Заливка с другого сайта', 'cogs'); ?>
 <a href ='<?= $this->url->module(); ?>/parseWeb/florange'>Florange.ru</a>
-<?php $this->helper->end_box();
-?>
+<?php $this->helper->end_box(); ?>
 <?php
 if (isset($catalogs)) {
 

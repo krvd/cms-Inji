@@ -1,9 +1,7 @@
 <?php
 
 /**
- * Item name
- *
- * Info
+ * Static loader controlelr
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/

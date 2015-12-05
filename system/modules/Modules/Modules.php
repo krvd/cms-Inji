@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Modules class
+ * Modules module
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/

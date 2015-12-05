@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Modules controller class
+ * Modules admin controller
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/

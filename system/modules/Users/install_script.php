@@ -1,6 +1,6 @@
 <?php
 
-return function ($step = NULL, $params = array()) {
+return function ($step = NULL, $params = []) {
     //users 
     App::$cur->db->createTable('users_user', array(
         'user_id' => 'pk',

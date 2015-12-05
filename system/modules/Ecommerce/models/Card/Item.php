@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Card item model
+ * Card Item
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/

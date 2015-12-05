@@ -1,9 +1,7 @@
 <?php
 
 /**
- * Item name
- *
- * Info
+ * Reward condition
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/

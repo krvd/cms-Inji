@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Material
+ *
+ * @author Alexey Krupskiy <admin@inji.ru>
+ * @link http://inji.ru/
+ * @copyright 2015 Alexey Krupskiy
+ * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
+ */
+
 namespace Materials;
 
 class Material extends \Model
@@ -65,7 +74,7 @@ class Material extends \Model
         'image_file_id' => ['type' => 'image'],
         'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
         'date_create' => ['type' => 'dateTime'],
-        'link' => ['type' => 'dataManager','relation'=>'links'],
+        'link' => ['type' => 'dataManager', 'relation' => 'links'],
     ];
     static $forms = [
         'manager' => [

@@ -1,20 +1,12 @@
 <?php
 
 /**
- * Item name
- *
- * Info
+ * Active form controller
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
- */
-
-/**
- * Description of ActiveForm
- *
- * @author inji
  */
 class ActiveFormController extends Controller
 {

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Textarea input
+ * Active form input textarea
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/

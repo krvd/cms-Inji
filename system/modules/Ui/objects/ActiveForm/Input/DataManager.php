@@ -1,7 +1,7 @@
 <?php
 
 /**
- * DataManager field
+ * Active form input Data Manager
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/

@@ -1,9 +1,7 @@
 <?php
 
 /**
- * Item name
- *
- * Info
+ * Item
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/
@@ -29,24 +27,24 @@ class Item extends \Model
         'type' => ['type' => 'select', 'source' => 'array', 'sourceArray' => [
                 'href' => 'Ссылка',
             /*
-                'materialCategory' => [
-                    'text' => 'Категория материалов',
-                    'input' => [
-                        'type' => 'select',
-                        'source' => 'model',
-                        'model' => '\Materials\Category',
-                        'name' => 'aditional'
-                    ]
-                ],
-                'material' => [
-                    'text' => 'Материал',
-                    'input' => [
-                        'type' => 'select',
-                        'source' => 'model',
-                        'model' => '\Materials\Material',
-                        'name' => 'aditional'
-                    ]
-                ]
+              'materialCategory' => [
+              'text' => 'Категория материалов',
+              'input' => [
+              'type' => 'select',
+              'source' => 'model',
+              'model' => '\Materials\Category',
+              'name' => 'aditional'
+              ]
+              ],
+              'material' => [
+              'text' => 'Материал',
+              'input' => [
+              'type' => 'select',
+              'source' => 'model',
+              'model' => '\Materials\Material',
+              'name' => 'aditional'
+              ]
+              ]
              * 
              */
             ]

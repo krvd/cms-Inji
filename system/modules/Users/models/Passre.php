@@ -1,9 +1,7 @@
 <?php
 
 /**
- * Item name
- *
- * Info
+ * Passre
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/
@@ -15,5 +13,5 @@ namespace Users;
 
 class Passre extends \Model
 {
-    //put your code here
+    
 }

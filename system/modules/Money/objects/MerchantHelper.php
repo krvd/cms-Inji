@@ -1,7 +1,7 @@
 <?php
 
 /**
- * MerchantHelper
+ * Merchant helper
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/
@@ -11,11 +11,6 @@
 
 namespace Money;
 
-/**
- * Description of MerchantHelper
- *
- * @author inji
- */
 class MerchantHelper extends \Object
 {
     static $merchant;

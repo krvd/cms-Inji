@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Perfect Money
+ * Merchant helper Perfect money
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/

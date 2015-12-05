@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Item name
+ * Code generator
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Exchange module for 1c
+ * Exchange1c module
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/

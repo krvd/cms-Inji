@@ -7,13 +7,13 @@
         if (empty($section['widget'])) {
             continue;
         }
-        
+
         $widgetSize = !empty($section['size']) ? $section['size'] : 1;
         $rowSum+=$widgetSize;
         ?>
         <div class="col-sm-<?= $widgetSize * 4; ?>" style="margin-bottom: 10px;"><?= $section['widget'](); ?></div>
         <?php
-        if($rowSum>=3){
+        if ($rowSum >= 3) {
             $rowSum = 0;
             echo '</div><div class = "row">';
         }

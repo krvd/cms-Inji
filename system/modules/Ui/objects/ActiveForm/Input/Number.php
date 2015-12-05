@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Number input
+ * Active form input number
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/

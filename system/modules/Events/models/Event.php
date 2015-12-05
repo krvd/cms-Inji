@@ -1,9 +1,7 @@
 <?php
 
 /**
- * Item name
- *
- * Info
+ * Event
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/
@@ -18,7 +16,7 @@ class Event extends \Model
     static $objectName = 'Событие системы';
     static $labels = [
         'name' => 'Название',
-        'event'=>'Событие'
+        'event' => 'Событие'
     ];
     static $storage = ['type' => 'moduleConfig'];
     static $cols = [
@@ -28,14 +26,14 @@ class Event extends \Model
     static $dataManagers = [
         'manager' => [
             'cols' => [
-                'name','event'
+                'name', 'event'
             ],
         ]
     ];
     static $forms = [
         'manager' => [
             'map' => [
-                ['name','event'],
+                ['name', 'event'],
             ]
         ]
     ];

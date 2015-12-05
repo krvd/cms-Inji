@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Wallet One
+ * Merchant helper Wallet one
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/

@@ -1,9 +1,7 @@
 <?php
 
 /**
- * Item name
- *
- * Info
+ * Callback Type
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/
@@ -13,17 +11,11 @@
 
 namespace Callbacks\Callback;
 
-/**
- * Description of Type
- *
- * @author inji
- */
 class Type extends \Model
 {
     public static $objectName = "Тип отзыва";
     public static $cols = [
         'name' => ['type' => 'text'],
-        'date_create' => ['type' => 'dateTime',]
     ];
     public static $labels = [
         'name' => 'Название',

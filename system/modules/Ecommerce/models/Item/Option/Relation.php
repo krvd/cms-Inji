@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Option to catalog relation
+ * Item option relation
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/

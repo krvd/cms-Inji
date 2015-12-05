@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Filed for user info model
+ * UserAdds info
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/

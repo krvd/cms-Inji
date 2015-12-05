@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Apps Controller
+ * Apps Setup Controller
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Text input
+ * Active form input bool
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/

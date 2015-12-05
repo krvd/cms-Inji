@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Ecommerce controller
+ * Ecommerce app controller
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/

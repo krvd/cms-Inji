@@ -1,9 +1,7 @@
 <?php
 
 /**
- * Item name
- *
- * Info
+ * Wallet block
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/
@@ -13,11 +11,6 @@
 
 namespace Money\Wallet;
 
-/**
- * Description of Block
- *
- * @author inji
- */
 class Block extends \Model
 {
     static function relations()

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Hidden input
+ * Active form input hidden
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/

@@ -1,9 +1,7 @@
 <?php
 
 /**
- * Item name
- *
- * Info
+ * Migration object param value
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/
@@ -15,5 +13,5 @@ namespace Migrations\Migration\Object\Param;
 
 class Value extends \Model
 {
-    //put your code here
+    
 }

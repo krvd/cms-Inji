@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Fast edit object
+ * Fast edit
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/

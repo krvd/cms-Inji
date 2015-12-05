@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Device
+ * Subscriber Device
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/
@@ -11,11 +11,6 @@
 
 namespace Notifications\Subscriber;
 
-/**
- * Description of Device
- *
- * @author inji
- */
 class Device extends \Model
 {
     static function relations()

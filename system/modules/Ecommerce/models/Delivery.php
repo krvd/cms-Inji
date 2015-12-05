@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Delivery
+ *
+ * @author Alexey Krupskiy <admin@inji.ru>
+ * @link http://inji.ru/
+ * @copyright 2015 Alexey Krupskiy
+ * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
+ */
+
 namespace Ecommerce;
 
 class Delivery extends \Model
@@ -20,7 +29,7 @@ class Delivery extends \Model
         'max_cart_price' => 'Басплатно при',
         'icon_file_id' => 'Иконка',
         'currency_id' => 'Валюта',
-        'info'=>'Дополнительная информация'
+        'info' => 'Дополнительная информация'
     ];
     static $dataManagers = [
         'manager' => [

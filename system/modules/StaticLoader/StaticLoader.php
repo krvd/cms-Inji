@@ -1,7 +1,7 @@
 <?php
 
 /**
- * StaticLoader class
+ * StaticLoader module
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/

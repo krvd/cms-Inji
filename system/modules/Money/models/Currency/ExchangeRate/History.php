@@ -1,9 +1,7 @@
 <?php
 
 /**
- * Item name
- *
- * Info
+ * Currency exchange rate history
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/

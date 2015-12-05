@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Notifications
+ * Notifications controller
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/

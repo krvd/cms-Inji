@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Card item history model
+ * Card item history
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/
@@ -13,5 +13,5 @@ namespace Ecommerce\Card\Item;
 
 class History extends \Model
 {
-    //put your code here
+    
 }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Search input
+ * Active form input search
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/

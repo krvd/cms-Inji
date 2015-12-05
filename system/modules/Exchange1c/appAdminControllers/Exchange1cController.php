@@ -1,9 +1,7 @@
 <?php
 
 /**
- * Item name
- *
- * Info
+ * Exchange1c admin controller
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/

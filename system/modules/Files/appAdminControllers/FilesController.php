@@ -1,9 +1,7 @@
 <?php
 
 /**
- * Item name
- *
- * Info
+ * Files admin controller
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/
@@ -11,11 +9,6 @@
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
 
-/**
- * Description of FilesController
- *
- * @author inji
- */
 class FilesController extends adminController
 {
     function managerForEditorAction()

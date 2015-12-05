@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Ecommerce item model
+ * Item
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/

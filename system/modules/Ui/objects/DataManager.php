@@ -1,8 +1,6 @@
 <?php
 /**
- * Item name
- *
- * Info
+ * Data manager
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/

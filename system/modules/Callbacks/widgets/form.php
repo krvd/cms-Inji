@@ -23,7 +23,6 @@
         <label>Ваша фотография <small>(По вашему желанию)</small></label>
         <input type = 'file' name = 'Callbacks[photo]'/>
       </div>
-
     </div>
     <div class ='col-xs-12 text-center'>      
       <div class="form-group">

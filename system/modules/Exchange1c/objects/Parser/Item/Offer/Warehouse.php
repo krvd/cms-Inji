@@ -1,9 +1,7 @@
 <?php
 
 /**
- * Item name
- *
- * Info
+ * Parser Item Offer Warehouse
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/

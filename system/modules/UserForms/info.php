@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
     'name' => 'Формы',
     'menu' => [
         'appAdmin' => [
@@ -11,4 +11,4 @@ return array(
             ]
         ]
     ]
-);
+];

@@ -6,7 +6,7 @@ return array(
         'appAdmin' => [
             [
                 'name' => 'Интернет-магазин',
-                'href' => '/admin/ecommerce/dashboard',
+                'href' => '/admin/ecommerce/Item',
                 'childs' => [
                     [
                         'name' => 'Список Товаров',
