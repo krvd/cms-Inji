@@ -8,7 +8,7 @@
         </li>
         <?php
         foreach ($sections as $sectionName => $section) {
-            if (!empty($section['fullWidget']) || !empty($section['href'])) {
+            if (!empty($section['name']) && (!empty($section['fullWidget']) || !empty($section['href']))) {
                 ?>
                 <li role="presentation" <?= $activeSection == $sectionName ? 'class="active"' : ''; ?>>
                   <a href="<?= !empty($section['href']) ? $section['href'] : "/users/cabinet/{$sectionName}"; ?>"><?= $section['name']; ?></a>
