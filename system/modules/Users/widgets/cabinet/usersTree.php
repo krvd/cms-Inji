@@ -20,43 +20,58 @@ if (!empty($_POST['partnerInvite']['email'])) {
     Tools::sendMail('noreply@' . INJI_DOMAIN_NAME, $_POST['partnerInvite']['email'], $title, $text);
     Tools::redirect(null, 'Приглашение было отправлено', 'success');
 }
-$ii = 8;
-$levels = [];
-$userIds = Users\User::$cur->user_id;
-$allUserIds = [];
-$allUserIds[] = Users\User::$cur->user_id;
-$count = 0;
-for ($i = 1; $i <= $ii; $i++) {
-    $levels[$i] = \Users\User::getList(['where' => [['parent_id', $userIds, 'IN']]]);
-    $count += count($levels[$i]);
-    $userIds = implode(',', array_keys($levels[$i]));
-    if (!$userIds)
-        break;
-    $allUserIds = array_merge($allUserIds, array_keys($levels[$i]));
-}
+$partners = App::$cur->users->getUserPartners(Users\User::$cur, 8);
 $usersSearch = [];
-foreach ($levels as $level) {
-    foreach ($level as $user) {
-        $usersSearch[] = [
-            'name' => $user->name(),
-            'id' => $user->pk(),
-            'translit' => Tools::translit($user->name()),
-        ];
-    }
+foreach ($partners['users'] as $user) {
+    $usersSearch[] = [
+        'name' => $user->name(),
+        'id' => $user->pk(),
+        'translit' => Tools::translit($user->name()),
+    ];
+}
+if (!empty($_GET['info']['user_id']) && !empty($users[$_GET['info']['user_id']])) {
+    
 }
 App::$cur->libs->loadLib('typeahead');
 ?>
 
 <div class ='row'>
-  <div class ='col-sm-6'>
-    <h3>Ваши партнеры</h3>
-    <h4>Партнеров в 8 поколениях: <b><?= $count; ?></b></h4>
-    <div class ='form-group'>
-      <input autocomplete="off" id ='partnersCabinetSearch' type="text" class ='form-control' placeholder="Поиск" />
+  <div class ='col-md-6'>
+    <div class="users-cabinet-userTree">
+      <h3>Ваши партнеры</h3>
+      <h4>Партнеров в 8 поколениях: <b><?= $partners['count']; ?></b></h4>
+      <div class ='form-group'>
+        <input autocomplete="off" id ='partnersCabinetSearch' type="text" class ='form-control' placeholder="Поиск" />
+      </div>
+      <?php \Ui\Tree::ul(Users\User::$cur, 8); ?>
     </div>
-    <?php \Ui\Tree::ul(Users\User::$cur, $ii); ?>
+    <script>
+        inji.onLoad(function () {
+          $('.users-cabinet-userTree li a').popover({
+            trigger: 'click',
+            placement: 'top',
+            html: true,
+            title: function () {
+              return '<span class="text-info"><strong>' + $(this).text() + '</strong></span>' +
+                      '<button type="button" class="close" onclick="$(\'#' + $(this).parents('li').attr('id') + '\').find(\'>label>a\').popover(\'hide\');">&times;</button>'
+            },
+            content: function () {
+              var html = '';
+              var id = $(this).parents('li').attr('id').replace('Users_User-', '');
+              inji.Server.request({
+                url: '/Users/getPartnerInfo/' + id,
+                async: false,
+                success: function (result) {
+                  html = result;
+                }
+              });
+              return html;
+            }
+          });
+        });
+    </script>
   </div>
-  <div class="col-sm-6">
+  <div class="col-md-6">
     <h3>Пригласить партнера</h3>
     <?php
     $form = new \Ui\Form();

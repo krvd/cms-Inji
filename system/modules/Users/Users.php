@@ -40,7 +40,7 @@ class Users extends Module
                         ['user_id', $_COOKIE[$this->cookiePrefix . "_user_id"]],
                         ['hash', $_COOKIE[$this->cookiePrefix . "_user_session_hash"]]
             ]);
-            if($session){
+            if ($session) {
                 $session->delete();
             }
         }
@@ -291,6 +291,34 @@ class Users extends Module
     function verifypass($pass, $hash)
     {
         return password_verify($pass, $hash);
+    }
+
+    function getUserPartners($user, $levels = 0)
+    {
+        $return = [
+            'users' => [],
+            'levels' => [],
+            'count' => 0,
+            'lastLevel' => 0
+        ];
+        $users = [];
+        $levels = [];
+        $userIds = $user->user_id;
+        for ($i = 1; $i <= $levels || !$levels; $i++) {
+            if (!$userIds && $levels) {
+                $levels[$i] = [];
+                continue;
+            } elseif (!$userIds && !$levels) {
+                break;
+            }
+            $usersLevel = \Users\User::getList(['where' => [['parent_id', $userIds, 'IN']]]);
+            $return['users'] += $usersLevel;
+            $return['levels'][$i] = array_keys($usersLevel);
+            $userIds = implode(',', $return['levels'][$i]);
+            $return['lastLevel'] = $i;
+        }
+        $return['count'] = count($return['users']);
+        return $return;
     }
 
 }

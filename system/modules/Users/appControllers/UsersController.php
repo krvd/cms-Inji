@@ -74,4 +74,60 @@ class UsersController extends Controller
         Tools::redirect('/', 'Вы успешно активировали ваш аккаунт, теперь вы можете войти');
     }
 
+    function getPartnerInfoAction($userId = 0)
+    {
+        $userId = (int) $userId;
+        $result = new \Server\Result();
+        if (!$userId) {
+            $result->success = FALSE;
+            $result->content = 'Не указан пользователь';
+            $result->send();
+        }
+        $partners = App::$cur->users->getUserPartners(Users\User::$cur, 8);
+        if (empty($partners['users'][$userId])) {
+            $result->success = FALSE;
+            $result->content = 'Этот пользователь не находится в вашей структуре';
+            $result->send();
+        }
+        $user = $partners['users'][$userId];
+        ob_start();
+        echo "E-mail: <a href='mailto:{$user->mail}'>{$user->mail}</a>";
+        $rewards = Money\Reward::getList(['where' => ['active', 1]]);
+        $levelTypes = [
+            'procent' => 'Процент',
+            'amount' => 'Сумма',
+        ];
+        $itemTypes = [
+            'event' => 'Событие'
+        ];
+        foreach ($rewards as $reward) {
+            foreach ($reward->conditions as $condition) {
+                $complete = $condition->checkComplete($userId);
+                ?>
+                <h5 class="<?= $complete ? 'text-success' : 'text-danger'; ?>"><?= $condition->name(); ?></h5>
+                <ul>
+                  <?php
+                  foreach ($condition->items as $item) {
+                      $itemComplete = $item->checkComplete($userId);
+                      switch ($item->type) {
+                          case 'event':
+                              $name = \Events\Event::get($item->value, 'event')->name();
+                              break;
+                      }
+                      ?>
+                      <li> 
+                        <b class="<?= $itemComplete ? 'text-success' : 'text-danger'; ?>"><?= $name; ?> <?= $item->recivedCount($userId); ?></b>/<?= $item->count; ?> <br />
+                      </li>
+                      <?php
+                  }
+                  ?>
+                </ul>
+                <?php
+            }
+        }
+        $result->content = ob_get_contents();
+        ob_end_clean();
+        $result->send();
+    }
+
 }
