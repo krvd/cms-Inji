@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Social helper vk
+ * Social helper Google
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/
@@ -11,53 +11,60 @@
 
 namespace Users\SocialHelper;
 
-class Vk extends \Users\SocialHelper
+class Google extends \Users\SocialHelper
 {
     static function auth()
     {
+
         $config = static::getConfig();
         if (empty($_GET['code']) && empty($_GET['error'])) {
             $query = [
-                'client_id' => $config['appId'],
-                'scope' => 'email',
+                'client_id' => $config['client_id'],
+                'scope' => 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile',
                 'response_type' => 'code',
-                'display' => 'page',
-                'redirect_uri' => 'http://' . INJI_DOMAIN_NAME . '/users/social/auth/vk'
+                'redirect_uri' => 'http://' . INJI_DOMAIN_NAME . '/users/social/auth/google'
             ];
-            \Tools::redirect("https://oauth.vk.com/authorize?" . http_build_query($query));
+            \Tools::redirect("https://accounts.google.com/o/oauth2/auth?" . http_build_query($query));
         }
         if (empty($_GET['code']) && !empty($_GET['error'])) {
             \Tools::redirect('/', 'Произошла ошибка во время авторизации через соц. сеть: ' . $_GET['error_description']);
         }
         $query = [
-            'client_id' => $config['appId'],
+            'client_id' => $config['client_id'],
             'client_secret' => $config['secret'],
             'code' => $_GET['code'],
-            'redirect_uri' => 'http://' . INJI_DOMAIN_NAME . '/users/social/auth/vk'
+            'grant_type' => 'authorization_code',
+            'redirect_uri' => 'http://' . INJI_DOMAIN_NAME . '/users/social/auth/google'
         ];
-        $result = @file_get_contents("https://oauth.vk.com/access_token?" . http_build_query($query));
+        $result = false;
+        if ($curl = curl_init()) {
+            curl_setopt($curl, CURLOPT_URL, 'https://accounts.google.com/o/oauth2/token');
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($curl, CURLOPT_POST, true);
+            curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($query));
+            $result = curl_exec($curl);
+            curl_close($curl);
+        }
         if ($result === false) {
             \Tools::redirect('/', 'Во время авторизации произошли ошибки', 'danger');
         }
         $result = json_decode($result, true);
-        if (empty($result['user_id'])) {
+        if (empty($result['access_token'])) {
             \Tools::redirect('/', 'Во время авторизации произошли ошибки', 'danger');
         }
         $userQuery = [
-            'user_id' => $result['user_id'],
-            'fields' => 'sex, bdate, photo_max_orig, home_town',
             'access_token' => $result['access_token']
         ];
-        $userResult = @file_get_contents("https://api.vk.com/method/users.get?" . http_build_query($userQuery));
+        $userResult = @file_get_contents("https://www.googleapis.com/oauth2/v1/userinfo?" . http_build_query($userQuery));
         if (!$userResult) {
             \Tools::redirect('/', 'Во время авторизации произошли ошибки', 'danger');
         }
         $userDetail = json_decode($userResult, true);
-        if (empty($userDetail['response'][0])) {
+        if (empty($userDetail['id'])) {
             \Tools::redirect('/', 'Во время авторизации произошли ошибки', 'danger');
         }
         $social = static::getObject();
-        $userSocial = \Users\User\Social::get([['uid', $result['user_id']], ['social_id', $social->id]]);
+        $userSocial = \Users\User\Social::get([['uid', $userDetail['id']], ['social_id', $social->id]]);
         if ($userSocial && $userSocial->user) {
             \App::$cur->users->newSession($userSocial->user);
             if (!empty(\App::$cur->users->config['loginUrl'][\App::$cur->type])) {
@@ -69,15 +76,15 @@ class Vk extends \Users\SocialHelper
             }
             if (!\Users\User::$cur->id) {
                 $user = false;
-                if (!empty($result['email'])) {
-                    $user = \Users\User::get($result['email'], 'mail');
+                if (!empty($userDetail['email']) && !empty($userDetail['verified_email'])) {
+                    $user = \Users\User::get($userDetail['email'], 'mail');
                 }
                 if (!$user) {
                     $user = new \Users\User();
                     $user->group_id = 2;
                     $user->role_id = 2;
-                    if (!empty($result['email'])) {
-                        $user->login = $user->mail = $result['email'];
+                    if (!empty($userDetail['email']) && !empty($userDetail['verified_email'])) {
+                        $user->login = $user->mail = $userDetail['email'];
                     }
                     $invite_code = (!empty($_POST['invite_code']) ? $_POST['invite_code'] : ((!empty($_COOKIE['invite_code']) ? $_COOKIE['invite_code'] : ((!empty($_GET['invite_code']) ? $_GET['invite_code'] : '')))));
                     if (!empty($invite_code)) {
@@ -105,32 +112,26 @@ class Vk extends \Users\SocialHelper
             } else {
                 $user = \Users\User::$cur;
             }
-            if (!$user->info->photo_file_id && !empty($userDetail['response'][0]['photo_max_orig'])) {
-                $user->info->photo_file_id = \App::$cur->files->uploadFromUrl($userDetail['response'][0]['photo_max_orig']);
+            if (!$user->info->photo_file_id && !empty($userDetail['picture'])) {
+                $user->info->photo_file_id = \App::$cur->files->uploadFromUrl($userDetail['picture']);
             }
-            if (!$user->info->first_name && !empty($userDetail['response'][0]['first_name'])) {
-                $user->info->first_name = $userDetail['response'][0]['first_name'];
+            if (!$user->info->first_name && !empty($userDetail['given_name'])) {
+                $user->info->first_name = $userDetail['given_name'];
             }
-            if (!$user->info->last_name && !empty($userDetail['response'][0]['last_name'])) {
-                $user->info->last_name = $userDetail['response'][0]['last_name'];
+            if (!$user->info->last_name && !empty($userDetail['family_name'])) {
+                $user->info->last_name = $userDetail['family_name'];
             }
-            if (!$user->info->city && !empty($userDetail['response'][0]['home_town'])) {
-                $user->info->city = $userDetail['response'][0]['home_town'];
-            }
-            if (!$user->info->sex && !empty($userDetail['response'][0]['sex'])) {
-                $user->info->sex = $userDetail['response'][0]['sex'] == 2 ? 1 : ($userDetail['response'][0]['sex'] == 1 ? 2 : 0);
-            }
-            if ($user->info->bday == '0000-00-00' && !empty($userDetail['response'][0]['bdate'])) {
-                $user->info->bday = substr_count($userDetail['response'][0]['bdate'], '.') == 2 ? \DateTime::createFromFormat('d.m.Y', $userDetail['response'][0]['bdate'])->format('Y-m-d') : (substr_count($userDetail['response'][0]['bdate'], '.') == 1 ? \DateTime::createFromFormat('d.m', $userDetail['response'][0]['bdate'])->format('Y-m-1') : '0000-00-00');
+            if (!$user->info->sex && !empty($userDetail['gender'])) {
+                $user->info->sex = $userDetail['gender'] == 'male' ? 1 : ($userDetail['gender'] == 'female' ? 2 : 0);
             }
             $user->info->save();
             $userSocial = new \Users\User\Social();
-            $userSocial->uid = $result['user_id'];
+            $userSocial->uid = $userDetail['id'];
             $userSocial->social_id = $social->id;
             $userSocial->user_id = $user->id;
             $userSocial->save();
             \App::$cur->users->newSession($user);
-            \Tools::redirect('/users/cabinet/profile', 'Вы успешно зарегистрировались через ВКонтакте', 'success');
+            \Tools::redirect('/users/cabinet/profile', 'Вы успешно зарегистрировались через Google+', 'success');
         }
     }
 
