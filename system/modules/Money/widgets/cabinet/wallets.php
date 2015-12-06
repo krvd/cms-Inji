@@ -25,10 +25,6 @@
                 echo "<a href = '/money/exchange?currency_id={$wallet->currency_id}'>Обменять</a>";
                 break;
             }
-            if ($rate->target_currency_id == $wallet->currency_id && !empty($wallets[$rate->currency_id])) {
-                echo "<a href = '/money/exchange?target_currency_id={$wallet->currency_id}'>Обменять</a>";
-                break;
-            }
         }
         echo " <a href ='/money/transfer?currency_id={$wallet->currency_id}'>Перевести</a><br />";
         echo " <a href ='/users/cabinet/walletHistory?currency_id={$wallet->currency_id}'>История</a>";

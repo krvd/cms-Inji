@@ -137,7 +137,7 @@ class MoneyController extends Controller
             } else {
                 $amount = (float) $_GET['exchange']['give']['amount'];
             }
-            if ($amount && $amount > $wallets[$currency->id]->amount) {
+            if (!empty($amount) && $amount > $wallets[$currency->id]->amount) {
                 Msg::add('Вы указали сумму большую чем вам доступно');
                 $error = true;
             }
