@@ -43,6 +43,7 @@ class Search extends \Ui\ActiveForm\Input
             $this->form->input('hidden', $inputName, '', $inputOptions);
             return true;
         }
+        $inputOptions['inputObject'] = $this;
         $this->form->input('search', $inputName, $inputLabel, $inputOptions);
         return true;
     }

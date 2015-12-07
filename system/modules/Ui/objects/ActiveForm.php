@@ -256,7 +256,6 @@ class ActiveForm extends \Object
                         if (is_array($inputParams['showCol'])) {
                             switch ($inputParams['showCol']['type']) {
                                 case 'staticMethod':
-                                    //call_user_func($callback, $item);
                                     $values[$key] = $inputParams['showCol']['class']::{$inputParams['showCol']['method']}($item);
                                     break;
                             }

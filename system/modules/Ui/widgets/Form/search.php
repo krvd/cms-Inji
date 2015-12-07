@@ -2,6 +2,23 @@
 echo empty($options['noContainer']) ? '<div class="form-group">' : '';
 echo $label !== false ? "<label>{$label}</label>" : '';
 $value = !empty($options['value']) ? addcslashes($options['value'], "'") : (!empty($form->userDataTree[$name]) ? addcslashes($form->userDataTree[$name], "'") : '');
+$displayValue = '';
+if (!empty($options['values'][$value])) {
+    if (!empty($options['inputObject']->colParams['showCol'])) {
+        if (is_array($options['inputObject']->colParams['showCol'])) {
+            switch ($options['inputObject']->colParams['showCol']['type']) {
+                case 'staticMethod':
+                    $calssName = $options['inputObject']->colParams['showCol']['class'];
+                    $displayValue = $calssName::{$options['inputObject']->colParams['showCol']['method']}($options['values'][$value]);
+                    break;
+            }
+        } else {
+            $displayValue = $options['values'][$value]->$options['inputObject']->colParams['showCol'];
+        }
+    } else {
+        $displayValue = $options['values'][$value]->name();
+    }
+}
 ?>
 <input <?= !empty($options['required']) ? 'required' : ''; ?> 
   type ="text" 
@@ -9,10 +26,10 @@ $value = !empty($options['value']) ? addcslashes($options['value'], "'") : (!emp
   placeholder="<?= !empty($options['placeholder']) ? $options['placeholder'] : ''; ?>" 
   class="form-control" 
   name = 'query-<?= $name; ?>' 
-  value = '<?= !empty($options['values'][$value]) ? $options['values'][$value] : ''; ?>'
+  value = '<?= $displayValue; ?>'
   />
 
-<div class="form-search-cur">Выбрано: <?= !empty($options['values'][$value]) ? $options['values'][$value]->name() : ''; ?></div>
+<div class="form-search-cur">Выбрано: <?= $displayValue; ?></div>
 <input 
   type="hidden" 
   name = '<?= $name; ?>'
