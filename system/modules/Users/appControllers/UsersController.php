@@ -99,6 +99,7 @@ class UsersController extends Controller
         }
         $user = $partners['users'][$userId];
         ob_start();
+        echo "id:{$user->id}<br />";
         echo "E-mail: <a href='mailto:{$user->mail}'>{$user->mail}</a>";
         $rewards = Money\Reward::getList(['where' => ['active', 1]]);
         $levelTypes = [
