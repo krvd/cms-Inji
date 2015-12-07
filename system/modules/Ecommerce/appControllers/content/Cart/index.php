@@ -127,7 +127,15 @@
                         } else {
                             $checked = '';
                         }
-                        $form->input('radio', "payType", $payType->name, ['value' => $payType->id, 'checked' => $checked]);
+                        $helpText = '';
+                        if ($payType->info) {
+                            $helpText .= nl2br($delivery->info);
+                        }
+                        $form->input('radio', "payType", $payType->name, [
+                            'value' => $payType->id,
+                            'checked' => $checked,
+                            'helpText' => $helpText
+                        ]);
                     }
                     ?>            
                   </div>                        
