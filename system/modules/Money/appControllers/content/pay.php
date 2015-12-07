@@ -28,7 +28,7 @@
         <img src="<?= $merchant->image ? $merchant->image->path : '/static/system/images/no-image.png'; ?>" class="img-responsive" />
         <h4><?= $merchant->name(); ?></h4>
       </div>
-      <div class="col-xs-10 text-left">
+      <div class="col-xs-10 col-md-4 text-left">
         <?php
         foreach ($allowCurrencies as $allowCurrency) {
             switch ($allowCurrency['type']) {
@@ -44,6 +44,9 @@
             <?php
         }
         ?>
+      </div>
+      <div class="hidden-xs hidden-sm col-md-6 text-left">
+        <?= $merchant->previewImage ? '<img src="' . $merchant->previewImage->path . '" class="img-responsive" />' : ''; ?>
       </div>
       <?php
   }

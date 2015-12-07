@@ -18,6 +18,7 @@ class Merchant extends \Model
         'name' => ['type' => 'text'],
         'object_name' => ['type' => 'text'],
         'image_file_id' => ['type' => 'image'],
+        'preview_image_file_id' => ['type' => 'image'],
         'active' => ['type' => 'bool'],
         'refill' => ['type' => 'bool'],
         'pay' => ['type' => 'bool'],
@@ -27,6 +28,7 @@ class Merchant extends \Model
     static $labels = [
         'name' => 'Название',
         'image_file_id' => 'Иконка',
+        'preview_image_file_id' => 'Превью экрана оплаты',
         'active' => 'Активировано',
         'refill' => 'Пополнение',
         'pay' => 'Оплата',
@@ -47,9 +49,10 @@ class Merchant extends \Model
     static $forms = [
         'manager' => [
             'map' => [
-                ['name', 'image_file_id'],
+                ['name'],
                 ['object_name', 'active'],
-                ['pay','refill'],
+                ['pay', 'refill'],
+                ['image_file_id', 'preview_image_file_id'],
                 ['config'],
                 ['currency']
             ]
@@ -71,6 +74,10 @@ class Merchant extends \Model
             'image' => [
                 'model' => 'Files\File',
                 'col' => 'image_file_id'
+            ],
+            'previewImage' => [
+                'model' => 'Files\File',
+                'col' => 'preview_image_file_id'
             ]
         ];
     }
