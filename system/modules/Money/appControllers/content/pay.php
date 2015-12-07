@@ -40,7 +40,7 @@
                     break;
             }
             ?>
-            <a class="btn btn-default btn-lg" href ="/money/merchants/go/<?= $pay->id; ?>/<?= $merchant->id; ?>/<?= $allowCurrency['currency']->id; ?>"><?= $sum; ?> <?= $allowCurrency['currency']->acronym(); ?></a>
+            <a class="btn btn-primary btn-lg" href ="/money/merchants/go/<?= $pay->id; ?>/<?= $merchant->id; ?>/<?= $allowCurrency['currency']->id; ?>">Оплатить <?= $sum; ?> <?= $allowCurrency['currency']->acronym(); ?></a>
             <?php
         }
         ?>
