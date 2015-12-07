@@ -129,7 +129,7 @@
                         }
                         $helpText = '';
                         if ($payType->info) {
-                            $helpText .= nl2br($delivery->info);
+                            $helpText .= nl2br($payType->info);
                         }
                         $form->input('radio', "payType", $payType->name, [
                             'value' => $payType->id,
