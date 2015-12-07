@@ -16,11 +16,13 @@ class PayType extends \Model
     static $objectName = 'Оплата';
     static $labels = [
         'name' => 'Название',
+        'info' => 'Дополнительная информация',
         'handler' => 'Обработчик',
         'icon_file_id' => 'Иконка',
     ];
     static $cols = [
         'name' => ['type' => 'text'],
+        'info' => ['type' => 'textarea'],
         'handler' => [
             'type' => 'select',
             'source' => 'method',
@@ -42,7 +44,7 @@ class PayType extends \Model
         'manager' => [
             'map' => [
                 ['name', 'icon_file_id'],
-                ['handler']
+                ['handler', 'info']
             ]
     ]];
 
