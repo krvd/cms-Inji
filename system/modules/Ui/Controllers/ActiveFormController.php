@@ -47,7 +47,7 @@ class ActiveFormController extends Controller
         ];
         $search = [];
         $first = true;
-        $searchStr = preg_replace('![^A-zА-я0-9@-_\. ]!iSu', ' ', $_GET['search']);
+        $searchStr = preg_replace('![^A-zА-я0-9@-_\. ]!iSu', ' ', urldecode($_GET['search']));
         $searchArr = [];
         $colWhere = [];
         foreach (explode(' ', $searchStr) as $part) {

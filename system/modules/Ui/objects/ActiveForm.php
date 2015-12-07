@@ -149,7 +149,7 @@ class ActiveForm extends \Object
                         }
                         \Msg::add($text, 'success');
                     }
-                    
+
                     $this->model->save(!empty($params['dataManagerParams']) ? $params['dataManagerParams'] : []);
                     foreach ($afterSave as $form) {
                         $form->checkRequest();
@@ -241,6 +241,9 @@ class ActiveForm extends \Object
                     if (!empty($relation['order'])) {
                         $options['order'] = $relation['order'];
                     }
+                    if (!empty($inputParams['itemName'])) {
+                        $options['itemName'] = $inputParams['itemName'];
+                    }
                     $items = $relation['model']::getList($options);
                 }
                 if (!empty($params['noEmptyValue'])) {
@@ -250,7 +253,16 @@ class ActiveForm extends \Object
                 }
                 foreach ($items as $key => $item) {
                     if (!empty($inputParams['showCol'])) {
-                        $values[$key] = $item->$inputParams['showCol'];
+                        if (is_array($inputParams['showCol'])) {
+                            switch ($inputParams['showCol']['type']) {
+                                case 'staticMethod':
+                                    //call_user_func($callback, $item);
+                                    $values[$key] = $inputParams['showCol']['class']::{$inputParams['showCol']['method']}($item);
+                                    break;
+                            }
+                        } else {
+                            $values[$key] = $item->$inputParams['showCol'];
+                        }
                     } else {
                         $values[$key] = $item->name();
                     }

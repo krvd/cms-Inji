@@ -25,6 +25,12 @@ class Transfer extends \Model
     static $labels = [
         'amount' => 'Сумма'
     ];
+
+    static function itemName($item)
+    {
+        return $item->pk() . '. ' . $item->name();
+    }
+
     static $forms = [
         'transfer' => [
             'name' => 'Перевод средств',
@@ -34,6 +40,11 @@ class Transfer extends \Model
                     'type' => 'search',
                     'source' => 'relation',
                     'relation' => 'toUser',
+                    'showCol' => [
+                        'type' => 'staticMethod',
+                        'class'=>'Money\Transfer',
+                        'method' => 'itemName',
+                    ],
                     'label' => 'Получатель',
                     'cols' => [
                         'info:first_name',
