@@ -13,6 +13,13 @@ namespace Money\Reward\Condition\Item;
 
 class Recive extends \Model
 {
+    static $cols = [
+        'reward_condition_item_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'item'],
+        'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
+        'count' => ['type' => 'number'],
+        'data' => ['type' => 'text'],
+        'expired_date' => ['type' => 'dateTime']
+    ];
 
     static function relations()
     {
@@ -20,7 +27,11 @@ class Recive extends \Model
             'item' => [
                 'model' => 'Money\Reward\Condition\Item',
                 'col' => 'reward_condition_item_id'
-            ]
+            ],
+            'user' => [
+                'model' => 'Users\User',
+                'col' => 'user_id'
+            ],
         ];
     }
 

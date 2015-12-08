@@ -1,6 +1,7 @@
 <h3>Мои кошельки</h3>
 <div class="row">
   <?php
+  $blocked = App::$cur->money->getUserBlocks();
   $wallets = App::$cur->money->getUserWallets();
   $rates = Money\Currency\ExchangeRate::getList();
   foreach ($wallets as $wallet) {
@@ -9,13 +10,8 @@
         <h4><?= $wallet->currency->name(); ?></h4>
         <b><?= number_format($wallet->amount, 4, '.', ' '); ?></b> <?= $wallet->currency->acronym(); ?><br />
         <?php
-        $blocked = \Money\Wallet\Block::getList(['where' => ['wallet_id', $wallet->id]]);
-        $blockedSum = 0;
-        foreach ($blocked as $block) {
-            $blockedSum += $block->amount;
-        }
-        if ($blockedSum) {
-            echo "Заблокировано: {$blockedSum}<br />";
+        if (!empty($blocked[$wallet->currency_id])) {
+            echo "Заблокировано: {$blocked[$wallet->currency_id]->amount}<br />";
         }
         if ($wallet->currency->refill) {
             echo "<a href = '/money/refill?currency_id={$wallet->currency_id}'>Пополнить</a> ";

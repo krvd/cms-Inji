@@ -21,6 +21,10 @@ class Item extends \Model
         }
         $count = 0;
         foreach ($this->recives(['where' => ['user_id', $userId]]) as $recive) {
+            if ($recive->expired_date != '0000-00-00 00:00:00' && \DateTime::createFromFormat('Y-m-d H:i:s', $recive->expired_date) <= new \DateTime()) {
+                $recive->delete();
+                continue;
+            }
             $count += $recive->count;
         }
         return $count;

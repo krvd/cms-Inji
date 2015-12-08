@@ -1,5 +1,6 @@
 <big>Кошельки</big><br />
 <?php
+$blocked = App::$cur->money->getUserBlocks();
 $wallets = App::$cur->money->getUserWallets();
 foreach ($wallets as $wallet) {
     ?>

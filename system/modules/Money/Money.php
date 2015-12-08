@@ -88,6 +88,27 @@ class Money extends Module
         $mr->save();
     }
 
+    function getUserBlocks($userId = null)
+    {
+        $userId = $userId ? $userId : \Users\User::$cur->id;
+        $blocked = \Money\Wallet\Block::getList(['where' => ['wallet:user_id', $userId]]);
+        $blocks = [];
+        foreach ($blocked as $block) {
+            if ($block->date_expired != '0000-00-00 00:00:00' && \DateTime::createFromFormat('Y-m-d H:i:s', $block->date_expired) <= new \DateTime()) {
+                if ($block->expired_type == 'burn') {
+                    $block->delete();
+                }
+                continue;
+            }
+            if (empty($blocks[$block->wallet->currency_id])) {
+                $blocks[$block->wallet->currency_id] = $block->amount;
+            } else {
+                $blocks[$block->wallet->currency_id]+= $block->amount;
+            }
+        }
+        return $blocks;
+    }
+
     function getUserWallets($userId = null, $walletIdasKey = false, $forSelect = false)
     {
         $userId = $userId ? $userId : \Users\User::$cur->id;
