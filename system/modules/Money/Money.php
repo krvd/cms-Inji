@@ -115,6 +115,7 @@ class Money extends Module
         if (!$userId) {
             return [];
         }
+        $this->getUserBlocks($userId);
         $currencies = Money\Currency::getList(['where' => ['wallet', 1]]);
         $wallets = Money\Wallet::getList(['where' => ['user_id', $userId], 'key' => 'currency_id']);
         $result = [];
