@@ -177,18 +177,9 @@ class Money extends Module
             }
             $rewardGet = true;
             foreach ($reward->conditions as $condition) {
-                if (!$rewardGet) {
+                if (!$condition->checkComplete($user->id)) {
+                    $complete = false;
                     break;
-                }
-                foreach ($condition->items as $item) {
-                    $count = 0;
-                    foreach ($item->recives(['where' => ['user_id', $user->id]]) as $recive) {
-                        $count += $recive->count;
-                    }
-                    if ($count < $item->count) {
-                        $rewardGet = false;
-                        break;
-                    }
                 }
             }
             if (!$rewardGet && !$reward->block) {
