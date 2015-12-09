@@ -1,23 +1,24 @@
 <?php
 
 /**
- * Item name
- *
- * Info
+ * Statics
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
-
-/**
- * Description of Statics
- *
- * @author inji
- */
 class Statics
 {
+    /**
+     * Cached static file and return absolute url for client side use
+     * 
+     * @param string $path
+     * @param string $resize
+     * @param string $resizeCrop
+     * @param string $resizePos
+     * @return string
+     */
     static function file($path, $resize = '', $resizeCrop = '', $resizePos = '')
     {
         $absolutePath = App::$cur->staticLoader->parsePath($path);

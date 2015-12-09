@@ -12,6 +12,13 @@
  */
 class Tools extends Model
 {
+    /**
+     * Return random string
+     * 
+     * @param int $length
+     * @param string $characters
+     * @return string
+     */
     static function randomString($length = 20, $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')
     {
         $charactersLength = strlen($characters);
@@ -22,6 +29,12 @@ class Tools extends Model
         return $randomString;
     }
 
+    /**
+     * Clean and return user query params
+     * 
+     * @param string $uri
+     * @return array
+     */
     static function uriParse($uri)
     {
         $answerPos = strpos($uri, '?');
@@ -37,6 +50,12 @@ class Tools extends Model
         return $params;
     }
 
+    /**
+     * Recursive create dir
+     * 
+     * @param string $path
+     * @return boolean
+     */
     static function createDir($path)
     {
         if (file_exists($path))
@@ -53,6 +72,16 @@ class Tools extends Model
         return true;
     }
 
+    /**
+     * Resize image in path
+     * 
+     * @param string $img_path
+     * @param int $max_width
+     * @param int $max_height
+     * @param string|false $crop
+     * @param string $pos
+     * @return string
+     */
     static function resizeImage($img_path, $max_width = 1000, $max_height = 1000, $crop = false, $pos = 'center')
     {
         ini_set("gd.jpeg_ignore_warning", 1);
@@ -138,6 +167,17 @@ class Tools extends Model
         return $img_type;
     }
 
+    /**
+     * Send mail
+     * 
+     * @param string $from
+     * @param string $to
+     * @param string $subject
+     * @param string $text
+     * @param string $charset
+     * @param string $ctype
+     * @return boolean
+     */
     static function sendMail($from, $to, $subject, $text, $charset = 'utf-8', $ctype = 'text/html')
     {
         $headers = "From: {$from}\r\n";
@@ -146,6 +186,15 @@ class Tools extends Model
         return mail($to, $subject, $text, $headers);
     }
 
+    /**
+     * Redirect user from any place of code
+     * 
+     * Also add message to message query for view
+     * 
+     * @param string $href
+     * @param string $text
+     * @param string $status
+     */
     static function redirect($href = null, $text = false, $status = 'info')
     {
         if ($href === null) {
@@ -189,6 +238,12 @@ class Tools extends Model
         return $ending;
     }
 
+    /**
+     * Clean request path
+     * 
+     * @param string $path
+     * @return string
+     */
     static function parsePath($path)
     {
         $path = str_replace('\\', '/', $path);
@@ -214,6 +269,12 @@ class Tools extends Model
         return (strpos($path, '/') === 0 ? '/' : '') . implode('/', $pathArray);
     }
 
+    /**
+     * Show date in rus
+     * 
+     * @param string $date
+     * @return string
+     */
     static function toRusDate($date)
     {
         $yy = (int) substr($date, 0, 4);
@@ -229,6 +290,12 @@ class Tools extends Model
         return ($dd > 0 ? $dd . " " : '') . $month[$mm - 1] . " " . $yy . " " . $hours;
     }
 
+    /**
+     * Set header
+     * 
+     * @param string $code
+     * @param boolean $exit
+     */
     static function header($code, $exit = false)
     {
         switch ($code) {
@@ -243,6 +310,15 @@ class Tools extends Model
         }
     }
 
+    /**
+     * Return exist path from array
+     * 
+     * If no exist path in array - return default
+     * 
+     * @param array $paths
+     * @param string|false $default
+     * @return string
+     */
     static function pathsResolve($paths = [], $default = false)
     {
         foreach ($paths as $path) {
@@ -253,6 +329,12 @@ class Tools extends Model
         return $default;
     }
 
+    /**
+     * Convert acronyms to bites
+     * 
+     * @param string $val
+     * @return int
+     */
     static function toBytes($val)
     {
         $val = trim($val);
@@ -269,6 +351,12 @@ class Tools extends Model
         return $val;
     }
 
+    /**
+     * Recursive copy directories and files
+     * 
+     * @param string $from
+     * @param string $to
+     */
     static function copyFiles($from, $to)
     {
         $from = rtrim($from, '/');
@@ -287,6 +375,12 @@ class Tools extends Model
         }
     }
 
+    /**
+     * Translit function
+     * 
+     * @param string $str
+     * @return string
+     */
     static function translit($str)
     {
         $rus = array('А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ё', 'Ж', 'З', 'И', 'Й', 'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С', 'Т', 'У', 'Ф', 'Х', 'Ц', 'Ч', 'Ш', 'Щ', 'Ъ', 'Ы', 'Ь', 'Э', 'Ю', 'Я', 'а', 'б', 'в', 'г', 'д', 'е', 'ё', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь', 'э', 'ю', 'я');

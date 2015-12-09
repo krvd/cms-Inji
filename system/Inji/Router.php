@@ -10,6 +10,12 @@
  */
 class Router
 {
+    /**
+     * Find class by name
+     * 
+     * @param string $className
+     * @return boolean
+     */
     static function findClass($className)
     {
         if (strpos($className, '\\')) {
@@ -28,6 +34,12 @@ class Router
         return false;
     }
 
+    /**
+     * Include class by name
+     * 
+     * @param string $className
+     * @return boolean
+     */
     static function loadClass($className)
     {
         $folders = [];
@@ -67,6 +79,14 @@ class Router
         return FALSE;
     }
 
+    /**
+     * Return posible paths for class path
+     * 
+     * @param type $code
+     * @param type $folder
+     * @param type $classPath
+     * @return string
+     */
     static function genFolderPaths($code, $folder, $classPath)
     {
         $paths = [];
@@ -87,6 +107,12 @@ class Router
         return $paths;
     }
 
+    /**
+     * Return dir for class name
+     * 
+     * @param string $className
+     * @return string
+     */
     static function getLoadedClassPath($className)
     {
         $rc = new ReflectionClass($className);

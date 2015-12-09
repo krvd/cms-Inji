@@ -1,27 +1,39 @@
 <?php
 
 /**
- * Item name
- *
- * Info
+ * Cache
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
-
-/**
- * Description of Cache
- *
- * @author inji
- */
 class Cache
 {
+    /**
+     * Connection to a set of memcache servers
+     * 
+     * @var Memcache 
+     */
     static $server = null;
+
+    /**
+     * Truing to connect flag
+     * 
+     * @var boolean 
+     */
     static $connectTrying = false;
+
+    /**
+     * Connected flag
+     * 
+     * @var boolean 
+     */
     static $connected = false;
 
+    /**
+     * Try connect to memcache server
+     */
     static function connect()
     {
         if (!self::$connectTrying && class_exists('Memcache', false)) {
@@ -31,6 +43,16 @@ class Cache
         self::$connectTrying = true;
     }
 
+    /**
+     * Get chached value
+     * 
+     * If value not present, call callback
+     * 
+     * @param string $name
+     * @param array $params
+     * @param callable $callback
+     * @return boolean
+     */
     static function get($name, $params = [], $callback = null)
     {
         if (!self::$connected) {
@@ -55,6 +77,15 @@ class Cache
         return false;
     }
 
+    /**
+     * Set value to cache
+     * 
+     * @param string $name
+     * @param array $params
+     * @param mixed $val
+     * @param int $lifeTime
+     * @return boolean
+     */
     static function set($name, $params = [], $val = '', $lifeTime = 3600)
     {
         if (!self::$connected) {
@@ -66,6 +97,15 @@ class Cache
         return false;
     }
 
+    /**
+     * Move file to cache folder and return path
+     * 
+     * Also resize image when given resize params
+     * 
+     * @param string $file
+     * @param array $options
+     * @return string
+     */
     static function file($file, $options = [])
     {
         $dir = App::$primary->path;
@@ -89,6 +129,12 @@ class Cache
         return $path;
     }
 
+    /**
+     * Get cache dir for app
+     * 
+     * @param App $app
+     * @return string
+     */
     static function getDir($app = null)
     {
         if (!$app) {

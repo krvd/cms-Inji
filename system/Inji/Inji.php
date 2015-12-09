@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Inji core file
+ * Inji core
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/
@@ -10,9 +10,32 @@
  */
 class Inji
 {
+    /**
+     * Static storage for core object
+     * 
+     * @var Inji
+     */
     public static $inst = NULL;
+
+    /**
+     * Dynamic events listeners
+     * 
+     * @var array
+     */
     private $_listeners = [];
+
+    /**
+     * Core config
+     * 
+     * @var array
+     */
     public static $config = [];
+
+    /**
+     * Static storage for anything
+     * 
+     * @var array 
+     */
     public static $storage = [];
 
     /**
@@ -21,7 +44,7 @@ class Inji
      * @param string $eventName
      * @param string $listenCode
      * @param array|function $callback
-     * @param bool $save
+     * @param boolean $save
      */
     function listen($eventName, $listenCode, $callback, $save = false)
     {
@@ -82,7 +105,7 @@ class Inji
      * 
      * @param string $eventName
      * @param string $listenCode
-     * @param bool $save
+     * @param boolean $save
      */
     function unlisten($eventName, $listenCode, $save = false)
     {

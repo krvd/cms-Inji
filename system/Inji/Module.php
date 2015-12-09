@@ -10,14 +10,60 @@
  */
 class Module
 {
+    /**
+     * Storage of cur requested module
+     * 
+     * @var \Module
+     */
     public static $cur = null;
+
+    /**
+     * Module name
+     * 
+     * @var string
+     */
     public $moduleName = '';
+
+    /**
+     * Module config
+     * 
+     * @var array
+     */
     public $config = [];
+
+    /**
+     * Module info
+     * 
+     * @var array
+     */
     public $info = [];
+
+    /**
+     * Requested module params
+     * 
+     * @var array
+     */
     public $params = [];
+
+    /**
+     * Module directory path
+     * 
+     * @var string 
+     */
     public $path = '';
+
+    /**
+     * Module app
+     * 
+     * @var \App
+     */
     public $app = null;
 
+    /**
+     * Parse cur module
+     * 
+     * @param type $app
+     */
     function __construct($app)
     {
         $this->app = $app;
@@ -31,6 +77,12 @@ class Module
         });
     }
 
+    /**
+     * Get all posible directorys for module files
+     * 
+     * @param string $moduleName
+     * @return array
+     */
     static function getModulePaths($moduleName)
     {
         $moduleName = ucfirst($moduleName);
@@ -43,6 +95,12 @@ class Module
         return $paths;
     }
 
+    /**
+     * Return directory where places module file
+     * 
+     * @param string $moduleName
+     * @return string
+     */
     static function getModulePath($moduleName)
     {
         $moduleName = ucfirst($moduleName);
@@ -54,16 +112,28 @@ class Module
         }
     }
 
+    /**
+     * Check module for installed
+     * 
+     * @param string $moduleName
+     * @param \App $app
+     * @return boolean
+     */
     static function installed($moduleName, $app)
     {
-
         if (in_array($moduleName, self::getInstalled($app))) {
             return true;
         }
-
         return FALSE;
     }
 
+    /**
+     * Get installed modules for app
+     * 
+     * @param \App $app
+     * @param boolean $primary
+     * @return array
+     */
     static function getInstalled($app, $primary = null)
     {
         if (!$primary) {
@@ -76,6 +146,12 @@ class Module
         return $modules;
     }
 
+    /**
+     * Find module by request
+     * 
+     * @param \App $app
+     * @return \Module
+     */
     static function resolveModule($app)
     {
         $moduleName = false;
@@ -98,6 +174,11 @@ class Module
         return null;
     }
 
+    /**
+     * Get posible path for controller
+     * 
+     * @return array
+     */
     function getControllerPaths()
     {
         $paths = [];
@@ -132,6 +213,11 @@ class Module
         return $paths;
     }
 
+    /**
+     * Find controller by request
+     * 
+     * @return \Controller
+     */
     function findController()
     {
         $paths = $this->getControllerPaths();
@@ -156,6 +242,12 @@ class Module
         }
     }
 
+    /**
+     * Return module info
+     * 
+     * @param string $moduleName
+     * @return array
+     */
     static function getInfo($moduleName = '')
     {
         if (!$moduleName && get_called_class()) {
@@ -172,6 +264,15 @@ class Module
         return [];
     }
 
+    /**
+     * Return snippets by name
+     * 
+     * @param string $snippetsPath
+     * @param boolean $extensions
+     * @param string $dir
+     * @param string $moduleName
+     * @return array
+     */
     function getSnippets($snippetsPath, $extensions = true, $dir = '/snippets', $moduleName = '')
     {
         $moduleName = $moduleName ? $moduleName : $this->moduleName;
@@ -196,6 +297,13 @@ class Module
         return $snippets;
     }
 
+    /**
+     * Return extensions for type
+     * 
+     * @param string $extensionType
+     * @param string $request
+     * @return array
+     */
     function getExtensions($extensionType, $request)
     {
         $extensions = [];

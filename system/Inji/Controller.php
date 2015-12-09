@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Controller class
+ * Controller
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/
@@ -10,12 +10,53 @@
  */
 class Controller
 {
+    /**
+     * Storage of cur requested controller
+     * 
+     * @var Controller 
+     */
     static $cur = null;
+
+    /**
+     * Requested params for method
+     * 
+     * @var array 
+     */
     public $params = [];
+
+    /**
+     * Path to controller dir
+     * 
+     * @var string 
+     */
     public $path = '';
+
+    /**
+     * Requested action name
+     * 
+     * @var string 
+     */
     public $method = 'index';
+
+    /**
+     * Module of this controller
+     * 
+     * @var Module 
+     */
     public $module = null;
+
+    /**
+     * This controller name
+     * 
+     * @var string 
+     */
     public $name = '';
+
+    /**
+     * Flag of controller runing
+     * 
+     * @var boolean 
+     */
     public $run = false;
 
     /**

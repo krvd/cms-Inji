@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Item name
+ * Object
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/
@@ -10,5 +10,5 @@
  */
 class Object
 {
-    //put your code here
+    
 }

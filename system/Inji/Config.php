@@ -1,7 +1,20 @@
 <?php
 
+/**
+ * Config
+ *
+ * @author Alexey Krupskiy <admin@inji.ru>
+ * @link http://inji.ru/
+ * @copyright 2015 Alexey Krupskiy
+ * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
+ */
 class Config
 {
+    /**
+     * Static config storage
+     * 
+     * @var array 
+     */
     private static $_configs = array();
 
     /**
@@ -40,8 +53,8 @@ class Config
     /**
      * Load app config
      * 
-     * @param type $site_name
-     * @return type
+     * @param string $site_name
+     * @return array
      */
     public static function app($app = false)
     {
@@ -61,8 +74,8 @@ class Config
     /**
      * Load share config
      * 
-     * @param type $site_name
-     * @return type
+     * @param string $site_name
+     * @return array
      */
     public static function share($module = '')
     {
@@ -94,6 +107,14 @@ class Config
         }
     }
 
+    /**
+     * Load module config
+     * 
+     * @param string $module_name
+     * @param string $system
+     * @param App $app
+     * @return array
+     */
     public static function module($module_name, $system = false, $app = null)
     {
 
@@ -124,6 +145,14 @@ class Config
         return self::$_configs['module'][$appName][$module_name] = include $path;
     }
 
+    /**
+     * Save config
+     * 
+     * @param string $type
+     * @param array $data
+     * @param string $module
+     * @param App $app
+     */
     public static function save($type, $data, $module = NULL, $app = null)
     {
         if (!$app) {

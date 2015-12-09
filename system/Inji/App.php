@@ -1,7 +1,7 @@
 <?php
 
 /**
- * App class
+ * App
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/
@@ -122,11 +122,24 @@ class App
         return null;
     }
 
+    /**
+     * Reference to module getter
+     * 
+     * @param string $className
+     * @return object|null
+     */
     function __get($className)
     {
         return $this->getObject($className);
     }
 
+    /**
+     * Reference to module getter with params
+     * 
+     * @param string $className
+     * @param array $params
+     * @return object|null
+     */
     function __call($className, $params)
     {
         return $this->getObject($className, $params);

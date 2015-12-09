@@ -1,23 +1,24 @@
 <?php
 
 /**
- * Item name
- *
- * Info
- *
+ * Html
+ * 
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
-
-/**
- * Description of Html
- *
- * @author inji
- */
 class Html
 {
+    /**
+     * Generate html element
+     * 
+     * @param string $tag
+     * @param array $attributes
+     * @param string $body
+     * @param boolean|null $noCloseTag
+     * @return string
+     */
     static function el($tag, $attributes = [], $body = '', $noCloseTag = false)
     {
         $html = "<{$tag}";

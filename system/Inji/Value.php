@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Value
+ *
+ * @author Alexey Krupskiy <admin@inji.ru>
+ * @link http://inji.ru/
+ * @copyright 2015 Alexey Krupskiy
+ * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
+ */
 class Value
 {
     public $valueKey = '';
@@ -44,7 +52,7 @@ class Value
                         if (!empty($colInfo['colParams']['params'])) {
                             $values = call_user_func_array([App::$cur->$colInfo['colParams']['module'], $colInfo['colParams']['method']], $colInfo['colParams']['params']);
                         } else {
-                            $values = $colInfo['colParams']['module']-> $colInfo['colParams']['method']();
+                            $values = $colInfo['colParams']['module']->$colInfo['colParams']['method']();
                         }
                         return !empty($values[$this->model->{$this->valueKey}]) ? $values[$this->model->{$this->valueKey}] : 'Не задано';
                     case 'relation':

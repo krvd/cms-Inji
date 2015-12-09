@@ -1,32 +1,142 @@
 <?php
 
+/**
+ * Log
+ *
+ * @author Alexey Krupskiy <admin@inji.ru>
+ * @link http://inji.ru/
+ * @copyright 2015 Alexey Krupskiy
+ * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
+ */
 class Model
 {
+    /**
+     * Object storage type
+     * 
+     * @var array 
+     */
     static $storage = ['type' => 'db'];
+
+    /**
+     * Object name
+     * 
+     * @var string 
+     */
     static $objectName = '';
+
+    /**
+     * App type for separate data storage
+     * 
+     * @var string
+     */
     public $appType = 'app';
+
+    /**
+     * Object current params
+     * 
+     * @var array
+     */
     public $_params = [];
+
+    /**
+     * List of changed params in current instance
+     * 
+     * @var array
+     */
     public $_changedParams = [];
+
+    /**
+     * Loaded relations
+     * 
+     * @var array 
+     */
     public $loadedRelations = [];
+
+    /**
+     * Model name where this model uses as category
+     * 
+     * @var string
+     */
     static $treeCategory = '';
+
+    /**
+     * Model name who uses as category in this model
+     * 
+     * @var string
+     */
     static $categoryModel = '';
+
+    /**
+     * Col labels
+     * 
+     * @var array
+     */
     static $labels = [];
+
+    /**
+     * Model forms
+     * 
+     * @var array
+     */
     static $forms = [];
+
+    /**
+     * Model cols
+     * 
+     * @var array
+     */
     static $cols = [];
+
+    /**
+     * Options group for display inforamtion from model
+     * 
+     * @var array
+     */
     static $view = [];
+
+    /**
+     * List of relations need loaded with item
+     * 
+     * @var array 
+     */
     static $needJoin = [];
+
+    /**
+     * List of joins who need to laod
+     * 
+     * @var array 
+     */
     static $relJoins = [];
 
+    /**
+     * Set params when model create
+     * 
+     * @param array $params
+     */
     function __construct($params = array())
     {
         $this->setParams($params);
     }
 
+    /**
+     * return object name
+     * 
+     * @return string
+     */
     static function objectName()
     {
         return static::$objectName;
     }
 
+    /**
+     * Retrn col value with col params and relations path
+     * 
+     * @param Model $object
+     * @param string $valuePath
+     * @param boolean $convert
+     * @param boolean $manageHref
+     * @return string
+     */
     static function getColValue($object, $valuePath, $convert = false, $manageHref = false)
     {
         if (strpos($valuePath, ':')) {
@@ -50,6 +160,14 @@ class Model
         }
     }
 
+    /**
+     * Retrun value for view
+     * 
+     * @param Model $item
+     * @param string $colName
+     * @param boolean $manageHref
+     * @return string
+     */
     static function resloveTypeValue($item, $colName, $manageHref = false)
     {
         $modelName = get_class($item);
@@ -122,6 +240,14 @@ class Model
         return $value;
     }
 
+    /**
+     * Fix col prefix
+     * 
+     * @param mixed $array
+     * @param string $searchtype
+     * @param string $rootModel
+     * @return null
+     */
     static function fixPrefix(&$array, $searchtype = 'key', $rootModel = '')
     {
         if (!$rootModel) {
@@ -182,6 +308,12 @@ class Model
         }
     }
 
+    /**
+     * Check model relations path and load need relations
+     * 
+     * @param string $col
+     * @param strig $rootModel
+     */
     static function checkForJoin(&$col, $rootModel)
     {
 
@@ -210,11 +342,23 @@ class Model
         }
     }
 
+    /**
+     * Return full col information
+     * 
+     * @param string $col
+     * @return array
+     */
     static function getColInfo($col)
     {
         return static::parseColRecursion($col);
     }
 
+    /**
+     * Information extractor for col relations path
+     * 
+     * @param string|array $info
+     * @return array
+     */
     private static function parseColRecursion($info)
     {
         if (is_string($info)) {
@@ -263,6 +407,12 @@ class Model
         return $info;
     }
 
+    /**
+     * Return actual cols from data base
+     * 
+     * @param boolean $refresh
+     * @return array
+     */
     static function cols($refresh = false)
     {
         if (static::$storage['type'] == 'moduleConfig') {
@@ -282,6 +432,12 @@ class Model
         return Model::$cols[static::table()];
     }
 
+    /**
+     * Create new col in data base
+     * 
+     * @param string $colName
+     * @return boolean
+     */
     static function createCol($colName)
     {
         if (empty(static::$cols[$colName]) || static::$storage['type'] == 'moduleConfig') {
@@ -333,17 +489,32 @@ class Model
         App::$cur->db->addCol(static::table(), static::colPrefix() . $colName, $params);
     }
 
+    /**
+     * Return table name
+     * 
+     * @return string
+     */
     static function table()
     {
         return strtolower(str_replace('\\', '_', get_called_class()));
     }
 
+    /**
+     * Return table index col name
+     * 
+     * @return string
+     */
     static function index()
     {
 
         return static::colPrefix() . 'id';
     }
 
+    /**
+     * Return col prefix
+     * 
+     * @return string
+     */
     static function colPrefix()
     {
         $classPath = explode('\\', get_called_class());
@@ -351,21 +522,44 @@ class Model
         return strtolower(implode('_', $classPath)) . '_';
     }
 
+    /**
+     * return relations list
+     * 
+     * @return array
+     */
     static function relations()
     {
         return [];
     }
 
+    /**
+     * Return name of col with object name
+     * 
+     * @return string
+     */
     static function nameCol()
     {
         return 'name';
     }
 
+    /**
+     * Return object name
+     * 
+     * @return string
+     */
     function name()
     {
-        return $this->name ? $this->name : $this->pk();
+        return $this->{$this->nameCol()} ? $this->{$this->nameCol()} : $this->pk();
     }
 
+    /**
+     * Get single object from data base
+     * 
+     * @param array $param
+     * @param string $col
+     * @param array $options
+     * @return Model
+     */
     static function get($param = null, $col = null, $options = [])
     {
         if (static::$storage['type'] == 'moduleConfig') {
@@ -531,7 +725,7 @@ class Model
     }
 
     /**
-     * New method
+     * Return list of objects from data base
      * 
      * @param type $options
      * @return type
@@ -550,6 +744,14 @@ class Model
         return static::get_list($options);
     }
 
+    /**
+     * Get single item from module storage
+     * 
+     * @param array $param
+     * @param string $col
+     * @param array $options
+     * @return boolean|\Model
+     */
     static function getFromModuleStorage($param = null, $col = null, $options = [])
     {
         if ($col === null) {
@@ -588,9 +790,15 @@ class Model
                 }
             }
         }
-        return [];
+        return false;
     }
 
+    /**
+     * Return list items from module storage
+     * 
+     * @param array $options
+     * @return array
+     */
     static function getListFromModuleStorage($options = [])
     {
         $classPath = explode('\\', get_called_class());
@@ -645,6 +853,12 @@ class Model
         return [];
     }
 
+    /**
+     * Return count of records from module storage
+     * 
+     * @param array $options
+     * @return int
+     */
     static function getCountFromModuleStorage($options = [])
     {
 
@@ -678,6 +892,16 @@ class Model
         return $count;
     }
 
+    /**
+     * Check where for module storage query
+     * 
+     * @param array $item
+     * @param array|string $where
+     * @param string $value
+     * @param string $operation
+     * @param string $concatenation
+     * @return boolean
+     */
     static function checkWhere($item = [], $where = '', $value = '', $operation = '=', $concatenation = 'AND')
     {
 
@@ -707,6 +931,12 @@ class Model
         return false;
     }
 
+    /**
+     * Return count of records from data base
+     * 
+     * @param array $options
+     * @return array|int
+     */
     static function getCount($options = array())
     {
 
@@ -798,6 +1028,13 @@ class Model
         }
     }
 
+    /**
+     * Update records in data base
+     * 
+     * @param array $params
+     * @param array $where
+     * @return boolean
+     */
     static function update($params, $where = [])
     {
         static::fixPrefix($params);
@@ -821,16 +1058,30 @@ class Model
         App::$cur->db->update(static::table(), $values);
     }
 
+    /**
+     * Return primary key of object
+     * 
+     * @return mixed
+     */
     function pk()
     {
         return $this->{$this->index()};
     }
 
+    /**
+     * Before save trigger
+     */
     function beforeSave()
     {
         
     }
 
+    /**
+     * Save object to module storage
+     * 
+     * @param array $options
+     * @return boolean
+     */
     function saveModuleStorage($options)
     {
 
@@ -884,6 +1135,9 @@ class Model
         return true;
     }
 
+    /**
+     * Update tree path category
+     */
     function changeCategoryTree()
     {
         $class = get_class($this);
@@ -912,6 +1166,12 @@ class Model
         $itemModel::update([$itemTreeCol => $this->tree_path . $this->id . '/'], [$itemModel::colPrefix() . $this->index(), $this->id]);
     }
 
+    /**
+     * Return tree path
+     * 
+     * @param \Model $catalog
+     * @return string
+     */
     function getCatalogTree($catalog)
     {
         $catalogClass = get_class($catalog);
@@ -926,6 +1186,9 @@ class Model
         return '/';
     }
 
+    /**
+     * Update tree path item
+     */
     function changeItemTree()
     {
         $class = get_class($this);
@@ -938,6 +1201,12 @@ class Model
         }
     }
 
+    /**
+     * Save object to data base
+     * 
+     * @param array $options
+     * @return boolean|int
+     */
     function save($options = [])
     {
 
@@ -999,16 +1268,28 @@ class Model
         return $this->{$this->index()};
     }
 
+    /**
+     * After save trigger
+     */
     function afterSave()
     {
         
     }
 
+    /**
+     * Before delete trigger
+     */
     function beforeDelete()
     {
         
     }
 
+    /**
+     * Delete item from module storage
+     * 
+     * @param array $options
+     * @return boolean
+     */
     function deleteFromModuleStorage($options)
     {
 
@@ -1055,6 +1336,12 @@ class Model
         return true;
     }
 
+    /**
+     * Delete item from data base
+     * 
+     * @param array $options
+     * @return boolean
+     */
     function delete($options = [])
     {
         $this->beforeDelete();
@@ -1073,6 +1360,11 @@ class Model
         return false;
     }
 
+    /**
+     * Delete items from data base
+     * 
+     * @param array $where
+     */
     function deleteList($where)
     {
         if ($where) {
@@ -1082,11 +1374,20 @@ class Model
         App::$cur->db->delete(static::table());
     }
 
+    /**
+     * After delete trigger
+     */
     function afterDelete()
     {
         
     }
 
+    /**
+     * find relation for col name
+     * 
+     * @param string $col
+     * @return array|null
+     */
     static function findRelation($col)
     {
 
@@ -1097,6 +1398,11 @@ class Model
         return NULL;
     }
 
+    /**
+     * Set params for model
+     * 
+     * @param array $params
+     */
     function setParams($params)
     {
         static::fixPrefix($params);
@@ -1120,12 +1426,25 @@ class Model
         $this->_params = array_merge($this->_params, $params);
     }
 
+    /**
+     * Return relation
+     * 
+     * @param string $relName
+     * @return array|boolean
+     */
     static function getRelation($relName)
     {
         $relations = static::relations();
         return !empty($relations[$relName]) ? $relations[$relName] : false;
     }
 
+    /**
+     * Load relation
+     * 
+     * @param string $name
+     * @param array $params
+     * @return null|array|\Model
+     */
     function loadRelation($name, $params = [])
     {
         $relation = static::getRelation($name);
@@ -1211,6 +1530,13 @@ class Model
         return NULL;
     }
 
+    /**
+     * Add relation item
+     * 
+     * @param string $relName
+     * @param \Model $objectId
+     * @return boolean
+     */
     function addRelation($relName, $objectId)
     {
         $relations = $this->relations();
@@ -1231,6 +1557,12 @@ class Model
         return false;
     }
 
+    /**
+     * Check user access for form
+     * 
+     * @param string $formName
+     * @return boolean
+     */
     function checkFormAccess($formName)
     {
         if ($formName == 'manage' && !Users\User::$cur->isAdmin()) {
@@ -1239,6 +1571,13 @@ class Model
         return true;
     }
 
+    /**
+     * Check access for model
+     * 
+     * @param string $mode
+     * @param \Users\User $user
+     * @return boolean
+     */
     function checkAccess($mode = 'write', $user = null)
     {
         if (!$user) {
@@ -1247,6 +1586,13 @@ class Model
         return $user->isAdmin();
     }
 
+    /**
+     * Param and relation with params getter
+     * 
+     * @param string $name
+     * @param array $params
+     * @return \Value|mixed
+     */
     function __call($name, $params)
     {
         $fixedName = $name;
@@ -1259,6 +1605,12 @@ class Model
         return call_user_func_array([$this, 'loadRelation'], array_merge([$name], $params));
     }
 
+    /**
+     * Param and relation getter
+     * 
+     * @param string $name
+     * @return mixed
+     */
     function __get($name)
     {
         $fixedName = $name;
@@ -1272,6 +1624,12 @@ class Model
         return $this->loadRelation($name);
     }
 
+    /**
+     * Return model value in object
+     * 
+     * @param string $name
+     * @return \Value|null
+     */
     function value($name)
     {
         $fixedName = $name;
@@ -1284,16 +1642,32 @@ class Model
         return null;
     }
 
+    /**
+     * Return manager filters
+     * 
+     * @return array
+     */
     static function managerFilters()
     {
         return [];
     }
 
+    /**
+     * Return validators for cols
+     * 
+     * @return array
+     */
     static function validators()
     {
         return [];
     }
 
+    /**
+     * Return validator by name
+     * 
+     * @param string $name
+     * @return array
+     */
     static function validator($name)
     {
         $validators = static::validators();
@@ -1303,6 +1677,12 @@ class Model
         return [];
     }
 
+    /**
+     * Set handler for model params
+     * 
+     * @param string $name
+     * @param mixed $value
+     */
     function __set($name, $value)
     {
         static::fixPrefix($name);
@@ -1328,12 +1708,23 @@ class Model
         $this->_params[$name] = $value;
     }
 
+    /**
+     * Isset handler for model params
+     * 
+     * @param string $name
+     * @return boolean
+     */
     function __isset($name)
     {
         static::fixPrefix($name);
         return isset($this->_params[$name]);
     }
 
+    /**
+     * Convert object to string
+     * 
+     * @return string
+     */
     public function __toString()
     {
         return $this->name();
