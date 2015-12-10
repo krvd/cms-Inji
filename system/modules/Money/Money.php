@@ -163,6 +163,7 @@ class Money extends Module
     {
         $rootUser = $rootUser ? $rootUser : \Users\User::$cur;
         $reward = \Money\Reward::get($reward_id);
+        $reward->checkBlocked();
         foreach ($reward->levels(['order' => ['level', 'asc']]) as $level) {
             $user = $rootUser;
             for ($i = 0; $i < $level->level; $i++) {
@@ -178,7 +179,7 @@ class Money extends Module
             $rewardGet = true;
             foreach ($reward->conditions as $condition) {
                 if (!$condition->checkComplete($user->id)) {
-                    $complete = false;
+                    $rewardGet = false;
                     break;
                 }
             }
