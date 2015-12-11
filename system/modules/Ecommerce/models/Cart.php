@@ -148,6 +148,7 @@ class Cart extends \Model
             ],
             'filters' => [
                 'cart_status_id',
+                'payed',
                 'delivery_id',
                 'payed',
                 'complete_data',
