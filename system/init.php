@@ -91,6 +91,7 @@ $shareConfig = Config::share();
 if (empty($shareConfig['installed']) && App::$cur->name != 'setup' && (empty(App::$cur->params[0]) || App::$cur->params[0] != 'static')) {
     Tools::redirect('/setup');
 }
+putenv('COMPOSER_HOME=' . getcwd());
 ComposerCmd::check();
 if (file_exists(App::$primary->path . '/vendor/autoload.php')) {
     include_once App::$primary->path . '/vendor/autoload.php';
