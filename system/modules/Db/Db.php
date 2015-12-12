@@ -52,8 +52,13 @@ class Db extends Module
 
         return false;
     }
-    function newQuery(){
-        return new $this->QueryClassName($this->connection);
+
+    function newQuery()
+    {
+        if($this->QueryClassName) {
+            return new $this->QueryClassName($this->connection);
+        }
+        return false;
     }
 
     function __get($name)
