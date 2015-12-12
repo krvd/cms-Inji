@@ -87,6 +87,8 @@ $carts = Ecommerce\Cart::getList(['where' => ['user_id', Users\User::$cur->id], 
                   }
                   if (!empty($newRedirect[0])) {
                       echo '<a class="btn btn-warning btn-sm" href = "' . $newRedirect[0] . '">Оплатить</a>';
+                  } else {
+                      echo 'Не оплачено';
                   }
               }
               ?></td>
