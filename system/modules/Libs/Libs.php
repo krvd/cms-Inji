@@ -30,7 +30,7 @@ class Libs extends Module
                     if (strpos($file, '/') === 0 || strpos($file, 'http') === 0) {
                         App::$cur->view->customAsset('css', $file, $libName);
                     } else {
-                        App::$cur->view->customAsset('css', '/static/libs/vendor/' . $libName . '/' . $file, $libName);
+                        App::$cur->view->customAsset('css', '/static/libs/vendor/' . ucfirst($libName) . '/' . $file, $libName);
                     }
                 }
             }
@@ -39,7 +39,7 @@ class Libs extends Module
                     if (strpos($file, '/') === 0 || strpos($file, 'http') === 0) {
                         App::$cur->view->customAsset('js', $file, $libName);
                     } else {
-                        App::$cur->view->customAsset('js', '/static/libs/vendor/' . $libName . '/' . $file, $libName);
+                        App::$cur->view->customAsset('js', '/static/libs/vendor/' . ucfirst($libName) . '/' . $file, $libName);
                     }
                 }
             }
