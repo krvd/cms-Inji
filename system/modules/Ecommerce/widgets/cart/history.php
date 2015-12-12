@@ -4,14 +4,16 @@ $carts = Ecommerce\Cart::getList(['where' => ['user_id', Users\User::$cur->id], 
 ?>
 <h3>История заказов</h3>
 <div class="table-responsive">
-  <table class="table table-bordered table-hover list">
+  <table class="table table-bordered table-hover table-condensed list">
     <thead>
       <tr>
         <td class="text-right">№ Заказа</td>
         <td class="text-left">Статус</td>
-        <td class="text-left">Добавлено</td>
+
         <td class="text-right">Товары</td>
         <td class="text-right">Всего</td>
+        <td class="text-left">Оформлено</td>
+        <td>Оплата</td>
         <td></td>
       </tr>
     </thead>
@@ -27,25 +29,64 @@ $carts = Ecommerce\Cart::getList(['where' => ['user_id', Users\User::$cur->id], 
                   $sums[$currency_id] += $cartItem->final_price * $cartItem->count;
               }
           }
+          if ($cart->delivery && $cart->delivery->price) {
+              $currency_id = $cart->delivery->currency_id;
+              if (empty($sums[$currency_id])) {
+                  $sums[$currency_id] = $cart->delivery->price;
+              } else {
+                  $sums[$currency_id] += $cart->delivery->price;
+              }
+          }
+          foreach ($cart->extras as $extra) {
+              $currency_id = $extra->currency ? $extra->currency->id : \App::$cur->ecommerce->config['defaultCurrency'];
+              if (empty($sums[$currency_id])) {
+                  $sums[$currency_id] = $extra->price * $extra->count;
+              } else {
+                  $sums[$currency_id] += $extra->price * $extra->count;
+              }
+          }
           ?>
           <tr>
             <td class="text-right">#<?= $cart->id; ?></td>
             <td class="text-left"><?= $cart->status ? $cart->status->name : 'Наполняется'; ?></td>
 
-            <td class="text-left"><?= $cart->complete_data; ?></td>
+
             <td class="text-right"><?= count($cart->cartItems); ?></td>
             <td class="text-right"><?php
-              foreach ($sums as $currency_id => $sum) {
-                  echo $sum . ' ';
-                  if (App::$cur->money) {
-                      $currency = Money\Currency::get($currency_id);
-                      if ($currency) {
-                          echo $currency->acronym();
-                      } else {
-                          echo 'руб.';
+              if ($sums) {
+                  foreach ($sums as $currency_id => $sum) {
+                      if (!$sum) {
+                          continue;
                       }
-                  } else {
-                      echo 'руб.';
+                      echo number_format($sum, 2, '.', ' ');
+                      if (App::$cur->money) {
+                          $currency = Money\Currency::get($currency_id);
+                          if ($currency) {
+                              echo '&nbsp;' . $currency->acronym();
+                          } else {
+                              echo '&nbsp;р.';
+                          }
+                      } else {
+                          echo '&nbsp;р.';
+                      }
+                      echo '<br />';
+                  }
+              }
+              ?></td>
+            <td class="text-left"><?= $cart->complete_data; ?></td>
+            <td><?php
+              if ($cart->payed) {
+                  echo 'Оплачено';
+              } elseif (!App::$cur->money) {
+                  echo 'Не оплачено';
+              } else {
+                  $handlers = App::$cur->ecommerce->getSnippets('payTypeHandler');
+                  $redirect = ['/ecommerce/cart/success'];
+                  if ($cart->payType && !empty($handlers[$cart->payType->handler]['handler'])) {
+                      $newRedirect = $handlers[$cart->payType->handler]['handler']($cart);
+                  }
+                  if (!empty($newRedirect[0])) {
+                      echo '<a class="btn btn-warning btn-sm" href = "' . $newRedirect[0] . '">Оплатить</a>';
                   }
               }
               ?></td>
@@ -53,14 +94,14 @@ $carts = Ecommerce\Cart::getList(['where' => ['user_id', Users\User::$cur->id], 
               <?php
               if ($cart->cart_status_id < 2) {
                   ?>
-                  <a title="Продолжить покупки" href="/ecommerce/cart/continue/<?= $cart->id; ?>" data-toggle="tooltip" title="" class="btn btn-success"><i class="glyphicon glyphicon-chevron-right"></i></a>
-                  <a title="Удалить заказ" href="/ecommerce/cart/delete/<?= $cart->id; ?>" data-toggle="tooltip" title="" class="btn btn-danger"><i class="glyphicon glyphicon-trash"></i></a>
+                  <a title="Продолжить покупки" href="/ecommerce/cart/continue/<?= $cart->id; ?>" data-toggle="tooltip" title="" class="btn btn-success btn-sm"><i class="glyphicon glyphicon-chevron-right"></i></a>
+                  <a title="Удалить заказ" onclick="return confirm('Вы уверены?')" href="/ecommerce/cart/delete/<?= $cart->id; ?>" data-toggle="tooltip" title="" class="btn btn-danger btn-sm"><i class="glyphicon glyphicon-trash"></i></a>
                   <?php
               }
               if ($cart->cart_status_id >= 2) {
                   ?>
-                  <a title="Просмотр" href="/ecommerce/cart/orderDetail/<?= $cart->id; ?>" data-toggle="tooltip" title="" class="btn btn-info "><i class="glyphicon glyphicon-eye-open"></i></a>
-                  <a title="Заказать повторно" href="/ecommerce/cart/refill/<?= $cart->id; ?>" data-toggle="tooltip" title="" class="btn btn-primary "><i class="glyphicon glyphicon-refresh"></i></a>
+                  <a title="Просмотр" href="/ecommerce/cart/orderDetail/<?= $cart->id; ?>" data-toggle="tooltip" title="" class="btn btn-info btn-sm"><i class="glyphicon glyphicon-eye-open"></i></a>
+                  <a title="Заказать повторно" href="/ecommerce/cart/refill/<?= $cart->id; ?>" data-toggle="tooltip" title="" class="btn btn-primary btn-sm"><i class="glyphicon glyphicon-refresh"></i></a>
                     <?php
                 }
                 ?>
