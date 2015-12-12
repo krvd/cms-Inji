@@ -298,12 +298,14 @@ class Tools extends Model
      */
     static function header($code, $exit = false)
     {
-        switch ($code) {
-            case '404':
-                header('HTTP/1.1 404 Not Found');
-                break;
-            default :
-                header($code);
+        if (!headers_sent()) {
+            switch ($code) {
+                case '404':
+                    header('HTTP/1.1 404 Not Found');
+                    break;
+                default :
+                    header($code);
+            }
         }
         if ($exit) {
             exit;
