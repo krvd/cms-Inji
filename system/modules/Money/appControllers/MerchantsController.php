@@ -69,7 +69,11 @@ class MerchantsController extends Controller
             $this->view->setTitle('Выбор счета для оплаты');
             $bread = [];
             $bread = ['text' => 'Просмотр счетов'];
-            $pays = Money\Pay::getList(['where' => [['user_id', \Users\User::$cur->id], ['pay_status_id', 1]], 'order' => ['date_create', 'DESC']]);
+            $where = [['user_id', \Users\User::$cur->id], ['pay_status_id', 1]];
+            if (!empty($_GET['data'])) {
+                $where[] = ['data', $_GET['data']];
+            }
+            $pays = Money\Pay::getList(['where' => $where, 'order' => ['date_create', 'DESC']]);
             $this->view->page(['content' => 'pays', 'data' => compact('bread', 'pays')]);
         } else {
             $where = [['active', 1]];
