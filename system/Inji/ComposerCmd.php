@@ -70,7 +70,9 @@ class ComposerCmd
         $input = new Symfony\Component\Console\Input\StringInput($command . ' -d ' . $path);
         $app = new Composer\Console\Application();
         $app->setAutoExit(false);
+        $dir = getcwd();
         $app->run($input, $output);
+        chdir($dir);
     }
 
     static function requirePackage($packageName, $version = '')
