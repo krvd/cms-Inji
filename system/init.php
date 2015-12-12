@@ -91,35 +91,10 @@ $shareConfig = Config::share();
 if (empty($shareConfig['installed']) && App::$cur->name != 'setup' && (empty(App::$cur->params[0]) || App::$cur->params[0] != 'static')) {
     Tools::redirect('/setup');
 }
-
-if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
-    include_once __DIR__ . '/../vendor/autoload.php';
+ComposerCmd::check();
+if (file_exists(App::$primary->path . '/vendor/autoload.php')) {
+    include_once App::$primary->path . '/vendor/autoload.php';
 }
-/*
-  if (!file_exists(__DIR__ . '/../vendor/autoload.php')) {
-  Tools::createDir(__DIR__ . '/../vendor/composer');
-  if (!file_exists(__DIR__ . '/../vendor/composer/bin/composer')) {
-  if (!file_exists(__DIR__ . '/../vendor/composer.phar')) {
-  file_put_contents(__DIR__ . '/../vendor/composerInstall.php', file_get_contents('https://getcomposer.org/installer'));
-  $argv = ['install', '--install-dir', __DIR__ . '/../vendor/'];
-  header("Location: " . filter_input(INPUT_SERVER, 'REQUEST_URI'));
-  include_once __DIR__ . '/../vendor/composerInstall.php';
-  }
-  $composer = new Phar(__DIR__ . '/../vendor/composer.phar');
-  $composer->extractTo(__DIR__ . '/../vendor/composer/');
-  }
-  //$argv = ['install'];
-  include_once __DIR__ . '/../vendor/composer/bin/composer';
-  //require __DIR__ . '/../vendor/composer/src/bootstrap.php';
-  //$io = new Composer\IO\NullIO();
-  //$composer = Composer\Factory::create($io);
-  //$installComand = new Composer\Command\InstallCommand();
-  //$installComand->execute();
-
-  //var_dump($composer);
-  }
-  require __DIR__ . '/../vendor/autoload.php';
- */
 Module::$cur = Module::resolveModule(App::$cur);
 
 if (Module::$cur === null) {

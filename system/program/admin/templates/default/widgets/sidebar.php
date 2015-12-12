@@ -6,7 +6,7 @@
       </a>
     </li>
     <?php
-    if (Users\User::$cur->isAdmin()) {
+    if (class_exists('Users\User') && Users\User::$cur->isAdmin()) {
         App::$cur->ui;
         ?>
         <hr />

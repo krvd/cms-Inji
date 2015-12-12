@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Libs module
  *
@@ -7,44 +8,53 @@
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
-class Libs extends Module {
+class Libs extends Module
+{
+    function loadLib($libName, $options = [])
+    {
 
-    function loadLib($libName, $options = []) {
-
-        if (file_exists($this->path . '/static/libs/' . $libName . '/libConfig.php')) {
-            $lib = include $this->path . '/static/libs/' . $libName . '/libConfig.php';
-            if (!empty($lib['requiredLibs'])) {
-                foreach ($lib['requiredLibs'] as $rLib) {
+        $className = 'Libs\\' . ucfirst($libName);
+        if (class_exists($className)) {
+            if (!empty($className::$composerPacks)) {
+                foreach ($className::$composerPacks as $packageName => $version) {
+                    ComposerCmd::requirePackage($packageName, $version);
+                }
+            }
+            if (!empty($className::$requiredLibs)) {
+                foreach ($className::$requiredLibs as $rLib) {
                     $this->loadLib($rLib);
                 }
             }
-            if (!empty($lib['files']['css']) && (!isset($options['loadCss']) || $options['loadCss'] )) {
-                foreach ($lib['files']['css'] as $file) {
-                    App::$cur->view->customAsset('css', '/static/moduleAsset/libs/libs/' . $libName . '/' . $file, $libName);
+            if (!empty($className::$files['css']) && (!isset($options['loadCss']) || $options['loadCss'] )) {
+                foreach ($className::$files['css'] as $file) {
+                    if (strpos($file, '/') === 0 || strpos($file, 'http') === 0) {
+                        App::$cur->view->customAsset('css', $file, $libName);
+                    } else {
+                        App::$cur->view->customAsset('css', '/libs/vendor/' . $libName . '/' . $file, $libName);
+                    }
                 }
             }
-            if (!empty($lib['files']['js'])) {
-                foreach ($lib['files']['js'] as $file) {
-                    if (strpos($file, '//') !== false) {
-
+            if (!empty($className::$files['js'])) {
+                foreach ($className::$files['js'] as $file) {
+                    if (strpos($file, '/') === 0 || strpos($file, 'http') === 0) {
                         App::$cur->view->customAsset('js', $file, $libName);
                     } else {
-
-                        App::$cur->view->customAsset('js', '/static/moduleAsset/libs/libs/' . $libName . '/' . $file, $libName);
+                        App::$cur->view->customAsset('js', '/libs/vendor/' . $libName . '/' . $file, $libName);
                     }
                 }
             }
         }
     }
 
-    function staticCalled($file, $dir) {
+    function staticCalled($file, $dir)
+    {
         $libPath = preg_replace('!^libs/!', '', $file);
         $libName = substr($libPath, 0, strpos($libPath, '/'));
-        if (file_exists($this->path . '/static/libs/' . $libName . '/libConfig.php')) {
-            $lib = include $this->path . '/static/libs/' . $libName . '/libConfig.php';
-            if (!empty($lib['programDirs'])) {
+        $className = 'Libs\\' . ucfirst($libName);
+        if (class_exists($className)) {
+            if (!empty($className::$programDirs)) {
                 $fileDir = substr($libPath, strlen($libName) + 1, strpos($libPath, '/', strlen($libName) + 1) - strlen($libName) - 1);
-                foreach ($lib['programDirs'] as $programDir) {
+                foreach ($className::$programDirs as $programDir) {
                     if ($programDir == $fileDir) {
                         include $dir . $file;
                         exit();
@@ -53,6 +63,22 @@ class Libs extends Module {
             }
         }
         return $dir . $file;
+    }
+
+    function getPath($args)
+    {
+        if (!empty($args[0])) {
+            $libName = 'Libs\\' . $args[0];
+            if (class_exists($libName)) {
+                $file = implode('/', array_slice($args, 1));
+                foreach ($libName::$staticDirs as $dir) {
+                    if (strpos($file, $dir) === 0) {
+                        return \App::$primary->path . '/vendor/' . $file;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
 }

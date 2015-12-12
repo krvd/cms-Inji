@@ -58,7 +58,7 @@ class App extends \Model
     ];
     static $forms = [
         'manager' => [
-            'name' => 'Соединение с БД',
+            'name' => 'Приложение',
             'map' => [
                 ['name', 'dir'],
                 ['installed', 'default'],

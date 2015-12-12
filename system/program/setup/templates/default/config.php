@@ -7,6 +7,6 @@ return [
         'style.css'
     ],
     'libs' => [
-        'bootstrap'
+        'bootstrap','jqueryUi'
     ]
 ];

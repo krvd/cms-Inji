@@ -49,8 +49,6 @@ $carts = Ecommerce\Cart::getList(['where' => ['user_id', Users\User::$cur->id], 
           <tr>
             <td class="text-right">#<?= $cart->id; ?></td>
             <td class="text-left"><?= $cart->status ? $cart->status->name : 'Наполняется'; ?></td>
-
-
             <td class="text-right"><?= count($cart->cartItems); ?></td>
             <td class="text-right"><?php
               if ($sums) {

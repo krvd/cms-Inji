@@ -275,9 +275,14 @@ class View extends \Module
                     continue;
                 }
             }
-            $this->loadedCss[$href] = $href;
-            $urls[$href] = $path = $this->app->staticLoader->parsePath($href);
-            $timeStr.=filemtime($path);
+            $path = $this->app->staticLoader->parsePath($href);
+            if (file_exists($path)) {
+                $this->loadedCss[$href] = $href;
+                $urls[$href] = $path;
+                $timeStr.=filemtime($path);
+            } else {
+                echo "\n        <link href='{$href}' rel='stylesheet' type='text/css' />";
+            }
         }
         $timeMd5 = md5($timeStr);
         $cacheDir = Cache::getDir();
@@ -402,22 +407,35 @@ class View extends \Module
         $urls = [];
         $nativeUrl = [];
         $timeStr = '';
+        $noParsedScripts = [];
         foreach ($scripts as $script) {
             if (is_string($script)) {
                 if (!empty($urls[$script]))
                     continue;
-                $nativeUrl[$script] = $script;
-                $urls[$script] = $path = $this->app->staticLoader->parsePath($script);
-                $timeStr.=filemtime($path);
+
+                $path = $this->app->staticLoader->parsePath($script);
+                if (file_exists($path)) {
+                    $nativeUrl[$script] = $script;
+                    $urls[$script] = $path;
+                    $timeStr.=filemtime($path);
+                } else {
+                    $noParsedScripts[$script] = $script;
+                }
             } elseif (!empty($script['file'])) {
                 if (!empty($urls[$script['file']]))
                     continue;
-                $nativeUrl[$script['file']] = $script['file'];
-                $urls[$script['file']] = $path = $this->app->staticLoader->parsePath($script['file']);
-                if (!empty($script['name'])) {
-                    $onLoadModules[$script['name']] = $script['name'];
+
+                $path = $this->app->staticLoader->parsePath($script['file']);
+                if (file_exists($path)) {
+                    $nativeUrl[$script['file']] = $script['file'];
+                    $urls[$script['file']] = $path;
+                    if (!empty($script['name'])) {
+                        $onLoadModules[$script['name']] = $script['name'];
+                    }
+                    $timeStr.=filemtime($path);
+                } else {
+                    $noParsedScripts[$script] = $script;
                 }
-                $timeStr.=filemtime($path);
             }
         }
 
@@ -430,12 +448,13 @@ class View extends \Module
             file_put_contents($cacheDir . '/all' . $timeMd5 . '.js', $scriptAll);
         }
         $options = [
-            'scripts' => ['/' . $cacheDir . '/all' . $timeMd5 . '.js'],
+            'scripts' => array_values($noParsedScripts),
             'compresedScripts' => $nativeUrl,
             'styles' => [],
             'appRoot' => $this->app->type == 'app' ? '/' : '/' . $this->app->name . '/',
             'onLoadModules' => $onLoadModules
         ];
+        $options['scripts'][] = '/' . $cacheDir . '/all' . $timeMd5 . '.js';
         $this->widget('View\bodyEnd', compact('options'));
     }
 

@@ -29,7 +29,7 @@ class ViewController extends Controller
     {
         $this->view->setTitle('Создание шаблона');
         App::$cur->view->customAsset('css', '/static/moduleAsset/View/css/blockDrop.css');
-        App::$cur->view->customAsset('js', ['file' => '/static/moduleAsset/View/js/blockDrop.js', 'libs' => ['jquery-ui']]);
+        App::$cur->view->customAsset('js', ['file' => '/static/moduleAsset/View/js/blockDrop.js', 'libs' => ['JqueryUi']]);
         if (!empty($_POST)) {
             $text = '<!DOCTYPE html>
 <html lang="en">

@@ -48,9 +48,12 @@ class StaticLoader extends Module
         if (strpos($path, 'static/') !== false && strpos($path, 'static/') <= 1) {
             $path = substr($path, strpos($path, 'static') + 7);
         }
-        $type = substr($path, 0, strpos($path, '/'));
 
+        $type = substr($path, 0, strpos($path, '/'));
         switch ($type) {
+            case 'libs':
+                return App::$cur->Libs->getPath(array_slice(explode('/', $path),2));
+                break;
             case 'templates':
                 $path = substr($path, strpos($path, '/') + 1);
                 return $scriptApp->view->templatesPath . '/' . $path;

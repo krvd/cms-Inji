@@ -423,10 +423,12 @@ class Model
         }
         if (!Model::$cols[static::table()]) {
             $query = App::$cur->db->newQuery();
-            $query->createTable(static::table(), [
-                static::colPrefix() . 'id' => 'pk',
-                static::colPrefix() . 'date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,',
-            ]);
+            if ($query) {
+                $query->createTable(static::table(), [
+                    static::colPrefix() . 'id' => 'pk',
+                    static::colPrefix() . 'date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,',
+                ]);
+            }
             Model::$cols[static::table()] = App::$cur->db->getTableCols(static::table());
         }
         return Model::$cols[static::table()];
