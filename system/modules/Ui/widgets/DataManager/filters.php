@@ -97,6 +97,7 @@
                     case 'text':
                     case 'textarea':
                     case 'html':
+                    case 'decimal':
                         ?>
                   <div class="form-group">
                     <label><?= $colInfo['label']; ?></label>
