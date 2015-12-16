@@ -13,6 +13,7 @@ namespace Money\Wallet;
 
 class History extends \Model
 {
+    static $objectName = 'История кошелька';
     static $cols = [
         'wallet_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'wallet'],
         'new' => ['type' => 'decimal'],
@@ -22,12 +23,12 @@ class History extends \Model
         'date_create' => ['type' => 'dateTime'],
     ];
     static $labels = [
-        'wallet:user'=>'Пользователь',
-        'old'=>'До',
-        'new'=>'После',
-        'amount'=>'Сумма',
-        'comment'=>'Комментарий',
-        'date_create'=>'Дата'
+        'wallet:user' => 'Пользователь',
+        'old' => 'До',
+        'new' => 'После',
+        'amount' => 'Сумма',
+        'comment' => 'Комментарий',
+        'date_create' => 'Дата'
     ];
 
     static function relations()
@@ -42,6 +43,7 @@ class History extends \Model
 
     static $dataManagers = [
         'manager' => [
+            'name' => 'История кошельков',
             'cols' => [
                 'wallet:user_id',
                 'wallet:currency_id',
