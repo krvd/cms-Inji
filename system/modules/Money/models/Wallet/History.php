@@ -71,6 +71,7 @@ class History extends \Model
             'preSort' => [
                 'date_create' => 'desc'
             ],
+            'rowButtons' => []
         ]
     ];
 

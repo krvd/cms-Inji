@@ -7,7 +7,7 @@ $formParams = [
 $buttons = [
     'open', 'edit', 'delete'
 ];
-if (!empty($dataManager->managerOptions['rowButtons'])) {
+if (isset($dataManager->managerOptions['rowButtons'])) {
     $buttons = $dataManager->managerOptions['rowButtons'];
 }
 foreach ($buttons as $button) {
