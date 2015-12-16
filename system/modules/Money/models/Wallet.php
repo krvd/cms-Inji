@@ -13,6 +13,15 @@ namespace Money;
 
 class Wallet extends \Model
 {
+    static $cols = [
+        'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
+        'currency_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'currency']
+    ];
+    static $labels = [
+        'user_id' => 'Пользователь',
+        'currency_id' => 'Валюта'
+    ];
+
     static function relations()
     {
         return [
