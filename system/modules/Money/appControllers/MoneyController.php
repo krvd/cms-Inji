@@ -71,7 +71,7 @@ class MoneyController extends Controller
         $block = Money\Wallet\Block::get('Money\Transfer:' . $transfer->id, 'data');
         $block->delete();
         $wallets = $this->money->getUserWallets();
-        $wallets[$transfer->currency_id]->dif($transfer->amount, 'Отмена перевода средств');
+        $wallets[$transfer->currency_id]->diff($transfer->amount, 'Отмена перевода средств');
         $transfer->save();
         Tools::redirect('/users/cabinet', 'Перевод был успешно отменен', 'success');
     }
