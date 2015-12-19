@@ -68,7 +68,7 @@ class Libs extends Module
     function getPath($args)
     {
         if (!empty($args[0])) {
-            $libName = 'Libs\\' . $args[0];
+            $libName = 'Libs\\' . ucfirst($args[0]);
             if (class_exists($libName)) {
                 $file = implode('/', array_slice($args, 1));
                 foreach ($libName::$staticDirs as $dir) {
