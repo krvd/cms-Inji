@@ -11,7 +11,7 @@
         <b><?= number_format($wallet->amount, 4, '.', ' '); ?></b> <?= $wallet->currency->acronym(); ?><br />
         <?php
         if (!empty($blocked[$wallet->currency_id])) {
-            echo "Заблокировано: {$blocked[$wallet->currency_id]->amount}<br />";
+            echo "Заблокировано: {$blocked[$wallet->currency_id]} " . $wallet->currency->acronym() . "<br />";
         }
         if ($wallet->currency->refill) {
             echo "<a href = '/money/refill?currency_id={$wallet->currency_id}'>Пополнить</a> ";
@@ -31,3 +31,17 @@
   }
   ?>
 </div>
+<?php
+$transfers = Money\Transfer::getList(['where' => [
+                ['user_id', \Users\User::$cur->id],
+                ['complete', 0],
+                ['canceled', 0]
+        ]]);
+if ($transfers) {
+    echo "<h3>У вас есть незаконченные переводы</h3>";
+    echo "<ul>";
+    foreach ($transfers as $transfer) {
+        echo "<li><a href = '/money/confirmTransfer/{$transfer->id}'>{$transfer->name()}</a></li>";
+    }
+    echo "</ul>";
+}

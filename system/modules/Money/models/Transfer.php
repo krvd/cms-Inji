@@ -42,7 +42,7 @@ class Transfer extends \Model
                     'relation' => 'toUser',
                     'showCol' => [
                         'type' => 'staticMethod',
-                        'class'=>'Money\Transfer',
+                        'class' => 'Money\Transfer',
                         'method' => 'itemName',
                     ],
                     'label' => 'Получатель',
@@ -141,6 +141,11 @@ class Transfer extends \Model
                 'col' => 'currency_id'
             ]
         ];
+    }
+
+    function name()
+    {
+        return 'Перевод на сумму ' . $this->amount . ' ' . $this->currency->name . ' от ' . $this->user->name() . ' для ' . $this->toUser->name();
     }
 
 }
