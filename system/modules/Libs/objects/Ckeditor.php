@@ -19,6 +19,7 @@ class Ckeditor extends \Object
     ];
     static $files = [
         'js' => [
+            '/static/moduleAsset/libs/libs/ckeditor/path.js',
             'ckeditor/ckeditor/ckeditor.js',
             '/static/moduleAsset/libs/libs/ckeditor/bootstrap-ckeditor-fix.js',
             '/static/moduleAsset/libs/libs/ckeditor/jquery.adapter.js'
