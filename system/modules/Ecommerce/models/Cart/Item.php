@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Cart item
  *
@@ -7,6 +8,7 @@
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
+
 namespace Ecommerce\Cart;
 
 class Item extends \Model
@@ -90,15 +92,17 @@ class Item extends \Model
 
     static $labels = [
         'item_id' => 'Товар',
-        'item_offer_price_id' => 'Цена',
+        'item_offer_price_id' => 'Цена в каталоге',
         'count' => 'Количество',
         'cart_id' => 'Корзина',
+        'final_price' => 'Итоговая цена за единицу',
     ];
     static $cols = [
         'item_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'item'],
         'cart_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'cart'],
         'item_offer_price_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'price', 'showCol' => 'price'],
         'count' => ['type' => 'text'],
+        'final_price' => ['type' => 'decimal'],
     ];
     static $dataManagers = [
         'manager' => [
@@ -121,8 +125,8 @@ class Item extends \Model
                 ]
             ],
             'map' => [
-                ['cart_id', 'item_id'],
-                ['item_offer_price_id', 'count'],
+                ['cart_id', 'item_id', 'item_offer_price_id'],
+                ['final_price', 'count'],
             ]
         ]
     ];
