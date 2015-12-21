@@ -111,7 +111,17 @@ class Info extends \Model
     function name()
     {
         if ($this->first_name . $this->last_name . $this->middle_name) {
-            return trim($this->first_name . ' ' . $this->middle_name . ' ' . $this->last_name);
+            $name = '';
+            if ($this->first_name) {
+                $name.=$this->first_name;
+            }
+            if ($this->middle_name) {
+                $name.=($name ? ' ' : '') . $this->middle_name;
+            }
+            if ($this->last_name) {
+                $name.=($name ? ' ' : '') . $this->last_name;
+            }
+            return $name;
         } else {
             return $this->user_id;
         }
