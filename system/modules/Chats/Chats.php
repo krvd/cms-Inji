@@ -15,4 +15,16 @@ class Chats extends Module
         App::$primary->view->customAsset('js', '/moduleAsset/Chats/js/chat.js');
     }
 
+    function getMembers($chatId)
+    {
+        $members = \Chats\Chat\Member::getList(['where' => ['chat_id', $chatId]]);
+        foreach ($members as $key => $member) {
+            if (strtotime($member->date_last_active) - time() > 30) {
+                $member->delete();
+                unset($members[$key]);
+            }
+        }
+        return $members;
+    }
+
 }

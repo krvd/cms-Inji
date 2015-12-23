@@ -12,7 +12,7 @@ if (!$chat) {
     return;
 }
 $id = 'chat-' . Tools::randomString();
-$msgTemplate = '<div class="chats-chat-message"><small class="text-mutted">message-date_create</small> <b>user-name</b>: message-text</div>';
+$msgTemplate = '<div class="chats-chat-message"><b title="message-date_create user-fullName">user-firstName</b>: message-text</div>';
 $events = $chat->events(['order' => ['date_create', 'DESC'], 'key' => false]);
 $lastDate = $events ? $events[0]->date_create : 0;
 ?>
@@ -21,7 +21,20 @@ $lastDate = $events ? $events[0]->date_create : 0;
   <div class ="chats-chat-message-template" style="display: none;">
     <?= $msgTemplate; ?>
   </div>
-  <div class="chats-chat-inputarea"></div>
+  <div class="chats-chat-inputarea">
+    <form onsubmit="inji.Chats.sendForm(this,'<?= $id; ?>');return false;">
+      <div class="form-group">
+        <div class="row">
+          <div class="col-md-9">
+            <input class="form-control" name ='chat-message'> 
+          </div>
+          <div class="col-md-3">
+            <button class="btn btn-success btn-block">Отправить</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
   <div class="chats-chat-messageList"></div>
 </div>
 <script>

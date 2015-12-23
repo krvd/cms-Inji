@@ -16,7 +16,8 @@ class Member extends \Model
     static $cols = [
         'chat_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'chat'],
         'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
-        'chat_member_status_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'status']
+        'chat_member_status_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'status'],
+        'date_last_active' => ['type' => 'dateTime']
     ];
 
     static function relations()
