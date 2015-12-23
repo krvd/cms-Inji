@@ -15,38 +15,19 @@ class Slide extends \Model
 {
     public static $objectName = "Слайд";
     public static $cols = [
-        'name' => [
-            'type' => 'text'
-        ],
-        'description' => [
-            'type' => 'html'
-        ],
-        'image_file_id' => [
-            'type' => 'image'
-        ],
-        'date_create' => [
-            'type' => 'dateTime',
-        ],
-        'sort' => [
-            'type' => 'text'
-        ],
-        'slider_id' => [
-            'type' => 'select',
-            'source' => 'relation',
-            'relation' => 'slider',
-            'showCol' => 'name'
-        ],
-        'user_id' => [
-            'type' => 'select',
-            'source' => 'relation',
-            'relation' => 'user'
-        ],
-        'weight' => [
-            'type' => 'number'
-        ],
+        'name' => ['type' => 'text'],
+        'link' => ['type' => 'text'],
+        'description' => ['type' => 'html'],
+        'image_file_id' => ['type' => 'image'],
+        'sort' => ['type' => 'text'],
+        'slider_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'slider'],
+        'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
+        'weight' => ['type' => 'number'],
+        'date_create' => ['type' => 'dateTime'],
     ];
     public static $labels = [
         'name' => 'Имя',
+        'link' => 'Ссылка',
         'description' => 'Описание',
         'date_create' => 'Дата создания',
         'sort' => 'Сортировка',
@@ -59,8 +40,7 @@ class Slide extends \Model
         'manager' => [
             'name' => 'Слайды',
             'cols' => [
-                'name',
-                'date_create'
+                'name', 'link', 'date_create'
             ],
             'sortMode' => true
         ],
@@ -68,7 +48,7 @@ class Slide extends \Model
     static $forms = [
         'manager' => [
             'map' => [
-                ['name'],
+                ['name', 'link'],
                 ['image_file_id'],
                 ['description'],
             ],

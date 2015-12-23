@@ -26,10 +26,20 @@ $slides = $slider->slides(['order' => ['weight', 'ASC']]);
     foreach ($slides as $item) {
         ?>
         <div class="item <?= !$i ? 'active' : ''; ?>">
+          <?php
+          if ($item->link) {
+              echo "<a href = '{$item->link}' style = 'display:inline-block;'>";
+          }
+          ?>
           <img src="<?= Statics::file($item->image->path); ?>" alt="<?= $item->name; ?>">
           <div class="carousel-caption">
             <?= $item->description; ?>
           </div>
+          <?php
+          if ($item->link) {
+              echo "</a>";
+          }
+          ?>
         </div>
         <?php
         $i++;
