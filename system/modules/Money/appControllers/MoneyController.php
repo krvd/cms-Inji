@@ -69,7 +69,9 @@ class MoneyController extends Controller
         }
         $transfer->canceled = true;
         $block = Money\Wallet\Block::get('Money\Transfer:' . $transfer->id, 'data');
-        $block->delete();
+        if ($block) {
+            $block->delete();
+        }
         $wallets = $this->money->getUserWallets();
         $wallets[$transfer->currency_id]->diff($transfer->amount, 'Отмена перевода средств');
         $transfer->save();
