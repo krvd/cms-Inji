@@ -54,6 +54,7 @@ class User extends \Model
                 'info:last_name',
                 'group_id',
                 'role_id',
+                'reg_date'
             ],
             'sortable' => [
                 'mail',
@@ -61,12 +62,14 @@ class User extends \Model
                 'info:last_name',
                 'group_id',
                 'role_id',
+                'reg_date'
             ],
             'filters' => [
                 'mail',
                 'info:first_name',
                 'info:last_name',
                 'role_id',
+                'reg_date'
             ],
             'searchableCols' => ['mail']
         ],
