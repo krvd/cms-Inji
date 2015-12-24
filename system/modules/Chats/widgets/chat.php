@@ -22,7 +22,7 @@ $lastDate = $events ? $events[0]->date_create : 0;
     <?= $msgTemplate; ?>
   </div>
   <div class="chats-chat-inputarea">
-    <form onsubmit="inji.Chats.sendForm(this,'<?= $id; ?>');return false;">
+    <form onsubmit="inji.Chats.sendForm(this, '<?= $id; ?>');this.querySelector('[name=\'chat-message\']').value = '';return false;">
       <div class="form-group">
         <div class="row">
           <div class="col-md-9">
