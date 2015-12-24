@@ -68,6 +68,9 @@ App::$cur->libs->loadLib('typeahead');
               return html;
             }
           });
+          $('.users-cabinet-userTree li a').click(function () {
+            return false;
+          })
         });
     </script>
   </div>
