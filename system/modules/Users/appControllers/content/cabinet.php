@@ -3,21 +3,21 @@
   <div class = "row">
     <div class = "col-sm-3">
       <ul class = "nav nav-pills nav-stacked">
-        <li role="presentation" <?= !$activeSection ? 'class="active"' : ''; ?>>
+        <li <?= !$activeSection ? 'class="active"' : ''; ?>>
           <a href="/users/cabinet">Мой кабинет</a>
         </li>
         <?php
         foreach ($sections as $sectionName => $section) {
             if (!empty($section['name']) && (!empty($section['fullWidget']) || !empty($section['href']))) {
                 ?>
-                <li role="presentation" <?= $activeSection == $sectionName ? 'class="active"' : ''; ?>>
+                <li <?= $activeSection == $sectionName ? 'class="active"' : ''; ?>>
                   <a href="<?= !empty($section['href']) ? $section['href'] : "/users/cabinet/{$sectionName}"; ?>"><?= $section['name']; ?></a>
                 </li>
                 <?php
             }
         }
         ?>
-        <li role="presentation">
+        <li>
           <a href="?logout">Выход</a>
         </li>
       </ul>

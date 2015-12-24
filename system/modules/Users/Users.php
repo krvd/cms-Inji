@@ -14,11 +14,9 @@ class Users extends Module
 
     function init()
     {
-
         if (!empty($this->config['cookieSplit'])) {
             $this->cookiePrefix = \App::$cur->type;
         }
-
         \Users\User::$cur = new Users\User(array('group_id' => 1, 'role_id' => 1));
         if (!App::$cur->db->connect) {
             return;

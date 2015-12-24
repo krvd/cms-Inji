@@ -15,6 +15,8 @@ $id = 'chat-' . Tools::randomString();
 $msgTemplate = '<div class="chats-chat-message"><b title="message-date_create user-fullName">user-firstName</b>: message-text</div>';
 $events = $chat->events(['order' => ['date_create', 'DESC'], 'key' => false]);
 $lastDate = $events ? $events[0]->date_create : 0;
+$inputSize = empty($inputSize) ? 'col-md-9' : $inputSize;
+$submitSize = empty($submitSize) ? 'col-md-3' : $submitSize;
 ?>
 
 <div id ="<?= $id; ?>" class="chats-chat" data-chat-id="<?= $chatId; ?>" data-last-event-date="<?= $lastDate; ?>" data-msg-count="<?= $chat->messages(['count' => true]); ?>">
@@ -25,10 +27,10 @@ $lastDate = $events ? $events[0]->date_create : 0;
     <form onsubmit="inji.Chats.sendForm(this, '<?= $id; ?>');this.querySelector('[name=\'chat-message\']').value = '';return false;">
       <div class="form-group">
         <div class="row">
-          <div class="col-md-9">
+          <div class="<?= $inputSize; ?>">
             <input class="form-control" name ='chat-message'> 
           </div>
-          <div class="col-md-3">
+          <div class="<?= $submitSize; ?>">
             <button class="btn btn-success btn-block">Отправить</button>
           </div>
         </div>
