@@ -46,7 +46,8 @@ class ChatsController extends Controller
             ];
         }
 
-        $messages = \Chats\Chat\Message::getList(['where' => $where, 'limit' => 20, 'order' => ['date_create', 'ASC']]);
+        $messages = \Chats\Chat\Message::getList(['where' => $where, 'limit' => 20, 'order' => ['date_create', 'DESC']]);
+        $messages = array_reverse($messages);
         foreach ($messages as $message) {
             $msg = [
                 'message' => $message->_params,
