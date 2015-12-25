@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Materials app controller
  *
@@ -14,24 +15,39 @@ class MaterialsController extends Controller
         $args = func_get_args();
         $category = null;
         $material = null;
-        $alias = trim(implode('/', $args));
-        if ($alias) {
-            $material = Materials\Material::get($alias, 'alias');
-            if (!$material) {
-                if (is_numeric($alias)) {
-                    $material = Materials\Material::get($alias);
+        $path = trim(implode('/', $args));
+
+        if (is_numeric($path)) {
+            $material = Materials\Category::get((int) $path);
+        }
+        if (!$material) {
+            foreach ($args as $key => $alias) {
+                $category = Materials\Category::get([['parent_id', $category ? $category->id : 0], ['alias', $alias]]);
+                if (!$category || $key + 2 == count($args)) {
+                    break;
                 }
-                if (!$material) {
-                    $category = Materials\Category::get($alias, 'alias');
-                    if ($category) {
-                        $this->categoryAction($category->id);
-                    }
+            }
+        }
+        if ($path) {
+            if ($category) {
+                $where = [
+                    ['category_id', $category->id],
+                    ['alias', $args[count($args)-1]],
+                ];
+            } else {
+                $where = [['alias', $path]];
+            }
+            $material = Materials\Material::get($where);
+            if (!$material) {
+                $category = Materials\Category::get($path, 'alias');
+                if ($category) {
+                    $this->categoryAction($category->id);
                 }
             }
         } else {
             $material = Materials\Material::get(1, 'default');
         }
-        if (!$category && $material) {
+        if ($material) {
             $this->viewAction($material->id);
         } elseif (!$category && !$material) {
             Tools::header('404');
@@ -42,9 +58,25 @@ class MaterialsController extends Controller
         }
     }
 
-    function categoryAction($category_id = 0)
+    function categoryAction()
     {
-        $category = Materials\Category::get((int) $category_id);
+        $args = func_get_args();
+        $path = trim(implode('/', $args));
+        $category = null;
+        if (is_numeric($path)) {
+            $category = Materials\Category::get((int) $path);
+        }
+        if (!$category) {
+            foreach ($args as $alias) {
+                $category = Materials\Category::get([['parent_id', $category ? $category->id : 0], ['alias', $alias]]);
+                if (!$category) {
+                    break;
+                }
+            }
+        }
+        if (!$category) {
+            $category = Materials\Category::get($path, 'alias');
+        }
         if (!$category) {
             Tools::header('404');
             $this->view->page([
@@ -55,7 +87,7 @@ class MaterialsController extends Controller
             $this->view->setTitle($category->name);
 
             $pages = new Ui\Pages($_GET, ['count' => Materials\Material::getCount(['where' => ['category_id', $category->id]]), 'limit' => 10]);
-            $materials = Materials\Material::getList(['where' => ['category_id', $category->id], 'order' => ['date_create', 'desc'], 'start' => $pages->params['start'], 'limit' => $pages->params['limit']]);
+            $materials = Materials\Material::getList(['where' => ['tree_path', $category->tree_path . $category->id . '/%', 'LIKE'], 'order' => ['date_create', 'desc'], 'start' => $pages->params['start'], 'limit' => $pages->params['limit']]);
 
             $this->view->page(['page' => $category->resolveTemplate(), 'content' => $category->resolveViewer(), 'data' => compact('materials', 'pages', 'category')]);
         }

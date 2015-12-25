@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Category
  *
@@ -7,6 +8,7 @@
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
+
 namespace Materials;
 
 class Category extends \Model
@@ -75,6 +77,31 @@ class Category extends \Model
         foreach ($this->childs as $child) {
             $child->delete();
         }
+    }
+
+    function getRoot()
+    {
+        $treePath = array_values(array_filter(explode('/', $this->tree_path)));
+        if (!empty($treePath[0])) {
+            $category = Category::get($treePath[0]);
+            if($category){
+                return $category;
+            }
+        }
+        return $this;
+    }
+
+    function getHref()
+    {
+        $href = !empty(\App::$primary->config['defaultModule']) && \App::$primary->config['defaultModule'] == 'Materials' ? '/category' : '/materials/category';
+        $treePath = array_filter(explode('/', $this->tree_path));
+        if ($treePath) {
+            $categorys = Category::getList(['where' => ['id', implode(',', $treePath), 'IN']]);
+            foreach ($categorys as $category) {
+                $href .="/{$category->alias}";
+            }
+        }
+        return $href . "/{$this->alias}";
     }
 
     static function relations()

@@ -120,6 +120,19 @@ class Material extends \Model
         ];
     }
 
+    function getHref()
+    {
+        $href = !empty(\App::$primary->config['defaultModule']) && \App::$primary->config['defaultModule'] == 'Materials' ? '' : '/materials';
+        $treePath = array_filter(explode('/', $this->tree_path));
+        if ($treePath) {
+            $categorys = Category::getList(['where' => ['id', implode(',', $treePath), 'IN']]);
+            foreach ($categorys as $category) {
+                $href .="/{$category->alias}";
+            }
+        }
+        return $href . "/{$this->alias}";
+    }
+
     function resolveTemplate()
     {
         if ($this->template !== 'inherit') {
