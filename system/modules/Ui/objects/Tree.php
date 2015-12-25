@@ -12,9 +12,14 @@ namespace Ui;
 
 class Tree extends \Object
 {
-    static function ul($objectRoot, $maxDeep = 0, $deep = 1)
+    static function ul($objectRoot, $maxDeep = 0, $hrefFunc = null)
     {
         $count = 0;
+        if (!$hrefFunc) {
+            $hrefFunc = function($object) {
+                echo "<a href='#'> {$object->name()}</a>";
+            };
+        }
         ?>
         <ul class="nav nav-list-categorys" data-col='tree_path'>
           <?php
@@ -22,7 +27,7 @@ class Tree extends \Object
           $items = $class::getList(['where' => ['parent_id', $objectRoot->pk()]]);
           $count += count($items);
           foreach ($items as $objectChild) {
-              $count+=static::showLi($objectChild, $deep, $maxDeep);
+              $count+=static::showLi($objectChild, 1, $maxDeep, $hrefFunc);
           }
           ?>
         </ul>
@@ -30,7 +35,7 @@ class Tree extends \Object
         return $count;
     }
 
-    static function showLi($object, $deep = 1, $maxDeep = 0)
+    static function showLi($object, $deep = 1, $maxDeep = 0, $hrefFunc = null)
     {
         $count = 0;
         $isset = false;
@@ -45,12 +50,12 @@ class Tree extends \Object
                     <li id='<?= str_replace('\\', '_', get_class($object)) . "-{$object->pk()}"; ?>'>
                       <label class='nav-toggle nav-header'>
                         <span class='nav-toggle-icon glyphicon glyphicon-chevron-right'></span> 
-                        <a href='#'> <?= $object->name(); ?></a> 
+                        <?= $hrefFunc ? $hrefFunc($object) : "<a href='#'> {$object->name()}</a> "; ?>
                       </label>
                       <ul class='nav nav-list nav-left-ml'>
                         <?php
                     }
-                    $count+=static::showLi($objectChild, $deep + 1, $maxDeep);
+                    $count+=static::showLi($objectChild, $deep + 1, $maxDeep,$hrefFunc);
                 }
             }
             if ($isset) {
@@ -63,7 +68,7 @@ class Tree extends \Object
             <li id='<?= str_replace('\\', '_', get_class($object)) . "-{$object->pk()}"; ?>'>
               <label class='nav-toggle nav-header'>
                 <span class=' nav-toggle-icon glyphicon glyphicon-minus'></span> 
-                <a href='#'> <?= $object->name(); ?></a> 
+                <?= $hrefFunc ? $hrefFunc($object) : "<a href='#'> {$object->name()}</a> "; ?>
               </label>
             </li>
             <?php
