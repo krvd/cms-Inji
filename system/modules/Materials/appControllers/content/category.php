@@ -19,7 +19,7 @@
           foreach ($materials as $material) {
               ?>
               <div class = "col-sm-6 category-material">
-                <a class="category-material-name" href ="/<?= $material->alias ? $material->alias : $material->id; ?>"><h3><?= $material->name; ?></h3></a>
+                <a class="category-material-name" href ="<?= $material->getHref(); ?>"><h3><?= $material->name; ?></h3></a>
                 <div class="category-material-preview"><?= $material->preview; ?></div>
                 <div class="text-right category-material-more">
                   <a href ="<?= $material->getHref(); ?>"><strong>Читать далее <i class ='glyphicon glyphicon-forward'></i></strong></a>
