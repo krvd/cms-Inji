@@ -159,6 +159,12 @@ class Cart extends \Model
             'rowButtonsWidget' => 'Ecommerce\cart/adminButtons'
         ]
     ];
+
+    static function itemName($item)
+    {
+        return $item->pk() . '. ' . $item->name();
+    }
+
     static $forms = [
         'manager' => [
             'inputs' => [
@@ -175,6 +181,11 @@ class Cart extends \Model
                     ],
                     'col' => 'user_id',
                     'required' => true,
+                    'showCol' => [
+                        'type' => 'staticMethod',
+                        'class' => 'Ecommerce\Cart',
+                        'method' => 'itemName',
+                    ],
                 ],
                 'cardSearch' => [
                     'type' => 'search',
