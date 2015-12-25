@@ -5,6 +5,7 @@
 CKEDITOR.plugins.addExternal('inlinesave', '/static/moduleAsset/libs/libs/ckeditor/plugins/inlinesave/');
 CKEDITOR.plugins.addExternal('injiwidgets', '/static/moduleAsset/libs/libs/ckeditor/plugins/injiwidgets/');
 CKEDITOR.plugins.addExternal('font', '/static/moduleAsset/libs/libs/ckeditor/plugins/font/');
+CKEDITOR.plugins.addExternal('justify', '/static/moduleAsset/libs/libs/ckeditor/plugins/justify/');
 
 CKEDITOR.editorConfig = function (config) {
   config.filebrowserBrowseUrl = '/admin/files/managerForEditor?folder=images';
@@ -45,7 +46,7 @@ CKEDITOR.editorConfig = function (config) {
     {name: 'tools'},
     {name: 'inji'},
   ];
-  config.extraPlugins = 'inlinesave,injiwidgets,font';
+  config.extraPlugins = 'inlinesave,injiwidgets,font,justify';
 };
 CKEDITOR.basePath = inji.options.appRoot + 'static/libs/vendor/ckeditor/ckeditor/ckeditor/';
 CKEDITOR.plugins.basePath = inji.options.appRoot + 'static/libs/vendor/ckeditor/ckeditor/ckeditor/plugins/';
