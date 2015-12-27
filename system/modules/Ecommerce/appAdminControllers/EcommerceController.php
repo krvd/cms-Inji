@@ -101,7 +101,7 @@ class EcommerceController extends adminController
     {
         $cart = Ecommerce\Cart::get((int) $cartId);
         $result = new Server\Result();
-        if ($cart) {
+        if ($cart && $cart->cart_status_id != 5) {
             $cart->cart_status_id = 5;
             $cart->save();
             $result->successMsg = 'Заказ был завершен';
@@ -109,6 +109,7 @@ class EcommerceController extends adminController
         }
         $result->success = false;
         $result->content = 'Такая корзина не найдена';
+        $result->send();
     }
 
 }
