@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Ecommerce Cart app controller
  *
@@ -154,16 +155,6 @@ class CartController extends Controller
             'href' => '/ecommerce/cart'
         ];
         $this->view->page(['data' => compact('cart', 'items', 'deliverys', 'payTypes', 'packItem', 'bread')]);
-    }
-
-    function primaryAction($cartId = 0)
-    {
-        $cartId = (int) $cartId;
-        if (!$cartId || !($cart = Ecommerce\Cart::get($cartId)) || $cart->user_id != \Users\User::$cur->id) {
-            Tools::redirect('/', 'Это не ваша корзина');
-        }
-        $this->view->setTitle('Прямой перевод');
-        $this->view->page(['data' => compact('cart')]);
     }
 
     function orderDetailAction($id = 0)
