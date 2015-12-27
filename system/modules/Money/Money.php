@@ -25,7 +25,6 @@ class Money extends Module
         foreach ($wallets as $wallet) {
             if ($wallet->currency_id == $data['pay']->currency_id) {
                 $wallet->diff($data['pay']->sum, 'Пополнение');
-                $wallet->save();
                 break;
             }
         }

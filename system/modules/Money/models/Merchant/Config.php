@@ -16,7 +16,7 @@ class Config extends \Model
     static $objectName = 'Опция системы оплаты';
     static $cols = [
         'name' => ['type' => 'text'],
-        'value' => ['type' => 'text'],
+        'value' => ['type' => 'textarea'],
     ];
     static $labels = [
         'name' => 'Название',
@@ -48,4 +48,5 @@ class Config extends \Model
             ]
         ];
     }
+
 }

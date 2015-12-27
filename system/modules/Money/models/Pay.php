@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Pay
  *
@@ -7,6 +8,7 @@
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
+
 namespace Money;
 
 class Pay extends \Model
@@ -61,9 +63,21 @@ class Pay extends \Model
                 'sum',
                 'currency_id',
                 'pay_status_id',
+                'user_id',
                 'date_recive',
                 'date_create'
-            ]
+            ],
+            'sortable' => [
+                'sum',
+                'currency_id',
+                'pay_status_id',
+                'date_recive',
+                'date_create'
+            ],
+            'preSort' => [
+                'date_create' => 'desc'
+            ],
+            'rowButtonsWidget' => 'Money\adminButtons'
         ]
     ];
     static $forms = [

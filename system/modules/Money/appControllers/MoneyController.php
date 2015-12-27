@@ -91,6 +91,7 @@ class MoneyController extends Controller
                 'currency_id' => $currency->id,
                 'sum' => (float) str_replace(',', '.', $_POST['amount']),
                 'type' => 'refill',
+                'description' => 'Пополнение баланса ' . $currency->name(),
                 'callback_module' => 'Money',
                 'callback_method' => 'refillPayRecive'
             ]);
@@ -163,10 +164,19 @@ class MoneyController extends Controller
         if (!$wallet || $wallet->user_id != \Users\User::$cur->id) {
             Tools::redirect('/money/merchants/pay/' . $pay->id, 'Такой кошелек не найден');
         }
-        if ($pay->sum > $wallet->amount) {
+        if ($pay->currency_id != $wallet->currency_id) {
+            $rate = \Money\Currency\ExchangeRate::get([['currency_id', $wallet->currency_id], ['target_currency_id', $pay->currency_id]]);
+            if (!$rate) {
+                Tools::redirect('/money/merchants/pay/' . $pay->id, 'Нет возможности оплатить счет в валюте ' . $pay->currency->name() . ' валютой ' . $wallet->currency->name());
+            }
+            $sum = $pay->sum / $rate->rate;
+        } else {
+            $sum = $pay->sum;
+        }
+        if ($sum > $wallet->amount) {
             Tools::redirect('/money/merchants/pay/' . $pay->id, 'На вашем счете недостаточно средств');
         }
-        $wallet->diff(-$pay->sum, 'Оплата счета №' . $payId);
+        $wallet->diff(-$sum, 'Оплата счета №' . $payId);
         $statuses = \Money\Pay\Status::getList(['key' => 'code']);
         if (!empty($statuses['success'])) {
             $pay->pay_status_id = $statuses['success']->id;
@@ -177,6 +187,33 @@ class MoneyController extends Controller
             App::$cur->{$pay->callback_module}->{$pay->callback_method}(['status' => 'success', 'payId' => $pay->id, 'pay' => $pay]);
         }
         Tools::redirect('/users/cabinet', 'Вы успешно оплатили счет', 'success');
+    }
+
+    function primaryPayAction($payId, $currencyId)
+    {
+        $pay = Money\Pay::get((int) $payId);
+        if (!$pay || $pay->user_id != \Users\User::$cur->id) {
+            Tools::redirect('/money/merchants/pay/', 'Такой счет не найден');
+        }
+        $merchant = \Money\MerchantHelper\Primary::getMerchant();
+        if (!$merchant->active) {
+            Tools::redirect('/money/merchants/pay/' . $pay->id, 'Этот способ оплаты недоступен');
+        }
+        $allowCurrencies = $merchant->allowCurrencies($pay);
+        $method = [];
+        foreach ($allowCurrencies as $allowCurrency) {
+            if ($allowCurrency['currency']->id == $currencyId) {
+                $method = $allowCurrency;
+                break;
+            }
+        }
+        if (!$method) {
+            Tools::redirect('/', 'Валюта для этого способа оплаты не найдена', 'danger');
+        }
+        $className = 'Money\MerchantHelper\\' . $merchant->object_name;
+        $sum = $className::getFinalSum($pay, $method);
+        $this->view->setTitle('Прямая оплата');
+        $this->view->page(['data' => compact('pay', 'sum', 'method')]);
     }
 
 }

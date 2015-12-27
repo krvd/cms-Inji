@@ -45,4 +45,17 @@ class MerchantHelper extends \Object
         }
     }
 
+    static function getFinalSum($pay, $method)
+    {
+        switch ($method['type']) {
+            case 'transfer':
+                $sum = $pay->sum / $method['transfer']->rate;
+                break;
+            default:
+                $sum = $pay->sum;
+                break;
+        }
+        return $sum;
+    }
+
 }

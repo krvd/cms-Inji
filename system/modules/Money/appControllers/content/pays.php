@@ -7,6 +7,7 @@ $table->setCols([
     'Описание',
     'Сумма',
     'Валюта',
+    '',
     ''
 ]);
 foreach ($pays as $pay) {
@@ -15,7 +16,8 @@ foreach ($pays as $pay) {
         $pay->description,
         $pay->sum,
         $pay->currency->name(),
-        '<a href = "/money/merchants/pay/' . $pay->id . '" class="btn btn-success btn-sm">Оплатить</a>'
+        '<a href = "/money/merchants/pay/' . $pay->id . '" class="btn btn-success btn-sm">Оплатить</a>',
+        '<a href = "/money/merchants/cancelPay/' . $pay->id . '" class="btn btn-danger btn-sm">Отказаться</a>'
     ]);
 }
 $table->draw();

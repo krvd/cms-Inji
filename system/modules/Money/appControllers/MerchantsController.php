@@ -64,7 +64,7 @@ class MerchantsController extends Controller
 
     function payAction($pay_id = 0)
     {
-        $pay = Money\Pay::get($pay_id);
+        $pay = Money\Pay::get([['id', $pay_id], ['user_id', Users\User::$cur->id]]);
         if (!$pay) {
             $this->view->setTitle('Выбор счета для оплаты');
             $bread = [];
@@ -84,6 +84,17 @@ class MerchantsController extends Controller
             $this->view->setTitle('Выбор способа оплаты');
             $this->view->page(['data' => compact('bread', 'merchants', 'pay')]);
         }
+    }
+
+    function cancelPayAction($pay_id = 0)
+    {
+        $pay = Money\Pay::get([['id', $pay_id], ['user_id', Users\User::$cur->id]]);
+        if (!$pay) {
+            Tools::redirect('/users/cabinet/wallets', 'Такой платеж несуществует');
+        }
+        $pay->pay_status_id = 3;
+        $pay->save();
+        Tools::redirect('/users/cabinet/wallets', 'Платеж был отменен');
     }
 
     function goAction($pay_id, $merchant_id, $currency_id)

@@ -45,3 +45,8 @@ if ($transfers) {
     }
     echo "</ul>";
 }
+$pays = \Money\Pay::getList(['where' => [['pay_status_id', 1], ['user_id', \Users\User::$cur->id]]]);
+if ($pays) {
+    echo "<h3>У вас есть неоплаченные счета</h3>";
+    $this->content(['module'=>\App::$cur->money, 'content' => 'pays', 'data' => compact('pays')]);
+}
