@@ -203,6 +203,7 @@ class Users extends Module
             Msg::add('Вы не ввели E-mail', 'danger');
             return false;
         }
+        $user_mail = trim($user_mail);
         if (!filter_var($user_mail, FILTER_VALIDATE_EMAIL)) {
             Msg::add('Вы ввели не корректный E-mail', 'danger');
             return false;
@@ -216,6 +217,7 @@ class Users extends Module
         if (empty($user_login)) {
             $user_login = $user_mail;
         }
+        $user_login = trim($user_login);
         $user = $this->get($user_login, 'login');
         if ($user) {
             Msg::add('Введенный вами логин зарегистрирован в нашей системе, войдите или введите другой логин', 'danger');
