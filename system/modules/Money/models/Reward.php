@@ -15,15 +15,16 @@ class Reward extends \Model
 {
     function checkBlocked()
     {
-        $blocked = Wallet\Block::getList(['where' => ['data', 'reward:' . $this->id]]);
+        $blocked = Wallet\Block::getList(['where' => [
+                        ['data', 'reward:' . $this->id],
+                        [
+                            ['date_expired', '0000-00-00 00:00:00'],
+                            ['date_expired', date('Y-m-d H:i:s'), '>', 'OR']
+                        ]
+                    ]
+        ]);
         $usersCompleted = [];
         foreach ($blocked as $block) {
-            if ($block->date_expired != '0000-00-00 00:00:00' && \DateTime::createFromFormat('Y-m-d H:i:s', $block->date_expired) <= new \DateTime()) {
-                if ($block->expired_type == 'burn') {
-                    $block->delete();
-                }
-                continue;
-            }
             if (!isset($usersCompleted[$block->wallet->user_id])) {
                 $complete = true;
                 foreach ($this->conditions as $condition) {

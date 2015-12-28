@@ -90,15 +90,15 @@ class Money extends Module
     function getUserBlocks($userId = null)
     {
         $userId = $userId ? $userId : \Users\User::$cur->id;
-        $blocked = \Money\Wallet\Block::getList(['where' => ['wallet:user_id', $userId]]);
+        $blocked = \Money\Wallet\Block::getList(['where' => [
+                        ['wallet:user_id', $userId],
+                        [
+                            ['date_expired', '0000-00-00 00:00:00'],
+                            ['date_expired', date('Y-m-d H:i:s'), '>', 'OR']
+                        ]
+        ]]);
         $blocks = [];
         foreach ($blocked as $block) {
-            if ($block->date_expired != '0000-00-00 00:00:00' && \DateTime::createFromFormat('Y-m-d H:i:s', $block->date_expired) <= new \DateTime()) {
-                if ($block->expired_type == 'burn') {
-                    $block->delete();
-                }
-                continue;
-            }
             if (empty($blocks[$block->wallet->currency_id])) {
                 $blocks[$block->wallet->currency_id] = $block->amount;
             } else {

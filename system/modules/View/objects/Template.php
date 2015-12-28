@@ -193,7 +193,7 @@ class Template extends \Object
             if (!$this->content) {
                 $this->content = \Controller::$cur->method;
             }
-            if (!$this->contentPath && \Module::$cur) {
+            if ((!$this->contentPath || $content) && \Module::$cur) {
                 $this->contentPath = \Module::$cur->path . '/' . \Module::$cur->app->type . "Controllers/content/{$this->content}.php";
             }
             $this->contentPath = \Tools::pathsResolve($this->getContentPaths(), $this->contentPath);

@@ -13,6 +13,16 @@ namespace Money\Wallet;
 
 class Block extends \Model
 {
+    static $cols = [
+        'wallet_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'wallet'],
+        'amount' => ['type' => 'decimal'],
+        'data' => ['type' => 'text'],
+        'comment' => ['type' => 'text'],
+        'expired_type' => ['type' => 'text'],
+        'date_expired' => ['type' => 'dateTime'],
+        'date_create' => ['type' => 'dateTime'],
+    ];
+
     static function relations()
     {
         return [
