@@ -13,6 +13,7 @@ namespace Money\Wallet;
 
 class Block extends \Model
 {
+    static $objectName = 'Блокировка кошелька';
     static $cols = [
         'wallet_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'wallet'],
         'amount' => ['type' => 'decimal'],
@@ -22,7 +23,48 @@ class Block extends \Model
         'date_expired' => ['type' => 'dateTime'],
         'date_create' => ['type' => 'dateTime'],
     ];
+    
+    static $labels = [
+        'wallet:user' => 'Пользователь',
+        'amount' => 'Сумма',
+        'comment' => 'Комментарий',
+        'date_create' => 'Дата',
+        'date_expired' => 'Истекает'
+    ];
 
+    static $dataManagers = [
+        'manager' => [
+            'name' => 'Блокировки кошельков',
+            'cols' => [
+                'wallet:user_id',
+                'wallet:currency_id',
+                'amount',
+                'comment',
+                'date_create',
+                'date_expired'
+            ],
+            'sortable' => [
+                'amount',
+                'comment',
+                'date_create',
+                'date_expired'
+            ],
+            'filters' => [
+                'wallet:user:mail',
+                'wallet:user:info:first_name',
+                'wallet:user:info:last_name',
+                'wallet:currency_id',
+                'amount',
+                'comment',
+                'date_create',
+                'date_expired'
+            ],
+            'preSort' => [
+                'date_create' => 'desc'
+            ],
+            'rowButtons' => []
+        ]
+    ];
     static function relations()
     {
         return [
