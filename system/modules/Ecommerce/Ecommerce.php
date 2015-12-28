@@ -377,10 +377,16 @@ class Ecommerce extends Module
 
     function bonusTrigger($event)
     {
-
         $cart = $event['eventObject'];
         foreach ($cart->cartItems as $cartItem) {
             foreach ($cartItem->price->offer->bonuses as $bonus) {
+                if ($bonus->limited && $bonus->left <= 0) {
+                    continue;
+                }
+                elseif ($bonus->limited && $bonus->left > 0) {
+                    $bonus->left -= 1;
+                    $bonus->save();
+                }
                 switch ($bonus->type) {
                     case'currency':
                         $currency = \Money\Currency::get($bonus->value);
