@@ -17,7 +17,7 @@ class Bonus extends \Model
         'item_offer_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'offer'],
         'type' => ['type' => 'text'],
         'value' => ['type' => 'text'],
-        'count' => ['type' => 'decinal'],
+        'count' => ['type' => 'decimal'],
         'limited' => ['type' => 'bool'],
         'left' => ['type' => 'number']
     ];
