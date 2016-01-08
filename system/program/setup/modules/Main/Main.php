@@ -13,11 +13,23 @@ class Main extends Module
     function init()
     {
         $config = Config::share();
+        if (!empty($config['failTry']) && $config['failTry'] > 3) {
+            exit('Превышен лимит неправильного ввода пароля. Для разблокировки отредактируйте файл %INJI_PROGRAM_DIR%/config/config.php');
+        }
         if (empty(App::$cur->params[0]) || App::$cur->params[0] != 'enter') {
-            if (empty($_COOKIE['systemPass']) || empty($config['systemPass'])) {
+            if (empty($config['systemPass'])) {
+                Tools::redirect('/setup/enter', 'Придумайте системный пароль');
+            }
+            if (empty($_COOKIE['systemPass'])) {
                 Tools::redirect('/setup/enter', 'Введите системный пароль');
             }
-            if (!empty($_COOKIE['systemPass']) && !empty($config['systemPass']) && $_COOKIE['systemPass'] != $config['systemPass']) {
+            if (!empty($_COOKIE['systemPass']) && $_COOKIE['systemPass'] != $config['systemPass']) {
+                if (empty($config['failTry'])) {
+                    $config['failTry'] = 1;
+                } else {
+                    $config['failTry'] ++;
+                }
+                Config::save('share', $config);
                 Tools::redirect('/setup/enter', 'Не верный системный пароль');
             }
         }

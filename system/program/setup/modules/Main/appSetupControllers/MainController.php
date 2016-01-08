@@ -27,8 +27,13 @@ class MainController extends Controller
             }
             if ($_POST['systemPass'] == $config['systemPass']) {
                 setcookie('systemPass', $_POST['systemPass'], 0, '/setup');
+            } else {
+                if (empty($config['failTry'])) {
+                    $config['failTry'] = 1;
+                } else {
+                    $config['failTry'] ++;
+                }
             }
-
             Tools::redirect('/setup');
         }
         if (!empty($config['systemPass']) && !empty($_COOKIE['systemPass']) && $_COOKIE['systemPass'] == $config['systemPass']) {
