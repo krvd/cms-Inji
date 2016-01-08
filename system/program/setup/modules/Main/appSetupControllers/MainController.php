@@ -33,6 +33,7 @@ class MainController extends Controller
                 } else {
                     $config['failTry'] ++;
                 }
+                Config::save('share', $config);
             }
             Tools::redirect('/setup');
         }
