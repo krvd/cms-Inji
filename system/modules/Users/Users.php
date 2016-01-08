@@ -269,7 +269,7 @@ class Users extends Module
             Msg::add('Не удалось зарегистрировать', 'danger');
             return false;
         }
-        $info = new \Users\Info([
+        $info = new \Users\User\Info([
             'user_id' => $user->id,
             'first_name' => htmlspecialchars($user_name),
             'city' => htmlspecialchars($user_city),

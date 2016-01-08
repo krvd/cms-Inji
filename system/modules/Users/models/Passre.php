@@ -13,5 +13,21 @@ namespace Users;
 
 class Passre extends \Model
 {
-    
+    static $cols = [
+        'hash' => ['type' => 'textarea'],
+        'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
+        'status' => ['type' => 'number'],
+        'date_create' => ['type' => 'dateTime']
+    ];
+
+    static function relations()
+    {
+        return[
+            'user' => [
+                'col' => 'user_id',
+                'model' => 'Users\User'
+            ]
+        ];
+    }
+
 }
