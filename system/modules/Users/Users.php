@@ -75,7 +75,7 @@ class Users extends Module
         }
         if ($session && $session->user && !$session->user->blocked) {
             Users\User::$cur = $session->user;
-            Users\User::$cur->last_activ = 'CURRENT_TIMESTAMP';
+            Users\User::$cur->date_last_active = 'CURRENT_TIMESTAMP';
             Users\User::$cur->save();
         } else {
             if (!headers_sent()) {
@@ -137,7 +137,7 @@ class Users extends Module
             $this->newSession($user);
 
             Users\User::$cur = $user;
-            Users\User::$cur->last_activ = 'CURRENT_TIMESTAMP';
+            Users\User::$cur->date_last_active = 'CURRENT_TIMESTAMP';
             Users\User::$cur->save();
             if (!$noMsg && !empty($this->config['loginUrl'][$this->app->type])) {
                 Tools::redirect($this->config['loginUrl'][$this->app->type]);
