@@ -13,7 +13,7 @@ namespace Materials;
 
 class Category extends \Model
 {
-    static $objectModel = 'Категория';
+    static $objectName = 'Категория';
     static $treeCategory = 'Materials\Material';
     static $labels = [
         'name' => 'Название',
@@ -84,7 +84,7 @@ class Category extends \Model
         $treePath = array_values(array_filter(explode('/', $this->tree_path)));
         if (!empty($treePath[0])) {
             $category = Category::get($treePath[0]);
-            if($category){
+            if ($category) {
                 return $category;
             }
         }
@@ -101,7 +101,7 @@ class Category extends \Model
                 $href .="/{$category->alias}";
             }
         }
-        return $href . "/{$this->alias}";
+        return $href . "/" . ($this->alias ? $this->alias : $this->pk());
     }
 
     static function relations()

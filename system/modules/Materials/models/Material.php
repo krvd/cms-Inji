@@ -130,7 +130,7 @@ class Material extends \Model
                 $href .="/{$category->alias}";
             }
         }
-        return $href . "/{$this->alias}";
+        return $href . "/" . ($this->alias ? $this->alias : $this->pk());
     }
 
     function resolveTemplate()

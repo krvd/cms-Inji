@@ -39,6 +39,17 @@ class MaterialsController extends Controller
             }
             $material = Materials\Material::get($where);
             if (!$material) {
+                if ($category) {
+                    $where = [
+                        ['category_id', $category->id],
+                        ['id', (int) $args[count($args) - 1]],
+                    ];
+                } else {
+                    $where = [['alias', $path]];
+                }
+                $material = Materials\Material::get($where);
+            }
+            if (!$material) {
                 $category = Materials\Category::get($path, 'alias');
                 if ($category) {
                     $this->categoryAction($category->id);
