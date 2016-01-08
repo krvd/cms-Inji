@@ -1,5 +1,5 @@
 <div class="dashboard-widgets">
-  <h2 class ='dashboard-widgets-welcome'>Добро Пожаловать в панель управления, <?= \Users\User::$cur->name(); ?></h2>
+  <h4 class ='dashboard-widgets-welcome'>Добро Пожаловать в панель управления, <?= \Users\User::$cur->name(); ?></h4>
   <div class = "row">
     <?php
     $rowSum = 0;
