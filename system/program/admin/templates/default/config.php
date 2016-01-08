@@ -3,9 +3,7 @@
 return [
     'name' => 'default',
     'file' => 'index.html',
-    'css' => [
-        'style.css'
-    ],
+    'css' => ['paper.bootstrap.css', 'style.css'],
     'libs' => [
         'bootstrap', 'JqueryUi'
     ]
