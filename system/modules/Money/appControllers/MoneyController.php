@@ -54,6 +54,7 @@ class MoneyController extends Controller
                 $block->delete();
                 $wallets = $this->money->getUserWallets($transfer->to_user_id);
                 $wallets[$transfer->currency_id]->diff($transfer->amount, 'Перевод средств от ' . $transfer->user->name());
+                $transfer->save();
                 Tools::redirect('/users/cabinet', 'Перевод был успешно завершен', 'success');
             }
         }
