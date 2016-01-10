@@ -67,7 +67,7 @@ class MoneyController extends Controller
         if (!$transfer || $transfer->user_id != \Users\User::$cur->id || $transfer->complete || $transfer->canceled) {
             Tools::redirect('/', 'Такой перевод не найден');
         }
-        $transfer->canceled = true;
+        $transfer->canceled = 1;
         $block = Money\Wallet\Block::get('Money\Transfer:' . $transfer->id, 'data');
         if ($block) {
             $block->delete();
