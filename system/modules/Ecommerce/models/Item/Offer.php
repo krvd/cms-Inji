@@ -119,6 +119,11 @@ class Offer extends \Model
                     $price->delete();
                 }
             }
+            if ($this->bonuses) {
+                foreach ($this->bonuses as $bonus) {
+                    $bonus->delete();
+                }
+            }
         }
     }
 
