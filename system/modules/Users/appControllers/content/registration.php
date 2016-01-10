@@ -6,7 +6,7 @@
     if ($socials) {
         ?>
         <div class="form-group">
-          <label>Регистрация через соц.сети</label>
+          <label>Регистрация через соц.сети</label><br />
           <?php
           foreach (Users\Social::getList(['where' => ['active', 1]]) as $social) {
               echo "<a href = '/users/social/auth/{$social->code}'>{$social->name()}</a> ";
