@@ -1390,10 +1390,10 @@ class Model
      * 
      * @param array $where
      */
-    function deleteList($where)
+    static function deleteList($where)
     {
         if ($where) {
-            static::fixPrefix($where, 'key');
+            static::fixPrefix($where, 'first');
             App::$cur->db->where($where);
         }
         App::$cur->db->delete(static::table());
