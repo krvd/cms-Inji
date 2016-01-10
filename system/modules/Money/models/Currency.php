@@ -47,4 +47,14 @@ class Currency extends \Model
         return "<acronym title='{$this->name()}'>{$this->code}</acronym>";
     }
 
+    function beforeDelete()
+    {
+        if ($this->id) {
+            $wallets = Wallet::getList(['where' => ['currency_id', $this->id]]);
+            foreach ($wallets as $wallet) {
+                $wallet->delete();
+            }
+        }
+    }
+
 }
