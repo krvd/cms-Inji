@@ -49,7 +49,7 @@ class MoneyController extends Controller
             if ($transfer->code != $_POST['code']) {
                 Msg::add('Код не совпадает', 'danger');
             } else {
-                $transfer->complete = true;
+                $transfer->complete = 1;
                 $block = Money\Wallet\Block::get('Money\Transfer:' . $transfer->id, 'data');
                 $block->delete();
                 $wallets = $this->money->getUserWallets($transfer->to_user_id);
