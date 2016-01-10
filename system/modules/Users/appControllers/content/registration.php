@@ -2,9 +2,23 @@
   <div class = 'box col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1'>
     <h3>Регистрация</h3>
     <?php
+    $socials = Users\Social::getList(['where' => ['active', 1]]);
+    if ($socials) {
+        ?>
+        <div class="form-group">
+          <label>Регистрация через соц.сети</label>
+          <?php
+          foreach (Users\Social::getList(['where' => ['active', 1]]) as $social) {
+              echo "<a href = '/users/social/auth/{$social->code}'>{$social->name()}</a> ";
+          }
+          ?>
+        </div>
+        <?php
+    }
+    ?>
+    <?php
     $form = new Ui\Form();
     ?>
-
     <form action = '' method = 'POST' enctype="multipart/form-data" >
       <div class ='row'>
         <div class="col-sm-6">
