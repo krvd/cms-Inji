@@ -106,7 +106,7 @@ class User extends \Model
                 ['pass'],
                 ['activation'],
                 ['admin_text'],
-                ['form:info:manager']
+            //['form:info:manager']
             ]
         ],
         'profile' => [
@@ -116,6 +116,11 @@ class User extends \Model
                         3
                     ],
                     'self' => true
+                ]
+            ],
+            'inputs' => [
+                'pass' => [
+                    'type' => 'changePassword'
                 ]
             ],
             'map' => [
