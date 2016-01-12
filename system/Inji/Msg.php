@@ -18,8 +18,20 @@ class Msg extends Module
      */
     static function add($text = false, $status = 'info')
     {
-        if ($text !== false)
-            $_SESSION['_INJI_MSG'][] = array('text' => $text, 'status' => $status);
+        if ($text !== false) {
+            foreach ($_SESSION['_INJI_MSG'] as $key => $msg) {
+                if ($msg['text'] == $text) {
+                    $msg['count'] ++;
+                    return true;
+                }
+            }
+            $_SESSION['_INJI_MSG'][] = [
+                'text' => $text,
+                'status' => $status,
+                'count' => 1
+            ];
+        }
+        return true;
     }
 
     /**
