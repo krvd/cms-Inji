@@ -80,7 +80,7 @@ class UsersController extends Controller
         $user->activation = '';
         $user->save();
         Inji::$inst->event('Users-completeActivation', $user);
-        Tools::redirect('/', 'Вы успешно активировали ваш аккаунт');
+        Tools::redirect('/', 'Вы успешно активировали ваш аккаунт', 'success');
     }
 
     function attachEmailAction()
