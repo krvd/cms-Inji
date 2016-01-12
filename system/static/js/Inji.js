@@ -76,6 +76,10 @@ Inji.prototype.loadScripts = function (scripts, key) {
           inji[scripts[key].name].init();
         }
       }
+    } else if (typeof (scripts[key].file) != 'undefined') {
+      inji.loadedScripts[scripts[key].file] = true;
+        console.log('js ' + scripts[key].file + ' loaded');
+
     } else {
       inji.loadedScripts[scripts[key]] = true;
       console.log('js ' + scripts[key] + ' loaded');
@@ -194,7 +198,7 @@ Inji.prototype.get = function (query) {
         } catch (e) {
           return data;
         }
-        
+
       }
     }
   }
