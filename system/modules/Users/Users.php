@@ -77,6 +77,9 @@ class Users extends Module
             if ($session->user->activation) {
                 Msg::add('Этот аккаунт ещё не активирован, не все функции могут быть доступны. <br />Если вы не получали письмо с ссылкой для активации, нажмите на - <a href = "/users/resendActivation/' . $session->user->id . '"><b>повторно выслать ссылку активации</b></a>');
             }
+            if (!$session->user->mail) {
+                Msg::add('У вас не указан E-Mail, не все функции могут быть доступны. <a href = "/users/attachEmail/"><b>Указать E-Mail</b></a>');
+            }
             Users\User::$cur = $session->user;
             Users\User::$cur->date_last_active = 'CURRENT_TIMESTAMP';
             Users\User::$cur->save();
@@ -136,6 +139,9 @@ class Users extends Module
         if ($user && $this->verifypass($pass, $user->pass) && !$user->blocked) {
             if ($user->activation) {
                 Msg::add('Этот аккаунт ещё не активирован, не все функции могут быть доступны. <br />Если вы не получали письмо с ссылкой для активации, нажмите на - <a href = "/users/resendActivation/' . $user->id . '"><b>повторно выслать ссылку активации</b></a>');
+            }
+            if (!$user->mail) {
+                Msg::add('У вас не указан E-Mail, не все функции могут быть доступны. <a href = "/users/attachEmail/"><b>Указать E-Mail</b></a>');
             }
             $this->newSession($user);
 
