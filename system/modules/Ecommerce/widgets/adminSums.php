@@ -4,7 +4,7 @@ $cart = $item;
 $sums = [];
 $allSums = [];
 foreach ($cart->cartItems as $cartItem) {
-    $currency_id = $cartItem->price->currency ? $cartItem->price->currency->id : \App::$cur->ecommerce->config['defaultCurrency'];
+    $currency_id = $cartItem->price && $cartItem->price->currency ? $cartItem->price->currency->id : \App::$cur->ecommerce->config['defaultCurrency'];
     if (empty($sums[$currency_id])) {
         $sums[$currency_id] = $cartItem->final_price * $cartItem->count;
     } else {

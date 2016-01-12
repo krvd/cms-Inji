@@ -22,7 +22,7 @@ $carts = Ecommerce\Cart::getList(['where' => ['user_id', Users\User::$cur->id], 
       foreach ($carts as $cart) {
           $sums = [];
           foreach ($cart->cartItems as $cartItem) {
-              $currency_id = $cartItem->price->currency ? $cartItem->price->currency->id : (!empty(\App::$cur->ecommerce->config['defaultCurrency']) ? \App::$cur->ecommerce->config['defaultCurrency'] : 0);
+              $currency_id = $cartItem->price && $cartItem->price->currency ? $cartItem->price->currency->id : (!empty(\App::$cur->ecommerce->config['defaultCurrency']) ? \App::$cur->ecommerce->config['defaultCurrency'] : 0);
               if (empty($sums[$currency_id])) {
                   $sums[$currency_id] = $cartItem->final_price * $cartItem->count;
               } else {
