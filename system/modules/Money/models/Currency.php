@@ -19,6 +19,7 @@ class Currency extends \Model
         'code' => 'Обозначение',
         'wallet' => 'Кошелек на сайте',
         'refill' => 'Пополнение',
+        'transfer' => 'Переводы',
         'date_create' => 'Дата создания',
     ];
     static $cols = [
@@ -26,18 +27,19 @@ class Currency extends \Model
         'code' => ['type' => 'text'],
         'refill' => ['type' => 'bool'],
         'wallet' => ['type' => 'bool'],
+        'transfer' => ['type' => 'bool'],
     ];
     static $dataManagers = [
         'manager' => [
             'name' => 'Валюты',
-            'cols' => ['name', 'code', 'wallet', 'refill', 'date_create']
+            'cols' => ['name', 'code', 'wallet', 'refill', 'transfer', 'date_create']
         ]
     ];
     static $forms = [
         'manager' => [
             'map' => [
                 ['name', 'code'],
-                ['refill', 'wallet'],
+                ['refill', 'wallet','transfer'],
             ]
         ]
     ];

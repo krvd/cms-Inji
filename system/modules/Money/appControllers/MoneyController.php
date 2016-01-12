@@ -20,14 +20,17 @@ class MoneyController extends Controller
             $transfer->user_id = \Users\User::$cur->id;
             $transfer->code = Tools::randomString();
             $transfer->save();
+            
             $wallets = $this->money->getUserWallets();
+            $wallets[$transfer->currency_id]->diff(-$transfer->amount, 'Перевод средств для ' . $transfer->toUser->name());
+
             $block = new Money\Wallet\Block();
             $block->wallet_id = $wallets[$transfer->currency_id]->id;
             $block->amount = $transfer->amount;
             $block->comment = 'Заблокированно на перевод средств для ' . $transfer->toUser->name();
             $block->data = 'Money\Transfer:' . $transfer->id;
-            $wallets[$transfer->currency_id]->diff(-$transfer->amount, 'Перевод средств для ' . $transfer->toUser->name());
             $block->save();
+
             $from = 'noreply@' . INJI_DOMAIN_NAME;
             $to = \Users\User::$cur->mail;
             $subject = 'Подтверждение перевода';

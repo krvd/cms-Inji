@@ -108,14 +108,18 @@ class Money extends Module
         return $blocks;
     }
 
-    function getUserWallets($userId = null, $walletIdasKey = false, $forSelect = false)
+    function getUserWallets($userId = null, $walletIdasKey = false, $forSelect = false, $transferOnly = false)
     {
         $userId = $userId ? $userId : \Users\User::$cur->id;
         if (!$userId) {
             return [];
         }
         $this->getUserBlocks($userId);
-        $currencies = Money\Currency::getList(['where' => ['wallet', 1]]);
+        $where = [['wallet', 1]];
+        if ($transferOnly) {
+            $where[] = ['transfer', 1];
+        }
+        $currencies = Money\Currency::getList(['where' => $where]);
         $wallets = Money\Wallet::getList(['where' => ['user_id', $userId], 'key' => 'currency_id']);
         $result = [];
         foreach ($currencies as $currency) {
@@ -134,9 +138,8 @@ class Money extends Module
 
     function rewardTrigger($event)
     {
-        $trigger = Money\Reward\Trigger::get([['type', 'event'], ['value', $event['eventName']]]);
-
-        if ($trigger) {
+        $triggers = Money\Reward\Trigger::getList(['where' => [['type', 'event'], ['value', $event['eventName']]]]);
+        foreach ($triggers as $trigger) {
             $handlers = $this->getSnippets('rewardTriggerHandler');
             if (!empty($handlers[$trigger->handler])) {
                 $handlers[$trigger->handler]['handler']($event['eventObject'], $trigger);
@@ -146,8 +149,8 @@ class Money extends Module
 
     function rewardConditionTrigger($event)
     {
-        $item = Money\Reward\Condition\Item::get([['type', 'event'], ['value', $event['eventName']]]);
-        if ($item) {
+        $items = Money\Reward\Condition\Item::getList(['where' => [['type', 'event'], ['value', $event['eventName']]]]);
+        foreach ($items as $item) {
             $recivers = $this->getSnippets('rewardConditionItemReciver');
             if (!empty($recivers[$item->reciver])) {
                 $recivers[$item->reciver]['reciver']($event['eventObject'], $item);
