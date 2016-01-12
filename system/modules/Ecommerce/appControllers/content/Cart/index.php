@@ -170,9 +170,9 @@
                         $discountSum += $discount;
                         $itemName = $cartItem->item->name();
                         if (!isset($sums[$cartItem->price->currency_id])) {
-                            $sums[$cartItem->price->currency_id] = $cartItem->price->price;
+                            $sums[$cartItem->price->currency_id] = $cartItem->price->price * $cartItem->count;
                         } else {
-                            $sums[$cartItem->price->currency_id] += $cartItem->price->price;
+                            $sums[$cartItem->price->currency_id] += $cartItem->price->price * $cartItem->count;
                         }
                         ?>
                         <tr class="cart_item_id<?= $cartItem->id; ?> item" data-cart_item_id = '<?php echo $cartItem->id; ?>' data-priceam = '<?php echo $cartItem->price->price; ?>' data-item_offer_price_id = '<?php echo $cartItem->price->id; ?>'>
