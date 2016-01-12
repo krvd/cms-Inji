@@ -106,7 +106,7 @@ class User extends \Model
                 ['pass'],
                 ['activation'],
                 ['admin_text'],
-            //['form:info:manager']
+                ['form:info:manager']
             ]
         ],
         'profile' => [
