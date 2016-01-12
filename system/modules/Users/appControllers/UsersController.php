@@ -85,6 +85,9 @@ class UsersController extends Controller
 
     function attachEmailAction()
     {
+        if (Users\User::$cur->mail) {
+            Tools::redirect('/', 'К вашему аккаунту уже привязан E-Mail');
+        }
         if (!empty($_POST['mail'])) {
             $user_mail = trim($_POST['mail']);
             if (!filter_var($user_mail, FILTER_VALIDATE_EMAIL)) {
