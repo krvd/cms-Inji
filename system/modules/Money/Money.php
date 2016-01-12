@@ -190,6 +190,7 @@ class Money extends Module
             }
             $wallets = $this->getUserWallets($user->id);
             if (!empty($wallets[$level->currency_id])) {
+                $amount = 0;
                 switch ($level->type) {
                     case 'procent':
                         $finalSum = 0;
@@ -222,7 +223,7 @@ class Money extends Module
                     case 'amount':
                         $amount = $level->amount;
                 }
-                if (!$rewardGet && $reward->block) {
+                if ($amount && !$rewardGet && $reward->block) {
                     $block = new \Money\Wallet\Block();
                     $block->wallet_id = $wallets[$level->currency_id]->id;
                     $block->amount = $amount;
@@ -240,7 +241,11 @@ class Money extends Module
                     }
                     $block->save();
                 } else {
-                    $wallets[$level->currency_id]->diff($amount, 'Партнерское вознаграждение от ' . $rootUser->name());
+                    $text = 'Вознаграждение по программе "' . $reward->name . '"';
+                    if ($rootUser->id != $user->id) {
+                        $text .= ' от ' . $rootUser->name();
+                    }
+                    $wallets[$level->currency_id]->diff($amount, $text);
                 }
             }
         }

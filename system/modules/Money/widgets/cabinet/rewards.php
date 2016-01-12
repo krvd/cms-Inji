@@ -17,7 +17,7 @@ foreach ($rewards as $reward) {
           <?php
           foreach ($reward->levels as $level) {
               ?>
-              <li><?= !$level->level ? 'Личный' : $level->level; ?>. <?= $levelTypes[$level->type]; ?>: <?= $level->amount; ?></li>
+              <li><?= !$level->level ? 'Личный' : $level->level; ?>. <?= $levelTypes[$level->type]; ?>: <?= $level->amount; ?> <?= $level->currency ? $level->currency->acronym() : ''; ?></li>
               <?php
           }
           ?>
@@ -27,6 +27,9 @@ foreach ($rewards as $reward) {
       <div class="col-sm-6">
         <h3>Условия получения</h3>
         <?php
+        if (!$reward->conditions) {
+            echo '<h4 class="text-success">Нет особых условий для получения вознаграждения</h4>';
+        }
         foreach ($reward->conditions as $condition) {
             $complete = $condition->checkComplete();
             ?>
