@@ -223,7 +223,10 @@ class Money extends Module
                     case 'amount':
                         $amount = $level->amount;
                 }
-                if ($amount && !$rewardGet && $reward->block) {
+                if(!$amount){
+                    continue;
+                }
+                if (!$rewardGet && $reward->block) {
                     $block = new \Money\Wallet\Block();
                     $block->wallet_id = $wallets[$level->currency_id]->id;
                     $block->amount = $amount;
