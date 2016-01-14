@@ -71,4 +71,12 @@ class Wallet extends \Model
         return $this->currency->name();
     }
 
+    function beforeDelete()
+    {
+        if ($this->id) {
+            Wallet\History::deleteList(['wallet_id', $this->id]);
+            Wallet\Block::deleteList(['wallet_id', $this->id]);
+        }
+    }
+
 }

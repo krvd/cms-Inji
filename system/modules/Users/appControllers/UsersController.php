@@ -74,12 +74,64 @@ class UsersController extends Controller
     function activationAction($userId = 0, $hash = '')
     {
         $user = \Users\User::get((int) $userId);
-        if (!$user || $user->activation !== (string) $hash) {
+        if (!$user || !$hash || $user->activation !== (string) $hash) {
             Tools::redirect('/', 'Во время активации произошли ошибки', 'danger');
         }
         $user->activation = '';
         $user->save();
-        Tools::redirect('/', 'Вы успешно активировали ваш аккаунт, теперь вы можете войти');
+        Inji::$inst->event('Users-completeActivation', $user);
+        Tools::redirect('/', 'Вы успешно активировали ваш аккаунт', 'success');
+    }
+
+    function attachEmailAction()
+    {
+        if (Users\User::$cur->mail) {
+            Tools::redirect('/', 'К вашему аккаунту уже привязан E-Mail');
+        }
+        if (!empty($_POST['mail'])) {
+            $user_mail = trim($_POST['mail']);
+            if (!filter_var($user_mail, FILTER_VALIDATE_EMAIL)) {
+                Msg::add('Вы ввели не корректный E-mail', 'danger');
+            } else {
+                $user = Users\User::get($user_mail, 'mail');
+                if ($user && $user->id != Users\User::$cur->id) {
+                    Msg::add('Данный E-mail уже привязан к другому аккаунту', 'danger');
+                } else {
+                    Users\User::$cur->mail = $user_mail;
+                    if (!empty($this->module->config['needActivation'])) {
+                        Users\User::$cur->activation = Tools::randomString();
+                        $from = 'noreply@' . INJI_DOMAIN_NAME;
+                        $to = $user_mail;
+                        $subject = 'Активация аккаунта на сайте ' . idn_to_utf8(INJI_DOMAIN_NAME);
+                        $text = 'Для активации вашего аккаунта перейдите по ссылке <a href = "http://' . INJI_DOMAIN_NAME . '/users/activation/' . Users\User::$cur->id . '/' . Users\User::$cur->activation . '">http://' . idn_to_utf8(INJI_DOMAIN_NAME) . '/users/activation/' . Users\User::$cur->id . '/' . Users\User::$cur->activation . '</a>';
+                        Tools::sendMail($from, $to, $subject, $text);
+                        Msg::add('На указанный почтовый ящик была выслана ваша ссылка для подтверждения E-Mail', 'success');
+                    } else {
+                        Msg::add('Вы успешно привязали E-Mail к своему аккаунту', 'success');
+                    }
+                    Users\User::$cur->save();
+                    Tools::redirect('/');
+                }
+            }
+        }
+        $this->view->page();
+    }
+
+    function resendActivationAction($userId = 0)
+    {
+        $user = \Users\User::get((int) $userId);
+        if (!$user) {
+            Tools::redirect('/', 'Не указан пользователь', 'danger');
+        }
+        if (!$user->activation) {
+            Tools::redirect('/', 'Пользователь уже активирован');
+        }
+        $from = 'noreply@' . INJI_DOMAIN_NAME;
+        $to = $user->mail;
+        $subject = 'Активация аккаунта на сайте ' . idn_to_utf8(INJI_DOMAIN_NAME);
+        $text = 'Для активации вашего аккаунта перейдите по ссылке <a href = "http://' . INJI_DOMAIN_NAME . '/users/activation/' . $user->id . '/' . $user->activation . '">http://' . idn_to_utf8(INJI_DOMAIN_NAME) . '/users/activation/' . $user->id . '/' . $user->activation . '</a>';
+        Tools::sendMail($from, $to, $subject, $text);
+        Tools::redirect('/', 'На указанный почтовый ящик была выслана ваша ссылка для подтверждения E-Mail', 'success');
     }
 
     function getPartnerInfoAction($userId = 0)

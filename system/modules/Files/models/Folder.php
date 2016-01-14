@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Folder
  *
@@ -12,6 +13,13 @@ namespace Files;
 
 class Folder extends \Model
 {
+    static $cols = [
+        'dir' => ['type' => 'text'],
+        'name' => ['type' => 'text'],
+        'alias' => ['type' => 'text'],
+        'public' => ['type' => 'bool'],
+        'date_create' => ['type' => 'dateTime'],
+    ];
 
     function beforeDelete()
     {

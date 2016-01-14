@@ -105,7 +105,7 @@ class Google extends \Users\SocialHelper
                         }
                     }
                     $user->save();
-                    $userInfo = new \Users\Info();
+                    $userInfo = new \Users\User\Info();
                     $userInfo->user_id = $user->id;
                     $userInfo->save();
                 }

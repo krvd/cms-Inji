@@ -74,8 +74,14 @@ class Users extends Module
             return;
         }
         if ($session && $session->user && !$session->user->blocked) {
+            if ($session->user->activation) {
+                Msg::add('Этот аккаунт ещё не активирован, не все функции могут быть доступны. <br />Если вы не получали письмо с ссылкой для активации, нажмите на - <a href = "/users/resendActivation/' . $session->user->id . '"><b>повторно выслать ссылку активации</b></a>');
+            }
+            if (!$session->user->mail) {
+                Msg::add('У вас не указан E-Mail, не все функции могут быть доступны. <a href = "/users/attachEmail/"><b>Указать E-Mail</b></a>');
+            }
             Users\User::$cur = $session->user;
-            Users\User::$cur->last_activ = 'CURRENT_TIMESTAMP';
+            Users\User::$cur->date_last_active = 'CURRENT_TIMESTAMP';
             Users\User::$cur->save();
         } else {
             if (!headers_sent()) {
@@ -132,12 +138,15 @@ class Users extends Module
         $user = $this->get($login, $ltype);
         if ($user && $this->verifypass($pass, $user->pass) && !$user->blocked) {
             if ($user->activation) {
-                Tools::redirect('/', 'Этот аккаунт ещё не активирован');
+                Msg::add('Этот аккаунт ещё не активирован, не все функции могут быть доступны. <br />Если вы не получали письмо с ссылкой для активации, нажмите на - <a href = "/users/resendActivation/' . $user->id . '"><b>повторно выслать ссылку активации</b></a>');
+            }
+            if (!$user->mail) {
+                Msg::add('У вас не указан E-Mail, не все функции могут быть доступны. <a href = "/users/attachEmail/"><b>Указать E-Mail</b></a>');
             }
             $this->newSession($user);
 
             Users\User::$cur = $user;
-            Users\User::$cur->last_activ = 'CURRENT_TIMESTAMP';
+            Users\User::$cur->date_last_active = 'CURRENT_TIMESTAMP';
             Users\User::$cur->save();
             if (!$noMsg && !empty($this->config['loginUrl'][$this->app->type])) {
                 Tools::redirect($this->config['loginUrl'][$this->app->type]);
@@ -264,12 +273,15 @@ class Users extends Module
             'group_id' => 2,
             'parent_id' => !empty($parent_id) ? $parent_id : 0
         ]);
+        if (!empty($this->config['needActivation'])) {
+            $user->activation = Tools::randomString();
+        }
         $user->save();
         if (!$user->id) {
             Msg::add('Не удалось зарегистрировать', 'danger');
             return false;
         }
-        $info = new \Users\Info([
+        $info = new \Users\User\Info([
             'user_id' => $user->id,
             'first_name' => htmlspecialchars($user_name),
             'city' => htmlspecialchars($user_city),
@@ -280,14 +292,24 @@ class Users extends Module
         if ($autorization) {
             $this->autorization($user_mail, $pass, 'mail');
         }
-
-        $from = 'noreply@' . INJI_DOMAIN_NAME;
-        $to = $user_mail;
-        $subject = 'Регистрация на сайте ' . idn_to_utf8(INJI_DOMAIN_NAME);
-        $text = 'Вы были зарегистрированы на сайте ' . idn_to_utf8(INJI_DOMAIN_NAME) . '<br />для входа используйте ваш почтовый ящик в качестве логина и пароль: ' . $pass;
-        Tools::sendMail($from, $to, $subject, $text);
-        Msg::add('Вы были зарегистрированы. На указанный почтовый ящик был выслан ваш пароль', 'success');
-
+        if (!empty($this->config['needActivation'])) {
+            $from = 'noreply@' . INJI_DOMAIN_NAME;
+            $to = $user_mail;
+            $subject = 'Регистрация на сайте ' . idn_to_utf8(INJI_DOMAIN_NAME);
+            $text = 'Вы были зарегистрированы на сайте ' . idn_to_utf8(INJI_DOMAIN_NAME) . '<br />для входа используйте ваш почтовый ящик в качестве логина и пароль: ' . $pass;
+            $text .='<br />';
+            $text .= '<br />';
+            $text .= 'Для активации вашего аккаунта перейдите по ссылке <a href = "http://' . INJI_DOMAIN_NAME . '/users/activation/' . $user->id . '/' . $user->activation . '">http://' . idn_to_utf8(INJI_DOMAIN_NAME) . '/users/activation/' . $user->id . '/' . $user->activation . '</a>';
+            Tools::sendMail($from, $to, $subject, $text);
+            Msg::add('Вы были зарегистрированы. На указанный почтовый ящик был выслан ваш пароль и ссылка для активации', 'success');
+        } else {
+            $from = 'noreply@' . INJI_DOMAIN_NAME;
+            $to = $user_mail;
+            $subject = 'Регистрация на сайте ' . idn_to_utf8(INJI_DOMAIN_NAME);
+            $text = 'Вы были зарегистрированы на сайте ' . idn_to_utf8(INJI_DOMAIN_NAME) . '<br />для входа используйте ваш почтовый ящик в качестве логина и пароль: ' . $pass;
+            Tools::sendMail($from, $to, $subject, $text);
+            Msg::add('Вы были зарегистрированы. На указанный почтовый ящик был выслан ваш пароль', 'success');
+        }
         return $user->id;
     }
 

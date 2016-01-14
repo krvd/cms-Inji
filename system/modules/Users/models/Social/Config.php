@@ -17,6 +17,7 @@ class Config extends \Model
     public static $cols = [
         'name' => ['type' => 'text'],
         'value' => ['type' => 'text'],
+        'social_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'social'],
         'date_create' => ['type' => 'dateTime']
     ];
     public static $labels = [
@@ -32,9 +33,9 @@ class Config extends \Model
             ]
         ]
     ];
-    static $forms=[
-        'manager'=>[
-            'map'=>[
+    static $forms = [
+        'manager' => [
+            'map' => [
                 ['name'],
                 ['value'],
             ]

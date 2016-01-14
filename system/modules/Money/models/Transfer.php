@@ -61,7 +61,7 @@ class Transfer extends \Model
                     'source' => 'method',
                     'module' => 'Money',
                     'method' => 'getUserWallets',
-                    'params' => [null, false, true],
+                    'params' => [null, false, true, true],
                     'label' => 'Кошелек',
                     'col' => 'currency_id',
                     'required' => true
@@ -117,6 +117,9 @@ class Transfer extends \Model
                     throw new \Exception('У вас нет такого кошелька');
                 }
                 $wallet = $wallets[(int) $request['wallets']];
+                if (!$wallet->currency->transfer) {
+                    throw new \Exception('Вы не можете переводить эту валюту');
+                }
                 if ($wallet->amount < $amount) {
                     throw new \Exception('У вас недостаточно средств на кошельке');
                 }

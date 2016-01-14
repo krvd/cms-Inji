@@ -20,14 +20,17 @@ class MoneyController extends Controller
             $transfer->user_id = \Users\User::$cur->id;
             $transfer->code = Tools::randomString();
             $transfer->save();
+            
             $wallets = $this->money->getUserWallets();
+            $wallets[$transfer->currency_id]->diff(-$transfer->amount, 'Перевод средств для ' . $transfer->toUser->name());
+
             $block = new Money\Wallet\Block();
             $block->wallet_id = $wallets[$transfer->currency_id]->id;
             $block->amount = $transfer->amount;
             $block->comment = 'Заблокированно на перевод средств для ' . $transfer->toUser->name();
             $block->data = 'Money\Transfer:' . $transfer->id;
-            $wallets[$transfer->currency_id]->diff(-$transfer->amount, 'Перевод средств для ' . $transfer->toUser->name());
             $block->save();
+
             $from = 'noreply@' . INJI_DOMAIN_NAME;
             $to = \Users\User::$cur->mail;
             $subject = 'Подтверждение перевода';
@@ -49,11 +52,12 @@ class MoneyController extends Controller
             if ($transfer->code != $_POST['code']) {
                 Msg::add('Код не совпадает', 'danger');
             } else {
-                $transfer->complete = true;
+                $transfer->complete = 1;
                 $block = Money\Wallet\Block::get('Money\Transfer:' . $transfer->id, 'data');
                 $block->delete();
                 $wallets = $this->money->getUserWallets($transfer->to_user_id);
                 $wallets[$transfer->currency_id]->diff($transfer->amount, 'Перевод средств от ' . $transfer->user->name());
+                $transfer->save();
                 Tools::redirect('/users/cabinet', 'Перевод был успешно завершен', 'success');
             }
         }
@@ -67,7 +71,7 @@ class MoneyController extends Controller
         if (!$transfer || $transfer->user_id != \Users\User::$cur->id || $transfer->complete || $transfer->canceled) {
             Tools::redirect('/', 'Такой перевод не найден');
         }
-        $transfer->canceled = true;
+        $transfer->canceled = 1;
         $block = Money\Wallet\Block::get('Money\Transfer:' . $transfer->id, 'data');
         if ($block) {
             $block->delete();

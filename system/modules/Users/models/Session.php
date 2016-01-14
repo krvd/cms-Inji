@@ -13,6 +13,14 @@ namespace Users;
 
 class Session extends \Model
 {
+    static $cols = [
+        'hash' => ['type' => 'text'],
+        'ip' => ['type' => 'text'],
+        'agent' => ['type' => 'text'],
+        'user_id' => ['type' => 'select', 'source' => 'realtion', 'relation' => 'user'],
+        'date_create' => ['type' => 'dateTime']
+    ];
+
     static function relations()
     {
         return [

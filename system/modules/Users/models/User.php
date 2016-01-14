@@ -16,28 +16,30 @@ class User extends \Model
     static $cur;
     public static $objectName = "Пользователь";
     static $labels = [
+        'login' => 'Логин',
         'mail' => 'E-Mail',
-        'group_id' => 'Группа пользователя',
-        'role_id' => 'Роль пользователя',
-        'parent_id' => 'Пригласивший',
-        'reg_date' => 'Дата регистрации',
-        'blocked' => 'Заблокирован',
         'pass' => 'Пароль',
+        'parent_id' => 'Пригласивший',
+        'group_id' => 'Группа',
+        'role_id' => 'Роль',
+        'admin_text' => 'Комментарий администратора',
+        'activation' => 'Код активации',
+        'blocked' => 'Заблокирован',
+        'date_last_active' => 'Последняя активность',
+        'date_create' => 'Дата регистрации',
     ];
     static $cols = [
+        'login' => ['type' => 'text'],
         'mail' => ['type' => 'email'],
         'pass' => ['type' => 'password'],
-        'login' => ['type' => 'text'],
+        'parent_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'parent'],
         'group_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'group'],
         'role_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'role'],
-        'parent_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'parent'],
-        'pass' => ['type' => 'changePassword'],
-        'blocked' => [
-            'type' => 'bool',
-        ],
-        'reg_date' => [
-            'type' => 'dateTime',
-        ]
+        'admin_text' => ['type' => 'html'],
+        'activation' => ['type' => 'text'],
+        'blocked' => ['type' => 'bool',],
+        'date_last_active' => ['type' => 'dateTime'],
+        'date_create' => ['type' => 'dateTime']
     ];
     static $dataManagers = [
         'manager' => [
@@ -54,7 +56,8 @@ class User extends \Model
                 'info:last_name',
                 'group_id',
                 'role_id',
-                'reg_date'
+                'date_last_active',
+                'date_create',
             ],
             'sortable' => [
                 'mail',
@@ -62,14 +65,16 @@ class User extends \Model
                 'info:last_name',
                 'group_id',
                 'role_id',
-                'reg_date'
+                'date_last_active',
+                'date_create'
             ],
             'filters' => [
                 'mail',
                 'info:first_name',
                 'info:last_name',
                 'role_id',
-                'reg_date'
+                'date_last_active',
+                'date_create',
             ],
             'searchableCols' => ['mail']
         ],
@@ -90,12 +95,17 @@ class User extends \Model
                     ],
                     'col' => 'parent_id',
                 ],
+                'pass' => [
+                    'type' => 'changePassword'
+                ]
             ],
             'map' => [
                 ['login', 'mail',],
                 ['group_id', 'role_id'],
-                ['parent_id', 'blocked'],
+                ['userSearch', 'blocked'],
                 ['pass'],
+                ['activation'],
+                ['admin_text'],
                 ['form:info:manager']
             ]
         ],
@@ -106,6 +116,11 @@ class User extends \Model
                         3
                     ],
                     'self' => true
+                ]
+            ],
+            'inputs' => [
+                'pass' => [
+                    'type' => 'changePassword'
                 ]
             ],
             'map' => [
@@ -128,7 +143,7 @@ class User extends \Model
             ],
             'info' => [
                 'type' => 'one',
-                'model' => 'Users\Info',
+                'model' => 'Users\User\Info',
                 'col' => 'user_id'
             ],
             'socials' => [

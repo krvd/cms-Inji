@@ -9,20 +9,23 @@
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
 
-namespace Users;
+namespace Users\User;
 
 class Info extends \Model
 {
-    public static $objectName = "Расширеная информация";
+    public static $objectName = "Расширенная информация";
     public static $cols = [
-        'first_name' => [
-            'type' => 'text'
-        ],
-        'last_name' => [
-            'type' => 'text'
-        ],
-        'middle_name' => [
-            'type' => 'text'
+        'first_name' => ['type' => 'text'],
+        'last_name' => ['type' => 'text'],
+        'middle_name' => ['type' => 'text'],
+        'phone' => ['type' => 'text'],
+        'country' => ['type' => 'text'],
+        'city' => ['type' => 'text'],
+        'user_id' => [
+            'type' => 'select',
+            'source' => 'relation',
+            'relation' => 'user',
+            'showCol' => 'name'
         ],
         'sex' => [
             'type' => 'select',
@@ -33,27 +36,8 @@ class Info extends \Model
                 2 => 'Женщина'
             ]
         ],
-        'photo_file_id' => [
-            'type' => 'image'
-        ],
-        'bday' => [
-            'type' => 'date'
-        ],
-        'phone' => [
-            'type' => 'text'
-        ],
-        'country' => [
-            'type' => 'text'
-        ],
-        'city' => [
-            'type' => 'text'
-        ],
-        'user_id' => [
-            'type' => 'select',
-            'source' => 'relation',
-            'relation' => 'user',
-            'showCol' => 'name'
-        ]
+        'photo_file_id' => ['type' => 'image'],
+        'bday' => ['type' => 'date'],
     ];
     static $forms = [
         'manager' => [

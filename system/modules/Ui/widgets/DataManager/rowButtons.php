@@ -52,6 +52,6 @@ foreach ($buttons as $button) {
         if (!empty($button['query'])) {
             $query = $query + $button['query'];
         }
-        echo "<a class='" . ($button['class'] ? $button['class'] : '') . "' href='{$button['href']}?" . http_build_query($query) . "'>{$button['text']}</a>&nbsp;";
+        echo "<a class='" . (isset($button['class']) ? $button['class'] : '') . "' href='{$button['href']}?" . http_build_query($query) . "'>{$button['text']}</a>&nbsp;";
     }
 }

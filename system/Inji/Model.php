@@ -422,25 +422,13 @@ class Model
             Model::$cols[static::table()] = App::$cur->db->getTableCols(static::table());
         }
         if (!Model::$cols[static::table()]) {
-            $query = App::$cur->db->newQuery();
-            if ($query) {
-                $query->createTable(static::table(), [
-                    static::colPrefix() . 'id' => 'pk',
-                    static::colPrefix() . 'date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,',
-                ]);
-            }
+            static::createTable();
             Model::$cols[static::table()] = App::$cur->db->getTableCols(static::table());
         }
         return Model::$cols[static::table()];
     }
 
-    /**
-     * Create new col in data base
-     * 
-     * @param string $colName
-     * @return boolean
-     */
-    static function createCol($colName)
+    static function genColParams($colName)
     {
         if (empty(static::$cols[$colName]) || static::$storage['type'] == 'moduleConfig') {
             return false;
@@ -464,11 +452,13 @@ class Model
                 $params = 'int(11) NOT NULL';
                 break;
             case 'text':
+            case 'mail':
                 $params = 'varchar(255) NOT NULL';
                 break;
             case 'html':
             case 'textarea':
             case 'json':
+            case 'password':
                 $params = 'text NOT NULL';
                 break;
             case 'bool':
@@ -484,11 +474,60 @@ class Model
                 $params = 'timestamp NOT NULL DEFAULT 0';
                 break;
         }
+        return $params;
+    }
 
+    /**
+     * Create new col in data base
+     * 
+     * @param string $colName
+     * @return boolean
+     */
+    static function createCol($colName)
+    {
+        $params = static::genColParams($colName);
         if (!$params) {
             return false;
         }
         App::$cur->db->addCol(static::table(), static::colPrefix() . $colName, $params);
+    }
+
+    static function createTable()
+    {
+        $query = App::$cur->db->newQuery();
+        if (!$query) {
+            return false;
+        }
+
+        if (!isset($this)) {
+            $tableName = static::table();
+            $colPrefix = static::colPrefix();
+        } else {
+            $tableName = $this->table();
+            $colPrefix = $this->colPrefix();
+        }
+
+        $cols = [
+            $colPrefix . 'id' => 'pk'
+        ];
+        $className = get_called_class();
+        if (!empty($className::$cols)) {
+            foreach ($className::$cols as $colName => $colParams) {
+                if ($colName == 'date_create') {
+                    $cols[$colPrefix . 'date_create'] = 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP';
+                    continue;
+                }
+                $params = $className::genColParams($colName);
+                if ($params) {
+                    $cols[$colPrefix . $colName] = $params;
+                }
+            }
+        }
+        if (empty($cols[$colPrefix . 'date_create'])) {
+            $cols[$colPrefix . 'date_create'] = 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP';
+        }
+        $query->createTable($tableName, $cols);
+        return true;
     }
 
     /**
@@ -621,11 +660,7 @@ class Model
             $result = App::$cur->db->select(static::table());
         } catch (PDOException $exc) {
             if ($exc->getCode() == '42S02') {
-                $query = App::$cur->db->newQuery();
-                $query->createTable(static::table(), [
-                    static::colPrefix() . 'id' => 'pk',
-                    static::colPrefix() . 'date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,',
-                ]);
+                static::createTable();
             }
             $result = App::$cur->db->select(static::table());
         }
@@ -703,11 +738,7 @@ class Model
             $result = App::$cur->db->select(static::table());
         } catch (PDOException $exc) {
             if ($exc->getCode() == '42S02') {
-                $query = App::$cur->db->newQuery();
-                $query->createTable(static::table(), [
-                    static::colPrefix() . 'id' => 'pk',
-                    static::colPrefix() . 'date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,',
-                ]);
+                static::createTable();
             }
             $result = App::$cur->db->select(static::table());
         }
@@ -1013,11 +1044,7 @@ class Model
             $result = App::$cur->db->select(static::table());
         } catch (PDOException $exc) {
             if ($exc->getCode() == '42S02') {
-                $query = App::$cur->db->newQuery();
-                $query->createTable(static::table(), [
-                    static::colPrefix() . 'id' => 'pk',
-                    static::colPrefix() . 'date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,',
-                ]);
+                static::createTable();
             }
             $result = App::$cur->db->select(static::table());
         }
@@ -1254,11 +1281,7 @@ class Model
             $result = App::$cur->db->select($this->table());
         } catch (PDOException $exc) {
             if ($exc->getCode() == '42S02') {
-                $query = App::$cur->db->newQuery();
-                $query->createTable($this->table(), [
-                    $this->colPrefix() . 'id' => 'pk',
-                    $this->colPrefix() . 'date_create' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,',
-                ]);
+                $this->createTable();
             }
             $result = App::$cur->db->select($this->table());
         }
@@ -1367,10 +1390,10 @@ class Model
      * 
      * @param array $where
      */
-    function deleteList($where)
+    static function deleteList($where)
     {
         if ($where) {
-            static::fixPrefix($where, 'key');
+            static::fixPrefix($where, 'first');
             App::$cur->db->where($where);
         }
         App::$cur->db->delete(static::table());

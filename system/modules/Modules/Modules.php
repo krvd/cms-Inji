@@ -121,18 +121,23 @@ class Modules extends Module
 
     function install($module, $params = [])
     {
+        $installed = Module::getInstalled(App::$primary);
+        if (in_array($module, $installed)) {
+            return true;
+        }
+        $info = Module::getInfo($module);
+        if (!empty($info['requires'])) {
+            foreach ($info['requires'] as $requireModuleName) {
+                $this->install($requireModuleName);
+            }
+        }
+
+        $config = Config::app();
 
         $type = 'modules';
 
         $path = INJI_SYSTEM_DIR . '/modules/';
         $location = 'modules';
-
-        $config = Config::app();
-        $modules = !empty($config[$location]) ? array_flip($config[$location]) : [];
-        if (isset($modules[$module])) {
-            return true;
-        }
-        $info = Module::getInfo($module);
 
         $config[$location][] = $module;
         if (!empty($info['autoload'])) {

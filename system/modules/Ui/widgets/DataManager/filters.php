@@ -165,10 +165,10 @@
                     <label><?= $colInfo['label']; ?></label>
                     <div class="row">
                       <div class="col-xs-6">
-                        <?php $form->input('number', "datamanagerFilters[{$col}][min]", 'с'); ?>
+                        <?php $form->input('number', "datamanagerFilters[{$col}][min]", false, ['placeholder' => 'начиная с']); ?>
                       </div>
                       <div class="col-xs-6">
-                        <?php $form->input('number', "datamanagerFilters[{$col}][max]", 'по'); ?>
+                        <?php $form->input('number', "datamanagerFilters[{$col}][max]", false, ['placeholder' => 'заканчивая по']); ?>
                       </div>
                     </div>
                   </div>
@@ -181,10 +181,10 @@
                     <label><?= $colInfo['label']; ?></label>
                     <div class="row">
                       <div class="col-xs-6">
-                        <?php $form->input('dateTime', "datamanagerFilters[{$col}][min]", 'с'); ?>
+                        <?php $form->input('dateTime', "datamanagerFilters[{$col}][min]", false, ['placeholder' => 'начиная с']); ?>
                       </div>
                       <div class="col-xs-6">
-                        <?php $form->input('dateTime', "datamanagerFilters[{$col}][max]", 'по'); ?>
+                        <?php $form->input('dateTime', "datamanagerFilters[{$col}][max]", false, ['placeholder' => 'заканчивая по']); ?>
                       </div>
                     </div>
                   </div>
@@ -196,10 +196,10 @@
                     <label><?= $colInfo['label']; ?></label>
                     <div class="row">
                       <div class="col-xs-6">
-                        <?php $form->input('date', "datamanagerFilters[{$col}][min]", 'с'); ?>
+                        <?php $form->input('date', "datamanagerFilters[{$col}][min]",  false, ['placeholder' => 'начиная с']); ?>
                       </div>
                       <div class="col-xs-6">
-                        <?php $form->input('date', "datamanagerFilters[{$col}][max]", 'по'); ?>
+                        <?php $form->input('date', "datamanagerFilters[{$col}][max]", false, ['placeholder' => 'заканчивая по']); ?>
                       </div>
                     </div>
                   </div>

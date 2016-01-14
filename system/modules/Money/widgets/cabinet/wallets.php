@@ -22,7 +22,9 @@
                 break;
             }
         }
-        echo " <a href ='/money/transfer?currency_id={$wallet->currency_id}'>Перевести</a><br />";
+        if ($wallet->currency->transfer) {
+            echo " <a href ='/money/transfer?currency_id={$wallet->currency_id}'>Перевести</a><br />";
+        }
         echo " <a href ='/users/cabinet/walletHistory?currency_id={$wallet->currency_id}'>История</a>";
         echo " <a href ='/users/cabinet/walletBlocked?currency_id={$wallet->currency_id}'>Блокировки</a>";
         ?>
@@ -48,5 +50,5 @@ if ($transfers) {
 $pays = \Money\Pay::getList(['where' => [['pay_status_id', 1], ['user_id', \Users\User::$cur->id]]]);
 if ($pays) {
     echo "<h3>У вас есть неоплаченные счета</h3>";
-    $this->content(['module'=>\App::$cur->money, 'content' => 'pays', 'data' => compact('pays')]);
+    $this->content(['module' => \App::$cur->money, 'content' => 'pays', 'data' => compact('pays')]);
 }

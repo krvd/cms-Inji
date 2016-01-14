@@ -25,9 +25,10 @@ class Invite extends \Model
     static $cols = [
         'code' => ['type' => 'text'],
         'type' => ['type' => 'text'],
-        'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
         'limit' => ['type' => 'number'],
         'count' => ['type' => 'number'],
+        'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
+        'date_create' => ['type' => 'dateTime']
     ];
     static $dataManagers = [
         'manager' => [

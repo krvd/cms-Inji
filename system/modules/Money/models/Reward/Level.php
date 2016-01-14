@@ -19,6 +19,10 @@ class Level extends \Model
             'reward' => [
                 'model' => 'Money\Reward',
                 'col' => 'reward_id'
+            ],
+            'currency' => [
+                'model' => 'Money\Currency',
+                'col' => 'currency_id'
             ]
         ];
     }

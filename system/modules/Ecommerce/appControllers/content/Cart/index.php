@@ -170,15 +170,15 @@
                         $discountSum += $discount;
                         $itemName = $cartItem->item->name();
                         if (!isset($sums[$cartItem->price->currency_id])) {
-                            $sums[$cartItem->price->currency_id] = $cartItem->price->price;
+                            $sums[$cartItem->price->currency_id] = $cartItem->price->price * $cartItem->count;
                         } else {
-                            $sums[$cartItem->price->currency_id] += $cartItem->price->price;
+                            $sums[$cartItem->price->currency_id] += $cartItem->price->price * $cartItem->count;
                         }
                         ?>
                         <tr class="cart_item_id<?= $cartItem->id; ?> item" data-cart_item_id = '<?php echo $cartItem->id; ?>' data-priceam = '<?php echo $cartItem->price->price; ?>' data-item_offer_price_id = '<?php echo $cartItem->price->id; ?>'>
                           <td class="text-center image">                            
                             <a href="/ecommerce/view/<?php echo $cartItem->item->id; ?>">
-                              <img src="<?= $path; ?>?resize=50x50" alt="<?= $itemName; ?>" title="<?= $itemName; ?>" class="img-thumbnail" />
+                              <img src="<?= $path; ?>?resize=50x50" alt="<?= htmlspecialchars($itemName); ?>" title="<?= htmlspecialchars($itemName); ?>" />
                             </a>
                           </td>
                           <td class="text-left name">

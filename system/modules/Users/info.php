@@ -3,6 +3,9 @@
 return [
     'name' => 'Пользователи',
     'widgets' => ['Users\loginForm' => 'Форма входа'],
+    'requires' => [
+        'Files', 'Access'
+    ],
     'menu' => [
         'appAdmin' => [
             [

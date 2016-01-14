@@ -13,5 +13,12 @@ namespace Files;
 
 class Type extends \Model
 {
-    
+    static $cols = [
+        'dir' => ['type' => 'text'],
+        'ext' => ['type' => 'text'],
+        'group' => ['type' => 'text'],
+        'allow_resize' => ['type' => 'bool'],
+        'date_create' => ['type' => 'dateTime'],
+    ];
+
 }
