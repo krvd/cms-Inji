@@ -161,7 +161,7 @@ class Money extends Module
         }
     }
 
-    function reward($reward_id, $sums, $rootUser = null)
+    function reward($reward_id, $sums = [], $rootUser = null)
     {
         $rootUser = $rootUser ? $rootUser : \Users\User::$cur;
         $reward = \Money\Reward::get($reward_id);
@@ -223,7 +223,7 @@ class Money extends Module
                     case 'amount':
                         $amount = $level->amount;
                 }
-                if(!$amount){
+                if (!$amount) {
                     continue;
                 }
                 if (!$rewardGet && $reward->block) {
