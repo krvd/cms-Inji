@@ -4,7 +4,7 @@ $blocked = App::$cur->money->getUserBlocks();
 $wallets = App::$cur->money->getUserWallets();
 foreach ($wallets as $wallet) {
     ?>
-    <b><?= number_format($wallet->amount, 4, '.', ' '); ?></b> <?= $wallet->currency->acronym(); ?><br />
+    <b><?= $wallet->showAmount(); ?></b> <?= $wallet->currency->acronym(); ?><br />
     <?php
 }
 ?>
