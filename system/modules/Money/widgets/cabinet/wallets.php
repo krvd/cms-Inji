@@ -8,7 +8,7 @@
       ?>
       <div class="col-sm-4">
         <h4><?= $wallet->currency->name(); ?></h4>
-        <b><?= number_format($wallet->amount, 4, '.', ' '); ?></b> <?= $wallet->currency->acronym(); ?><br />
+        <b><?= $wallet->showAmount(); ?></b> <?= $wallet->currency->acronym(); ?><br />
         <?php
         if (!empty($blocked[$wallet->currency_id])) {
             echo "Заблокировано: {$blocked[$wallet->currency_id]} " . $wallet->currency->acronym() . "<br />";

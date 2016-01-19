@@ -15,7 +15,8 @@ class Wallet extends \Model
 {
     static $cols = [
         'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
-        'currency_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'currency']
+        'currency_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'currency'],
+        'amount' => ['type' => 'decimal']
     ];
     static $labels = [
         'user_id' => 'Пользователь',
@@ -69,6 +70,18 @@ class Wallet extends \Model
     function name()
     {
         return $this->currency->name();
+    }
+
+    function showAmount()
+    {
+        switch ($this->currency->round_type) {
+            case 'floor':
+                $dif = (float) ('1' . str_repeat('0', $this->currency->round_precision));
+                return floor($this->amount * $dif) / $dif;
+                break;
+            default :
+                return $this->amount;
+        }
     }
 
     function beforeDelete()

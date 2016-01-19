@@ -20,6 +20,8 @@ class Currency extends \Model
         'wallet' => 'Кошелек на сайте',
         'refill' => 'Пополнение',
         'transfer' => 'Переводы',
+        'round_type' => 'Округдение при выводе',
+        'round_precision' => 'Количество занков после запятов при округдлении',
         'date_create' => 'Дата создания',
     ];
     static $cols = [
@@ -28,6 +30,8 @@ class Currency extends \Model
         'refill' => ['type' => 'bool'],
         'wallet' => ['type' => 'bool'],
         'transfer' => ['type' => 'bool'],
+        'round_type' => ['type' => 'text'],
+        'round_precision' => ['type' => 'number'],
     ];
     static $dataManagers = [
         'manager' => [
@@ -39,7 +43,7 @@ class Currency extends \Model
         'manager' => [
             'map' => [
                 ['name', 'code'],
-                ['refill', 'wallet','transfer'],
+                ['refill', 'wallet', 'transfer'],
             ]
         ]
     ];
