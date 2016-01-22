@@ -97,6 +97,9 @@ class Vk extends \Users\SocialHelper
                             $invite->save();
                         }
                     }
+                    if (!$user->parent_id && !empty(\App::$cur->Users->config['defaultPartner'])) {
+                        $user->parent_id = \App::$cur->Users->config['defaultPartner'];
+                    }
                     $user->save();
                     $userInfo = new \Users\User\Info();
                     $userInfo->user_id = $user->id;
