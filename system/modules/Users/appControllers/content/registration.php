@@ -30,12 +30,9 @@
           if (!empty(App::$cur->users->config['invites'])) {
               ?>
               <div class ='form-group'>
-                <label>Код приглашения</label>
+                <label><?= !empty(App::$cur->users->config['invitesName']) ? App::$cur->users->config['invitesName'] : 'Код приглашения'; ?></label>
                 <input type ='text' name ='invite_code' class ='form-control' value ="<?= (isset($_POST['invite_code']) ? $_POST['invite_code'] : ((!empty($_COOKIE['invite_code']) ? $_COOKIE['invite_code'] : ((!empty($_GET['invite_code']) ? $_GET['invite_code'] : ''))))); ?>" />
               </div>   
-              <script>
-
-              </script>
               <?php
           }
           ?>
