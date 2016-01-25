@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Ecommerce module
  *
@@ -85,10 +86,14 @@ class Ecommerce extends Module
             if ($field->userfield) {
                 if (strpos($field->userfield, ':')) {
                     $path = explode(':', $field->userfield);
-                    $user->{$path[0]}->{$path[1]} = $info->value;
-                    $relations[$path[0]] = $path[0];
+                    if (!$user->{$path[0]}->{$path[1]}) {
+                        $user->{$path[0]}->{$path[1]} = $info->value;
+                        $relations[$path[0]] = $path[0];
+                    }
                 } else {
-                    $user->{$field->userfield} = $info->value;
+                    if (!$user->{$field->userfield}) {
+                        $user->{$field->userfield} = $info->value;
+                    }
                 }
             }
             foreach ($relations as $rel) {
@@ -382,8 +387,7 @@ class Ecommerce extends Module
             foreach ($cartItem->price->offer->bonuses as $bonus) {
                 if ($bonus->limited && $bonus->left <= 0) {
                     continue;
-                }
-                elseif ($bonus->limited && $bonus->left > 0) {
+                } elseif ($bonus->limited && $bonus->left > 0) {
                     $bonus->left -= 1;
                     $bonus->save();
                 }
