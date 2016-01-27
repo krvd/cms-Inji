@@ -35,9 +35,10 @@ class Link extends \Model
         ]
     ];
     static $cols = [
-        'name' => ['type' => 'text'],
         'material_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'material'],
         'linked_material_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'linkedMaterial'],
+        'name' => ['type' => 'text'],
+        'weight' => ['type' => 'number'],
     ];
     static $forms = [
         'manager' => [

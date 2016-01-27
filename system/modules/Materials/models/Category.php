@@ -27,15 +27,19 @@ class Category extends \Model
         'material_template' => 'Шаблон страниц по умолчанию',
     ];
     static $cols = [
+
         'name' => ['type' => 'text'],
-        'description' => ['type' => 'html'],
         'alias' => ['type' => 'text'],
         'image_file_id' => ['type' => 'image'],
+        'description' => ['type' => 'html'],
         'parent_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'parent', 'showCol' => 'name'],
-        'viewer' => ['type' => 'select', 'source' => 'method', 'method' => 'viewsCategoryList', 'module' => 'Materials'],
-        'template' => ['type' => 'select', 'source' => 'method', 'method' => 'templatesCategoryList', 'module' => 'Materials'],
+        'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
         'material_viewer' => ['type' => 'select', 'source' => 'method', 'method' => 'viewsList', 'module' => 'Materials'],
         'material_template' => ['type' => 'select', 'source' => 'method', 'method' => 'templatesList', 'module' => 'Materials'],
+        'viewer' => ['type' => 'select', 'source' => 'method', 'method' => 'viewsCategoryList', 'module' => 'Materials'],
+        'template' => ['type' => 'select', 'source' => 'method', 'method' => 'templatesCategoryList', 'module' => 'Materials'],
+        'tree_path' => ['type' => 'text'],
+        'weight' => ['type' => 'number'],
     ];
     static $dataManagers = [
         'manager' => [
@@ -124,6 +128,10 @@ class Category extends \Model
             'image' => [
                 'model' => 'Files\File',
                 'col' => 'image_file_id'
+            ],
+            'user' => [
+                'model' => 'Users\User',
+                'col' => 'user_id'
             ]
         ];
     }

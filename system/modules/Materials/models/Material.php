@@ -64,17 +64,21 @@ class Material extends \Model
     static $cols = [
         'name' => ['type' => 'text'],
         'alias' => ['type' => 'text'],
-        'description' => ['type' => 'text'],
-        'keywords' => ['type' => 'text'],
-        'viewer' => ['type' => 'select', 'source' => 'method', 'method' => 'viewsList', 'module' => 'Materials'],
-        'template' => ['type' => 'select', 'source' => 'method', 'method' => 'templatesList', 'module' => 'Materials'],
         'preview' => ['type' => 'html'],
         'text' => ['type' => 'html'],
+        'keywords' => ['type' => 'text'],
+        'description' => ['type' => 'text'],
         'category_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'category'],
-        'image_file_id' => ['type' => 'image'],
         'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
-        'date_create' => ['type' => 'dateTime'],
+        'template' => ['type' => 'select', 'source' => 'method', 'method' => 'templatesList', 'module' => 'Materials'],
+        'viewer' => ['type' => 'select', 'source' => 'method', 'method' => 'viewsList', 'module' => 'Materials'],
+        'default' => ['type' => 'bool'],
+        'hidden' => ['type' => 'bool'],
+        'image_file_id' => ['type' => 'image'],
         'link' => ['type' => 'dataManager', 'relation' => 'links'],
+        'tree_path' => ['type' => 'text'],
+        'weight' => ['type' => 'number'],
+        'date_create' => ['type' => 'dateTime'],
     ];
     static $forms = [
         'manager' => [

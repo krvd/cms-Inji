@@ -2,6 +2,9 @@
 
 return [
     'name' => 'Материалы сайта',
+    'requires' => [
+        'Files', 'Widgets'
+    ],
     'menu' => [
         'appAdmin' => [
             [
