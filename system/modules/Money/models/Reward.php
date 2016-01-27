@@ -13,6 +13,17 @@ namespace Money;
 
 class Reward extends \Model
 {
+    static $cols = [
+        'name' => ['type' => 'text'],
+        'active' => ['type' => 'bool'],
+        'lasthaveall' => ['type' => 'bool'],
+        'block' => ['type' => 'bool'],
+        'block_date_expired' => ['type' => 'text'],
+        'round_type' => ['type' => 'text'],
+        'round_precision' => ['type' => 'number'],
+        'peruser' => ['type' => 'number'],
+    ];
+
     function checkBlocked()
     {
         $blocked = Wallet\Block::getList(['where' => [

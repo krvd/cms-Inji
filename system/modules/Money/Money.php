@@ -166,6 +166,7 @@ class Money extends Module
         $rootUser = $rootUser ? $rootUser : \Users\User::$cur;
         $reward = \Money\Reward::get($reward_id);
         $reward->checkBlocked();
+        $types = $this->getSnippets('rewardType');
         foreach ($reward->levels(['order' => ['level', 'asc']]) as $level) {
             $user = $rootUser;
             for ($i = 0; $i < $level->level; $i++) {
@@ -178,6 +179,17 @@ class Money extends Module
             if (!$user) {
                 break;
             }
+
+            if ($reward->peruser) {
+                $recives = \Money\Reward\Recive::getList(['where' => [['user_id', $user->id], ['reward_id', $reward->id]]]);
+                $amount = 0;
+                foreach ($recives as $recive) {
+                    $amount+=$recive->amount;
+                }
+                if ($amount >= $reward->peruser) {
+                    continue;
+                }
+            }
             $rewardGet = true;
             foreach ($reward->conditions as $condition) {
                 if (!$condition->checkComplete($user->id)) {
@@ -188,69 +200,12 @@ class Money extends Module
             if (!$rewardGet && !$reward->block) {
                 continue;
             }
-            $wallets = $this->getUserWallets($user->id);
-            if (!empty($wallets[$level->currency_id])) {
-                $amount = 0;
-                switch ($level->type) {
-                    case 'procent':
-                        $finalSum = 0;
-                        foreach ($sums as $currency_id => $sum) {
-                            if ($currency_id != $level->currency_id) {
-                                $rate = \Money\Currency\ExchangeRate::get([
-                                            ['currency_id', $currency_id],
-                                            ['target_currency_id', $level->currency_id],
-                                ]);
-                                if ($rate) {
-                                    $finalSum += $sum * $rate->rate;
-                                }
-                            } else {
-                                $finalSum += $sum;
-                            }
-                        }
-                        switch ($reward->round_type) {
-                            case 'round':
-                                $finalSum = round($finalSum, $reward->round_precision);
-                                $amount = $finalSum / 100 * $level->amount;
-                                break;
-                            case 'floor':
-                                $finalSum = floor($finalSum);
-                                $amount = $finalSum / 100 * $level->amount;
-                                break;
-                            default:
-                                $amount = $finalSum / 100 * $level->amount;
-                        }
-                        break;
-                    case 'amount':
-                        $amount = $level->amount;
-                }
-                if (!$amount) {
-                    continue;
-                }
-                if (!$rewardGet && $reward->block) {
-                    $block = new \Money\Wallet\Block();
-                    $block->wallet_id = $wallets[$level->currency_id]->id;
-                    $block->amount = $amount;
-                    $block->comment = 'Партнерское вознаграждение от ' . $rootUser->name();
-                    $block->data = 'reward:' . $reward->id;
-                    $dateGenerators = $this->getSnippets('expiredDateGenerator');
-                    if ($reward->block_date_expired && !empty($dateGenerators[$reward->block_date_expired])) {
-                        $date = $dateGenerators[$reward->block_date_expired]($reward, $user);
-                        if (!empty($date['date'])) {
-                            $block->date_expired = $date['date'];
-                        }
-                        if (!empty($date['type'])) {
-                            $block->expired_type = $date['type'];
-                        }
-                    }
-                    $block->save();
-                } else {
-                    $text = 'Вознаграждение по программе "' . $reward->name . '"';
-                    if ($rootUser->id != $user->id) {
-                        $text .= ' от ' . $rootUser->name();
-                    }
-                    $wallets[$level->currency_id]->diff($amount, $text);
-                }
-            }
+            $recive = new \Money\Reward\Recive();
+            $recive->reward_id = $reward->id;
+            $recive->user_id = $user->id;
+            $recive->amount = 1;
+            $recive->save();
+            $count = $types[$level->type]['rewarder']($reward, $sums, $user, $rootUser, $level, $rewardGet);
         }
     }
 

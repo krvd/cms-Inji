@@ -23,6 +23,12 @@ class Level extends \Model
             'currency' => [
                 'model' => 'Money\Currency',
                 'col' => 'currency_id'
+            ],
+            'params' => [
+                'type' => 'many',
+                'model' => 'Money\Reward\Level\Param',
+                'col' => 'reward_level_id',
+                'resultKey' => 'param'
             ]
         ];
     }

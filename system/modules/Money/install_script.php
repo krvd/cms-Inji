@@ -131,17 +131,6 @@ return function ($step = NULL, $params = []) {
         'merchant_currency_currency_id' => 'INT(11) UNSIGNED NOT NULL',
         'merchant_currency_code' => 'varchar(255) NOT NULL',
     ]);
-    App::$cur->db->createTable('money_reward', [
-        'reward_id' => 'pk',
-        'reward_name' => 'varchar(255) NOT NULL',
-        'reward_active' => 'tinyint(1) UNSIGNED NOT NULL',
-        'reward_lasthaveall' => 'tinyint(1) UNSIGNED NOT NULL',
-        'reward_block' => 'tinyint(1) UNSIGNED NOT NULL',
-        'reward_block_date_expired' => 'varchar(255) NOT NULL',
-        'reward_round_type' => 'varchar(255) NOT NULL',
-        'reward_round_precision' => 'varchar(255) NOT NULL',
-        'reward_date_create' => 'timestamp DEFAULT CURRENT_TIMESTAMP',
-    ]);
     App::$cur->db->createTable('money_reward_trigger', [
         'reward_trigger_id' => 'pk',
         'reward_trigger_reward_id' => 'INT(11) UNSIGNED NOT NULL',

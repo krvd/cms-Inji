@@ -1,12 +1,9 @@
 <?php
 $rewards = Money\Reward::getList(['where' => ['active', 1]]);
-$levelTypes = [
-    'procent' => 'Процент',
-    'amount' => 'Сумма',
-];
 $itemTypes = [
     'event' => 'Событие'
 ];
+$types = App::$cur->money->getSnippets('rewardType');
 foreach ($rewards as $reward) {
     ?>
     <h2><?= $reward->name; ?></h2>
@@ -15,9 +12,10 @@ foreach ($rewards as $reward) {
         <h3>Уровни начислений</h3>
         <ul>
           <?php
-          foreach ($reward->levels as $level) {
+          foreach ($reward->levels(['order' => ['level', 'asc']]) as $level) {
               ?>
-              <li><?= !$level->level ? 'Личный' : $level->level; ?>. <?= $levelTypes[$level->type]; ?>: <?= $level->amount; ?> <?= $level->currency ? $level->currency->acronym() : ''; ?></li>
+
+              <li><?= !$level->level ? 'Личный' : $level->level; ?>. <?= $types[$level->type]['viewer']($level); ?></li>
               <?php
           }
           ?>
