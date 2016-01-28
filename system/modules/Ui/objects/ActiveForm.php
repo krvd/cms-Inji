@@ -295,7 +295,10 @@ class ActiveForm extends \Object
     function checkAccess()
     {
         if (empty($this->form)) {
-            $this->drawError('"' . $this->modelName . '" manager with name: "' . $this->managerName . '" not found');
+            $this->drawError('"' . $this->modelName . '" form with name: "' . $this->formName . '" not found');
+            return false;
+        }
+        if ($this->formName == 'manager' && !\Users\User::$cur->isAdmin()) {
             return false;
         }
         if ($this->model && !empty($this->form['options']['access']['self']) && \Users\User::$cur->id == $this->model->user_id) {
