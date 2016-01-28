@@ -66,7 +66,11 @@ if (!empty($wallets[$level->params['currency_id']->value])) {
         $block = new \Money\Wallet\Block();
         $block->wallet_id = $wallets[$level->params['currency_id']->value]->id;
         $block->amount = $amount;
-        $block->comment = 'Партнерское вознаграждение от ' . $rootUser->name();
+        $text = 'Вознаграждение по программе "' . $reward->name . '"';
+        if ($rootUser->id != $user->id) {
+            $text .= ' от ' . $rootUser->name();
+        }
+        $block->comment = $text;
         $block->data = 'reward:' . $reward->id;
         $dateGenerators = $this->getSnippets('expiredDateGenerator');
         if ($reward->block_date_expired && !empty($dateGenerators[$reward->block_date_expired])) {
