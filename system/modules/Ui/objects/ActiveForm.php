@@ -172,7 +172,7 @@ class ActiveForm extends \Object
     function draw($params = [], $ajax = false)
     {
         if (!$this->checkAccess()) {
-            $this->drawError('you not have access to "' . $this->modelName . '" manager with name: "' . $this->formName . '"');
+            $this->drawError('you not have access to "' . $this->modelName . '" form with name: "' . $this->formName . '"');
             return [];
         }
         $form = new Form(!empty($this->form['formOptions']) ? $this->form['formOptions'] : []);
