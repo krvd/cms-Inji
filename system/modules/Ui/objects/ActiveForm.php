@@ -172,7 +172,7 @@ class ActiveForm extends \Object
     function draw($params = [], $ajax = false)
     {
         if (!$this->checkAccess()) {
-            $this->drawError('you not have access to "' . $this->modelName . '" manager with name: "' . $this->formName . '"');
+            $this->drawError('you not have access to "' . $this->modelName . '" form with name: "' . $this->formName . '"');
             return [];
         }
         $form = new Form(!empty($this->form['formOptions']) ? $this->form['formOptions'] : []);
@@ -295,7 +295,13 @@ class ActiveForm extends \Object
     function checkAccess()
     {
         if (empty($this->form)) {
-            $this->drawError('"' . $this->modelName . '" manager with name: "' . $this->managerName . '" not found');
+            $this->drawError('"' . $this->modelName . '" form with name: "' . $this->formName . '" not found');
+            return false;
+        }
+        if (!empty($this->form['options']['access']['apps']) && !in_array(\App::$cur->name, $this->form['options']['access']['apps'])) {
+            return false;
+        }
+        if ($this->formName == 'manager' && !\Users\User::$cur->isAdmin()) {
             return false;
         }
         if ($this->model && !empty($this->form['options']['access']['self']) && \Users\User::$cur->id == $this->model->user_id) {

@@ -14,7 +14,7 @@ class DataManager extends \Object
 {
     public $modelName = '';
     public $managerOptions = [];
-    public $managerName = 'manager';
+    public $managerName = 'customManager';
     public $name = 'Менеджер данных';
     public $limit = 30;
     public $page = 1;
@@ -32,6 +32,10 @@ class DataManager extends \Object
             $dataManager = \App::$cur->ui->getModelManager($modelName, $dataManager);
         }
         $this->managerOptions = $dataManager;
+
+        if (empty($this->managerOptions)) {
+            throw Exception('empty DataManager');
+        }
 
         if (!empty($this->managerOptions['name'])) {
             $this->name = $this->managerOptions['name'];
@@ -61,26 +65,18 @@ class DataManager extends \Object
         if ($model) {
             $formModelName = get_class($model);
             $relations = $formModelName::relations();
-            $formParams['preset'] = [$relations[$params['relation']]['col'] => $model->pk()];
+            $formParams['preset'] = [
+                $relations[$params['relation']]['col'] => $model->pk()
+            ];
         }
-        $buttons = [];
-        if (!empty($this->managerOptions['options']['formOnPage'])) {
-            $query = [
-                'item' => $modelName,
-                'params' => $formParams,
-                'formName' => !empty($this->managerOptions['editForm']) ? $this->managerOptions['editForm'] : 'manager',
-                'redirectUrl' => $_SERVER['REQUEST_URI']
-            ];
-            $buttons[] = [
-                'text' => 'Добавить элемент',
-                'href' => '/admin/ui/formPopUp/?' . http_build_query($query),
-            ];
-        } else {
-            $buttons[] = [
+
+        $buttons = [
+            [
                 'text' => 'Добавить элемент',
                 'onclick' => 'inji.Ui.forms.popUp("' . str_replace('\\', '\\\\', $modelName) . '",' . json_encode($formParams) . ')',
-            ];
-        }
+            ]
+        ];
+
         return $buttons;
     }
 
@@ -303,7 +299,7 @@ class DataManager extends \Object
         if (!$originalItem) {
             $originalItem = $item;
         }
-        
+
         $relations = $modelName::relations();
         if (strpos($colName, ':') !== false && !empty($relations[substr($colName, 0, strpos($colName, ':'))])) {
             $rel = substr($colName, 0, strpos($colName, ':'));
@@ -317,22 +313,26 @@ class DataManager extends \Object
         if (!empty($modelName::$cols[$colName]['relation'])) {
             $type = !empty($relations[$modelName::$cols[$colName]['relation']]['type']) ? $relations[$modelName::$cols[$colName]['relation']]['type'] : 'to';
             switch ($type) {
-                case'many':
+                case 'many':
                     $managerParams = ['relation' => $modelName::$cols[$colName]['relation']];
                     $count = $item->{$modelName::$cols[$colName]['relation']}(array_merge($params, ['count' => 1]));
                     return "<a class = 'btn btn-xs btn-primary' onclick = 'inji.Ui.dataManagers.popUp(\"" . str_replace('\\', '\\\\', $modelName) . ":" . $item->pk() . "\"," . json_encode(array_merge($params, $managerParams)) . ")'>{$count} " . \Tools::getNumEnding($count, ['Элемент', 'Элемента', 'Элементов']) . "</a>";
                     break;
                 default :
-                    if (\App::$cur->name == 'admin' && $item->{$modelName::$cols[$colName]['relation']}) {
-                        $href = "<a href ='/admin/" . str_replace('\\', '/view/', $relations[$modelName::$cols[$colName]['relation']]['model']) . "/" . $item->{$modelName::$cols[$colName]['relation']}->pk() . "'>";
-                        if (!empty($modelName::$cols[$colName]['showCol'])) {
-                            $href .= $item->{$modelName::$cols[$colName]['relation']}->{$modelName::$cols[$colName]['showCol']};
-                        } else {
+                    if ($item->{$modelName::$cols[$colName]['relation']}) {
+                        if (\App::$cur->name == 'admin') {
+                            $href = "<a href ='/admin/" . str_replace('\\', '/view/', $relations[$modelName::$cols[$colName]['relation']]['model']) . "/" . $item->{$modelName::$cols[$colName]['relation']}->pk() . "'>";
+                            if (!empty($modelName::$cols[$colName]['showCol'])) {
+                                $href .= $item->{$modelName::$cols[$colName]['relation']}->{$modelName::$cols[$colName]['showCol']};
+                            } else {
 
-                            $href .= $item->{$modelName::$cols[$colName]['relation']}->name();
+                                $href .= $item->{$modelName::$cols[$colName]['relation']}->name();
+                            }
+                            $href .= '</a>';
+                            return $href;
+                        } else {
+                            return $item->{$modelName::$cols[$colName]['relation']}->name();
                         }
-                        $href .= '</a>';
-                        return $href;
                     } else {
                         return $item->$colName;
                     }
@@ -342,7 +342,7 @@ class DataManager extends \Object
                 switch ($modelName::$cols[$colName]['view']['type']) {
                     case 'widget':
                         ob_start();
-                        \App::$cur->view->widget($modelName::$cols[$colName]['view']['widget'],['item'=> $item,'colName'=> $colName, 'colParams'=>$modelName::$cols[$colName]]);
+                        \App::$cur->view->widget($modelName::$cols[$colName]['view']['widget'], ['item' => $item, 'colName' => $colName, 'colParams' => $modelName::$cols[$colName]]);
                         $content = ob_get_contents();
                         ob_end_clean();
                         return $content;
@@ -644,18 +644,10 @@ class DataManager extends \Object
      */
     function checkAccess()
     {
-        $modelName = $this->modelName;
-        if (!class_exists($modelName)) {
-            return false;
-        }
-        if (empty($this->managerOptions)) {
-            $this->drawError('"' . $this->modelName . '" manager with name: "' . $this->managerName . '" not found');
+        if ($this->managerName == 'manager' && !\Users\User::$cur->isAdmin()) {
             return false;
         }
         if (!empty($this->managerOptions['options']['access']['apps']) && !in_array(\App::$cur->name, $this->managerOptions['options']['access']['apps'])) {
-            return false;
-        }
-        if ($this->managerName == 'manager' && !\Users\User::$cur->isAdmin()) {
             return false;
         }
         if (!empty($this->managerOptions['options']['access']['groups']) && !in_array(\Users\User::$cur->group_id, $this->managerOptions['options']['access']['groups'])) {

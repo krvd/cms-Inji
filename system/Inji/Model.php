@@ -452,7 +452,7 @@ class Model
                 $params = 'int(11) NOT NULL';
                 break;
             case 'text':
-            case 'mail':
+            case 'email':
                 $params = 'varchar(255) NOT NULL';
                 break;
             case 'html':
@@ -609,7 +609,7 @@ class Model
         if ($col) {
             static::fixPrefix($col);
         }
-
+        
         if (is_array($param)) {
             static::fixPrefix($param, 'first');
         }
