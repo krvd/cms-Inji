@@ -31,7 +31,15 @@ class DataManagerController extends Controller
         if (!empty($_GET['params']['relation'])) {
             $params['relation'] = $_GET['params']['relation'];
             $relations = $modelName::relations();
-            $modelName = $relations[$_GET['params']['relation']]['model'];
+            $type = !empty($relations[$_GET['params']['relation']]['type']) ? $relations[$_GET['params']['relation']]['type'] : 'to';
+            
+            switch ($type) {
+                case 'relModel':
+                    $modelName = $relations[$_GET['params']['relation']]['relModel'];
+                    break;
+                default:
+                    $modelName = $relations[$_GET['params']['relation']]['model'];
+            }
         }
         $dataManager = new Ui\DataManager($modelName, 'manager');
         $dataManager->draw($params, $model);
