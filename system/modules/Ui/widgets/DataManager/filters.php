@@ -70,8 +70,8 @@
                                 $values;
                                 break;
                         }
-                        $value = !empty($_GET['datamanagerFilters'][$col]['value']) ? $_GET['datamanagerFilters'][$col]['value'] : '';
-                        $inputOptions = ['value' => $value, 'values' => $values];
+                        $value = !empty($_GET['datamanagerFilters'][$col]['value']) ? $_GET['datamanagerFilters'][$col]['value'] : (!empty($params['filters'][$col]['value']) ? $params['filters'][$col]['value'] : '');
+                        $inputOptions = ['value' => $value, 'values' => $values, 'multiple' => true];
                         if (!empty($dataManager->managerOptions['userGroupFilter'][\Users\User::$cur->group_id]['getRows'][$col])) {
 
                             $inputOptions['disabled'] = true;
@@ -196,7 +196,7 @@
                     <label><?= $colInfo['label']; ?></label>
                     <div class="row">
                       <div class="col-xs-6">
-                        <?php $form->input('date', "datamanagerFilters[{$col}][min]",  false, ['placeholder' => 'начиная с']); ?>
+                        <?php $form->input('date', "datamanagerFilters[{$col}][min]", false, ['placeholder' => 'начиная с']); ?>
                       </div>
                       <div class="col-xs-6">
                         <?php $form->input('date', "datamanagerFilters[{$col}][max]", false, ['placeholder' => 'заканчивая по']); ?>

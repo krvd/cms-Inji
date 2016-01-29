@@ -176,10 +176,18 @@ class DataManager extends \Object
                 $colInfo = $modelName::getColInfo($col);
                 switch ($colInfo['colParams']['type']) {
                     case 'select':
-                        if (!isset($params['filters'][$col]['value']) || $params['filters'][$col]['value'] === '') {
+                        if (!$params['filters'][$col]['value']) {
                             continue;
                         }
-                        $queryParams['where'][] = [$col, $params['filters'][$col]['value']];
+                        foreach ($params['filters'][$col]['value'] as $key => $value) {
+                            if ($value === '') {
+                                unset($params['filters'][$col]['value'][$key]);
+                            }
+                        }
+                        if (!$params['filters'][$col]['value']) {
+                            continue;
+                        }
+                        $queryParams['where'][] = [$col, implode(',', $params['filters'][$col]['value']), 'IN'];
                         break;
                     case 'bool':
 
@@ -435,10 +443,18 @@ class DataManager extends \Object
                 $colInfo = $modelName::getColInfo($col);
                 switch ($colInfo['colParams']['type']) {
                     case 'select':
-                        if (!isset($params['filters'][$col]['value']) || $params['filters'][$col]['value'] === '') {
+                        if (!$params['filters'][$col]['value']) {
                             continue;
                         }
-                        $queryParams['where'][] = [$col, $params['filters'][$col]['value']];
+                        foreach ($params['filters'][$col]['value'] as $key => $value) {
+                            if ($value === '') {
+                                unset($params['filters'][$col]['value'][$key]);
+                            }
+                        }
+                        if (!$params['filters'][$col]['value']) {
+                            continue;
+                        }
+                        $queryParams['where'][] = [$col, implode(',', $params['filters'][$col]['value']), 'IN'];
                         break;
                     case 'bool':
 
