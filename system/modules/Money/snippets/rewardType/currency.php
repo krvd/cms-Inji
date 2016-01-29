@@ -46,18 +46,18 @@ if (!empty($wallets[$level->params['currency_id']->value])) {
             switch ($reward->round_type) {
                 case 'round':
                     $finalSum = round($finalSum, $reward->round_precision);
-                    $amount = $finalSum / 100 * $level->params['amount']->value;
+                    $amount = $finalSum / 100 * (float) $level->params['amount']->value;
                     break;
                 case 'floor':
                     $finalSum = floor($finalSum);
-                    $amount = $finalSum / 100 * $level->params['amount']->value;
+                    $amount = $finalSum / 100 * (float) $level->params['amount']->value;
                     break;
                 default:
-                    $amount = $finalSum / 100 * $level->params['amount']->value;
+                    $amount = $finalSum / 100 * (float) $level->params['amount']->value;
             }
             break;
         case 'amount':
-            $amount = $level->params['amount']->value;
+            $amount = (float) $level->params['amount']->value;
     }
     if (!$amount) {
         return 0;
