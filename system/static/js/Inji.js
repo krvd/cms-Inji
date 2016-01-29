@@ -63,7 +63,11 @@ Inji.prototype.start = function (options) {
       }
     }, true)
   }
-  this.loadScripts(options.scripts, 0);
+  if (options.scripts.length>0) {
+    this.loadScripts(options.scripts, 0);
+  } else {
+    inji.startCallbacks();
+  }
 }
 Inji.prototype.loadScripts = function (scripts, key) {
   this.addScript(scripts[key], function () {
@@ -78,7 +82,7 @@ Inji.prototype.loadScripts = function (scripts, key) {
       }
     } else if (typeof (scripts[key].file) != 'undefined') {
       inji.loadedScripts[scripts[key].file] = true;
-        console.log('js ' + scripts[key].file + ' loaded');
+      console.log('js ' + scripts[key].file + ' loaded');
 
     } else {
       inji.loadedScripts[scripts[key]] = true;
