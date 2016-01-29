@@ -29,6 +29,24 @@ Ui.prototype.bindMenu = function (container) {
     }
   });
 }
+Ui.prototype.requestInfo = function (options, callback) {
+  var id = 'resultForm' + inji.randomString();
+  var body = '<form id ="' + id + '">';
+  body += '<h2>' + options.header + '</h2>';
+  for (var key in options.inputs) {
+    body += '<div class = "form-group">';
+    body += '<label>' + options.inputs[key].label + '</label>';
+    body += '<input type = "' + options.inputs[key].type + '" name = "' + key + '" class ="form-control" />';
+    body += '</div>';
+  }
+  body += '<button class = "btn btn-primary">' + options.btn + '</button>';
+  body += '</form>'
+  inji.Ui.modals.show('', body);
+  $('#' + id).on('submit', function () {
+    callback($('#'+ id).serializeArray());
+    return false;
+  });
+}
 /**
  * Editors
  * 
