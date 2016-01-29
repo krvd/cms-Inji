@@ -45,8 +45,6 @@ Editors = function () {
 }
 Editors.prototype.checkEditors = function () {
   if (!this.ckeditor && typeof CKEDITOR != 'undefined') {
-    CKEDITOR.basePath = window.CKEDITOR_BASEPATH = inji.options.appRoot + 'static/moduleAsset/libs/libs/ckeditor/';
-    CKEDITOR.plugins.basePath = inji.options.appRoot + 'static/moduleAsset/libs/libs/ckeditor/plugins/';
     this.ckeditor = true;
   }
 }
@@ -69,7 +67,9 @@ Editors.prototype.loadIn = function (selector, search) {
         if ($(this).closest('.modal').length != 0) {
           var _this = this;
           $(this).closest('.modal').on('shown.bs.modal', function () {
-            $(_this).ckeditor({customConfig: inji.options.appRoot + 'static/moduleAsset/libs/libs/ckeditor/program/userConfig.php'});
+            setTimeout(function () {
+              $(_this).ckeditor({customConfig: inji.options.appRoot + 'static/moduleAsset/libs/libs/ckeditor/program/userConfig.php'});
+            }, 1000);
           })
           $(this).closest('.modal').on('hide.bs.modal', function () {
             if ($(_this).next().hasClass('cke')) {
@@ -83,7 +83,7 @@ Editors.prototype.loadIn = function (selector, search) {
           })
         }
       })
-    }, 500);
+    }, 1000);
   }
 }
 Editors.prototype.beforeSubmit = function (form) {
@@ -255,6 +255,7 @@ DataManagers.prototype.reloadAll = function () {
 function DataManager(element) {
   this.element = element;
   this.params = element.data('params');
+  this.filters = this.params.filters ? this.params.filters : {};
   this.modelName = element.data('modelname');
   this.managerName = element.data('managername');
   this.options = element.data('options');
@@ -344,7 +345,7 @@ DataManager.prototype.load = function (options) {
   params.limit = this.limit;
   params.page = this.page;
   params.categoryPath = this.categoryPath;
-  filters = {};
+  filters = this.filters;
   if (this.element.find('.dataManagerFilters [name^="datamanagerFilters"]').length > 0) {
     this.element.find('.dataManagerFilters [name^="datamanagerFilters"]').each(function () {
       var maths = $(this).attr('name').match(/\[([^\]]+)\]/g);
@@ -645,11 +646,15 @@ ActiveForms.prototype.get = function (selector) {
 ActiveForms.prototype.initial = function (element) {
   var activeForm = new ActiveForm();
   this.activeForms.push(activeForm);
-  element.element.setAttribute('activeFormIndex', this.activeForms.length - 1);
 
+  activeForm.index = this.activeForms.length - 1;
+  activeForm.element = element;
   activeForm.modelName = element.data('modelname');
   activeForm.formName = element.data('formname');
   activeForm.inputs = element.data('inputs');
+
+  element.element.setAttribute('activeFormIndex', activeForm.index);
+
   activeForm.load();
 };
 function ActiveForm() {
@@ -657,11 +662,15 @@ function ActiveForm() {
   this.formName;
   this.reqestProcess;
   this.inputs = {};
+  this.index;
+  this.element;
   this.load = function () {
+    console.log(this.element.element.id);
     for (var inputName in this.inputs) {
       var inputParams = this.inputs[inputName];
       if (this.inputHandlers[inputParams.type]) {
-        var query = '[name="query-ActiveForm_' + this.formName + '[' + this.modelName.replace('\\', '\\\\') + '][' + inputName + ']"]';
+        var query = '#' + this.element.element.id + ' [name="query-ActiveForm_' + this.formName + '[' + this.modelName.replace('\\', '\\\\') + '][' + inputName + ']"]';
+        console.log(query);
         this.inputHandlers[inputParams.type](inji.get(query), inputName, this)
       }
     }
@@ -673,7 +682,7 @@ function ActiveForm() {
         var selectedDiv = inputContainer.querySelector('.form-search-cur');
         var resultsDiv = inputContainer.querySelector('.form-search-results');
         resultsDiv.innerHTML = '<div class = "text-center"><img src = "' + inji.options.appRoot + 'static/moduleAsset/Ui/images/ajax-loader.gif" /></div>';
-        if(this.reqestProcess){
+        if (this.reqestProcess) {
           this.reqestProcess.abort()
         }
         this.reqestProcess = inji.Server.request({

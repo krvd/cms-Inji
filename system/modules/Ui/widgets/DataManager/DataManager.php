@@ -27,7 +27,7 @@ if (!empty($dataManager->managerOptions['filters'])) {
     $mainCol['style'].='margin-right:260px;';
     ?>
     <div class ="pull-right" style = 'width:250px;'>
-      <?php $this->widget('Ui\DataManager/filters', compact('dataManager')); ?>
+      <?php $this->widget('Ui\DataManager/filters', compact('dataManager','params')); ?>
     </div>
     <?php
 }

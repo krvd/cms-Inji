@@ -2,7 +2,7 @@
 $modelName = $dataManager->modelName;
 
 $formParams = [
-    'dataManagerParams' => $params
+    'dataManagerParams' => $params,
 ];
 $buttons = [
     'open', 'edit', 'delete'
@@ -32,7 +32,7 @@ foreach ($buttons as $button) {
                 } else {
                     ?>
                     <a href ="#" onclick='inji.Ui.forms.popUp("<?= addcslashes($modelName, '\\') . ":{$item->pk()}\"," . json_encode($formParams) ?>);
-                                                      return false;'><i class='glyphicon glyphicon-edit'></i></a>
+                                  return false;'><i class='glyphicon glyphicon-edit'></i></a>
                        <?php
                    }
 
@@ -40,7 +40,7 @@ foreach ($buttons as $button) {
                case 'delete':
                    ?>
                 <a href ="#" onclick='inji.Ui.dataManagers.get(this).delRow(<?= $item->pk(); ?>);
-                                      return false;'><i class='glyphicon glyphicon-remove'></i></a>
+                      return false;'><i class='glyphicon glyphicon-remove'></i></a>
                 <?php
                 break;
         }
