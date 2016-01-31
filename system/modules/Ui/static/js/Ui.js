@@ -322,7 +322,6 @@ function DataManager(element) {
     instance.load();
     return false;
   });
-  $(this.element).find('.dataManager-bottomFloat').css('right', $(window).width() - ($(this.element).offset().left + $(this.element).width()) + 'px');
   self = this;
   $(document).on('scroll', function () {
     self.flowPanel();
@@ -569,12 +568,15 @@ DataManager.prototype.switchCategory = function (categoryBtn) {
   this.categoryPath = $(categoryBtn).data('path');
   this.reload();
 }
-DataManager.prototype.flowPanel = function (categoryBtn) {
+DataManager.prototype.flowPanel = function () {
+
   var elHeight = $(this.element).offset().top + $(this.element).height();
   var scrollHeight = $(document).scrollTop() + $(window).height();
   if (elHeight > scrollHeight && scrollHeight < scrollHeight + 37) {
+    $(this.element).find('.dataManager-bottomFloat').css('right', $(window).width() - ($(this.element).offset().left + $(this.element).width()) + 'px');
     $(this.element).find('.dataManager-bottomFloat').css('position', 'fixed');
   } else {
+    $(this.element).find('.dataManager-bottomFloat').css('right', 'auto');
     $(this.element).find('.dataManager-bottomFloat').css('position', 'relative');
   }
 }
