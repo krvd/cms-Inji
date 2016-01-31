@@ -40,10 +40,10 @@ Ui.prototype.requestInfo = function (options, callback) {
     body += '</div>';
   }
   body += '<button class = "btn btn-primary">' + options.btn + '</button>';
-  body += '</form>'
+  body += '</form>';
   var modal = inji.Ui.modals.show('', body);
   $('#' + id).on('submit', function () {
-    callback($('#'+ id).serializeArray());
+    callback($('#' + id).serializeArray());
     modal.modal('hide');
     return false;
   });
