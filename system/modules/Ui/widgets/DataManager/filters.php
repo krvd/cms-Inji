@@ -1,4 +1,3 @@
-<h3>Фильтры</h3>
 <?php
 if (!$dataManager->checkAccess()) {
     echo 'you not have access to "' . $dataManager->modelName . '" manager with name: "' . $dataManager->managerName . '"';

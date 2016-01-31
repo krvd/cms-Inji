@@ -33,7 +33,7 @@ if (!empty($dataManager->managerOptions['filters'])) {
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header">
-            Фильтры
+            <h3>Фильтры</h3>
           </div>
           <div class="modal-body">
             <div class ="dataManager-filters">
