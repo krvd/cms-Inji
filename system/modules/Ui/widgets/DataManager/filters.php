@@ -1,4 +1,10 @@
 <h3>Фильтры</h3>
+<?php
+if (!$dataManager->checkAccess()) {
+    echo 'you not have access to "' . $dataManager->modelName . '" manager with name: "' . $dataManager->managerName . '"';
+    return false;
+}
+?>
 <form accept-charset="UTF-8" action="" class="dataManagerFilters" method="get" onsubmit="inji.Ui.dataManagers.get(this).reload();
       return false;">
         <?php
