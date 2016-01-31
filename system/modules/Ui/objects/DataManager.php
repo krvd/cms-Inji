@@ -56,6 +56,8 @@ class DataManager extends \Object
         } else {
             $this->name = $modelName;
         }
+
+        $this->managerId = str_replace('\\', '_', 'dataManager_' . $this->modelName . '_' . $this->managerName . '_' . \Tools::randomString());
     }
 
     /**
@@ -87,11 +89,17 @@ class DataManager extends \Object
             }
         }
 
-        $buttons = [
-            [
-                'text' => 'Добавить элемент',
-                'onclick' => 'inji.Ui.forms.popUp("' . str_replace('\\', '\\\\', $modelName) . '",' . json_encode($formParams) . ')',
-            ]
+        $buttons = [];
+        if (!empty($this->managerOptions['filters'])) {
+            $buttons[] = [
+                'text' => 'Фильтры',
+                'onclick' => '  var modal = $("#' . $this->managerId . '_filters");
+                modal.modal("show");',
+            ];
+        }
+        $buttons[] = [
+            'text' => 'Добавить элемент',
+            'onclick' => 'inji.Ui.forms.popUp("' . str_replace('\\', '\\\\', $modelName) . '",' . json_encode($formParams) . ')',
         ];
 
         return $buttons;
@@ -560,26 +568,18 @@ class DataManager extends \Object
         if (!class_exists($modelName)) {
             return false;
         }
-        $this->managerId = str_replace('\\', '_', 'dataManager_' . $this->modelName . '_' . $this->managerName . '_' . \Tools::randomString());
         $this->predraw = true;
         $modelName = $this->modelName;
 
-        $buttons = $this->getButtons($params, $model);
         $cols = $this->getCols();
 
         $this->table = new Table();
-        $this->table->name = $this->name;
         $tableCols = [];
         foreach ($cols as $colName => $colOptions) {
             $tableCols[] = !empty($colOptions['label']) ? $colOptions['label'] : $colName;
         }
         $tableCols[] = '';
         $this->table->setCols($tableCols);
-        $this->table->afterHeader = '<div class="modesContainer pull-left"></div>
-                                    <div class="pagesContainer pull-right"></div>';
-        foreach ($buttons as $button) {
-            $this->table->addButton($button);
-        }
     }
 
     function draw($params = [], $model = null)

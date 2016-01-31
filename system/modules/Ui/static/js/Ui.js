@@ -322,6 +322,16 @@ function DataManager(element) {
     instance.load();
     return false;
   });
+  $(this.element).find('.dataManager-bottomFloat').css('right', $(window).width() - ($(this.element).offset().left + $(this.element).width()) + 'px');
+  self = this;
+  $(document).on('scroll', function () {
+    self.flowPanel();
+  });
+  $(window).on('resize', function () {
+    self.flowPanel();
+  });
+  self.flowPanel();
+
   this.load();
 }
 DataManager.prototype.delRow = function (key) {
@@ -486,6 +496,7 @@ DataManager.prototype.load = function (options) {
     success: function (data) {
       dataManager.element.find('tbody').html(data.rows);
       dataManager.element.find('.pagesContainer').html(data.pages);
+      //dataManager.flowPages();
       if (dataManager.options.sortMode) {
         dataManager.element.find('.modesContainer').html('<a class ="btn btn-xs btn-default" data-mode="sort">' + (dataManager.mode != 'sort' ? 'Включить' : 'Выключить') + ' режим сортировки</a>');
       }
@@ -557,6 +568,15 @@ DataManager.prototype.load = function (options) {
 DataManager.prototype.switchCategory = function (categoryBtn) {
   this.categoryPath = $(categoryBtn).data('path');
   this.reload();
+}
+DataManager.prototype.flowPanel = function (categoryBtn) {
+  var elHeight = $(this.element).offset().top + $(this.element).height();
+  var scrollHeight = $(document).scrollTop() + $(window).height();
+  if (elHeight > scrollHeight && scrollHeight < scrollHeight + 37) {
+    $(this.element).find('.dataManager-bottomFloat').css('position', 'fixed');
+  } else {
+    $(this.element).find('.dataManager-bottomFloat').css('position', 'relative');
+  }
 }
 /**
  * Forms object

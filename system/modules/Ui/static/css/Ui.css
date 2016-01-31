@@ -21,6 +21,7 @@ span.nav-toggle-icon{
 
 .dataManager {
   font-size: 12px;
+  position: relative;
 }
 .dataManager th.sortable a{
   background:url("/static/moduleAsset/Ui/images/orderable.png") no-repeat 0 4px;
@@ -33,6 +34,17 @@ span.nav-toggle-icon{
 
 .dataManager th.sorted-desc a{
   background-position:0 -56px
+}
+.dataManager-bottomFloat-container {
+  height: 37px;
+}
+.dataManager .dataManager-bottomFloat {
+  position: fixed;
+  bottom:0;
+  right:0;
+}
+.dataManager .dataManager-bottomFloat .pagination {
+  margin:0;
 }
 .form-search-results {
   position: absolute;
