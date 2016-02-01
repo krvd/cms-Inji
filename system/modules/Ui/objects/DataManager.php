@@ -68,6 +68,7 @@ class DataManager extends \Object
      */
     public function getButtons($params = [], $model = null)
     {
+        $modelName = $this->modelName;
         $formParams = [
             'dataManagerParams' => $params
         ];
