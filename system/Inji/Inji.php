@@ -43,7 +43,7 @@ class Inji
      * 
      * @param string $eventName
      * @param string $listenCode
-     * @param array|function $callback
+     * @param array|closure $callback
      * @param boolean $save
      */
     function listen($eventName, $listenCode, $callback, $save = false)

@@ -53,10 +53,10 @@ class Config
     /**
      * Load app config
      * 
-     * @param string $site_name
+     * @param \App $app
      * @return array
      */
-    public static function app($app = false)
+    public static function app($app = null)
     {
         if (!$app) {
             $app = App::$primary;

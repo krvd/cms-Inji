@@ -15,7 +15,7 @@ class Controller
      * 
      * @var Controller 
      */
-    static $cur = null;
+    public static $cur = null;
 
     /**
      * Requested params for method
