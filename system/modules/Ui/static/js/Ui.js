@@ -80,25 +80,26 @@ Editors.prototype.loadIn = function (selector, search) {
         instances = $(selector);
       }
       $.each(instances, function () {
+        var editor;
+        var _this = this;
         if ($(this).closest('.modal').length == 0 || $(this).closest('.modal').hasClass('in')) {
-          var editor = $(this).ckeditor({customConfig: inji.options.appRoot + 'static/moduleAsset/libs/libs/ckeditor/program/userConfig.php'});
+          editor = $(_this).ckeditor({customConfig: inji.options.appRoot + 'static/moduleAsset/libs/libs/ckeditor/program/userConfig.php'});
         }
         if ($(this).closest('.modal').length != 0) {
-          var _this = this;
           $(this).closest('.modal').on('shown.bs.modal', function () {
             setTimeout(function () {
-              $(_this).ckeditor({customConfig: inji.options.appRoot + 'static/moduleAsset/libs/libs/ckeditor/program/userConfig.php'});
+              editor = $(_this).ckeditor({customConfig: inji.options.appRoot + 'static/moduleAsset/libs/libs/ckeditor/program/userConfig.php'});
             }, 1000);
           })
           $(this).closest('.modal').on('hide.bs.modal', function () {
-            if ($(_this).next().hasClass('cke')) {
-              var instance = $(_this).next().attr('id').replace('cke_', '');
-              if (CKEDITOR.instances[instance]) {
-                CKEDITOR.instances[instance].updateElement();
-                CKEDITOR.instances[instance].destroy();
-              }
-
+            if (editor.editor) {
+              editor.editor.updateElement();
+              editor.editor.destroy();
+              delete editor.editor
+              $(this).closest('.modal').unbind('hide.bs.modal');
+              $(this).closest('.modal').unbind('shown.bs.modal');
             }
+
           })
         }
       })
@@ -302,7 +303,7 @@ function DataManager(element) {
     }
   });
   if (this.options.sortMode) {
-    $(this.element).find('.modesContainer').on('click', 'a', function () {
+    $(this.element).find('.modeBtn').on('click', function () {
       if (instance.mode != $(this).data('mode')) {
         instance.mode = $(this).data('mode');
         instance.all = 1;
@@ -497,7 +498,11 @@ DataManager.prototype.load = function (options) {
       dataManager.element.find('.pagesContainer').html(data.pages);
       //dataManager.flowPages();
       if (dataManager.options.sortMode) {
-        dataManager.element.find('.modesContainer').html('<a class ="btn btn-xs btn-default" data-mode="sort">' + (dataManager.mode != 'sort' ? 'Включить' : 'Выключить') + ' режим сортировки</a>');
+        if (dataManager.mode != 'sort') {
+          dataManager.element.find('.modeBtn').removeClass('active');
+        } else {
+          dataManager.element.find('.modeBtn').addClass('active');
+        }
       }
       $(instance.element).find('tbody').sortable().sortable("disable");
       if (dataManager.mode == 'sort') {
@@ -617,7 +622,7 @@ Forms.prototype.popUp = function (item, params) {
 Forms.prototype.submitAjax = function (form) {
   inji.Ui.editors.beforeSubmit(form);
   var form = $(form);
-  var container = form.parent();
+  var container = form.parent().parent();
   var btn = form.find('button');
   btn.text('Подождите');
   btn[0].disabled = true;

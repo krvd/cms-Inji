@@ -90,6 +90,13 @@ class DataManager extends \Object
         }
 
         $buttons = [];
+        if (!empty($this->managerOptions['sortMode'])) {
+            $buttons[] = [
+                'class' => 'modeBtn',
+                'data-mode' => 'sort',
+                'text' => 'Сортировать',
+            ];
+        }
         if (!empty($this->managerOptions['filters'])) {
             $buttons[] = [
                 'text' => 'Фильтры',
@@ -295,12 +302,17 @@ class DataManager extends \Object
             }
         }
         if ($model && !empty($params['relation'])) {
+            $relation = $model::getRelation($params['relation']);
             $items = $model->$params['relation']($queryParams);
         } else {
+            $relation = false;
             $items = $modelName::getList($queryParams);
         }
         $rows = [];
-        foreach ($items as $key => $item) {
+        foreach ($items as $item) {
+            if ($relation && !empty($relation['relModel'])) {
+                $item = $relation['relModel']::get([[$relation['relModel']::index(), $item->id], [$model->index(), $model->id]]);
+            }
             $row = [];
             if (!empty($this->managerOptions['groupActions'])) {
                 $row[] = '<input type ="checkbox" name = "pk[]" value =' . $item->pk() . '>';
