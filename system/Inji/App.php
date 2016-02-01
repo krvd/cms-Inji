@@ -13,8 +13,8 @@ class App
     /**
      * static instances
      */
-    static public $cur = null;
-    static public $primary = null;
+    public static $cur = null;
+    public static $primary = null;
     private $_objects = [];
 
     /**
@@ -38,7 +38,7 @@ class App
      * 
      * @param array $preSet
      */
-    function __construct($preSet = [])
+    public function __construct($preSet = [])
     {
         foreach ($preSet as $key => $value) {
             $this->{$key} = $value;
@@ -51,7 +51,7 @@ class App
      * @param string $className
      * @return object
      */
-    function getObject($className, $params = [])
+    public function getObject($className, $params = [])
     {
         $paramsStr = serialize($params);
         $className = ucfirst($className);
@@ -67,7 +67,7 @@ class App
      * @param string $moduleName
      * @return mixed
      */
-    function findModuleClass($moduleName)
+    public function findModuleClass($moduleName)
     {
         $paths = Module::getModulePaths($moduleName);
         foreach ($paths as $path) {
@@ -93,7 +93,7 @@ class App
         return false;
     }
 
-    function isLoaded($moduleName)
+    public function isLoaded($moduleName)
     {
         return !empty($this->_objects[$moduleName]);
     }
@@ -104,7 +104,7 @@ class App
      * @param string $className
      * @return mixed
      */
-    function loadObject($className, $params = [])
+    public function loadObject($className, $params = [])
     {
         $paramsStr = serialize($params);
         $moduleClassName = $this->findModuleClass($className);
@@ -128,7 +128,7 @@ class App
      * @param string $className
      * @return object|null
      */
-    function __get($className)
+    public function __get($className)
     {
         return $this->getObject($className);
     }
@@ -140,7 +140,7 @@ class App
      * @param array $params
      * @return object|null
      */
-    function __call($className, $params)
+    public function __call($className, $params)
     {
         return $this->getObject($className, $params);
     }
