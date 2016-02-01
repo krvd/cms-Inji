@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Callbacks module
  *
@@ -11,35 +12,37 @@ class Callbacks extends Module
 {
     public function init()
     {
-        if (!empty($_POST['Callbacks'])) {
+        $callbacksData = filter_input(INPUT_POST, 'Callbacks', FILTER_REQUIRE_ARRAY);
+        if (!empty($callbacksData)) {
             $callback = new \Callbacks\Callback();
             $error = false;
-            if (empty($_POST['Callbacks']['text'])) {
+            if (empty($callbacksData['text'])) {
                 $error = true;
                 Msg::add('Вы не написали текст отзыва');
             } else {
-                $callback->text = nl2br(htmlspecialchars($_POST['Callbacks']['text']));
+                $callback->text = nl2br(htmlspecialchars($callbacksData['text']));
             }
-            if (empty($_POST['Callbacks']['name'])) {
+            if (empty($callbacksData['name'])) {
                 $error = true;
                 Msg::add('Вы не указали свое имя');
             } else {
-                $callback->name = htmlspecialchars($_POST['Callbacks']['name']);
+                $callback->name = htmlspecialchars($callbacksData['name']);
             }
-            if (empty($_POST['Callbacks']['phone'])) {
+            if (empty($callbacksData['phone'])) {
                 $error = true;
                 Msg::add('Вы не указали свой номер телефона');
             } else {
-                $callback->phone = htmlspecialchars($_POST['Callbacks']['phone']);
+                $callback->phone = htmlspecialchars($callbacksData['phone']);
             }
-            if (!empty($_FILES['Callbacks']['tmp_name']['photo'])) {
+            $files = filter_var($_FILES['Callbacks'], FILTER_REQUIRE_ARRAY);
+            if (!empty($files['tmp_name']['photo'])) {
                 $callback->image_file_id = App::$cur->files->upload([
-                    'name' => $_FILES['Callbacks']['name']['photo'],
-                    'tmp_name' => $_FILES['Callbacks']['tmp_name']['photo'],
+                    'name' => $files['name']['photo'],
+                    'tmp_name' => $files['tmp_name']['photo'],
                 ]);
             }
-            $callback->mail = htmlspecialchars($_POST['Callbacks']['mail']);
-            $callback->type_id = (int) $_POST['Callbacks']['type'];
+            $callback->mail = htmlspecialchars($callbacksData['mail']);
+            $callback->type_id = (int) $callbacksData['type'];
             if (!$error) {
                 $callback->save();
                 if (!empty(App::$cur->config['site']['email'])) {

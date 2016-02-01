@@ -12,7 +12,7 @@ class AppsController extends Controller
 {
     public function configureAction()
     {
-        $appOptions = Apps\App::get($_GET['item_pk']);
+        $appOptions = Apps\App::get(filter_input(INPUT_GET, 'item_pk', FILTER_SANITIZE_NUMBER_INT));
         $app = new App();
         $app->name = $appOptions->name;
         $app->system = true;
@@ -30,8 +30,8 @@ class AppsController extends Controller
             if (!empty($info['configure'])) {
                 $config = Config::module($module, false, $app);
                 foreach ($info['configure'] as $optionName => $params) {
-                    if (!empty($_POST[$optionName])) {
-                        $config[$optionName] = $_POST[$optionName];
+                    if (filter_input(INPUT_POST, $optionName)) {
+                        $config[$optionName] = filter_input(INPUT_POST, $optionName);
                         Config::save('module', $config, $module, $app);
                     }
                     $input = [];

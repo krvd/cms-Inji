@@ -27,6 +27,7 @@ class Value
         $type = !empty($colInfo['colParams']['type']) ? $colInfo['colParams']['type'] : 'string';
         switch ($type) {
             case 'dateTime':
+                //fall
             case 'date':
                 $yy = (int) substr($this->model->{$this->valueKey}, 0, 4);
                 $mm = (int) substr($this->model->{$this->valueKey}, 5, 2);
@@ -45,7 +46,6 @@ class Value
                             $sourceValue = $colInfo['colParams']['model']::get($this->model->{$this->valueKey});
                         }
                         return $sourceValue ? $sourceValue->name() : 'Не задано';
-                        break;
                     case 'array':
                         return !empty($colInfo['colParams']['sourceArray'][$this->model->{$this->valueKey}]) ? $colInfo['colParams']['sourceArray'][$this->model->{$this->valueKey}] : 'Не задано';
                     case 'method':

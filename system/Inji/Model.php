@@ -603,12 +603,12 @@ class Model
     /**
      * Get single object from data base
      * 
-     * @param array $param
+     * @param mixed $param
      * @param string $col
      * @param array $options
      * @return boolean|\Model
      */
-    public static function get($param = null, $col = null, $options = [])
+    public static function get($param, $col = null, $options = [])
     {
         if (static::$storage['type'] == 'moduleConfig') {
             return static::getFromModuleStorage($param, $col, $options);

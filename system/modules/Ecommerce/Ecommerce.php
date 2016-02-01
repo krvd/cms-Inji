@@ -124,23 +124,6 @@ class Ecommerce extends Module
         return $cart;
     }
 
-    public function getBreadcrumb()
-    {
-        $bread = [];
-        $bread['/ecommerce'] = 'Онлайн-магазин';
-        if (!empty($this->view->content_data['catalog'])) {
-
-            $ids = explode('/', $this->view->content_data['catalog']->catalog_tree_path);
-            foreach ($ids as $id) {
-                if ($catalog = Catalog::get((int) $id)) {
-                    $bread['/ecommerce/itemList/' . $id] = $catalog->catalog_name;
-                }
-            }
-            $bread['/ecommerce/itemList/' . $this->view->content_data['catalog']->catalog_id] = $this->view->content_data['catalog']->catalog_name;
-        }
-        return $bread;
-    }
-
     public function parseOptions($options = [])
     {
         $selectOptions = [
@@ -235,7 +218,7 @@ class Ecommerce extends Module
                     $searchArr[] = ['search_index', '%' . $part . '%', 'LIKE'];
                 }
             }
-            if ($searchArr) {
+            if (!empty($searchArr)) {
                 $selectOptions['where'][] = $searchArr;
             }
         }
@@ -286,9 +269,9 @@ class Ecommerce extends Module
      * @param array $params
      * @return array
      */
-    public function getItems($options = [])
+    public function getItems($params = [])
     {
-        $selectOptions = $this->parseOptions($options);
+        $selectOptions = $this->parseOptions($params);
         $items = Ecommerce\Item::getList($selectOptions);
         return $items;
     }
@@ -299,9 +282,9 @@ class Ecommerce extends Module
      * @param array $params
      * @return int
      */
-    public function getItemsCount($options = [])
+    public function getItemsCount($params = [])
     {
-        $selectOptions = $this->parseOptions($options);
+        $selectOptions = $this->parseOptions($params);
         $selectOptions['distinct'] = \Ecommerce\Item::index();
         $counts = Ecommerce\Item::getCount($selectOptions);
         if (is_array($counts)) {

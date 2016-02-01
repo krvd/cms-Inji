@@ -75,23 +75,6 @@ class EcommerceController extends adminController
         }
     }
 
-    public function parseWebAction($site = '', $catalogNum = '')
-    {
-        set_time_limit(0);
-        if ($site) {
-            $catalogs = $this->Ecommerce->$site->getCatalogs($catalogNum);
-        }
-        $this->view->page(compact('site', 'catalogs'));
-    }
-
-    public function processParseWebAction($site = '', $catalogNum = '')
-    {
-        set_time_limit(0);
-        if ($site) {
-            echo $this->Ecommerce->$site->processParseWeb($catalogNum);
-        }
-    }
-
     public function newOrdersSubscribeAction()
     {
         $this->Notifications->subscribe('Ecommerce-orders');

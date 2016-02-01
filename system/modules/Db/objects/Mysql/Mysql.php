@@ -101,8 +101,8 @@ class Mysql extends \Object
         if (!$table || !$name) {
             return false;
         }
-
-        return $this->query("ALTER TABLE `{$this->db_name}`.`{$this->table_prefix}{$table}` DROP `{$name}`");
+        $query = new Mysql\Query($this);
+        return $query->query("ALTER TABLE `{$this->db_name}`.`{$this->table_prefix}{$table}` DROP `{$name}`");
     }
 
     public function getTables()

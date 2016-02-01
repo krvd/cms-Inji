@@ -279,6 +279,7 @@ class Query extends \Object
                 $query .= ") ENGINE = INNODB CHARACTER SET utf8 COLLATE utf8_general_ci";
                 break;
             case 'UPDATE':
+                $updates = [];
                 foreach ($this->cols as $key => $item) {
                     if (!in_array($item, array('CURRENT_TIMESTAMP'))) {
                         $this->params[] = $item;
