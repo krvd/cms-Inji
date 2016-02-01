@@ -154,7 +154,7 @@ class DataManager extends \Object
     /**
      * Get rows for manager
      * 
-     * @param string $params
+     * @param array $params
      * @param object $model
      * @return type
      */

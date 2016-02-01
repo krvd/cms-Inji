@@ -194,17 +194,8 @@ class ActiveForm extends \Object
             $input->colName = $colName;
             $input->colParams = $options;
             $input->draw();
-            return true;
-            if (!empty($options['minDate'])) {
-                $inputOptions['minDate'] = $options['minDate'];
-            }
-            if ($type == 'map') {
-                $inputOptions['value'] = [
-                    'lat' => $this->model ? $this->model->{$colName . '_lat'} : 0,
-                    'lng' => $this->model ? $this->model->{$colName . '_lng'} : 0,
-                ];
-            }
         }
+        return true;
     }
 
     public static function getOptionsList($inputParams, $params = [], $modelName = false, $aditionalInputNamePrefix = 'aditional', $options = [])
@@ -266,7 +257,6 @@ class ActiveForm extends \Object
                         $values[$key] = $item->name();
                     }
                 }
-                $values = $values;
                 break;
         }
         foreach ($values as $key => $value) {

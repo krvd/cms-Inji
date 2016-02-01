@@ -46,9 +46,9 @@ class Template extends \Object
     /**
      * Template config
      * 
-     * @var string
+     * @var array
      */
-    public $config = '';
+    public $config = [];
 
     /**
      * Current template page for rendering
@@ -60,7 +60,7 @@ class Template extends \Object
     /**
      * Current template page path for rendering
      *
-     * @var string
+     * @var string|boolean
      */
     public $pagePath = '';
 
@@ -81,7 +81,7 @@ class Template extends \Object
     /**
      * Current content file path for rendering
      * 
-     * @var string
+     * @var string|boolean
      */
     public $contentPath = '';
 

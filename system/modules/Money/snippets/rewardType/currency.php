@@ -24,7 +24,7 @@ $levelTypes = [
 return $levelTypes[$level->params['type']->value] . ': ' . $level->params['amount']->value . ' ' . ($level->params['currency_id']->value ? \Money\Currency::get($level->params['currency_id']->value)->acronym() : '');
 },
     'rewarder' => function($reward, $sums, $user, $rootUser, $level, $rewardGet) {
-$wallets = $this->getUserWallets($user->id);
+$wallets = \App::$cur->money->getUserWallets($user->id);
 if (!empty($wallets[$level->params['currency_id']->value])) {
     $amount = 0;
     switch ($level->params['type']->value) {

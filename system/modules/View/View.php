@@ -198,7 +198,7 @@ class View extends \Module
         } elseif (empty($params['template']) && !empty($params['file'])) {
             $href = ($this->app->type != 'app' ? '/' . $this->app->name : '' ) . $params['file'];
         } elseif (!empty($params['template']) && !empty($params['file'])) {
-            $href = $this->app->templatesPath . "/{$this->template->name}/{$type}/{$js['file']}";
+            $href = $this->app->templatesPath . "/{$this->template->name}/{$type}/{$params['file']}";
         }
         return $href;
     }
@@ -523,12 +523,6 @@ class View extends \Module
                 }
                 break;
         }
-    }
-
-    public function timegen()
-    {
-        $this->current_function = 'TIMEGEN';
-        echo round(( microtime(true) - INJI_TIME_START), 4);
     }
 
     public function customAsset($type, $asset, $lib = false)
