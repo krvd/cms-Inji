@@ -90,6 +90,13 @@ class DataManager extends \Object
         }
 
         $buttons = [];
+        if (!empty($this->managerOptions['sortMode'])) {
+            $buttons[] = [
+                'class' => 'modeBtn',
+                'data-mode' => 'sort',
+                'text' => 'Сортировать',
+            ];
+        }
         if (!empty($this->managerOptions['filters'])) {
             $buttons[] = [
                 'text' => 'Фильтры',
