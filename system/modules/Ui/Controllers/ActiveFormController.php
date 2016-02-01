@@ -14,7 +14,7 @@ class ActiveFormController extends Controller
     {
         $result = new Server\Result();
         $searchString = filter_input(INPUT_GET, 'search', FILTER_SANITIZE_STRING);
-        $searchStr = trim(preg_replace('![^A-zА-я0-9@-_\. ]!iSu', ' ', urldecode($searchStr)));
+        $searchString = trim(preg_replace('![^A-zА-я0-9@-_\. ]!iSu', ' ', urldecode($searchString)));
         if (!$searchString) {
             $result->content = [];
             $result->send();
@@ -52,7 +52,7 @@ class ActiveFormController extends Controller
         ];
 
         $searchArr = [];
-        foreach (explode(' ', $searchStr) as $part) {
+        foreach (explode(' ', $searchString) as $part) {
             $colWhere = [];
             $first = true;
             foreach ($inputs[$inputName]['cols'] as $col) {

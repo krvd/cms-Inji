@@ -201,7 +201,7 @@ class ActiveForm extends \Object
         return true;
     }
 
-    public static function getOptionsList($inputParams, $params = [], $modelName = false, $aditionalInputNamePrefix = 'aditional', $options = [])
+    public static function getOptionsList($inputParams, $params = [], $modelName = '', $aditionalInputNamePrefix = 'aditional', $options = [])
     {
         $values = [];
         switch ($inputParams['source']) {

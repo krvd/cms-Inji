@@ -12,44 +12,49 @@ class DataManagerController extends Controller
 {
     public function parseRequest()
     {
+        $args = array(
+            'params' => [
+                'flags' => FILTER_REQUIRE_ARRAY,
+            ],
+        );
         $return = [];
+        $return['params'] = UserRequest::get('params', 'array', []);
 
-        $return['params'] = filter_var(INPUT_GET, 'params', FILTER_FORCE_ARRAY);
-        $item = filter_var(INPUT_GET, 'item', FILTER_SANITIZE_STRING);
+        $item = UserRequest::get('modelName', 'string', '');
 
         if (strpos($item, ':')) {
             $raw = explode(':', $item);
             $return['modelName'] = $raw[0];
-            $return['model'] = $modelName::get($raw[1], $modelName::index(), $params);
+            $return['model'] = $return['modelName']::get($raw[1], $return['modelName']::index(), $return['params']);
         } else {
             $return['modelName'] = $item;
             $return['model'] = null;
         }
         if (!empty($return['params']['relation'])) {
-            $relation = $modelName::getRelation($return['params']['relation']);
+            $relation = $return['modelName']::getRelation($return['params']['relation']);
             if (!empty($relation['type']) && $relation['type'] == 'telModlel') {
                 $return['modelName'] = $relation['relModel'];
             } else {
                 $return['modelName'] = $relation['model'];
             }
         }
-        $return['params']['filters'] = filter_var(INPUT_GET, 'filters', FILTER_FORCE_ARRAY);
-        $return['params']['sortered'] = filter_var(INPUT_GET, 'sortered', FILTER_FORCE_ARRAY);
-        $return['params']['mode'] = filter_var(INPUT_GET, 'mode', FILTER_SANITIZE_STRING);
-        $return['params']['all'] = filter_var(INPUT_GET, 'all', FILTER_VALIDATE_BOOLEAN);
+        $return['params']['filters'] = UserRequest::get('filters', 'array', []);
+        $return['params']['sortered'] = UserRequest::get('sortered', 'array', []);
+        $return['params']['mode'] = UserRequest::get('mode', 'string', '');
+        $return['params']['all'] = UserRequest::get('all', 'bool', false);
 
-        $return['key'] = filter_var(INPUT_GET, 'key', FILTER_SANITIZE_NUMBER_INT);
-        $return['col'] = filter_var(INPUT_GET, 'col', FILTER_SANITIZE_STRING);
-        $return['col_value'] = filter_var(INPUT_GET, 'col_value', FILTER_SANITIZE_STRING);
+        $return['key'] = UserRequest::get('key', 'int', 0);
+        $return['col'] = UserRequest::get('col', 'string', '');
+        $return['col_value'] = UserRequest::get('col_value', 'string', '');
 
-        $return['action'] = filter_var(INPUT_GET, 'action', FILTER_SANITIZE_STRING);
-        $return['ids'] = filter_var(INPUT_GET, 'ids', FILTER_SANITIZE_STRING);
-        $return['adInfo'] = filter_var(INPUT_GET, 'adInfo', FILTER_FORCE_ARRAY);
+        $return['action'] = UserRequest::get('action', 'string', '');
+        $return['ids'] = UserRequest::get('ids', 'string', '');
+        $return['adInfo'] = UserRequest::get('adInfo', 'array', []);
 
-        $return['download'] = filter_var(INPUT_GET, 'download', FILTER_VALIDATE_BOOLEAN);
-        $return['silence'] = filter_var(INPUT_GET, 'silence', FILTER_VALIDATE_BOOLEAN);
+        $return['download'] = UserRequest::get('download', 'bool', false);
+        $return['silence'] = UserRequest::get('silence', 'bool', false);
 
-        $return['managerName'] = filter_var(INPUT_GET, 'managerName', FILTER_SANITIZE_STRING);
+        $return['managerName'] = UserRequest::get('managerName', 'string', 'manager');
         if (!$return['managerName']) {
             $return['managerName'] = 'manager';
         }
@@ -57,7 +62,7 @@ class DataManagerController extends Controller
         return $return;
     }
 
-    public function indexAction($action = '')
+    public function indexAction()
     {
         $result = new Server\Result();
 
@@ -136,7 +141,7 @@ class DataManagerController extends Controller
         $result->content['pages'] = '';
 
         if (!$request['params']['all']) {
-            $pages = $dataManager->getPages($request['params'], $model);
+            $pages = $dataManager->getPages($request['params'], $request['model']);
             if ($pages) {
                 $pages->draw();
             }
@@ -189,10 +194,10 @@ class DataManagerController extends Controller
         $dataManager = new Ui\DataManager($request['modelName'], $request['managerName']);
 
         if ($dataManager->checkAccess()) {
-            $model = $modelName::get($request['key'], $request['modelName']::index(), $request['params']);
+            $model = $request['modelName']::get($request['key'], $request['modelName']::index(), $request['params']);
             if ($model) {
                 $model->{$request['col']} = $request['col_value'];
-                $model->save($params);
+                $model->save($request['params']);
             }
         }
         $result = new Server\Result();
@@ -245,7 +250,7 @@ class DataManagerController extends Controller
         $request = $this->parseRequest();
 
         $dataManager = new Ui\DataManager($request['modelName'], $request['managerName']);
-        
+
         if ($dataManager->checkAccess() && !empty($dataManager->managerOptions['categorys'])) {
             $categoryModel = $dataManager->managerOptions['categorys']['model'];
             $model = $categoryModel::get($request['key'], $categoryModel::index(), $request['params']);

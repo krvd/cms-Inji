@@ -170,11 +170,12 @@ class Query extends \Object
      * @param string $operation
      * @param string $concatenation
      */
-    public function buildWhere($where = '', $value = '', $operation = false, $concatenation = 'AND')
+    public function buildWhere($where = '', $value = '', $operation = '=', $concatenation = 'AND')
     {
         if (!is_array($where)) {
-            if (!$operation)
+            if (empty($operation)) {
                 $operation = '=';
+            }
 
             if ($concatenation === false)
                 $concatenation = 'AND';

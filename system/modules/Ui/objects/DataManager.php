@@ -34,7 +34,7 @@ class DataManager extends \Object
     public function __construct($modelName, $dataManager = 'manager')
     {
         if (!class_exists($modelName)) {
-            throw Exception("model {$modelName} not exists");
+            throw new \Exception("model {$modelName} not exists");
         }
 
         $this->modelName = $modelName;
@@ -46,7 +46,7 @@ class DataManager extends \Object
         $this->managerOptions = $dataManager;
 
         if (!$this->managerOptions || !is_array($this->managerOptions)) {
-            throw Exception('empty DataManager');
+            throw new \Exception('empty DataManager');
         }
 
         if (!empty($this->managerOptions['name'])) {
