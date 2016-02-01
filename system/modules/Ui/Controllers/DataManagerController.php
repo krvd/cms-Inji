@@ -32,7 +32,7 @@ class DataManagerController extends Controller
             $params['relation'] = $_GET['params']['relation'];
             $relations = $modelName::relations();
             $type = !empty($relations[$_GET['params']['relation']]['type']) ? $relations[$_GET['params']['relation']]['type'] : 'to';
-            
+
             switch ($type) {
                 case 'relModel':
                     $modelName = $relations[$_GET['params']['relation']]['relModel'];
@@ -72,8 +72,8 @@ class DataManagerController extends Controller
         if (!empty($_GET['params']['relation'])) {
             $params['relation'] = $_GET['params']['relation'];
             $relations = $modelName::relations();
-                        $type = !empty($relations[$_GET['params']['relation']]['type']) ? $relations[$_GET['params']['relation']]['type'] : 'to';
-            
+            $type = !empty($relations[$_GET['params']['relation']]['type']) ? $relations[$_GET['params']['relation']]['type'] : 'to';
+
             switch ($type) {
                 case 'relModel':
                     $modelName = $relations[$_GET['params']['relation']]['relModel'];
@@ -206,7 +206,15 @@ class DataManagerController extends Controller
             if (!empty($params['relation'])) {
                 $relations = $modelName::relations();
 
-                $modelName = $relations[$params['relation']]['model'];
+                $type = !empty($relations[$_GET['params']['relation']]['type']) ? $relations[$_GET['params']['relation']]['type'] : 'to';
+
+                switch ($type) {
+                    case 'relModel':
+                        $modelName = $relations[$_GET['params']['relation']]['relModel'];
+                        break;
+                    default:
+                        $modelName = $relations[$_GET['params']['relation']]['model'];
+                }
             }
         } else {
             $params = [];
@@ -241,8 +249,15 @@ class DataManagerController extends Controller
             $params = $_GET['params'];
             if (!empty($_GET['params']['relation'])) {
                 $relations = $modelName::relations();
+                $type = !empty($relations[$_GET['params']['relation']]['type']) ? $relations[$_GET['params']['relation']]['type'] : 'to';
 
-                $modelName = $relations[$_GET['params']['relation']]['model'];
+                switch ($type) {
+                    case 'relModel':
+                        $modelName = $relations[$_GET['params']['relation']]['relModel'];
+                        break;
+                    default:
+                        $modelName = $relations[$_GET['params']['relation']]['model'];
+                }
             }
         }
         $dataManager = new Ui\DataManager($modelName, $_GET['managerName']);
@@ -277,7 +292,15 @@ class DataManagerController extends Controller
             if (!empty($params['relation'])) {
                 $relations = $modelName::relations();
 
-                $modelName = $relations[$params['relation']]['model'];
+                $type = !empty($relations[$_GET['params']['relation']]['type']) ? $relations[$_GET['params']['relation']]['type'] : 'to';
+
+                switch ($type) {
+                    case 'relModel':
+                        $modelName = $relations[$_GET['params']['relation']]['relModel'];
+                        break;
+                    default:
+                        $modelName = $relations[$_GET['params']['relation']]['model'];
+                }
             }
         } else {
             $params = [];
