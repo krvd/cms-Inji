@@ -21,6 +21,9 @@ class DataManagerController extends Controller
         $return['params'] = UserRequest::get('params', 'array', []);
 
         $item = UserRequest::get('modelName', 'string', '');
+        if (!$item) {
+            $item = UserRequest::get('item', 'string', '');
+        }
 
         if (strpos($item, ':')) {
             $raw = explode(':', $item);
