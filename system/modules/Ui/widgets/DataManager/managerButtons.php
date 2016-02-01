@@ -2,14 +2,12 @@
 
 $html = '';
 foreach ($buttons as $button) {
-    $html .= '<a class = "btn btn-primary btn-sm"';
-    if (!empty($button['href'])) {
-        $html .= " href = '{$button['href']}'";
+    if (!empty($button['class'])) {
+        $button['class'] = 'btn btn-primary btn-sm ' . $button['class'];
+    } else {
+        $button['class'] = 'btn btn-primary btn-sm';
     }
-    if (!empty($button['onclick'])) {
-        $html .= " onclick = '{$button['onclick']}'";
-    }
-    $html .= ">{$button['text']}</a> ";
+    $html .= Html::el('a', $button, $button['text']);
 }
 echo $html;
 ?>

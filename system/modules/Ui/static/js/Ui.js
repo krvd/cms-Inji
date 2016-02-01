@@ -303,7 +303,7 @@ function DataManager(element) {
     }
   });
   if (this.options.sortMode) {
-    $(this.element).find('.modesContainer').on('click', 'a', function () {
+    $(this.element).find('.modeBtn').on('click', function () {
       if (instance.mode != $(this).data('mode')) {
         instance.mode = $(this).data('mode');
         instance.all = 1;
@@ -498,7 +498,11 @@ DataManager.prototype.load = function (options) {
       dataManager.element.find('.pagesContainer').html(data.pages);
       //dataManager.flowPages();
       if (dataManager.options.sortMode) {
-        dataManager.element.find('.modesContainer').html('<a class ="btn btn-xs btn-default" data-mode="sort">' + (dataManager.mode != 'sort' ? 'Включить' : 'Выключить') + ' режим сортировки</a>');
+        if (dataManager.mode != 'sort') {
+          dataManager.element.find('.modeBtn').removeClass('active');
+        } else {
+          dataManager.element.find('.modeBtn').addClass('active');
+        }
       }
       $(instance.element).find('tbody').sortable().sortable("disable");
       if (dataManager.mode == 'sort') {
