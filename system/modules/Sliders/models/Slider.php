@@ -44,7 +44,7 @@ class Slider extends \Model
         'user_id' => 'Создатель',
         'image_file_id' => 'Изображение',
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'name' => 'Слайдеры',
             'cols' => [
@@ -52,7 +52,7 @@ class Slider extends \Model
             ]
         ]
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['name', 'image_file_id'],
@@ -61,7 +61,7 @@ class Slider extends \Model
         ]
     ];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'slides' => [

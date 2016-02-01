@@ -12,7 +12,7 @@ class Users extends Module
 {
     public $cookiePrefix = '';
 
-    function init()
+    public function init()
     {
         if (!empty($this->config['cookieSplit'])) {
             $this->cookiePrefix = \App::$cur->type;
@@ -39,7 +39,7 @@ class Users extends Module
         }
     }
 
-    function logOut($redirect = true)
+    public function logOut($redirect = true)
     {
         if (!empty($_COOKIE[$this->cookiePrefix . "_user_session_hash"]) && !empty($_COOKIE[$this->cookiePrefix . "_user_id"])) {
             $session = Users\Session::get([
@@ -59,7 +59,7 @@ class Users extends Module
         }
     }
 
-    function cuntinueSession($hash, $userId)
+    public function cuntinueSession($hash, $userId)
     {
         $session = Users\Session::get([
                     ['user_id', $userId],
@@ -92,7 +92,7 @@ class Users extends Module
         }
     }
 
-    function passre($user_mail)
+    public function passre($user_mail)
     {
         $user = $this->get($user_mail, 'mail');
         if (!$user) {
@@ -111,7 +111,7 @@ class Users extends Module
         Tools::redirect('/', 'На указанный почтовый ящик была выслана инструкция по восстановлению пароля', 'success');
     }
 
-    function passrecont($hash)
+    public function passrecont($hash)
     {
         $passre = Users\Passre::get([['hash', $hash]]);
         if ($passre) {
@@ -130,7 +130,7 @@ class Users extends Module
         }
     }
 
-    function autorization($login, $pass, $ltype = 'login', $noMsg = true)
+    public function autorization($login, $pass, $ltype = 'login', $noMsg = true)
     {
 
         sleep(3); //simple anti brute
@@ -166,7 +166,7 @@ class Users extends Module
         return false;
     }
 
-    function newSession($user)
+    public function newSession($user)
     {
         $hash = Tools::randomString(255);
 
@@ -187,7 +187,7 @@ class Users extends Module
         }
     }
 
-    function get($idn = false, $ltype = 'id')
+    public function get($idn = false, $ltype = 'id')
     {
         if (!$idn)
             return false;
@@ -199,12 +199,12 @@ class Users extends Module
         else
             $user = Users\User::get($idn, 'mail');
         if (!$user)
-            return array();
+            return [];
 
         return $user;
     }
 
-    function registration($data, $autorization = false)
+    public function registration($data, $autorization = false)
     {
         extract($data);
 
@@ -312,17 +312,17 @@ class Users extends Module
         return $user->id;
     }
 
-    function hashpass($pass)
+    public function hashpass($pass)
     {
         return password_hash($pass, PASSWORD_DEFAULT);
     }
 
-    function verifypass($pass, $hash)
+    public function verifypass($pass, $hash)
     {
         return password_verify($pass, $hash);
     }
 
-    function getUserPartners($user, $levels = 0)
+    public function getUserPartners($user, $levels = 0)
     {
         $return = [
             'users' => [],

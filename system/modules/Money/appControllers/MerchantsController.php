@@ -10,7 +10,7 @@
  */
 class MerchantsController extends Controller
 {
-    function testPayAction()
+    public function testPayAction()
     {
 
         $this->module->goToMerchant([
@@ -26,7 +26,7 @@ class MerchantsController extends Controller
         ]);
     }
 
-    function reciverAction($system = '', $status = '')
+    public function reciverAction($system = '', $status = '')
     {
         $postData = [];
         foreach ($_POST as $key => $text) {
@@ -62,7 +62,7 @@ class MerchantsController extends Controller
         $this->module->reciver($postData, $system, $status, $request);
     }
 
-    function payAction($pay_id = 0)
+    public function payAction($pay_id = 0)
     {
         $pay = Money\Pay::get([['id', $pay_id], ['user_id', Users\User::$cur->id]]);
         if (!$pay) {
@@ -86,7 +86,7 @@ class MerchantsController extends Controller
         }
     }
 
-    function cancelPayAction($pay_id = 0)
+    public function cancelPayAction($pay_id = 0)
     {
         $pay = Money\Pay::get([['id', $pay_id], ['user_id', Users\User::$cur->id]]);
         if (!$pay) {
@@ -97,7 +97,7 @@ class MerchantsController extends Controller
         Tools::redirect('/users/cabinet/wallets', 'Платеж был отменен');
     }
 
-    function goAction($pay_id, $merchant_id, $currency_id)
+    public function goAction($pay_id, $merchant_id, $currency_id)
     {
         $pay = Money\Pay::get($pay_id);
         if (!$pay) {

@@ -10,7 +10,7 @@
  */
 class Adapter
 {
-    function el($name, $option = [])
+    public function el($name, $option = [])
     {
         $className = get_called_class() . '\\' . $name;
         if (class_exists($className)) {
@@ -18,12 +18,12 @@ class Adapter
         }
     }
 
-    function __get($name)
+    public function __get($name)
     {
         return $this->el($name);
     }
 
-    function __call($name, $arguments)
+    public function __call($name, $arguments)
     {
         return $this->el($name, $arguments);
     }

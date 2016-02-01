@@ -9,7 +9,7 @@
  */
 class Callbacks extends Module
 {
-    function init()
+    public function init()
     {
         if (!empty($_POST['Callbacks'])) {
             $callback = new \Callbacks\Callback();
@@ -52,7 +52,7 @@ class Callbacks extends Module
         }
     }
 
-    function viewsCategoryList($inherit = true)
+    public function viewsCategoryList($inherit = true)
     {
         $return = [];
         if ($inherit) {
@@ -70,7 +70,7 @@ class Callbacks extends Module
         return $return;
     }
 
-    function templatesCategoryList()
+    public function templatesCategoryList()
     {
         $return = [
             'inherit' => 'Как у родителя',

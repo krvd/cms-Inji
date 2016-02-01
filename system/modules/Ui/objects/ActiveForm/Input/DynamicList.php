@@ -13,7 +13,7 @@ namespace Ui\ActiveForm\Input;
 
 class DynamicList extends \Ui\ActiveForm\Input
 {
-    function draw()
+    public function draw()
     {
         $inputName = $this->colName();
         $inputLabel = $this->colLabel();
@@ -26,7 +26,7 @@ class DynamicList extends \Ui\ActiveForm\Input
         return true;
     }
 
-    function parseRequest($request)
+    public function parseRequest($request)
     {
         $modelName = $this->modelName;
         $rels = [];
@@ -57,7 +57,7 @@ class DynamicList extends \Ui\ActiveForm\Input
         }
     }
 
-    function value()
+    public function value()
     {
         $values = [];
         if ($this->activeForm->model) {
@@ -70,7 +70,7 @@ class DynamicList extends \Ui\ActiveForm\Input
         return $values;
     }
 
-    function getCols()
+    public function getCols()
     {
         $modelName = $this->modelName;
         $relation = $modelName::getRelation($this->colParams['relation']);

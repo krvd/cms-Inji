@@ -13,7 +13,7 @@ namespace Users;
 
 class Session extends \Model
 {
-    static $cols = [
+    public static $cols = [
         'hash' => ['type' => 'text'],
         'ip' => ['type' => 'text'],
         'agent' => ['type' => 'text'],
@@ -21,7 +21,7 @@ class Session extends \Model
         'date_create' => ['type' => 'dateTime']
     ];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'user' => [

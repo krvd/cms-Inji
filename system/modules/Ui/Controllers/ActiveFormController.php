@@ -10,7 +10,7 @@
  */
 class ActiveFormController extends Controller
 {
-    function searchAction()
+    public function searchAction()
     {
         $result = new Server\Result();
         if (empty($_GET['search'])) {

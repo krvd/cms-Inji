@@ -13,18 +13,18 @@ namespace Ecommerce\Item;
 
 class Type extends \Model
 {
-    static $objectName = 'Тип товара';
-    static $cols = [
+    public static $objectName = 'Тип товара';
+    public static $cols = [
         'name' => ['type' => 'text'],
         'code' => ['type' => 'text'],
         'electronic' => ['type' => 'bool'],
     ];
-    static $labels = [
+    public static $labels = [
         'name' => 'Название',
         'code' => 'Код',
         'electronic' => 'Электронный',
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'cols' => [
                 'name',
@@ -33,7 +33,7 @@ class Type extends \Model
             ]
         ]
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['name'],

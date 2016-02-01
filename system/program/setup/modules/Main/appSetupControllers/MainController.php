@@ -10,13 +10,13 @@
  */
 class MainController extends Controller
 {
-    function indexAction()
+    public function indexAction()
     {
         $this->view->setTitle('Система');
         $this->view->page();
     }
 
-    function enterAction()
+    public function enterAction()
     {
         $config = Config::share();
         if (!empty($_POST['systemPass'])) {

@@ -13,14 +13,14 @@ namespace Dashboard;
 
 class Comment extends \Model
 {
-    static $objectName = 'Комментарии';
-    static $labels = [
+    public static $objectName = 'Комментарии';
+    public static $labels = [
         'model' => 'Тип ресурса',
         'item_id' => 'Ресурс',
         'user_id' => 'Автор',
         'text' => 'Текст',
     ];
-    static $cols = [
+    public static $cols = [
         'user_id' => [
             'type' => 'relation',
             'relation' => 'user',
@@ -37,7 +37,7 @@ class Comment extends \Model
             ]
         ]
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'cols' => [
                 'model',
@@ -57,7 +57,7 @@ class Comment extends \Model
         ],
     ];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'user' => [

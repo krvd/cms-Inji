@@ -31,7 +31,7 @@ class DataManager extends \Object
      * @param string|array $dataManager
      * @throws Exception
      */
-    function __construct($modelName, $dataManager = 'manager')
+    public function __construct($modelName, $dataManager = 'manager')
     {
         if (!class_exists($modelName)) {
             throw Exception("model {$modelName} not exists");
@@ -66,7 +66,7 @@ class DataManager extends \Object
      * @param string $params
      * @param object $model
      */
-    function getButtons($params = [], $model = null)
+    public function getButtons($params = [], $model = null)
     {
         $formModelName = $modelName = $this->modelName;
         $formParams = [
@@ -117,7 +117,7 @@ class DataManager extends \Object
      * 
      * @return string
      */
-    function getCols()
+    public function getCols()
     {
         $modelName = $this->modelName;
         if (!class_exists($modelName)) {
@@ -158,7 +158,7 @@ class DataManager extends \Object
      * @param object $model
      * @return type
      */
-    function getRows($params = [], $model = null)
+    public function getRows($params = [], $model = null)
     {
         $modelName = $this->modelName;
         if (!class_exists($modelName)) {
@@ -331,7 +331,7 @@ class DataManager extends \Object
         return $rows;
     }
 
-    static function drawCol($item, $colName, $params = [], $dataManager = null, $originalCol = '', $originalItem = null)
+    public static function drawCol($item, $colName, $params = [], $dataManager = null, $originalCol = '', $originalItem = null)
     {
         $modelName = get_class($item);
         if (!class_exists($modelName)) {
@@ -425,7 +425,7 @@ class DataManager extends \Object
         }
     }
 
-    function rowButtons($item, $params)
+    public function rowButtons($item, $params)
     {
         $modelName = $this->modelName;
         if (!class_exists($modelName)) {
@@ -443,7 +443,7 @@ class DataManager extends \Object
         return $buttons;
     }
 
-    function getPages($params = [], $model = null)
+    public function getPages($params = [], $model = null)
     {
         $modelName = $this->modelName;
         if (!class_exists($modelName)) {
@@ -574,7 +574,7 @@ class DataManager extends \Object
         return $pages;
     }
 
-    function preDraw($params = [], $model = null)
+    public function preDraw($params = [], $model = null)
     {
         $modelName = $this->modelName;
         if (!class_exists($modelName)) {
@@ -594,7 +594,7 @@ class DataManager extends \Object
         $this->table->setCols($tableCols);
     }
 
-    function draw($params = [], $model = null)
+    public function draw($params = [], $model = null)
     {
         $modelName = $this->modelName;
         if (!class_exists($modelName)) {
@@ -611,7 +611,7 @@ class DataManager extends \Object
         ]);
     }
 
-    function drawCategorys()
+    public function drawCategorys()
     {
         $modelName = $this->modelName;
         if (!class_exists($modelName)) {
@@ -640,7 +640,7 @@ class DataManager extends \Object
         <?php
     }
 
-    function showCategory($categorys, $category)
+    public function showCategory($categorys, $category)
     {
         $isset = false;
         $class = get_class($category);
@@ -682,7 +682,7 @@ class DataManager extends \Object
      * 
      * @param text $errorText
      */
-    function drawError($errorText)
+    public function drawError($errorText)
     {
         echo $errorText;
     }
@@ -692,7 +692,7 @@ class DataManager extends \Object
      * 
      * @return boolean
      */
-    function checkAccess()
+    public function checkAccess()
     {
         if ($this->managerName == 'manager' && !\Users\User::$cur->isAdmin()) {
             return false;

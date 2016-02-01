@@ -23,27 +23,27 @@ class Table extends \Object
     public $attributes = [];
     public $indexCol = null;
 
-    function setCols($cols)
+    public function setCols($cols)
     {
         $this->cols = $cols;
     }
 
-    function draw()
+    public function draw()
     {
         \App::$cur->view->widget('Ui\Table/body', ['table' => $this]);
     }
 
-    static function drawRow($row)
+    public static function drawRow($row)
     {
         \App::$cur->view->widget('Ui\Table/row', ['row' => $row]);
     }
 
-    function addRow($row)
+    public function addRow($row)
     {
         $this->rows[] = $row;
     }
 
-    function addButton($button)
+    public function addButton($button)
     {
         $this->buttons[] = $button;
     }

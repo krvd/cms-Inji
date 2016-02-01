@@ -13,8 +13,8 @@ namespace Ecommerce;
 
 class Delivery extends \Model
 {
-    static $objectName = 'Доставка';
-    static $cols = [
+    public static $objectName = 'Доставка';
+    public static $cols = [
         'name' => ['type' => 'text'],
         'price' => ['type' => 'decimal'],
         'max_cart_price' => ['type' => 'decimal'],
@@ -23,7 +23,7 @@ class Delivery extends \Model
         'weight' => ['type' => 'number'],
         'info' => ['type' => 'textarea']
     ];
-    static $labels = [
+    public static $labels = [
         'name' => 'Название',
         'price' => 'Стоимость',
         'max_cart_price' => 'Басплатно при',
@@ -31,7 +31,7 @@ class Delivery extends \Model
         'currency_id' => 'Валюта',
         'info' => 'Дополнительная информация'
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'name' => 'Варианты доставки',
             'cols' => [
@@ -43,7 +43,7 @@ class Delivery extends \Model
             'sortMode' => true
         ],
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['name',],
@@ -53,7 +53,7 @@ class Delivery extends \Model
             ]
     ]];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'icon' => [

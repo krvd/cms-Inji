@@ -14,7 +14,7 @@ namespace Callbacks;
 class Callback extends \Model
 {
     public static $objectName = "Отзыв";
-    static $categoryModel = 'Callbacks\Category';
+    public static $categoryModel = 'Callbacks\Category';
     public static $cols = [
         'name' => ['type' => 'text'],
         'profession' => ['type' => 'text'],
@@ -69,7 +69,7 @@ class Callback extends \Model
         ];
     }
 
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'name' => 'Отзывы',
             'cols' => [
@@ -84,7 +84,7 @@ class Callback extends \Model
             'sortMode' => true
         ]
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['name', 'phone'],

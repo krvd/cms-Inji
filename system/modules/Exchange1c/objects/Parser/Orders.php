@@ -15,19 +15,19 @@ class Orders extends \Object
 {
     public $xml = null;
 
-    function __construct($xml)
+    public function __construct($xml)
     {
         $this->xml = $xml;
     }
 
-    function process()
+    public function process()
     {
         if ($this->xml->Документ) {
             $this->parseOrders($this->xml->Документ);
         }
     }
 
-    function parseOrders($orders)
+    public function parseOrders($orders)
     {
         foreach ($orders as $order) {
 
@@ -79,7 +79,7 @@ class Orders extends \Object
         }
     }
 
-    function updateCartItems($cart, $items)
+    public function updateCartItems($cart, $items)
     {
         $itemIds = [];
         $cItems = [];

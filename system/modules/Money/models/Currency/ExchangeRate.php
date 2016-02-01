@@ -13,24 +13,24 @@ namespace Money\Currency;
 
 class ExchangeRate extends \Model
 {
-    static $objectName = 'Курс обмена';
-    static $labels = [
+    public static $objectName = 'Курс обмена';
+    public static $labels = [
         'currency_id' => 'Валюта',
         'target_currency_id' => 'Итоговая валюта',
         'rate' => 'Курс',
     ];
-    static $cols = [
+    public static $cols = [
         'currency_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'currency'],
         'target_currency_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'targetCurrency'],
         'rate' => ['type' => 'text'],
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'name' => 'Курсы обмена',
             'cols' => ['currency_id', 'target_currency_id', 'rate']
         ]
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['currency_id', 'target_currency_id'],
@@ -39,7 +39,7 @@ class ExchangeRate extends \Model
         ]
     ];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'currency' => [
@@ -53,7 +53,7 @@ class ExchangeRate extends \Model
         ];
     }
 
-    function beforeSave()
+    public function beforeSave()
     {
         if ($this->pk()) {
             $cur = ExchangeRate::get($this->pk());

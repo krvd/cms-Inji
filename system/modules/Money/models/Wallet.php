@@ -13,17 +13,17 @@ namespace Money;
 
 class Wallet extends \Model
 {
-    static $cols = [
+    public static $cols = [
         'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
         'currency_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'currency'],
         'amount' => ['type' => 'decimal']
     ];
-    static $labels = [
+    public static $labels = [
         'user_id' => 'Пользователь',
         'currency_id' => 'Валюта'
     ];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'currency' => [
@@ -37,7 +37,7 @@ class Wallet extends \Model
         ];
     }
 
-    function beforeSave()
+    public function beforeSave()
     {
         if ($this->pk()) {
             $cur = Wallet::get($this->pk());
@@ -52,7 +52,7 @@ class Wallet extends \Model
         }
     }
 
-    function diff($amount, $comment = '')
+    public function diff($amount, $comment = '')
     {
         $amount = (float) $amount;
         $query = \App::$cur->db->newQuery();
@@ -67,12 +67,12 @@ class Wallet extends \Model
         $history->save();
     }
 
-    function name()
+    public function name()
     {
         return $this->currency->name();
     }
 
-    function showAmount()
+    public function showAmount()
     {
         switch ($this->currency->round_type) {
             case 'floor':
@@ -84,7 +84,7 @@ class Wallet extends \Model
         }
     }
 
-    function beforeDelete()
+    public function beforeDelete()
     {
         if ($this->id) {
             Wallet\History::deleteList(['wallet_id', $this->id]);

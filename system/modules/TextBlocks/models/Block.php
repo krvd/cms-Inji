@@ -34,7 +34,7 @@ class Block extends \Model
         'text' => 'Текст',
         'date_create' => 'Дата создания'
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'options' => [
                 'access' => [
@@ -50,7 +50,7 @@ class Block extends \Model
             ]
         ]
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'options' => [
                 'access' => [

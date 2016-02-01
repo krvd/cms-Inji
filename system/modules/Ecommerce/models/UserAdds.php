@@ -13,14 +13,14 @@ namespace Ecommerce;
 
 class UserAdds extends \Model
 {
-    static $labels = [
+    public static $labels = [
         'value' => 'Информация'
     ];
-    static $cols = [
+    public static $cols = [
         'value' => ['type' => 'dataManager', 'relation' => 'values'],
     ];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'values' => [

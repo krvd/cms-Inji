@@ -13,7 +13,7 @@ namespace Exchange1c\Mode;
 
 class Query extends \Exchange1c\Mode
 {
-    function process()
+    public function process()
     {
 
         function addToXml($xml, $parent, $nodeName, $text)

@@ -20,7 +20,7 @@ class Input extends \Object
     public $colName = '';
     public $colParams = [];
 
-    function draw()
+    public function draw()
     {
         $inputName = $this->colName();
         $inputLabel = $this->colLabel();
@@ -40,7 +40,7 @@ class Input extends \Object
         return true;
     }
 
-    function parseRequest($request)
+    public function parseRequest($request)
     {
         $colName = empty($this->colParams['col']) ? $this->colName : $this->colParams['col'];
         if (isset($request[$this->colName])) {
@@ -51,7 +51,7 @@ class Input extends \Object
         }
     }
 
-    function value()
+    public function value()
     {
         $value = isset($this->colParams['default']) ? $this->colParams['default'] : '';
         if ($this->activeForm) {
@@ -61,7 +61,7 @@ class Input extends \Object
         return $value;
     }
 
-    function preset()
+    public function preset()
     {
         $preset = !empty($this->activeForm->form['preset'][$this->colName]) ? $this->activeForm->form['preset'][$this->colName] : [];
         if (!empty($this->activeForm->form['userGroupPreset'][\Users\User::$cur->group_id][$this->colName])) {
@@ -83,23 +83,23 @@ class Input extends \Object
         return null;
     }
 
-    function colName()
+    public function colName()
     {
         return "{$this->activeForm->requestFormName}[{$this->activeForm->modelName}][{$this->colName}]";
     }
 
-    function colLabel()
+    public function colLabel()
     {
         $modelName = $this->modelName;
         return ($this->activeForm->model && !empty($modelName::$labels[$this->colName])) ? $modelName::$labels[$this->colName] : (!empty($this->colParams['label']) ? $this->colParams['label'] : $this->colName);
     }
 
-    function readOnly()
+    public function readOnly()
     {
         return !empty($this->activeForm->form['userGroupReadonly'][\Users\User::$cur->group_id]) && in_array($this->colName, $this->activeForm->form['userGroupReadonly'][\Users\User::$cur->group_id]);
     }
 
-    function validate($request)
+    public function validate($request)
     {
         if (empty($request[$this->colName]) && !empty($this->colParams['required'])) {
             throw new \Exception('Вы не заполнили: ' . $this->colLabel());

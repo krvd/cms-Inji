@@ -21,12 +21,7 @@ class Info extends \Model
         'phone' => ['type' => 'text'],
         'country' => ['type' => 'text'],
         'city' => ['type' => 'text'],
-        'user_id' => [
-            'type' => 'select',
-            'source' => 'relation',
-            'relation' => 'user',
-            'showCol' => 'name'
-        ],
+        'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user', 'showCol' => 'name'],
         'sex' => [
             'type' => 'select',
             'source' => 'array',
@@ -39,7 +34,7 @@ class Info extends \Model
         'photo_file_id' => ['type' => 'image'],
         'bday' => ['type' => 'date'],
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['first_name', 'middle_name', 'last_name'],
@@ -92,7 +87,7 @@ class Info extends \Model
         ];
     }
 
-    function name()
+    public function name()
     {
         if ($this->first_name . $this->last_name . $this->middle_name) {
             $name = '';

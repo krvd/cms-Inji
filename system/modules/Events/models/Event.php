@@ -13,24 +13,24 @@ namespace Events;
 
 class Event extends \Model
 {
-    static $objectName = 'Событие системы';
-    static $labels = [
+    public static $objectName = 'Событие системы';
+    public static $labels = [
         'name' => 'Название',
         'event' => 'Событие'
     ];
-    static $storage = ['type' => 'moduleConfig'];
-    static $cols = [
+    public static $storage = ['type' => 'moduleConfig'];
+    public static $cols = [
         'name' => ['type' => 'text'],
         'event' => ['type' => 'text'],
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'cols' => [
                 'name', 'event'
             ],
         ]
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['name', 'event'],
@@ -38,7 +38,7 @@ class Event extends \Model
         ]
     ];
 
-    static function index()
+    public static function index()
     {
         return 'id';
     }

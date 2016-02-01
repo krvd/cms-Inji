@@ -13,8 +13,8 @@ namespace Libs;
 
 class YandexMap extends \Object
 {
-    static $name = 'YandexMap';
-    static $files = [
+    public static $name = 'YandexMap';
+    public static $files = [
         'js' => [
             'http://api-maps.yandex.ru/2.1/?lang=ru_RU'
         ]

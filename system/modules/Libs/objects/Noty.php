@@ -13,16 +13,16 @@ namespace Libs;
 
 class Noty extends \Object
 {
-    static $name = 'Noty';
-    static $composerPacks = [
+    public static $name = 'Noty';
+    public static $composerPacks = [
         'needim/noty' => '2.3.*'
     ];
-    static $files = [
+    public static $files = [
         'js' => [
             'needim/noty/js/noty/packaged/jquery.noty.packaged.min.js'
         ]
     ];
-    static $staticDirs = [
+    public static $staticDirs = [
         'needim/noty/js'
     ];
 

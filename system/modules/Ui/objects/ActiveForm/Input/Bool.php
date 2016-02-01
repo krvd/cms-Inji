@@ -13,7 +13,7 @@ namespace Ui\ActiveForm\Input;
 
 class Bool extends \Ui\ActiveForm\Input
 {
-    function draw()
+    public function draw()
     {
         $inputName = $this->colName();
         $inputLabel = $this->colLabel();

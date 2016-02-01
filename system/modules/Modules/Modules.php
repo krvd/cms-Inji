@@ -10,7 +10,7 @@
  */
 class Modules extends Module
 {
-    function createBlankModule($name, $codeName)
+    public function createBlankModule($name, $codeName)
     {
         $codeName = ucfirst($codeName);
         Tools::createDir(App::$primary->path . '/modules/' . $codeName);
@@ -23,7 +23,7 @@ class Modules extends Module
         file_put_contents(App::$primary->path . '/modules/' . $codeName . '/generatorHash.php', "<?php\nreturn " . CodeGenerator::genArray([$codeName . '.php' => md5($moduleCode)]));
     }
 
-    function parseColsForModel($cols = [])
+    public function parseColsForModel($cols = [])
     {
         $modelCols = [ 'labels' => [], 'cols' => [], 'relations' => []];
         foreach ($cols as $col) {
@@ -45,7 +45,7 @@ class Modules extends Module
         return $modelCols;
     }
 
-    function parseColsForTable($cols, $colPrefix, $tableName)
+    public function parseColsForTable($cols, $colPrefix, $tableName)
     {
 
         $colsExist = App::$cur->db->getTableCols($tableName);
@@ -85,7 +85,7 @@ class Modules extends Module
         return $tableCols;
     }
 
-    function generateModel($module, $name, $codeName, $options)
+    public function generateModel($module, $name, $codeName, $options)
     {
         $codeName = ucfirst($codeName);
         $cols = [];
@@ -119,7 +119,7 @@ class Modules extends Module
         Config::save($modulePath . '/generatorHash.php', $config);
     }
 
-    function install($module, $params = [])
+    public function install($module, $params = [])
     {
         $installed = Module::getInstalled(App::$primary);
         if (in_array($module, $installed)) {
@@ -155,7 +155,7 @@ class Modules extends Module
         }
     }
 
-    function addInMenu($items, $appType, $parent = 0)
+    public function addInMenu($items, $appType, $parent = 0)
     {
         foreach ($items as $item) {
             $menuItem = new \Menu\Item();
@@ -170,7 +170,7 @@ class Modules extends Module
         }
     }
 
-    function getSelectListModels($module = false)
+    public function getSelectListModels($module = false)
     {
         $models = [];
         if ($module) {
@@ -199,7 +199,7 @@ class Modules extends Module
         return $models;
     }
 
-    function getModelsList($module, $dir = '')
+    public function getModelsList($module, $dir = '')
     {
         $modulePath = Module::getModulePath($module);
         $path = rtrim($modulePath . '/models/' . $dir, '/');
@@ -217,7 +217,7 @@ class Modules extends Module
         return $models;
     }
 
-    function createController($module, $controllerType)
+    public function createController($module, $controllerType)
     {
         $modulePath = Module::getModulePath($module);
         $path = $modulePath . '/' . $controllerType . '/' . $module . 'Controller.php';
@@ -232,7 +232,7 @@ class Modules extends Module
         Config::save($modulePath . '/generatorHash.php', $config);
     }
 
-    function addActionToController($module, $type, $controller, $url)
+    public function addActionToController($module, $type, $controller, $url)
     {
         $modulePath = Module::getModulePath($module);
         $path = Modules::getModulePath($module) . '/' . $type . '/' . $controller . '.php';

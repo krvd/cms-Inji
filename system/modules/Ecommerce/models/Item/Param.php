@@ -13,19 +13,19 @@ namespace Ecommerce\Item;
 
 class Param extends \Model
 {
-    static $objectName = 'Параметр товара';
-    static $labels = [
+    public static $objectName = 'Параметр товара';
+    public static $labels = [
         'item_option_id' => 'Параметр',
         'item_id' => 'Товар',
         'value' => 'Значение',
     ];
-    static $cols = [
+    public static $cols = [
         'item_option_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'option'],
         'item_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'item'],
         'value' => ['type' => 'dynamicType', 'typeSource' => 'selfMethod', 'selfMethod' => 'realType'],
     ];
 
-    function realType()
+    public function realType()
     {
         $type = $this->option->type;
         if ($type == 'select') {
@@ -38,7 +38,7 @@ class Param extends \Model
         return $type;
     }
 
-    static $dataManagers = [
+    public static $dataManagers = [
 
         'manager' => [
             'name' => 'Параметры товара',
@@ -49,7 +49,7 @@ class Param extends \Model
             ],
         ],
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['item_id', 'item_option_id'],
@@ -57,7 +57,7 @@ class Param extends \Model
             ]
     ]];
 
-    function value($default = '')
+    public function value($default = '')
     {
         if ($this->option->type != 'select') {
             return $this->value;
@@ -67,7 +67,7 @@ class Param extends \Model
         return $default;
     }
 
-    static function relations()
+    public static function relations()
     {
         return [
             'file' => [

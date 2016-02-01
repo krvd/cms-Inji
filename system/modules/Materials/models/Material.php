@@ -13,9 +13,9 @@ namespace Materials;
 
 class Material extends \Model
 {
-    static $objectName = 'Материал';
-    static $categoryModel = 'Materials\Category';
-    static $labels = [
+    public static $objectName = 'Материал';
+    public static $categoryModel = 'Materials\Category';
+    public static $labels = [
         'name' => 'Заголовок',
         'category_id' => 'Раздел',
         'preview' => 'Краткое превью',
@@ -29,7 +29,7 @@ class Material extends \Model
         'user_id' => 'Создатель',
         'date_create' => 'Дата создания'
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'cols' => [
                 'name',
@@ -61,7 +61,7 @@ class Material extends \Model
             'sortMode' => true
         ]
     ];
-    static $cols = [
+    public static $cols = [
         'name' => ['type' => 'text'],
         'alias' => ['type' => 'text'],
         'preview' => ['type' => 'html'],
@@ -80,7 +80,7 @@ class Material extends \Model
         'weight' => ['type' => 'number'],
         'date_create' => ['type' => 'dateTime'],
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'options' => [
                 'access' => [
@@ -101,7 +101,7 @@ class Material extends \Model
         ]
     ];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'category' => [
@@ -124,7 +124,7 @@ class Material extends \Model
         ];
     }
 
-    function getHref()
+    public function getHref()
     {
         $href = !empty(\App::$primary->config['defaultModule']) && \App::$primary->config['defaultModule'] == 'Materials' ? '' : '/materials';
         $treePath = array_filter(explode('/', $this->tree_path));
@@ -137,7 +137,7 @@ class Material extends \Model
         return $href . "/" . ($this->alias ? $this->alias : $this->pk());
     }
 
-    function resolveTemplate()
+    public function resolveTemplate()
     {
         if ($this->template !== 'inherit') {
             return $this->template;
@@ -148,7 +148,7 @@ class Material extends \Model
         }
     }
 
-    function resolveViewer()
+    public function resolveViewer()
     {
         if ($this->viewer !== 'inherit') {
             return $this->viewer;

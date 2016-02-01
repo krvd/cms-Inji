@@ -13,7 +13,7 @@ namespace Files;
 
 class File extends \Model
 {
-    static $cols = [
+    public static $cols = [
         'code' => ['type' => 'text'],
         'type_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'type'],
         'folder_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'foler'],
@@ -25,7 +25,7 @@ class File extends \Model
         'date_create' => ['type' => 'dateTime'],
     ];
 
-    function beforeDelete()
+    public function beforeDelete()
     {
         $path = $this->getRealPath();
         if (file_exists($path)) {
@@ -33,13 +33,13 @@ class File extends \Model
         }
     }
 
-    function getRealPath()
+    public function getRealPath()
     {
         $sitePath = \App::$primary->path;
         return "{$sitePath}/{$this->file_path}";
     }
 
-    static function relations()
+    public static function relations()
     {
         return [
             'type' => [

@@ -43,7 +43,7 @@ class Result extends \Object
         return $array;
     }
 
-    function fetch($className = '')
+    public function fetch($className = '')
     {
         if ($className) {
             return $this->pdoResult->fetchObject($className);

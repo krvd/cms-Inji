@@ -19,7 +19,7 @@ class Tools extends Model
      * @param string $characters
      * @return string
      */
-    static function randomString($length = 20, $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')
+    public static function randomString($length = 20, $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')
     {
         $charactersLength = strlen($characters);
         $randomString = '';
@@ -35,7 +35,7 @@ class Tools extends Model
      * @param string $uri
      * @return array
      */
-    static function uriParse($uri)
+    public static function uriParse($uri)
     {
         $answerPos = strpos($uri, '?');
         $params = array_slice(explode('/', substr($uri, 0, $answerPos ? $answerPos : strlen($uri) )), 1);
@@ -56,7 +56,7 @@ class Tools extends Model
      * @param string $path
      * @return boolean
      */
-    static function createDir($path)
+    public static function createDir($path)
     {
         if (file_exists($path))
             return true;
@@ -82,7 +82,7 @@ class Tools extends Model
      * @param string $pos
      * @return string
      */
-    static function resizeImage($img_path, $max_width = 1000, $max_height = 1000, $crop = false, $pos = 'center')
+    public static function resizeImage($img_path, $max_width = 1000, $max_height = 1000, $crop = false, $pos = 'center')
     {
         ini_set("gd.jpeg_ignore_warning", 1);
         list( $img_width, $img_height, $img_type, $img_tag ) = getimagesize($img_path);
@@ -178,7 +178,7 @@ class Tools extends Model
      * @param string $ctype
      * @return boolean
      */
-    static function sendMail($from, $to, $subject, $text, $charset = 'utf-8', $ctype = 'text/html')
+    public static function sendMail($from, $to, $subject, $text, $charset = 'utf-8', $ctype = 'text/html')
     {
         $headers = "From: {$from}\r\n";
         $headers .= "Content-type: {$ctype}; charset={$charset}\r\n";
@@ -195,7 +195,7 @@ class Tools extends Model
      * @param string $text
      * @param string $status
      */
-    static function redirect($href = null, $text = false, $status = 'info')
+    public static function redirect($href = null, $text = false, $status = 'info')
     {
         if ($href === null) {
             $href = $_SERVER['REQUEST_URI'];
@@ -218,7 +218,7 @@ class Tools extends Model
      *         например array('яблоко', 'яблока', 'яблок')
      * @return String
      */
-    static function getNumEnding($number, $endingArray)
+    public static function getNumEnding($number, $endingArray)
     {
         $number = $number % 100;
         if ($number >= 11 && $number <= 19) {
@@ -244,7 +244,7 @@ class Tools extends Model
      * @param string $path
      * @return string
      */
-    static function parsePath($path)
+    public static function parsePath($path)
     {
         $path = str_replace('\\', '/', $path);
         $pathArray = explode('/', $path);
@@ -275,7 +275,7 @@ class Tools extends Model
      * @param string $date
      * @return string
      */
-    static function toRusDate($date)
+    public static function toRusDate($date)
     {
         $yy = (int) substr($date, 0, 4);
         $mm = (int) substr($date, 5, 2);
@@ -296,7 +296,7 @@ class Tools extends Model
      * @param string $code
      * @param boolean $exit
      */
-    static function header($code, $exit = false)
+    public static function header($code, $exit = false)
     {
         if (!headers_sent()) {
             switch ($code) {
@@ -319,9 +319,9 @@ class Tools extends Model
      * 
      * @param array $paths
      * @param string|false $default
-     * @return string
+     * @return string|false
      */
-    static function pathsResolve($paths = [], $default = false)
+    public static function pathsResolve($paths = [], $default = false)
     {
         foreach ($paths as $path) {
             if (file_exists($path)) {
@@ -337,7 +337,7 @@ class Tools extends Model
      * @param string $val
      * @return int
      */
-    static function toBytes($val)
+    public static function toBytes($val)
     {
         $val = trim($val);
         $last = strtolower($val[strlen($val) - 1]);
@@ -359,7 +359,7 @@ class Tools extends Model
      * @param string $from
      * @param string $to
      */
-    static function copyFiles($from, $to)
+    public static function copyFiles($from, $to)
     {
         $from = rtrim($from, '/');
         $to = rtrim($to, '/');
@@ -383,7 +383,7 @@ class Tools extends Model
      * @param string $str
      * @return string
      */
-    static function translit($str)
+    public static function translit($str)
     {
         $rus = array('А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ё', 'Ж', 'З', 'И', 'Й', 'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С', 'Т', 'У', 'Ф', 'Х', 'Ц', 'Ч', 'Ш', 'Щ', 'Ъ', 'Ы', 'Ь', 'Э', 'Ю', 'Я', 'а', 'б', 'в', 'г', 'д', 'е', 'ё', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь', 'э', 'ю', 'я');
         $lat = array('A', 'B', 'V', 'G', 'D', 'E', 'E', 'Gh', 'Z', 'I', 'Y', 'K', 'L', 'M', 'N', 'O', 'P', 'R', 'S', 'T', 'U', 'F', 'H', 'C', 'Ch', 'Sh', 'Sch', 'Y', 'Y', 'Y', 'E', 'Yu', 'Ya', 'a', 'b', 'v', 'g', 'd', 'e', 'e', 'gh', 'z', 'i', 'y', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't', 'u', 'f', 'h', 'c', 'ch', 'sh', 'sch', 'y', 'y', 'y', 'e', 'yu', 'ya');
@@ -397,7 +397,7 @@ class Tools extends Model
      * @param string $url
      * @return string Youtube video id or FALSE if none found. 
      */
-    static function youtubeIdFromUrl($url)
+    public static function youtubeIdFromUrl($url)
     {
         $pattern = '%^# Match any youtube URL
         (?:https?://)?  # Optional scheme. Either http or https

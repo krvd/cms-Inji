@@ -10,7 +10,7 @@
  */
 class UiController extends Controller
 {
-    function formPopUpAction()
+    public function formPopUpAction()
     {
         if (strpos($_GET['item'], ':')) {
             $raw = explode(':', $_GET['item']);
@@ -54,7 +54,7 @@ class UiController extends Controller
         }
     }
 
-    function fastEditAction()
+    public function fastEditAction()
     {
         $model = $_POST['model']::get($_POST['key']);
         if ($model && $model->checkAccess()) {

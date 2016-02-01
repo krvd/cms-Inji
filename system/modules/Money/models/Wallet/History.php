@@ -13,8 +13,8 @@ namespace Money\Wallet;
 
 class History extends \Model
 {
-    static $objectName = 'История кошелька';
-    static $cols = [
+    public static $objectName = 'История кошелька';
+    public static $cols = [
         'wallet_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'wallet'],
         'new' => ['type' => 'decimal'],
         'old' => ['type' => 'decimal'],
@@ -22,7 +22,7 @@ class History extends \Model
         'comment' => ['type' => 'text'],
         'date_create' => ['type' => 'dateTime'],
     ];
-    static $labels = [
+    public static $labels = [
         'wallet:user' => 'Пользователь',
         'old' => 'До',
         'new' => 'После',
@@ -31,7 +31,7 @@ class History extends \Model
         'date_create' => 'Дата'
     ];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'wallet' => [
@@ -41,7 +41,7 @@ class History extends \Model
         ];
     }
 
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'name' => 'История кошельков',
             'cols' => [

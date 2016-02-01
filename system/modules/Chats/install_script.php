@@ -1,6 +1,6 @@
 <?php
 
-return function ($step = NULL, $params = array()) {
+return function ($step = NULL, $params = []) {
     $statuses = [
         [
             'name' => 'Онлайн',

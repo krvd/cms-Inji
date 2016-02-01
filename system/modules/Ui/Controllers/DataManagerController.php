@@ -10,7 +10,7 @@
  */
 class DataManagerController extends Controller
 {
-    function indexAction()
+    public function indexAction()
     {
         $result = new Server\Result();
         ob_start();
@@ -50,7 +50,7 @@ class DataManagerController extends Controller
 
     //function 
 
-    function loadRowsAction()
+    public function loadRowsAction()
     {
         $result = new Server\Result();
         $result->content = [];
@@ -155,7 +155,7 @@ class DataManagerController extends Controller
         $result->send();
     }
 
-    function loadCategorysAction()
+    public function loadCategorysAction()
     {
         $result = new Server\Result();
         ob_start();
@@ -188,7 +188,7 @@ class DataManagerController extends Controller
         $result->send();
     }
 
-    function delRowAction()
+    public function delRowAction()
     {
 
         if (strpos($_GET['modelName'], ':')) {
@@ -231,7 +231,7 @@ class DataManagerController extends Controller
         $result->send();
     }
 
-    function updateRowAction()
+    public function updateRowAction()
     {
 
         if (strpos($_GET['modelName'], ':')) {
@@ -273,7 +273,7 @@ class DataManagerController extends Controller
         $result->send();
     }
 
-    function groupActionAction()
+    public function groupActionAction()
     {
 
 
@@ -349,7 +349,7 @@ class DataManagerController extends Controller
         $result->send();
     }
 
-    function delCategoryAction()
+    public function delCategoryAction()
     {
 
         $dataManager = new Ui\DataManager($_GET['modelName'], $_GET['managerName']);

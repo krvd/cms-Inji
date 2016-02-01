@@ -13,18 +13,18 @@ namespace Ecommerce\Item\Offer;
 
 class Warehouse extends \Model
 {
-    static $objectName = 'Товар на складе';
-    static $labels = [
+    public static $objectName = 'Товар на складе';
+    public static $labels = [
         'count' => 'Количество',
         'warehouse_id' => 'Склад',
         'item_offer_id' => 'Торговое предложение',
     ];
-    static $cols = [
+    public static $cols = [
         'count' => ['type' => 'text'],
         'warehouse_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'warehouse'],
         'item_offer_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'offer'],
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'name' => 'Складской учет',
             'cols' => [
@@ -33,7 +33,7 @@ class Warehouse extends \Model
             ],
         ],
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['item_offer_id', 'warehouse_id'],
@@ -41,7 +41,7 @@ class Warehouse extends \Model
             ]
     ]];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'warehouse' => [

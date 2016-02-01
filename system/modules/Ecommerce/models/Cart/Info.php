@@ -11,19 +11,19 @@ namespace Ecommerce\Cart;
 
 class Info extends \Model
 {
-    static $labels = [
+    public static $labels = [
         'name' => 'название',
         'value' => 'Значение',
         'useradds_field_id' => 'Поле',
         'cart_id' => 'Корзина'
     ];
-    static $cols = [
+    public static $cols = [
         'useradds_field_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'field'],
         'cart_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'cart'],
         'name' => ['type' => 'text'],
         'value' => ['type' => 'text'],
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'name' => 'Дополнительно',
             'cols' => [
@@ -32,7 +32,7 @@ class Info extends \Model
             ],
         ],
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['name', 'value'],
@@ -41,7 +41,7 @@ class Info extends \Model
         ]
     ];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'cart' => [

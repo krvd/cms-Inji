@@ -10,7 +10,7 @@
  */
 class StaticLoaderController extends Controller
 {
-    function indexAction()
+    public function indexAction()
     {
         $path = $this->module->parsePath(implode('/', func_get_args()));
         $convet = FALSE;

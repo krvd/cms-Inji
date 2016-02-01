@@ -10,7 +10,7 @@
  */
 class MigrationsController extends adminController
 {
-    function manualAction()
+    public function manualAction()
     {
         if (!empty($_POST)) {
             $this->module->startMigration($_POST['migration'], $_POST['map'], $_FILES['file']['tmp_name']);

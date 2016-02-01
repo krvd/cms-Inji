@@ -13,7 +13,7 @@ namespace Ui;
 
 class FastEdit extends \Object
 {
-    static function block($object, $col, $value = null, $parse = false)
+    public static function block($object, $col, $value = null, $parse = false)
     {
         echo "<div class = 'fastEdit' ";
         if ($object) {

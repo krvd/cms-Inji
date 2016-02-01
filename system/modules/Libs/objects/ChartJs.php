@@ -13,16 +13,16 @@ namespace Libs;
 
 class ChartJs extends \Object
 {
-    static $name = 'ChartJs';
-    static $composerPacks = [
+    public static $name = 'ChartJs';
+    public static $composerPacks = [
         'nnnick/chartjs' => 'dev-master'
     ];
-    static $files = [
+    public static $files = [
         'js' => [
             'nnnick/chartjs/Chart.min.js',
         ],
     ];
-    static $staticDirs = [
+    public static $staticDirs = [
         'nnnick/chartjs'
     ];
 

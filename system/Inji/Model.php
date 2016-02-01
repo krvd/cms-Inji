@@ -429,13 +429,19 @@ class Model
         return Model::$cols[static::table()];
     }
 
+    /**
+     * Generate params string for col by name
+     * 
+     * @param type $colName
+     * @return boolean|string
+     */
     public static function genColParams($colName)
     {
         if (empty(static::$cols[$colName]) || static::$storage['type'] == 'moduleConfig') {
             return false;
         }
 
-        $params = '';
+        $params = false;
         switch (static::$cols[$colName]['type']) {
             case 'select':
                 switch (static::$cols[$colName]['source']) {
@@ -482,15 +488,15 @@ class Model
      * Create new col in data base
      * 
      * @param string $colName
-     * @return boolean
+     * @return boolean|integer
      */
     public static function createCol($colName)
     {
         $params = static::genColParams($colName);
-        if (!$params) {
+        if ($params === false) {
             return false;
         }
-        App::$cur->db->addCol(static::table(), static::colPrefix() . $colName, $params);
+        return App::$cur->db->addCol(static::table(), static::colPrefix() . $colName, $params);
     }
 
     public static function createTable()
@@ -600,14 +606,14 @@ class Model
      * @param array $param
      * @param string $col
      * @param array $options
-     * @return Model
+     * @return boolean|\Model
      */
     public static function get($param = null, $col = null, $options = [])
     {
         if (static::$storage['type'] == 'moduleConfig') {
             return static::getFromModuleStorage($param, $col, $options);
         }
-        if ($col) {
+        if (!empty($col)) {
             static::fixPrefix($col);
         }
 
@@ -675,12 +681,10 @@ class Model
      * Old method
      * 
      * @param type $options
-     * @return \class
+     * @return Array
      */
     public static function get_list($options = [])
     {
-
-        $return = [];
         if (!empty($options['where']))
             App::$cur->db->where($options['where']);
         if (!empty($options['group'])) {
@@ -973,14 +977,12 @@ class Model
      */
     public static function getCount($options = [])
     {
-
         if (static::$storage['type'] == 'moduleConfig') {
             return static::getCountFromModuleStorage($options);
         }
         if (!empty($options['where'])) {
             static::fixPrefix($options['where'], 'first');
         }
-        $return = [];
         if (!empty($options['where']))
             App::$cur->db->where($options['where']);
         if (!empty($options['join']))
@@ -1076,11 +1078,11 @@ class Model
             if (isset($params[$col]))
                 $values[$col] = $params[$col];
         }
-        if (!$values)
+        if (empty($values)) {
             return false;
+        }
 
-
-        if ($where) {
+        if (!empty($where)) {
             static::fixPrefix($where, 'key');
 
             App::$cur->db->where($where);
@@ -1117,7 +1119,7 @@ class Model
 
         $col = static::index();
         $id = $this->pk();
-
+        $appType = '';
         $classPath = explode('\\', get_called_class());
 
         if (!empty(static::$storage['options']['share'])) {
@@ -1192,7 +1194,6 @@ class Model
                         ' . $itemTreeCol . ' = REPLACE(' . $itemTreeCol . ', "' . $oldPath . $this->id . '/' . '", "' . $this->tree_path . $this->id . '/' . '") 
                     WHERE ' . $itemTreeCol . ' LIKE "' . $oldPath . $this->id . '/' . '%"');
         }
-        $array = [$itemTreeCol => $this->tree_path . $this->id . '/'];
         $itemModel::update([$itemTreeCol => $this->tree_path . $this->id . '/'], [$itemModel::colPrefix() . $this->index(), $this->id]);
     }
 
@@ -1261,8 +1262,9 @@ class Model
             if (isset($this->_params[$col]))
                 $values[$col] = $this->_params[$col];
         }
-        if (!$values && empty($options['empty']))
+        if (empty($values) && empty($options['empty'])) {
             return false;
+        }
 
         if ($this->pk()) {
             $new = false;
@@ -1321,7 +1323,7 @@ class Model
 
         $col = static::index();
         $id = $this->pk();
-
+        $appType = '';
         $classPath = explode('\\', get_called_class());
         if (!empty(static::$storage['options']['share'])) {
             $moduleConfig = Config::share($classPath[0]);
@@ -1393,7 +1395,7 @@ class Model
      */
     public static function deleteList($where)
     {
-        if ($where) {
+        if (!empty($where)) {
             static::fixPrefix($where, 'first');
             App::$cur->db->where($where);
         }
@@ -1469,7 +1471,7 @@ class Model
      * 
      * @param string $name
      * @param array $params
-     * @return null|array|\Model
+     * @return null|array|integer|\Model
      */
     public function loadRelation($name, $params = [])
     {
@@ -1490,7 +1492,7 @@ class Model
                     $fixedCol = $relation['model']::index();
                     $relation['relModel']::fixPrefix($fixedCol);
                     $ids = array_keys($relation['relModel']::getList(['where' => [$this->index(), $this->pk()], 'array' => true, 'key' => $fixedCol]));
-                    if (!$ids) {
+                    if (empty($ids)) {
                         if (empty($params['count'])) {
                             return [];
                         } else {

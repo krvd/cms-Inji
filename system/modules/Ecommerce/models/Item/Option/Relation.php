@@ -13,6 +13,6 @@ namespace Ecommerce\Item\Option;
 
 class Relation extends \Model
 {
-    static $objectName = 'Связь каталога и опций';
+    public static $objectName = 'Связь каталога и опций';
 
 }

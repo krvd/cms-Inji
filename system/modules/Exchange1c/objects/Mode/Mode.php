@@ -23,12 +23,12 @@ class Mode extends \Object
      */
     public $log;
 
-    function process()
+    public function process()
     {
         $this->end();
     }
 
-    function end($status = 'success')
+    public function end($status = 'success')
     {
         $this->log->status = $status;
         $this->log->date_end = date('Y-m-d H:i:s');

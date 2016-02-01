@@ -18,12 +18,12 @@ class Parser
     public $model;
     public $object;
 
-    function parse()
+    public function parse()
     {
         
     }
 
-    function editor()
+    public function editor()
     {
         return [
             '' => 'Выберите',

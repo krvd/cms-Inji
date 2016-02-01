@@ -13,19 +13,19 @@ namespace UserForms;
 
 class Input extends \Model
 {
-    static $objectName = 'Поле формы';
-    static $labels = [
+    public static $objectName = 'Поле формы';
+    public static $labels = [
         'label' => 'Название',
         'type' => 'Тип',
         'required' => 'Обязательное',
         'params' => 'Параметры'
     ];
-    static $cols = [
+    public static $cols = [
         'label' => ['type' => 'text'],
         'type' => ['type' => 'text'],
         'required' => ['type' => 'bool'],
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'cols' => [
                 'label',
@@ -34,7 +34,7 @@ class Input extends \Model
             ]
         ]
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['label'],

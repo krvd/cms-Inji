@@ -10,7 +10,7 @@
  */
 class Ui extends Module
 {
-    function init()
+    public function init()
     {
         App::$cur->view->customAsset('js', ['file' => '/static/moduleAsset/Ui/js/Ui.js', 'name' => 'Ui']);
         if ((!$this->app->users || \Users\User::$cur->isAdmin()) && \App::$cur->type == 'app') {
@@ -19,7 +19,7 @@ class Ui extends Module
         App::$cur->view->customAsset('css', '/static/moduleAsset/Ui/css/Ui.css');
     }
 
-    function getModelForm($modelName, $formName = '')
+    public function getModelForm($modelName, $formName = '')
     {
         if (!$formName) {
             $formName = 'manager';
@@ -28,7 +28,7 @@ class Ui extends Module
         return !empty($forms[$formName]) ? $forms[$formName] : [];
     }
 
-    function getModelForms($modelName)
+    public function getModelForms($modelName)
     {
         return $modelName::$forms;
     }

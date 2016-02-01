@@ -12,12 +12,12 @@ class StaticLoader extends Module
 {
     public $mimes = [];
 
-    function init()
+    public function init()
     {
         $this->mimes = $this->config['mimes'];
     }
 
-    function parsePath($path)
+    public function parsePath($path)
     {
         $path = Tools::parsePath($path);
 
@@ -80,7 +80,7 @@ class StaticLoader extends Module
         }
     }
 
-    function giveFile($file)
+    public function giveFile($file)
     {
         $convet = FALSE;
         if (!file_exists($file) && file_exists(mb_convert_encoding($file, 'Windows-1251', 'UTF-8'))) {

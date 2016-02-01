@@ -13,7 +13,7 @@ namespace Ecommerce\Item\Offer;
 
 class Bonus extends \Model
 {
-    static $cols = [
+    public static $cols = [
         'item_offer_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'offer'],
         'type' => ['type' => 'text'],
         'value' => ['type' => 'text'],
@@ -22,7 +22,7 @@ class Bonus extends \Model
         'left' => ['type' => 'number']
     ];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'offer' => [

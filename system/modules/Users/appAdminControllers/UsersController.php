@@ -10,7 +10,7 @@
  */
 class UsersController extends adminController
 {
-    function loginAction()
+    public function loginAction()
     {
         if (!Users\User::$cur->user_id) {
             $this->view->page(['page' => 'login', 'content' => 'login']);
@@ -19,7 +19,7 @@ class UsersController extends adminController
         }
     }
 
-    function loginAsAction($userId)
+    public function loginAsAction($userId)
     {
         $user = Users\User::get($userId);
         App::$cur->users->newSession($user);

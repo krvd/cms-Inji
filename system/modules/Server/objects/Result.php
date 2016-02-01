@@ -18,7 +18,7 @@ class Result extends \Object
     public $successMsg = '';
     public $scripts = [];
 
-    function send()
+    public function send()
     {
         $return = [];
         $return['success'] = $this->success;

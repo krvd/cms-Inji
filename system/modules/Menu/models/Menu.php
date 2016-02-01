@@ -13,19 +13,19 @@ namespace Menu;
 
 class Menu extends \Model
 {
-    static $objectName = 'Меню';
-    static $labels = [
+    public static $objectName = 'Меню';
+    public static $labels = [
         'name' => 'Название',
         'code' => 'Алиас',
         'items' => 'Пункты меню'
     ];
-    static $storage = ['type' => 'moduleConfig'];
-    static $cols = [
+    public static $storage = ['type' => 'moduleConfig'];
+    public static $cols = [
         'name' => ['type' => 'text'],
         'code' => ['type' => 'text'],
         'items' => ['type' => 'select', 'source' => 'relation', 'relation' => 'items']
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'options' => [
                 'access' => [
@@ -39,7 +39,7 @@ class Menu extends \Model
             ]
         ]
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'options' => [
                 'access' => [
@@ -54,7 +54,7 @@ class Menu extends \Model
         ]
     ];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'items' => [
@@ -65,7 +65,7 @@ class Menu extends \Model
         ];
     }
 
-    static function index()
+    public static function index()
     {
         return 'id';
     }

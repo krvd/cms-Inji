@@ -13,11 +13,11 @@ namespace Libs;
 
 class Ckeditor extends \Object
 {
-    static $name = 'CKEditor';
-    static $composerPacks = [
+    public static $name = 'CKEditor';
+    public static $composerPacks = [
         'ckeditor/ckeditor' => '4.*'
     ];
-    static $files = [
+    public static $files = [
         'js' => [
             '/static/moduleAsset/libs/libs/ckeditor/path.js',
             'ckeditor/ckeditor/ckeditor.js',
@@ -25,10 +25,10 @@ class Ckeditor extends \Object
             '/static/moduleAsset/libs/libs/ckeditor/jquery.adapter.js'
         ]
     ];
-    static $staticDirs = [
+    public static $staticDirs = [
         'ckeditor/ckeditor'
     ];
-    static $programDirs = [
+    public static $programDirs = [
         'program'
     ];
 

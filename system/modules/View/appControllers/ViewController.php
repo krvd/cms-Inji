@@ -10,7 +10,7 @@
  */
 class ViewController extends Controller
 {
-    function editorcssAction()
+    public function editorcssAction()
     {
         if (file_exists($this->view->template->path . '/css/editor.css')) {
             Tools::redirect('/static/templates/' . $this->view->template['name'] . '/css/editor.css');
@@ -20,7 +20,7 @@ class ViewController extends Controller
         }
     }
 
-    function templateProgramAction()
+    public function templateProgramAction()
     {
         $args = func_get_args();
         if ($args) {

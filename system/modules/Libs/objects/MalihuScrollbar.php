@@ -13,8 +13,8 @@ namespace Libs;
 
 class MalihuScrollbar extends \Object
 {
-    static $name = 'Malihu Scrollbar';
-    static $files = [
+    public static $name = 'Malihu Scrollbar';
+    public static $files = [
         'css' => [
             '/static/moduleAsset/libs/libs/malihuScrollbar/jquery.mCustomScrollbar.css'
         ],

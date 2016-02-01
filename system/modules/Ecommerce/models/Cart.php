@@ -13,9 +13,9 @@ namespace Ecommerce;
 
 class Cart extends \Model
 {
-    static $objectName = 'Корзины';
+    public static $objectName = 'Корзины';
 
-    static function relations()
+    public static function relations()
     {
         return [
             'user' => [
@@ -66,7 +66,7 @@ class Cart extends \Model
         ];
     }
 
-    function beforeDelete()
+    public function beforeDelete()
     {
         foreach ($this->cartItems as $cartItem) {
             $cartItem->delete();
@@ -82,7 +82,7 @@ class Cart extends \Model
         }
     }
 
-    static $labels = [
+    public static $labels = [
         'user_id' => 'Пользователь',
         'sum' => 'Сумма',
         'cart_status_id' => 'Статус',
@@ -102,7 +102,7 @@ class Cart extends \Model
         'pay' => 'Счета оплаты',
         'sums' => 'Суммы',
     ];
-    static $cols = [
+    public static $cols = [
         'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
         'info' => ['type' => 'dataManager', 'relation' => 'infos'],
         'items' => ['type' => 'select', 'source' => 'relation', 'relation' => 'cartItems'],
@@ -127,7 +127,7 @@ class Cart extends \Model
             ],
         ],
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'cols' => [
                 'info',
@@ -159,12 +159,12 @@ class Cart extends \Model
         ]
     ];
 
-    static function itemName($item)
+    public static function itemName($item)
     {
         return $item->pk() . '. ' . $item->name();
     }
 
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'inputs' => [
                 'userSearch' => [
@@ -214,12 +214,12 @@ class Cart extends \Model
         ],
     ];
 
-    function addPacks($count = 1)
+    public function addPacks($count = 1)
     {
         $this->addItem(Inji::app()->ecommerce->modConf['packItem']['ci_id'], Inji::app()->ecommerce->modConf['packItem']['ciprice_id'], $count);
     }
 
-    function needDelivery()
+    public function needDelivery()
     {
         foreach ($this->cartItems as $cartItem) {
             if (!$cartItem->item->type) {
@@ -232,7 +232,7 @@ class Cart extends \Model
         return false;
     }
 
-    function deliverySum()
+    public function deliverySum()
     {
 
         if ($this->needDelivery() && $this->delivery && $this->sum < $this->delivery->cd_max_cart_price) {
@@ -241,7 +241,7 @@ class Cart extends \Model
         return 0;
     }
 
-    function discountSun()
+    public function discountSun()
     {
         $discountSum = 0;
         foreach ($this->cartItems as $cartItem) {
@@ -250,17 +250,17 @@ class Cart extends \Model
         return $discountSum;
     }
 
-    function finalSum()
+    public function finalSum()
     {
         return $this->sum + $this->deliverySum() - $this->disountSum();
     }
 
-    function itemSum()
+    public function itemSum()
     {
         return $this->sum;
     }
 
-    function addItem($item_id, $offer_price_id, $count = 1, $final_price = 0)
+    public function addItem($item_id, $offer_price_id, $count = 1, $final_price = 0)
     {
         $item = Item::get((int) $item_id);
 
@@ -292,7 +292,7 @@ class Cart extends \Model
         return true;
     }
 
-    function calc($save = true)
+    public function calc($save = true)
     {
         if (!$this->id) {
             return;
@@ -314,12 +314,12 @@ class Cart extends \Model
         }
     }
 
-    function beforeSave()
+    public function beforeSave()
     {
         $this->calc(false);
     }
 
-    function checkFormAccess($formName)
+    public function checkFormAccess($formName)
     {
         if ($formName == 'manage' && !in_array(Inji::app()->users->cur->user_group_id, array(3, 4))) {
             return false;

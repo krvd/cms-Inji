@@ -17,7 +17,7 @@ class Files extends Module
      * --	[file_code]: уникальный код для системы медиаданых
      * --	[allow_types]: досупные для заливки типы файлов. Например image (тип форматов из таблицы типов файлов file_type_ext)
      */
-    function upload($file, $options = array())
+    public function upload($file, $options = [])
     {
 
         $sitePath = App::$primary->path;
@@ -71,7 +71,7 @@ class Files extends Module
      * --	[file_code]: уникальный код для системы медиаданых
      * --	[allow_types]: досупные для заливки типы файлов. Например image (тип форматов из таблицы типов файлов file_type_ext)
      */
-    function uploadFromUrl($url, $options = array())
+    public function uploadFromUrl($url, $options = [])
     {
         $sitePath = App::$primary->path;
 

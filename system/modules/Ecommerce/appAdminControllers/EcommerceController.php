@@ -10,13 +10,13 @@
  */
 class EcommerceController extends adminController
 {
-    function dashboardAction()
+    public function dashboardAction()
     {
         $this->view->setTitle('Онлайн магазин');
         $this->view->page();
     }
 
-    function configureAction()
+    public function configureAction()
     {
         if (!empty($_POST['config'])) {
             $config = App::$cur->ecommerce->config;
@@ -46,7 +46,7 @@ class EcommerceController extends adminController
         $this->view->page(['data' => compact('managers')]);
     }
 
-    function reBlockIndexAction()
+    public function reBlockIndexAction()
     {
         set_time_limit(0);
         $carts = Cart::getList();
@@ -56,7 +56,7 @@ class EcommerceController extends adminController
         Tools::redirect('/admin/ecommerce/configure', 'Данные о блокировках обновлены');
     }
 
-    function reSearchIndexAction($i = 0)
+    public function reSearchIndexAction($i = 0)
     {
         set_time_limit(0);
         $count = 100;
@@ -75,7 +75,7 @@ class EcommerceController extends adminController
         }
     }
 
-    function parseWebAction($site = '', $catalogNum = '')
+    public function parseWebAction($site = '', $catalogNum = '')
     {
         set_time_limit(0);
         if ($site) {
@@ -84,7 +84,7 @@ class EcommerceController extends adminController
         $this->view->page(compact('site', 'catalogs'));
     }
 
-    function processParseWebAction($site = '', $catalogNum = '')
+    public function processParseWebAction($site = '', $catalogNum = '')
     {
         set_time_limit(0);
         if ($site) {
@@ -92,12 +92,12 @@ class EcommerceController extends adminController
         }
     }
 
-    function newOrdersSubscribeAction()
+    public function newOrdersSubscribeAction()
     {
         $this->Notifications->subscribe('Ecommerce-orders');
     }
 
-    function closeCartAction($cartId = 0)
+    public function closeCartAction($cartId = 0)
     {
         $cart = Ecommerce\Cart::get((int) $cartId);
         $result = new Server\Result();

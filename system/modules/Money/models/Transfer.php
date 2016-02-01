@@ -13,7 +13,7 @@ namespace Money;
 
 class Transfer extends \Model
 {
-    static $cols = [
+    public static $cols = [
         'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
         'to_user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'toUser'],
         'currency_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'currency'],
@@ -22,16 +22,16 @@ class Transfer extends \Model
         'complete' => ['type' => 'bool'],
         'canceled' => ['type' => 'bool'],
     ];
-    static $labels = [
+    public static $labels = [
         'amount' => 'Сумма'
     ];
 
-    static function itemName($item)
+    public static function itemName($item)
     {
         return $item->pk() . '. ' . $item->name();
     }
 
-    static $forms = [
+    public static $forms = [
         'transfer' => [
             'name' => 'Перевод средств',
             'successText' => 'Операция перевода средств была успешно начата',
@@ -79,7 +79,7 @@ class Transfer extends \Model
         ]
     ];
 
-    static function validators()
+    public static function validators()
     {
         return [
             'userSearch' => function($activeForm, $request) {
@@ -128,7 +128,7 @@ class Transfer extends \Model
         ];
     }
 
-    static function relations()
+    public static function relations()
     {
         return [
             'user' => [
@@ -146,7 +146,7 @@ class Transfer extends \Model
         ];
     }
 
-    function name()
+    public function name()
     {
         return 'Перевод на сумму ' . $this->amount . ' ' . $this->currency->name . ' от ' . $this->user->name() . ' для ' . $this->toUser->name();
     }

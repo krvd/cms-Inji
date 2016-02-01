@@ -12,14 +12,14 @@ class Money extends Module
 {
     public $currentMerchant = '';
 
-    function init()
+    public function init()
     {
         if (!empty($this->config['defaultMerchant'])) {
             $this->currentMerchant = $this->config['defaultMerchant'];
         }
     }
 
-    function refillPayRecive($data)
+    public function refillPayRecive($data)
     {
         $wallets = $this->getUserWallets($data['pay']->user_id);
         foreach ($wallets as $wallet) {
@@ -30,7 +30,7 @@ class Money extends Module
         }
     }
 
-    function goToMerchant($pay, $merchant, $method, $merchantOptions)
+    public function goToMerchant($pay, $merchant, $method, $merchantOptions)
     {
         $objectName = $merchant->object_name;
 
@@ -49,7 +49,7 @@ class Money extends Module
         return $className::goToMerchant($pay->id, $sum, $method['currency'], $merchantOptions['description'], $merchantOptions['success'], $merchantOptions['false']);
     }
 
-    function reciver($data, $system, $status, $mr)
+    public function reciver($data, $system, $status, $mr)
     {
         if ($system) {
             $merchant = \Money\Merchant::get($system, 'object_name');
@@ -87,7 +87,7 @@ class Money extends Module
         $mr->save();
     }
 
-    function getUserBlocks($userId = null)
+    public function getUserBlocks($userId = null)
     {
         $userId = $userId ? $userId : \Users\User::$cur->id;
         $blocked = \Money\Wallet\Block::getList(['where' => [
@@ -108,7 +108,7 @@ class Money extends Module
         return $blocks;
     }
 
-    function getUserWallets($userId = null, $walletIdasKey = false, $forSelect = false, $transferOnly = false)
+    public function getUserWallets($userId = null, $walletIdasKey = false, $forSelect = false, $transferOnly = false)
     {
         $userId = $userId ? $userId : \Users\User::$cur->id;
         if (!$userId) {
@@ -136,7 +136,7 @@ class Money extends Module
         return $result;
     }
 
-    function rewardTrigger($event)
+    public function rewardTrigger($event)
     {
         $triggers = Money\Reward\Trigger::getList(['where' => [['type', 'event'], ['value', $event['eventName']]]]);
         foreach ($triggers as $trigger) {
@@ -147,7 +147,7 @@ class Money extends Module
         }
     }
 
-    function rewardConditionTrigger($event)
+    public function rewardConditionTrigger($event)
     {
         $items = Money\Reward\Condition\Item::getList(['where' => [['type', 'event'], ['value', $event['eventName']]]]);
         foreach ($items as $item) {
@@ -161,7 +161,7 @@ class Money extends Module
         }
     }
 
-    function reward($reward_id, $sums = [], $rootUser = null)
+    public function reward($reward_id, $sums = [], $rootUser = null)
     {
         $rootUser = $rootUser ? $rootUser : \Users\User::$cur;
         $reward = \Money\Reward::get($reward_id);

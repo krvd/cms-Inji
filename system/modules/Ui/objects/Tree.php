@@ -12,7 +12,7 @@ namespace Ui;
 
 class Tree extends \Object
 {
-    static function ul($objectRoot, $maxDeep = 0, $hrefFunc = null)
+    public static function ul($objectRoot, $maxDeep = 0, $hrefFunc = null)
     {
         $count = 0;
         if (!$hrefFunc) {
@@ -35,7 +35,7 @@ class Tree extends \Object
         return $count;
     }
 
-    static function showLi($object, $deep = 1, $maxDeep = 0, $hrefFunc = null)
+    public static function showLi($object, $deep = 1, $maxDeep = 0, $hrefFunc = null)
     {
         $count = 0;
         $isset = false;

@@ -10,7 +10,7 @@
  */
 class Exchange1cController extends Controller
 {
-    function indexAction()
+    public function indexAction()
     {
         ini_set('memory_limit', '2000M');
         ignore_user_abort(true);

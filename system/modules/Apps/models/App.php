@@ -16,9 +16,9 @@ class App extends \Model
     /**
      * Model options
      */
-    static $objectName = 'App options';
-    static $storage = ['type' => 'moduleConfig', 'options' => ['share' => true]];
-    static $labels = [
+    public static $objectName = 'App options';
+    public static $storage = ['type' => 'moduleConfig', 'options' => ['share' => true]];
+    public static $labels = [
         'id' => '#',
         'name' => 'Название',
         'dir' => 'Директория',
@@ -26,7 +26,7 @@ class App extends \Model
         'default' => 'По умолчанию',
         'route' => 'Роут',
     ];
-    static $cols = [
+    public static $cols = [
         'id' => ['type' => 'pk'],
         'name' => ['type' => 'text'],
         'dir' => ['type' => 'text'],
@@ -34,7 +34,7 @@ class App extends \Model
         'default' => ['type' => 'bool'],
         'route' => ['type' => 'text'],
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'setup' => [
             'name' => 'Настроенные приложения',
             'options' => [
@@ -51,14 +51,22 @@ class App extends \Model
                 'default',
                 'route',
             ],
+            'editForm' => 'setup',
             'rowButtons' => [
                 ['href' => '/setup/apps/configure', 'text' => '<i class = "glyphicon glyphicon-cog"></i>'], 'edit', 'delete'
             ],
         ]
     ];
-    static $forms = [
-        'manager' => [
+    public static $forms = [
+        'setup' => [
             'name' => 'Приложение',
+            'options' => [
+                'access' => [
+                    'apps' => [
+                        'setup'
+                    ]
+                ]
+            ],
             'map' => [
                 ['name', 'dir'],
                 ['installed', 'default'],
@@ -67,7 +75,7 @@ class App extends \Model
         ]
     ];
 
-    static function index()
+    public static function index()
     {
         return 'id';
     }

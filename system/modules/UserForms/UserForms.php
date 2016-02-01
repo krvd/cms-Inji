@@ -10,7 +10,7 @@
  */
 class UserForms extends \Module
 {
-    function init()
+    public function init()
     {
         \App::$cur->view->customAsset('js', '/static/moduleAsset/UserForms/js/formCatcher.js');
         if (!empty($_POST['UserForms'])) {
@@ -55,7 +55,7 @@ class UserForms extends \Module
         }
     }
 
-    function formData($item)
+    public function formData($item)
     {
         $inputs = json_decode($item->data, true);
         $text = '';

@@ -10,7 +10,7 @@
  */
 class NotificationsController extends \Controller
 {
-    function checkAction()
+    public function checkAction()
     {
         $result = new Server\Result();
         $device = $this->Notifications->getCurDevice();

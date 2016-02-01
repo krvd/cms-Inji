@@ -11,18 +11,18 @@ namespace Money\Merchant;
 
 class Currency extends \Model
 {
-    static $objectName = 'Валюта системы оплаты';
-    static $cols = [
+    public static $objectName = 'Валюта системы оплаты';
+    public static $cols = [
         'code' => ['type' => 'text'],
         'currency_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'currency'],
         'merchant_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'merchant'],
     ];
-    static $labels = [
+    public static $labels = [
         'currency_id' => 'Валюта',
         'merchant_id' => 'Система оплаты',
         'code' => 'Код',
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'name' => 'Валюты системы оплаты',
             'cols' => [
@@ -31,7 +31,7 @@ class Currency extends \Model
             ],
         ],
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['currency_id', 'code'],
@@ -39,7 +39,7 @@ class Currency extends \Model
             ]
     ]];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'currency' => [

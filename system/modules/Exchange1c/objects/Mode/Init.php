@@ -13,7 +13,7 @@ namespace Exchange1c\Mode;
 
 class Init extends \Exchange1c\Mode
 {
-    function process()
+    public function process()
     {
         echo "zip=no\n";
         echo 'file_limit=' . \Tools::toBytes(ini_get('post_max_size'));

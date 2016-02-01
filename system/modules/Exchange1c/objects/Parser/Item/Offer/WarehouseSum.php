@@ -13,7 +13,7 @@ namespace Exchange1c\Parser\Item\Offer;
 
 class WarehouseSum extends \Migrations\Parser
 {
-    function parse()
+    public function parse()
     {
         $count = (string) $this->reader;
         $warehouse = \Ecommerce\Warehouse::get(['name', 'Общий склад 1с']);

@@ -13,7 +13,7 @@ namespace UserForms;
 
 class PopUp
 {
-    static function onClick($userFormId)
+    public static function onClick($userFormId)
     {
         $userForm = Form::get($userFormId);
         return "popUpForm({$userForm->id},'{$userForm->name}');";

@@ -9,7 +9,7 @@
  */
 class TextBlocks extends Module
 {
-    function init()
+    public function init()
     {
         
     }

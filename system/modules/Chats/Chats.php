@@ -10,12 +10,12 @@
  */
 class Chats extends Module
 {
-    function init()
+    public function init()
     {
         App::$primary->view->customAsset('js', '/moduleAsset/Chats/js/chat.js');
     }
 
-    function getMembers($chatId)
+    public function getMembers($chatId)
     {
         $members = \Chats\Chat\Member::getList(['where' => ['chat_id', $chatId]]);
         foreach ($members as $key => $member) {

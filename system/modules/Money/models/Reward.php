@@ -13,7 +13,7 @@ namespace Money;
 
 class Reward extends \Model
 {
-    static $cols = [
+    public static $cols = [
         'name' => ['type' => 'text'],
         'active' => ['type' => 'bool'],
         'lasthaveall' => ['type' => 'bool'],
@@ -24,7 +24,7 @@ class Reward extends \Model
         'peruser' => ['type' => 'number'],
     ];
 
-    function checkBlocked()
+    public function checkBlocked()
     {
         $blocked = Wallet\Block::getList(['where' => [
                         ['data', 'reward:' . $this->id],
@@ -57,7 +57,7 @@ class Reward extends \Model
         }
     }
 
-    static function relations()
+    public static function relations()
     {
         return [
             'levels' => [

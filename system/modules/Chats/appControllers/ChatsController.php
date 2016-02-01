@@ -10,7 +10,7 @@
  */
 class ChatsController extends Controller
 {
-    function eventsAction($chatId = 0)
+    public function eventsAction($chatId = 0)
     {
         $chatId = (int) $chatId;
         $result = new Server\Result();
@@ -60,7 +60,7 @@ class ChatsController extends Controller
         $result->send();
     }
 
-    function sendFormAction($chatId = 0)
+    public function sendFormAction($chatId = 0)
     {
         $chatId = (int) $chatId;
         $result = new Server\Result();

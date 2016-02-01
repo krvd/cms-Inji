@@ -29,7 +29,7 @@ class Query extends \Object
     public $params = [];
     public $distinct = false;
 
-    function __construct($instance = null)
+    public function __construct($instance = null)
     {
         if (!$instance) {
             $this->curInstance = \App::$cur->db->connection;
@@ -38,7 +38,7 @@ class Query extends \Object
         }
     }
 
-    function insert($table, $data)
+    public function insert($table, $data)
     {
         $this->operation = 'INSERT';
         $this->table = $table;
@@ -54,7 +54,7 @@ class Query extends \Object
         return $this->query();
     }
 
-    function update($table, $data)
+    public function update($table, $data)
     {
         $this->operation = 'UPDATE';
         $this->table = $table;
@@ -63,7 +63,7 @@ class Query extends \Object
         return $result->pdoResult->rowCount();
     }
 
-    function delete($table)
+    public function delete($table)
     {
         $this->operation = 'DELETE';
         $this->table = $table;
@@ -71,7 +71,7 @@ class Query extends \Object
         return $result->pdoResult->rowCount();
     }
 
-    function createTable($table_name, $cols, $indexes = [])
+    public function createTable($table_name, $cols, $indexes = [])
     {
         $this->operation = 'CREATE TABLE';
         $this->table = $table_name;
@@ -105,7 +105,7 @@ class Query extends \Object
         }
     }
 
-    function where($where = '', $value = '', $operation = false, $concatenation = 'AND')
+    public function where($where = '', $value = '', $operation = false, $concatenation = 'AND')
     {
         if (!is_array($where)) {
             $this->where[] = [$where, $value, $operation, $concatenation];
@@ -114,7 +114,7 @@ class Query extends \Object
         }
     }
 
-    function group($colname)
+    public function group($colname)
     {
         $this->group[] = $colname;
     }
@@ -144,7 +144,7 @@ class Query extends \Object
             $this->limit .= ",{$len}";
     }
 
-    function buildJoin($table, $where = false, $type = 'LEFT', $alias = '')
+    public function buildJoin($table, $where = false, $type = 'LEFT', $alias = '')
     {
         $join = '';
         if (is_array($table)) {
@@ -162,7 +162,7 @@ class Query extends \Object
         return $join;
     }
 
-    function buildWhere($where = '', $value = '', $operation = false, $concatenation = 'AND')
+    public function buildWhere($where = '', $value = '', $operation = false, $concatenation = 'AND')
     {
         $params = [];
         if (!is_array($where)) {
@@ -233,7 +233,7 @@ class Query extends \Object
         }
     }
 
-    function buildQuery()
+    public function buildQuery()
     {
         $params = [];
         $query = $this->operation;
@@ -309,7 +309,7 @@ class Query extends \Object
         return ['query' => $query, 'params' => $this->params];
     }
 
-    function query($query = [])
+    public function query($query = [])
     {
         if (!$query) {
             $this->params = [];

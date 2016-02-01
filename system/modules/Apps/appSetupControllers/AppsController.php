@@ -10,7 +10,7 @@
  */
 class AppsController extends Controller
 {
-    function configureAction()
+    public function configureAction()
     {
         $appOptions = Apps\App::get($_GET['item_pk']);
         $app = new App();

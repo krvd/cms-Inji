@@ -10,7 +10,7 @@
  */
 class CartController extends Controller
 {
-    function indexAction()
+    public function indexAction()
     {
         $cart = '';
         $deliverys = \Ecommerce\Delivery::getList();
@@ -157,7 +157,7 @@ class CartController extends Controller
         $this->view->page(['data' => compact('cart', 'items', 'deliverys', 'payTypes', 'packItem', 'bread')]);
     }
 
-    function orderDetailAction($id = 0)
+    public function orderDetailAction($id = 0)
     {
         $cart = Ecommerce\Cart::get((int) $id);
         if ($cart->user_id != Users\User::$cur->id) {
@@ -179,7 +179,7 @@ class CartController extends Controller
         $this->view->page(['data' => compact('cart', 'bread')]);
     }
 
-    function continueAction($id = 0)
+    public function continueAction($id = 0)
     {
         $cart = \Ecommerce\Cart::get((int) $id);
         if ($cart->user_id != Users\User::$cur->id) {
@@ -192,7 +192,7 @@ class CartController extends Controller
         Tools::redirect('/ecommerce/cart');
     }
 
-    function deleteAction($id = 0)
+    public function deleteAction($id = 0)
     {
         $cart = \Ecommerce\Cart::get((int) $id);
         if ($cart->user_id != Users\User::$cur->id) {
@@ -208,7 +208,7 @@ class CartController extends Controller
         Tools::redirect('/users/cabinet/ecommerceOrdersHistory', 'Корзина была удалена', 'success');
     }
 
-    function refillAction($id = 0)
+    public function refillAction($id = 0)
     {
         $cart = \Ecommerce\Cart::get((int) $id);
         if ($cart->user_id != Users\User::$cur->id) {
@@ -227,7 +227,7 @@ class CartController extends Controller
         Tools::redirect('/ecommerce/cart/');
     }
 
-    function successAction()
+    public function successAction()
     {
         $bread = [];
         $bread[] = [
@@ -246,7 +246,7 @@ class CartController extends Controller
         $this->view->page(['data' => compact('bread')]);
     }
 
-    function addAction()
+    public function addAction()
     {
         $result = new Server\Result();
         if (empty($_GET['itemOfferPriceId'])) {
@@ -301,7 +301,7 @@ class CartController extends Controller
         $result->send();
     }
 
-    function getcartAction()
+    public function getcartAction()
     {
         $result = new Server\Result();
         ob_start();
@@ -311,7 +311,7 @@ class CartController extends Controller
         $result->send();
     }
 
-    function delcartitemAction($cci_id = 0)
+    public function delcartitemAction($cci_id = 0)
     {
         if (empty($_SESSION['cart']['cart_id']))
             exit('У вас нет корзины');

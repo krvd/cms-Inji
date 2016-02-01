@@ -13,7 +13,7 @@ namespace Db;
 
 class Mysql extends \Object
 {
-    public $config = array();       // настройки подключения выбраной базы
+    public $config = [];       // настройки подключения выбраной базы
     public $connect = FALSE;        // ярлык соединения с MySQL
     public $encoding = 'utf-8';        // установленная кодировка
     public $db_name = 'test';         // выбраная в данный момент база
@@ -62,7 +62,7 @@ class Mysql extends \Object
         }
     }
 
-    function getTableCols($table_name)
+    public function getTableCols($table_name)
     {
         $query = new Mysql\Query($this);
         $old_db = $this->db_name;
@@ -78,13 +78,13 @@ class Mysql extends \Object
         return $result->getArray('COLUMN_NAME');
     }
 
-    function tableExist($tableName)
+    public function tableExist($tableName)
     {
         $query = new Mysql\Query($this);
         return (bool) $query->query("SHOW TABLES FROM `{$this->db_name}` LIKE '{$this->table_prefix}{$tableName}'")->getArray();
     }
 
-    function addCol($table = false, $name = false, $param = 'TEXT NOT NULL')
+    public function addCol($table = false, $name = false, $param = 'TEXT NOT NULL')
     {
         if (!$table || !$name) {
             return false;
@@ -96,7 +96,7 @@ class Mysql extends \Object
         return $query->query("ALTER TABLE `{$this->db_name}`.`{$this->table_prefix}{$table}` ADD `{$name}` {$param}");
     }
 
-    function delCol($table = false, $name = false)
+    public function delCol($table = false, $name = false)
     {
         if (!$table || !$name) {
             return false;
@@ -105,7 +105,7 @@ class Mysql extends \Object
         return $this->query("ALTER TABLE `{$this->db_name}`.`{$this->table_prefix}{$table}` DROP `{$name}`");
     }
 
-    function getTables()
+    public function getTables()
     {
         $query = new Mysql\Query($this);
         return $query->query("SHOW TABLES")->getArray();

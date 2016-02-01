@@ -13,7 +13,7 @@ namespace Money\Reward;
 
 class Level extends \Model
 {
-    static function relations()
+    public static function relations()
     {
         return [
             'reward' => [

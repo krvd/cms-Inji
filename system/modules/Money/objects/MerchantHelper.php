@@ -13,9 +13,9 @@ namespace Money;
 
 class MerchantHelper extends \Object
 {
-    static $merchant;
+    public static $merchant;
 
-    static function getMerchant()
+    public static function getMerchant()
     {
         if (!self::$merchant) {
             $class = get_called_class();
@@ -25,7 +25,7 @@ class MerchantHelper extends \Object
         return self::$merchant;
     }
 
-    static function getConfig()
+    public static function getConfig()
     {
         $merchant = self::getMerchant();
         $configs = [];
@@ -35,7 +35,7 @@ class MerchantHelper extends \Object
         return $configs;
     }
 
-    static function getMerchantCurrency($currency)
+    public static function getMerchantCurrency($currency)
     {
         $merchant = self::getMerchant();
         foreach ($merchant->currencies as $merchantCurrency) {
@@ -45,7 +45,7 @@ class MerchantHelper extends \Object
         }
     }
 
-    static function getFinalSum($pay, $method)
+    public static function getFinalSum($pay, $method)
     {
         switch ($method['type']) {
             case 'transfer':

@@ -19,7 +19,7 @@ class Statics
      * @param string $resizePos
      * @return string
      */
-    static function file($path, $resize = '', $resizeCrop = '', $resizePos = '')
+    public static function file($path, $resize = '', $resizeCrop = '', $resizePos = '')
     {
         $absolutePath = App::$cur->staticLoader->parsePath($path);
         $convet = FALSE;
@@ -28,7 +28,7 @@ class Statics
             $convet = true;
         }
         if (!file_exists($absolutePath)) {
-            return ''; //Tools::header(404, true);
+            return '';
         } else {
             $options = [];
             if ($resize) {

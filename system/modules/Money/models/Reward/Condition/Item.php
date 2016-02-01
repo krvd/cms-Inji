@@ -13,7 +13,7 @@ namespace Money\Reward\Condition;
 
 class Item extends \Model
 {
-    function recivedCount($userId = 0)
+    public function recivedCount($userId = 0)
     {
         $userId = $userId ? $userId : \Users\User::$cur->id;
         if (!$userId) {
@@ -30,12 +30,12 @@ class Item extends \Model
         return $count;
     }
 
-    function checkComplete($userId = 0)
+    public function checkComplete($userId = 0)
     {
         return $this->count <= $this->recivedCount($userId);
     }
 
-    static function relations()
+    public static function relations()
     {
         return [
             'condition' => [

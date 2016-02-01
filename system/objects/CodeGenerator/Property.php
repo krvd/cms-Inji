@@ -18,7 +18,7 @@ class Property extends \Object
     public $name = 'property';
     public $value = 'value';
 
-    function generate()
+    public function generate()
     {
         $code = $this->security . ' ';
         $code .= $this->static ? 'static ' : '';

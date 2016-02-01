@@ -19,7 +19,7 @@ class Html
      * @param boolean|null $noCloseTag
      * @return string
      */
-    static function el($tag, $attributes = [], $body = '', $noCloseTag = false)
+    public static function el($tag, $attributes = [], $body = '', $noCloseTag = false)
     {
         $html = "<{$tag}";
         if (!empty($attributes) && is_array($attributes)) {

@@ -13,18 +13,18 @@ namespace Users;
 
 class Role extends \Model
 {
-    static $objectName = 'Роль пользователей';
-    static $labels = [
+    public static $objectName = 'Роль пользователей';
+    public static $labels = [
         'name' => 'Название',
         'user' => 'Пользователи',
         'group_id' => 'Группа'
     ];
-    static $cols = [
+    public static $cols = [
         'name' => ['type' => 'text'],
         'user' => ['type' => 'dataManager', 'relation' => 'users'],
         'group_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'group'],
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'name' => 'Группы пользователей',
             'cols' => [
@@ -32,7 +32,7 @@ class Role extends \Model
             ]
         ]
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['name', 'group_id']
@@ -40,7 +40,7 @@ class Role extends \Model
         ]
     ];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'group' => [

@@ -11,14 +11,14 @@ namespace Ecommerce;
 
 class Warehouse extends \Model
 {
-    static $objectName = 'Склад';
-    static $labels = [
+    public static $objectName = 'Склад';
+    public static $labels = [
         'name' => 'Название',
     ];
-    static $cols = [
+    public static $cols = [
         'name' => ['type' => 'text'],
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'name' => 'Склады',
             'cols' => [
@@ -26,7 +26,7 @@ class Warehouse extends \Model
             ],
         ],
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['name'],

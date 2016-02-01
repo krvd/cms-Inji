@@ -10,7 +10,7 @@
  */
 class WidgetsController extends Controller
 {
-    function widgetChooserAction()
+    public function widgetChooserAction()
     {
         $widgets = [];
         foreach (App::$primary->config['modules'] as $module) {
@@ -22,7 +22,7 @@ class WidgetsController extends Controller
         $this->view->page(['page' => 'blank', 'data' => compact('widgets')]);
     }
 
-    function widgetImageAction()
+    public function widgetImageAction()
     {
         if (!empty($_GET['text'])) {
             $widgetCode = explode(':', preg_replace('!^{WIDGET:!isU', '', preg_replace('!}$!isU', '', urldecode($_GET['text']))));

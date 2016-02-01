@@ -10,7 +10,7 @@
  */
 class Access extends Module
 {
-    function getDeniedRedirect($app = false)
+    public function getDeniedRedirect($app = false)
     {
         if (!$app) {
             $app = $this->app->type;
@@ -21,7 +21,7 @@ class Access extends Module
         return '/';
     }
 
-    function checkAccess($element, $user = null)
+    public function checkAccess($element, $user = null)
     {
         $access = NULL;
         if ($element instanceof Controller) {
@@ -56,7 +56,7 @@ class Access extends Module
         return true;
     }
 
-    function resolvePath($array, $path, $element)
+    public function resolvePath($array, $path, $element)
     {
         while ($path) {
             $result = $this->pathWalker($array, array_merge($path, [$element]));
@@ -68,7 +68,7 @@ class Access extends Module
         return null;
     }
 
-    function pathWalker($array, $path)
+    public function pathWalker($array, $path)
     {
         if ($path && isset($array[$path[0]])) {
             return $this->pathWalker($array[$path[0]], array_slice($path, 1));

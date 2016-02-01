@@ -13,7 +13,7 @@ namespace Exchange1c\Mode;
 
 class File extends \Exchange1c\Mode
 {
-    function process()
+    public function process()
     {
         $dir = $this->exchange->path;
         \Tools::createDir($dir);

@@ -13,11 +13,11 @@ namespace Libs;
 
 class JqueryUi extends \Object
 {
-    static $name = 'jQuery Ui';
-    static $composerPacks = [
+    public static $name = 'jQuery Ui';
+    public static $composerPacks = [
         'components/jqueryui' => '1.11.*'
     ];
-    static $files = [
+    public static $files = [
         'js' => [
             'components/jqueryui/jquery-ui.min.js',
             'components/jqueryui/ui/i18n/datepicker-ru.js',
@@ -29,10 +29,10 @@ class JqueryUi extends \Object
             '/static/moduleAsset/libs/libs/jqueryUi/timeAddon/jquery-ui-timepicker-addon.min.css'
         ]
     ];
-    static $staticDirs = [
+    public static $staticDirs = [
         'components/jqueryui'
     ];
-    static $requiredLibs = [
+    public static $requiredLibs = [
         'jquery'
     ];
 

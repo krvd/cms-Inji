@@ -62,9 +62,9 @@ class Module
     /**
      * Parse cur module
      * 
-     * @param type $app
+     * @param \App $app
      */
-    function __construct($app)
+    public function __construct($app)
     {
         $this->app = $app;
         $this->moduleName = get_class($this);
@@ -83,7 +83,7 @@ class Module
      * @param string $moduleName
      * @return array
      */
-    static function getModulePaths($moduleName)
+    public static function getModulePaths($moduleName)
     {
         $moduleName = ucfirst($moduleName);
         $paths = [];
@@ -101,7 +101,7 @@ class Module
      * @param string $moduleName
      * @return string
      */
-    static function getModulePath($moduleName)
+    public static function getModulePath($moduleName)
     {
         $moduleName = ucfirst($moduleName);
         $paths = Module::getModulePaths($moduleName);
@@ -119,7 +119,7 @@ class Module
      * @param \App $app
      * @return boolean
      */
-    static function installed($moduleName, $app)
+    public static function installed($moduleName, $app)
     {
         if (in_array($moduleName, self::getInstalled($app))) {
             return true;
@@ -134,10 +134,10 @@ class Module
      * @param boolean $primary
      * @return array
      */
-    static function getInstalled($app, $primary = null)
+    public static function getInstalled($app, $primary = false)
     {
         if (!$primary) {
-            $primary = App::$primary;
+            $primary = \App::$primary;
         }
         $system = !empty(Inji::$config['modules']) ? Inji::$config['modules'] : [];
         $primary = !empty($primary->config['modules']) ? $primary->config['modules'] : [];
@@ -152,9 +152,8 @@ class Module
      * @param \App $app
      * @return \Module
      */
-    static function resolveModule($app)
+    public static function resolveModule($app)
     {
-        $moduleName = false;
         if (!empty($app->params[0]) && $app->{$app->params[0]}) {
             $module = $app->{$app->params[0]};
             $module->params = array_slice($app->params, 1);
@@ -179,7 +178,7 @@ class Module
      * 
      * @return array
      */
-    function getControllerPaths()
+    public function getControllerPaths()
     {
         $paths = [];
         if (App::$cur != App::$primary) {
@@ -218,7 +217,7 @@ class Module
      * 
      * @return \Controller
      */
-    function findController()
+    public function findController()
     {
         $paths = $this->getControllerPaths();
         foreach ($paths as $pathName => $path) {
@@ -248,7 +247,7 @@ class Module
      * @param string $moduleName
      * @return array
      */
-    static function getInfo($moduleName = '')
+    public static function getInfo($moduleName = '')
     {
         if (!$moduleName && get_called_class()) {
             $moduleName = get_called_class();
@@ -273,7 +272,7 @@ class Module
      * @param string $moduleName
      * @return array
      */
-    function getSnippets($snippetsPath, $extensions = true, $dir = '/snippets', $moduleName = '')
+    public function getSnippets($snippetsPath, $extensions = true, $dir = '/snippets', $moduleName = '')
     {
         $moduleName = $moduleName ? $moduleName : $this->moduleName;
         $modulePaths = Module::getModulePaths($moduleName);
@@ -304,7 +303,7 @@ class Module
      * @param string $request
      * @return array
      */
-    function getExtensions($extensionType, $request)
+    public function getExtensions($extensionType, $request)
     {
         $extensions = [];
         $modules = Module::getInstalled(App::$cur);

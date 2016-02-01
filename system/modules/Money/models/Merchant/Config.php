@@ -13,16 +13,16 @@ namespace Money\Merchant;
 
 class Config extends \Model
 {
-    static $objectName = 'Опция системы оплаты';
-    static $cols = [
+    public static $objectName = 'Опция системы оплаты';
+    public static $cols = [
         'name' => ['type' => 'text'],
         'value' => ['type' => 'textarea'],
     ];
-    static $labels = [
+    public static $labels = [
         'name' => 'Название',
         'value' => 'Значение',
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'name' => 'Опции системы оплаты',
             'cols' => [
@@ -31,7 +31,7 @@ class Config extends \Model
             ],
         ],
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['name'],
@@ -39,7 +39,7 @@ class Config extends \Model
             ]
     ]];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'merchant' => [

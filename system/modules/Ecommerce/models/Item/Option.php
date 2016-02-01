@@ -11,8 +11,8 @@ namespace Ecommerce\Item;
 
 class Option extends \Model
 {
-    static $objectName = 'Свойство';
-    static $cols = [
+    public static $objectName = 'Свойство';
+    public static $cols = [
         'name' => ['type' => 'text'],
         'code' => ['type' => 'text'],
         'type' => ['type' => 'text'],
@@ -25,7 +25,7 @@ class Option extends \Model
         'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
         'date_create' => ['type' => 'dateTime']
     ];
-    static $labels = [
+    public static $labels = [
         'name' => 'Название',
         'code' => 'Код',
         'type' => 'Тип',
@@ -38,7 +38,7 @@ class Option extends \Model
         'user_id' => 'Создатель',
         'date_create' => 'Дата создания'
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'name' => 'Свойства товаров',
             'cols' => [
@@ -46,7 +46,7 @@ class Option extends \Model
             ]
         ]
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['name', 'code', 'type'],
@@ -56,7 +56,7 @@ class Option extends \Model
         ]
     ];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'user' => [
@@ -71,7 +71,7 @@ class Option extends \Model
         ];
     }
 
-    function beforeSave()
+    public function beforeSave()
     {
         if (!isset($this->id)) {
             $this->user_id = \Users\User::$cur->id;

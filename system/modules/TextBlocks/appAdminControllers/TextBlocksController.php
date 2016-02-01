@@ -10,7 +10,7 @@
  */
 class TextBlocksController extends Controller
 {
-    function indexAction()
+    public function indexAction()
     {
         $this->view->setTitle('Текстовые блоки');
         $dataManager = new Ui\DataManager('TextBlocks\Block');

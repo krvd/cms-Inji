@@ -21,13 +21,13 @@ class Form extends \Object
     public $userDataTree = [];
     public $options = ['widgetsDir' => 'Form'];
 
-    function __construct($options = [])
+    public function __construct($options = [])
     {
         $this->options = array_merge($this->options, $options);
         $this->genUserDataTree($_POST);
     }
 
-    function genUserDataTree($data, $treeKey = '')
+    public function genUserDataTree($data, $treeKey = '')
     {
         foreach ($data as $key => $item) {
             if (is_array($item)) {
@@ -38,14 +38,14 @@ class Form extends \Object
         }
     }
 
-    function begin($header = '', $options = [])
+    public function begin($header = '', $options = [])
     {
         $params = compact('header', 'options');
         $params['form'] = $this;
         \App::$cur->view->widget('Ui\\' . $this->options['widgetsDir'] . '/begin', $params);
     }
 
-    function input($type, $name, $label = '', $options = [])
+    public function input($type, $name, $label = '', $options = [])
     {
         switch ($type) {
             case 'html':
@@ -72,7 +72,7 @@ class Form extends \Object
         }
     }
 
-    function end($btnText = 'Отправить', $attributs = [])
+    public function end($btnText = 'Отправить', $attributs = [])
     {
         $params = compact('btnText', 'attributs');
         $params['form'] = $this;

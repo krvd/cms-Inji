@@ -10,7 +10,7 @@
  */
 class FlorangeObject extends Object
 {
-    function processParseWeb($catalogUrl)
+    public function processParseWeb($catalogUrl)
     {
         $option = Option::get('cio_code', 'gallery');
         if (!$option) {
@@ -93,7 +93,7 @@ class FlorangeObject extends Object
         return 'success';
     }
 
-    function getCatalogs($parent = '')
+    public function getCatalogs($parent = '')
     {
         $this->simple_html_dom;
         $catalogs = [];

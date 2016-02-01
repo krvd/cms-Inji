@@ -13,19 +13,19 @@ namespace Money\MerchantHelper;
 
 class Primary extends \Money\MerchantHelper
 {
-    static function reciver($data, $status)
+    public static function reciver($data, $status)
     {
         return false;
     }
 
-    static function goToMerchant($payId, $amount, $currency, $description = '', $success = '/', $false = '/')
+    public static function goToMerchant($payId, $amount, $currency, $description = '', $success = '/', $false = '/')
     {
         $pay = \Money\Pay::get($payId);
 
         \Tools::redirect('/money/primaryPay/' . $payId . '/' . $currency->id);
     }
 
-    static function getFinalSum($pay, $method)
+    public static function getFinalSum($pay, $method)
     {
         $sum = parent::getFinalSum($pay, $method);
         if ($pay->data && $cart = \Ecommerce\Cart::get($pay->data)) {

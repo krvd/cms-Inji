@@ -13,27 +13,27 @@ namespace Ecommerce\Item;
 
 class Offer extends \Model
 {
-    static $objectName = 'Торговое предложение';
-    static $cols = [
+    public static $objectName = 'Торговое предложение';
+    public static $cols = [
         'name' => ['type' => 'text'],
         'article' => ['type' => 'text'],
         'warehouse' => ['type' => 'dataManager', 'relation' => 'warehouses'],
         'price' => ['type' => 'dataManager', 'relation' => 'prices'],
     ];
-    static $labels = [
+    public static $labels = [
         'name' => 'Название',
         'article' => 'Артикул',
         'warehouse' => 'Наличие на складах',
         'price' => 'Цены',
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'cols' => [
                 'name', 'article', 'warehouse', 'price'
             ]
         ]
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['name', 'article'],
@@ -43,7 +43,7 @@ class Offer extends \Model
         ]
     ];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'warehouses' => [
@@ -68,7 +68,7 @@ class Offer extends \Model
         ];
     }
 
-    function changeWarehouse($count)
+    public function changeWarehouse($count)
     {
         $warehouse = Offer\Warehouse::get([['count', '0', '>'], ['item_offer_id', $this->id]]);
         if ($warehouse) {
@@ -83,7 +83,7 @@ class Offer extends \Model
         }
     }
 
-    function warehouseCount($cart_id = 0)
+    public function warehouseCount($cart_id = 0)
     {
         \App::$cur->db->where(\Ecommerce\Item\Offer\Warehouse::colPrefix() . \Ecommerce\Item\Offer::index(), $this->id);
         \App::$cur->db->cols = 'COALESCE(sum(' . \Ecommerce\Item\Offer\Warehouse::colPrefix() . 'count),0) as `sum` ';
@@ -106,7 +106,7 @@ class Offer extends \Model
         return (float) $warehouse['sum'] - (float) $blocked['sum'];
     }
 
-    function beforeDelete()
+    public function beforeDelete()
     {
         if ($this->id) {
             if ($this->warehouses) {

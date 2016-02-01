@@ -10,14 +10,14 @@
  */
 class ViewController extends Controller
 {
-    function indexAction()
+    public function indexAction()
     {
         $templates = App::$primary->view->config;
         App::$cur->view->setTitle('Шаблоны сайта');
         App::$cur->view->page(['data' => compact('templates')]);
     }
 
-    function setDefaultAction($name)
+    public function setDefaultAction($name)
     {
         $templates = App::$primary->view->config;
         $templates['app']['current'] = $name;
@@ -25,7 +25,7 @@ class ViewController extends Controller
         Tools::redirect('/admin/View');
     }
 
-    function createTemplateAction()
+    public function createTemplateAction()
     {
         $this->view->setTitle('Создание шаблона');
         App::$cur->view->customAsset('css', '/static/moduleAsset/View/css/blockDrop.css');
@@ -62,7 +62,7 @@ class ViewController extends Controller
         $this->view->page();
     }
 
-    function editTemplateAction($templateName)
+    public function editTemplateAction($templateName)
     {
         $this->view->setTitle('Редактирование шаблона');
         App::$cur->view->customAsset('css', '/static/moduleAsset/View/css/blockDrop.css');

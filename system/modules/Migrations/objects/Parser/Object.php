@@ -19,7 +19,7 @@ class Object extends \Object
     public $reader;
     public $model;
 
-    function parse()
+    public function parse()
     {
         if (!$this->model) {
             $this->setModel();
@@ -54,7 +54,7 @@ class Object extends \Object
         }
     }
 
-    function setModel()
+    public function setModel()
     {
         $keyCol = null;
         $uniques = [];
@@ -138,7 +138,7 @@ class Object extends \Object
         }
     }
 
-    function getParam($code)
+    public function getParam($code)
     {
         $param = \Migrations\Migration\Object\Param::get([
                     ['object_id', $this->object->id],

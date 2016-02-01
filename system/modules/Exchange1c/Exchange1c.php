@@ -10,7 +10,7 @@
  */
 class Exchange1c extends Module
 {
-    function response($code, $text = '', $exit = true)
+    public function response($code, $text = '', $exit = true)
     {
         echo $code;
         if ($text) {

@@ -13,8 +13,8 @@ namespace Libs;
 
 class FancyBox extends \Object
 {
-    static $name = 'Fancy Box';
-    static $files = [
+    public static $name = 'Fancy Box';
+    public static $files = [
         'js' => [
             '/static/moduleAsset/libs/libs/fancybox/source/jquery.fancybox.pack.js',
         ],
@@ -22,7 +22,7 @@ class FancyBox extends \Object
             '/static/moduleAsset/libs/libs/fancybox/source/jquery.fancybox.css'
         ]
     ];
-    static $requiredLibs = [
+    public static $requiredLibs = [
         'jquery'
     ];
 

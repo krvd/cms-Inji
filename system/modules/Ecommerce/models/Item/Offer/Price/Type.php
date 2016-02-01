@@ -11,16 +11,16 @@ namespace Ecommerce\Item\Offer\Price;
 
 class Type extends \Model
 {
-    static $objectName = 'Тип цены';
-    static $cols = [
+    public static $objectName = 'Тип цены';
+    public static $cols = [
         'name' => ['type' => 'text'],
         'curency' => ['type' => 'text'],
     ];
-    static $labels = [
+    public static $labels = [
         'name' => 'Название',
         'curency' => 'Валюта',
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'cols' => [
                 'name',
@@ -28,7 +28,7 @@ class Type extends \Model
             ]
         ]
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['name', 'curency']

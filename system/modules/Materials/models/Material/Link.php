@@ -13,13 +13,13 @@ namespace Materials\Material;
 
 class Link extends \Model
 {
-    static $objectName = 'Связь с материалом';
-    static $labels = [
+    public static $objectName = 'Связь с материалом';
+    public static $labels = [
         'name' => 'Название',
         'material_id' => 'Материал',
         'linked_material_id' => 'Связанный материал',
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'cols' => [
                 'name',
@@ -34,13 +34,13 @@ class Link extends \Model
             'sortMode' => true
         ]
     ];
-    static $cols = [
+    public static $cols = [
         'material_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'material'],
         'linked_material_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'linkedMaterial'],
         'name' => ['type' => 'text'],
         'weight' => ['type' => 'number'],
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'options' => [
                 'access' => [
@@ -56,7 +56,7 @@ class Link extends \Model
         ]
     ];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'material' => [

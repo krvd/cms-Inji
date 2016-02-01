@@ -16,7 +16,7 @@ class Msg extends Module
      * @param string $text
      * @param string $status
      */
-    static function add($text = false, $status = 'info')
+    public static function add($text = false, $status = 'info')
     {
         if ($text !== false) {
             if (!empty($_SESSION['_INJI_MSG'])) {
@@ -39,7 +39,7 @@ class Msg extends Module
     /**
      * Show messages query
      */
-    static function show()
+    public static function show()
     {
         App::$cur->view->widget('msgList');
     }
@@ -50,7 +50,7 @@ class Msg extends Module
      * @param boolean $clean
      * @return array
      */
-    static function get($clean = false)
+    public static function get($clean = false)
     {
         if (empty($_SESSION['_INJI_MSG']))
             return [];
@@ -64,7 +64,7 @@ class Msg extends Module
     /**
      * Clean messages query
      */
-    static function flush()
+    public static function flush()
     {
         $_SESSION['_INJI_MSG'] = [];
     }

@@ -13,13 +13,13 @@ namespace Money\Reward;
 
 class Recive extends \Model
 {
-    static $cols = [
+    public static $cols = [
         'reward_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'reward'],
         'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'reward'],
         'amount' => ['type' => 'decimal']
     ];
 
-    static function relations()
+    public static function relations()
     {
         return[
             'reward' => [

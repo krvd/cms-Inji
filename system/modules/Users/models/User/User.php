@@ -146,9 +146,9 @@ class User extends \Model
                 'model' => 'Users\User\Info',
                 'col' => 'user_id'
             ],
-            'inventory' => [
+            'info' => [
                 'type' => 'one',
-                'model' => 'Users\User\Inventory',
+                'model' => 'Users\User\Info',
                 'col' => 'user_id'
             ],
             'socials' => [

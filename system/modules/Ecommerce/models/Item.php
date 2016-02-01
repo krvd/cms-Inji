@@ -13,9 +13,9 @@ namespace Ecommerce;
 
 class Item extends \Model
 {
-    static $categoryModel = 'Ecommerce\Category';
-    static $objectName = 'Товар';
-    static $labels = [
+    public static $categoryModel = 'Ecommerce\Category';
+    public static $objectName = 'Товар';
+    public static $labels = [
         'name' => 'Название',
         'alias' => 'Алиас',
         'category_id' => 'Раздел',
@@ -26,7 +26,7 @@ class Item extends \Model
         'options' => 'Параметры',
         'offers' => 'Торговые предложения',
     ];
-    static $cols = [
+    public static $cols = [
         'name' => ['type' => 'text'],
         'alias' => ['type' => 'text'],
         'category_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'category'],
@@ -38,7 +38,7 @@ class Item extends \Model
         'offers' => ['type' => 'dataManager', 'relation' => 'offers'],
         'weight' => ['type' => 'number']
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'name' => 'Товары',
             'cols' => [
@@ -55,7 +55,7 @@ class Item extends \Model
             'sortMode'=>true
         ]
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['name', 'alias'],
@@ -67,7 +67,7 @@ class Item extends \Model
             ]
     ]];
 
-    function beforeSave()
+    public function beforeSave()
     {
 
         if ($this->id) {
@@ -89,7 +89,7 @@ class Item extends \Model
         }
     }
 
-    static function relations()
+    public static function relations()
     {
 
         return [
@@ -121,7 +121,7 @@ class Item extends \Model
         ];
     }
 
-    function getPrice()
+    public function getPrice()
     {
         $offers = $this->offers(['key' => false]);
         $curPrice = null;
@@ -139,7 +139,7 @@ class Item extends \Model
         return $curPrice;
     }
 
-    function name()
+    public function name()
     {
         if (!empty(\App::$primary->ecommerce->config['item_option_as_name'])) {
             $param = Item\Param::get([['item_id', $this->id], ['item_option_id', \App::$primary->ecommerce->config['item_option_as_name']]]);
@@ -150,7 +150,7 @@ class Item extends \Model
         return $this->name;
     }
 
-    function beforeDelete()
+    public function beforeDelete()
     {
         if ($this->id) {
             if ($this->options) {

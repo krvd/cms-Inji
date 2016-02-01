@@ -10,7 +10,7 @@
  */
 class ecommerceController extends Controller
 {
-    function buyCardAction()
+    public function buyCardAction()
     {
         $this->view->setTitle('Покупка карты');
         $bread = [];
@@ -80,7 +80,7 @@ class ecommerceController extends Controller
         $this->view->page(['data' => compact('bread')]);
     }
 
-    function autoCompleteAction()
+    public function autoCompleteAction()
     {
         $return = Cache::get('itemsAutocomplete');
         if (!$return) {
@@ -96,12 +96,12 @@ class ecommerceController extends Controller
         echo $return;
     }
 
-    function indexAction()
+    public function indexAction()
     {
         Tools::redirect('/ecommerce/itemList');
     }
 
-    function itemListAction($category_id = 0)
+    public function itemListAction($category_id = 0)
     {
         //search
         if (!empty($_GET['search'])) {
@@ -189,7 +189,7 @@ class ecommerceController extends Controller
             'data' => compact('active', 'category', 'sort', 'search', 'pages', 'items', 'categorys', 'bread')]);
     }
 
-    function viewAction($id = '')
+    public function viewAction($id = '')
     {
         $item = \Ecommerce\Item::get((int) $id);
         if (!$item) {

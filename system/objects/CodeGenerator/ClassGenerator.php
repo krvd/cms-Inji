@@ -18,7 +18,7 @@ class ClassGenerator extends \Object
     public $name = 'class';
     public $extends = '';
 
-    function addProperty($name, $value = null, $static = false, $security = 'public')
+    public function addProperty($name, $value = null, $static = false, $security = 'public')
     {
         $this->propertys[$name] = new Property();
         $this->propertys[$name]->name = $name;
@@ -27,7 +27,7 @@ class ClassGenerator extends \Object
         $this->propertys[$name]->security = $security;
     }
 
-    function addMethod($name, $body = '', $propertys = [], $static = false, $security = 'public')
+    public function addMethod($name, $body = '', $propertys = [], $static = false, $security = 'public')
     {
         $this->methods[$name] = new Method();
         $this->methods[$name]->name = $name;
@@ -37,7 +37,7 @@ class ClassGenerator extends \Object
         $this->methods[$name]->security = $security;
     }
 
-    function generate()
+    public function generate()
     {
         $code = 'class ' . $this->name . ' ';
         if ($this->extends) {

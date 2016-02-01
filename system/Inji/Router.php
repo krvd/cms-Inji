@@ -16,7 +16,7 @@ class Router
      * @param string $className
      * @return boolean
      */
-    static function findClass($className)
+    public static function findClass($className)
     {
         if (strpos($className, '\\')) {
             $classPath = explode('\\', $className);
@@ -31,7 +31,6 @@ class Router
         } else {
             return Router::loadClass($className);
         }
-        return false;
     }
 
     /**
@@ -40,7 +39,7 @@ class Router
      * @param string $className
      * @return boolean
      */
-    static function loadClass($className)
+    public static function loadClass($className)
     {
         $folders = [];
         if (strpos($className, '\\')) {
@@ -82,12 +81,12 @@ class Router
     /**
      * Return posible paths for class path
      * 
-     * @param type $code
-     * @param type $folder
-     * @param type $classPath
+     * @param string $code
+     * @param string $folder
+     * @param string $classPath
      * @return string
      */
-    static function genFolderPaths($code, $folder, $classPath)
+    public static function genFolderPaths($code, $folder, $classPath)
     {
         $paths = [];
         if (strpos($classPath, '/') === false) {
@@ -113,7 +112,7 @@ class Router
      * @param string $className
      * @return string
      */
-    static function getLoadedClassPath($className)
+    public static function getLoadedClassPath($className)
     {
         $rc = new ReflectionClass($className);
         return dirname($rc->getFileName());

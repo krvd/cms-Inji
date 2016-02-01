@@ -13,25 +13,25 @@ namespace Migrations;
 
 class Log extends \Model
 {
-    static $objectName = 'История миграции';
-    static $labels = [
+    public static $objectName = 'История миграции';
+    public static $labels = [
         'result' => 'Результат',
         'source' => 'Источник',
         'event' => 'События',
         'date_create' => 'Дата начала'
     ];
-    static $cols = [
+    public static $cols = [
         'result' => ['type' => 'text'],
         'source' => ['type' => 'text'],
         'date_create' => ['type' => 'text'],
         'event' => ['type' => 'dataManager', 'relation' => 'events']
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'cols' => ['source', 'result', 'event', 'date_create']
         ]
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['source'],
@@ -41,7 +41,7 @@ class Log extends \Model
         ]
     ];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'events' => [

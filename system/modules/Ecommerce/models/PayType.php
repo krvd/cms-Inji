@@ -13,14 +13,14 @@ namespace Ecommerce;
 
 class PayType extends \Model
 {
-    static $objectName = 'Оплата';
-    static $labels = [
+    public static $objectName = 'Оплата';
+    public static $labels = [
         'name' => 'Название',
         'info' => 'Дополнительная информация',
         'handler' => 'Обработчик',
         'icon_file_id' => 'Иконка',
     ];
-    static $cols = [
+    public static $cols = [
         'name' => ['type' => 'text'],
         'info' => ['type' => 'textarea'],
         'handler' => [
@@ -32,7 +32,7 @@ class PayType extends \Model
         ],
         'icon_file_id' => ['type' => 'image'],
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'name' => 'Способы оплаты',
             'cols' => [
@@ -40,7 +40,7 @@ class PayType extends \Model
             ],
         ],
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['name', 'icon_file_id'],
@@ -48,7 +48,7 @@ class PayType extends \Model
             ]
     ]];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'icon' => [
