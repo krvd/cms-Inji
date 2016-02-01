@@ -117,5 +117,3 @@ class Files extends Module
     }
 
 }
-
-?>

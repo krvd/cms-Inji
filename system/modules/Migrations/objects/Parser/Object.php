@@ -68,7 +68,6 @@ class Object extends \Object
                 $uniques[$param->code] = $param;
             }
         }
-        $objectId = null;
         if ($keyCol && $this->reader->__isset($keyCol)) {
             $objectId = \Migrations\Id::get([['parse_id', (string) $this->reader->$keyCol], ['type', $this->object->model]]);
             if ($objectId) {

@@ -432,7 +432,7 @@ class Model
     /**
      * Generate params string for col by name
      * 
-     * @param type $colName
+     * @param string $colName
      * @return boolean|string
      */
     public static function genColParams($colName)

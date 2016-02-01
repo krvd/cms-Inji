@@ -86,5 +86,3 @@ class ViewController extends Controller
     }
 
 }
-
-?>

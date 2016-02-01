@@ -88,7 +88,6 @@ class CartController extends Controller
                         Msg::add('Вы не указали: ' . $field->name);
                     }
                 }
-                $card_item_id = 0;
                 if (!empty($_POST['discounts']['card_item_id'])) {
                     $userCard = \Ecommerce\Card\Item::get((int) $_POST['discounts']['card_item_id']);
                     if (!$userCard) {
@@ -311,20 +310,4 @@ class CartController extends Controller
         $result->send();
     }
 
-    public function delcartitemAction($cci_id = 0)
-    {
-        if (empty($_SESSION['cart']['cart_id']))
-            exit('У вас нет корзины');
-        $cartItem = \Ecommerce\Cart\Item::get((int) $cci_id);
-        if (!$cartItem || $cartItem->cart_id != $_SESSION['cart']['cart_id']) {
-            exit('Этот элемент корзины не относится к вашей корзине');
-        }
-        $cart = $cartItem->cart;
-        $cartItem->delete();
-        $cart->calc();
-        $this->getcartAction();
-    }
-
 }
-
-?>

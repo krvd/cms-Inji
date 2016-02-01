@@ -13,10 +13,8 @@ class StaticLoaderController extends Controller
     public function indexAction()
     {
         $path = $this->module->parsePath(implode('/', func_get_args()));
-        $convet = FALSE;
         if (!file_exists($path) && file_exists(mb_convert_encoding($path, 'Windows-1251', 'UTF-8'))) {
             $path = mb_convert_encoding($path, 'Windows-1251', 'UTF-8');
-            $convet = true;
         }
         if (!file_exists($path)) {
             Tools::header(404, true);

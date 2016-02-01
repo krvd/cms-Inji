@@ -61,7 +61,6 @@ class Value extends \Migrations\Parser
                 $valueObject->param_id = $this->param->id;
                 $valueObject->original = $value;
                 $valueObject->save();
-                $value = '';
             } else {
                 $valueObject = $values[$value];
             }

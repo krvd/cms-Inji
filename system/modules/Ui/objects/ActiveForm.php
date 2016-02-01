@@ -24,7 +24,12 @@ class ActiveForm extends \Object
     public $requestFullFormName = '';
     public $parent = null;
 
-    public function __construct($model, $form = [])
+    /**
+     * 
+     * @param array|\Model $model
+     * @param array|string $form
+     */
+    public function __construct($model, $form = '')
     {
         if (is_array($model)) {
             $this->form = $model;
@@ -90,7 +95,6 @@ class ActiveForm extends \Object
             $this->drawError('you not have access to "' . $this->modelName . '" manager with name: "' . $this->formName . '"');
             return [];
         }
-        $modelName = $this->modelName;
         $successId = 0;
         if (!empty($_POST[$this->requestFormName][$this->modelName])) {
             $request = $_POST[$this->requestFormName][$this->modelName];
@@ -181,7 +185,6 @@ class ActiveForm extends \Object
 
     public function drawCol($colName, $options, $form, $params = [])
     {
-        $modelName = $this->modelName;
         if (is_object($options)) {
             $options->draw();
         } else {
@@ -270,7 +273,7 @@ class ActiveForm extends \Object
     /**
      * Draw error message
      * 
-     * @param text $errorText
+     * @param string $errorText
      */
     public function drawError($errorText)
     {

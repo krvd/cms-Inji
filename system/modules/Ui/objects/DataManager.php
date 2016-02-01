@@ -68,7 +68,6 @@ class DataManager extends \Object
      */
     public function getButtons($params = [], $model = null)
     {
-        $formModelName = $modelName = $this->modelName;
         $formParams = [
             'dataManagerParams' => $params
         ];
@@ -168,7 +167,6 @@ class DataManager extends \Object
             $this->drawError('you not have access to "' . $this->modelName . '" manager with name: "' . $this->managerName . '"');
             return [];
         }
-        $cols = $this->getCols();
         $modelName = $this->modelName;
         $queryParams = [];
         if (empty($params['all'])) {
@@ -362,12 +360,10 @@ class DataManager extends \Object
                     $managerParams = ['relation' => $modelName::$cols[$colName]['relation']];
                     $count = $item->{$modelName::$cols[$colName]['relation']}(array_merge($params, ['count' => 1]));
                     return "<a class = 'btn btn-xs btn-primary' onclick = 'inji.Ui.dataManagers.popUp(\"" . str_replace('\\', '\\\\', $modelName) . ":" . $item->pk() . "\"," . json_encode(array_merge($params, $managerParams)) . ")'>{$count} " . \Tools::getNumEnding($count, ['Элемент', 'Элемента', 'Элементов']) . "</a>";
-                    break;
                 case 'many':
                     $managerParams = ['relation' => $modelName::$cols[$colName]['relation']];
                     $count = $item->{$modelName::$cols[$colName]['relation']}(array_merge($params, ['count' => 1]));
                     return "<a class = 'btn btn-xs btn-primary' onclick = 'inji.Ui.dataManagers.popUp(\"" . str_replace('\\', '\\\\', $modelName) . ":" . $item->pk() . "\"," . json_encode(array_merge($params, $managerParams)) . ")'>{$count} " . \Tools::getNumEnding($count, ['Элемент', 'Элемента', 'Элементов']) . "</a>";
-                    break;
                 default :
                     if ($item->{$modelName::$cols[$colName]['relation']}) {
                         if (\App::$cur->name == 'admin') {
@@ -396,15 +392,12 @@ class DataManager extends \Object
                         $content = ob_get_contents();
                         ob_end_clean();
                         return $content;
-                        break;
                     case 'moduleMethod':
                         return \App::$cur->{$modelName::$cols[$colName]['view']['module']}->{$modelName::$cols[$colName]['view']['method']}($item, $colName, $modelName::$cols[$colName]);
-                        break;
                     case'many':
                         $managerParams = ['relation' => $modelName::$cols[$colName]['relation']];
                         $count = $item->{$modelName::$cols[$colName]['relation']}(array_merge($params, ['count' => 1]));
                         return "<a class = 'btn btn-xs btn-primary' onclick = 'inji.Ui.dataManagers.popUp(\"" . str_replace('\\', '\\\\', $modelName) . ":" . $item->pk() . "\"," . json_encode(array_merge($params, $managerParams)) . ")'>{$count} " . \Tools::getNumEnding($count, ['Элемент', 'Элемента', 'Элементов']) . "</a>";
-                        break;
                     default:
                         return $item->$colName;
                 }
@@ -576,12 +569,10 @@ class DataManager extends \Object
 
     public function preDraw($params = [], $model = null)
     {
-        $modelName = $this->modelName;
-        if (!class_exists($modelName)) {
+        if (!class_exists($this->modelName)) {
             return false;
         }
         $this->predraw = true;
-        $modelName = $this->modelName;
 
         $cols = $this->getCols();
 
@@ -596,8 +587,7 @@ class DataManager extends \Object
 
     public function draw($params = [], $model = null)
     {
-        $modelName = $this->modelName;
-        if (!class_exists($modelName)) {
+        if (!class_exists($this->modelName)) {
             return false;
         }
         if (!$this->predraw) {
@@ -613,8 +603,7 @@ class DataManager extends \Object
 
     public function drawCategorys()
     {
-        $modelName = $this->modelName;
-        if (!class_exists($modelName)) {
+        if (!class_exists($this->modelName)) {
             return false;
         }
         ?>
@@ -643,7 +632,6 @@ class DataManager extends \Object
     public function showCategory($categorys, $category)
     {
         $isset = false;
-        $class = get_class($category);
         foreach ($categorys as $categoryChild) {
             if ($categoryChild->parent_id == $category->pk()) {
                 if (!$isset) {
@@ -680,7 +668,7 @@ class DataManager extends \Object
     /**
      * Draw error message
      * 
-     * @param text $errorText
+     * @param string $errorText
      */
     public function drawError($errorText)
     {

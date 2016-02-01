@@ -78,7 +78,6 @@ class Wallet extends \Model
             case 'floor':
                 $dif = (float) ('1' . str_repeat('0', $this->currency->round_precision));
                 return floor($this->amount * $dif) / $dif;
-                break;
             default :
                 return $this->amount;
         }

@@ -20,8 +20,6 @@ class Primary extends \Money\MerchantHelper
 
     public static function goToMerchant($payId, $amount, $currency, $description = '', $success = '/', $false = '/')
     {
-        $pay = \Money\Pay::get($payId);
-
         \Tools::redirect('/money/primaryPay/' . $payId . '/' . $currency->id);
     }
 

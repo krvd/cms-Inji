@@ -99,7 +99,7 @@ class View extends \Module
         $this->paramsParse($params);
 
         if (empty($this->template->config['noSysMsgAutoShow'])) {
-            Msg::show(true);
+            Msg::show();
         }
         if (!file_exists($this->template->contentPath)) {
             echo 'Content not found';
@@ -289,7 +289,6 @@ class View extends \Module
         if (!file_exists($cacheDir . '/all' . $timeMd5 . '.css')) {
             foreach ($urls as $primaryUrl => $url) {
                 $source = file_get_contents($url);
-                $matches = [];
                 $rootPath = substr($primaryUrl, 0, strrpos($primaryUrl, '/'));
                 $levelUpPath = substr($rootPath, 0, strrpos($rootPath, '/'));
                 $source = preg_replace('!url\((\'?"?)[\.]{2}!isU', 'url($1' . $levelUpPath, $source);

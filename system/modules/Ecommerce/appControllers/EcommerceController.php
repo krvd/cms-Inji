@@ -59,7 +59,6 @@ class ecommerceController extends Controller
                 $cart->date_status = date('Y-m-d H:i:s');
                 $cart->complete_data = date('Y-m-d H:i:s');
                 if (!empty($_SESSION['cart']['cart_id'])) {
-                    $curCart = Ecommerce\Cart::get($_SESSION['cart']['cart_id']);
                     $cart->card_item_id = $cardItem->id;
                 }
                 $cart->save();
@@ -84,7 +83,6 @@ class ecommerceController extends Controller
     {
         $return = Cache::get('itemsAutocomplete');
         if (!$return) {
-            $count = $this->ecommerce->getItemsCount();
             $items = $this->ecommerce->getItems();
             $return = [];
             foreach ($items as $item) {
@@ -217,5 +215,3 @@ class ecommerceController extends Controller
     }
 
 }
-
-?>

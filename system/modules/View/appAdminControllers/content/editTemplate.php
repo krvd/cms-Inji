@@ -6,4 +6,3 @@ $form->input('text', 'name', 'Название темы', ['value' => $template[
 $form->input('hidden', 'map', '', ['value' => $template['map']]);
 $this->widget('View\blockDrop', ['map' => $template['map']]);
 $form->end('Сохранить', ['onclick' => 'blockDrop.submitMap(this);return false;']);
-?>

@@ -20,5 +20,3 @@ class MenuController extends adminController
     }
 
 }
-
-?>

@@ -66,4 +66,3 @@ foreach ($types as $type) {
     }
 }
 $table->draw();
-?>

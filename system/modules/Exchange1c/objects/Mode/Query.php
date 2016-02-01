@@ -47,7 +47,6 @@ class Query extends \Exchange1c\Mode
             if (!$items) {
                 continue;
             }
-            $summ = 0;
 
             $goodss = $xml->createElement('Товары');
             $sum = 0;

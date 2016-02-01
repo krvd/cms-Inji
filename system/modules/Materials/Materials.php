@@ -83,5 +83,3 @@ class Materials extends Module
     }
 
 }
-
-?>

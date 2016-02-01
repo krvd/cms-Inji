@@ -88,7 +88,6 @@ class Modules extends Module
     public function generateModel($module, $name, $codeName, $options)
     {
         $codeName = ucfirst($codeName);
-        $cols = [];
         $class = new CodeGenerator\ClassGenerator();
         $class->name = $codeName;
         $class->extends = '\Model';
@@ -170,7 +169,7 @@ class Modules extends Module
         }
     }
 
-    public function getSelectListModels($module = false)
+    public function getSelectListModels($module = '')
     {
         $models = [];
         if ($module) {

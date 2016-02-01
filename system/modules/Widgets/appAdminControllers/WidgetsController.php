@@ -69,7 +69,6 @@ class WidgetsController extends Controller
             $text = 'text not defined';
         }
 
-        $textWidth = mb_strlen($text, 'utf-8');
         header('Content-type: image/png');
         // шрифт
         $font = dirname(__FILE__) . '/../fonts/Cousine/Cousine-Regular.ttf';

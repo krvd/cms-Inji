@@ -25,7 +25,6 @@ class DataManagerController extends Controller
             $model = $modelName::get($id, $modelName::index(), $params);
         } else {
             $modelName = $_GET['item'];
-            $id = null;
             $model = null;
         }
         if (!empty($_GET['params']['relation'])) {
@@ -66,7 +65,6 @@ class DataManagerController extends Controller
             $model = $modelName::get($id, $modelName::index(), $params);
         } else {
             $modelName = $_GET['modelName'];
-            $id = null;
             $model = null;
         }
         if (!empty($_GET['params']['relation'])) {
@@ -166,8 +164,6 @@ class DataManagerController extends Controller
             $model = $modelName::get($id);
         } else {
             $modelName = $_GET['modelName'];
-            $id = null;
-            $model = null;
         }
         if (!empty($_GET['params'])) {
             $params = $_GET['params'];
@@ -198,8 +194,6 @@ class DataManagerController extends Controller
             $model = $modelName::get($id);
         } else {
             $modelName = $_GET['modelName'];
-            $id = null;
-            $model = null;
         }
         if (!empty($_GET['params'])) {
             $params = $_GET['params'];
@@ -216,8 +210,6 @@ class DataManagerController extends Controller
                         $modelName = $relations[$_GET['params']['relation']]['model'];
                 }
             }
-        } else {
-            $params = [];
         }
         $dataManager = new Ui\DataManager($modelName, $_GET['managerName']);
         if ($dataManager->checkAccess()) {
@@ -241,8 +233,6 @@ class DataManagerController extends Controller
             $model = $modelName::get($id);
         } else {
             $modelName = $_GET['modelName'];
-            $id = null;
-            $model = null;
         }
         $params = [];
         if (!empty($_GET['params'])) {
@@ -284,7 +274,6 @@ class DataManagerController extends Controller
             $model = $modelName::get($id);
         } else {
             $modelName = $_GET['modelName'];
-            $id = null;
             $model = null;
         }
         if (!empty($_GET['params'])) {
@@ -302,8 +291,6 @@ class DataManagerController extends Controller
                         $modelName = $relations[$_GET['params']['relation']]['model'];
                 }
             }
-        } else {
-            $params = [];
         }
         $dataManager = new Ui\DataManager($modelName, $_GET['managerName']);
         if ($dataManager->checkAccess()) {

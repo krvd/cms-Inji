@@ -10,4 +10,3 @@ foreach ($buttons as $button) {
     $html .= Html::el('a', $button, $button['text']);
 }
 echo $html;
-?>

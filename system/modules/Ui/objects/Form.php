@@ -45,6 +45,14 @@ class Form extends \Object
         \App::$cur->view->widget('Ui\\' . $this->options['widgetsDir'] . '/begin', $params);
     }
 
+    /**
+     * Draw form input
+     * 
+     * @param string $type
+     * @param string $name
+     * @param string|boolean $label
+     * @param array $options
+     */
     public function input($type, $name, $label = '', $options = [])
     {
         switch ($type) {
@@ -72,6 +80,12 @@ class Form extends \Object
         }
     }
 
+    /**
+     * Draw form end
+     * 
+     * @param boolean|string $btnText
+     * @param array $attributs
+     */
     public function end($btnText = 'Отправить', $attributs = [])
     {
         $params = compact('btnText', 'attributs');

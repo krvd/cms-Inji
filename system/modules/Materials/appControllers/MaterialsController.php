@@ -104,7 +104,7 @@ class MaterialsController extends Controller
         }
     }
 
-    public function viewAction($material_id = 0)
+    public function viewAction()
     {
         $args = func_get_args();
         $alias = trim(implode('/', $args));

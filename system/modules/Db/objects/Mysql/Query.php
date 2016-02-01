@@ -162,9 +162,16 @@ class Query extends \Object
         return $join;
     }
 
+    /**
+     * Build where string
+     * 
+     * @param string|array $where
+     * @param mixed $value
+     * @param string $operation
+     * @param string $concatenation
+     */
     public function buildWhere($where = '', $value = '', $operation = false, $concatenation = 'AND')
     {
-        $params = [];
         if (!is_array($where)) {
             if (!$operation)
                 $operation = '=';
@@ -199,10 +206,11 @@ class Query extends \Object
                 $item = $where[$i];
                 if (isset($where[$i + 1]) && !isset($where[$i - 1]) && is_array($where[$i])) {
                     if ($this->whereString != NULL && substr($this->whereString, -1, 1) != '(' && $this->whereString != 'WHERE ') {
-                        if (!isset($item[3]))
+                        if (!isset($item[3])) {
                             $concatenation = 'AND';
-                        else
+                        } else {
                             $concatenation = $item[3];
+                        }
 
                         $this->whereString .= "{$concatenation} ";
                     }
@@ -235,7 +243,6 @@ class Query extends \Object
 
     public function buildQuery()
     {
-        $params = [];
         $query = $this->operation;
         $this->operation = strtoupper($this->operation);
 
@@ -257,7 +264,6 @@ class Query extends \Object
         switch ($this->operation) {
             case 'INSERT':
                 $this->params = array_merge($this->params, array_values($this->cols));
-                $colsStr = '`' . implode('`,`', array_keys($this->cols)) . '`';
                 $colsStr = '';
                 if ($this->cols) {
                     $colsStr = '`' . implode('`,`', array_keys($this->cols)) . '`';
@@ -310,6 +316,12 @@ class Query extends \Object
         return ['query' => $query, 'params' => $this->params];
     }
 
+    /**
+     * Execute query
+     * 
+     * @param string|array $query
+     * @return \Db\Mysql\Result
+     */
     public function query($query = [])
     {
         if (!$query) {

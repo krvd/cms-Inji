@@ -15,7 +15,6 @@ class Warehouse extends \Migrations\Parser
 {
     public function parse()
     {
-        $id = $this->reader->data['ИдСклада'];
         $count = $this->reader->data['КоличествоНаСкладе'];
         $objectId = \Migrations\Id::get([['parse_id', (string) $this->reader->data['ИдСклада']], ['type', 'Ecommerce\Warehouse']]);
         if ($objectId) {

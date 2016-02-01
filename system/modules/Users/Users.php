@@ -187,7 +187,14 @@ class Users extends Module
         }
     }
 
-    public function get($idn = false, $ltype = 'id')
+    /**
+     * Return user
+     * 
+     * @param integer|string $idn
+     * @param type $ltype
+     * @return boolean|\User\User
+     */
+    public function get($idn, $ltype = 'id')
     {
         if (!$idn)
             return false;
@@ -330,7 +337,6 @@ class Users extends Module
             'count' => 0,
             'lastLevel' => 0
         ];
-        $users = [];
         $levels = [];
         $userIds = $user->user_id;
         for ($i = 1; $i <= $levels || !$levels; $i++) {
@@ -351,5 +357,3 @@ class Users extends Module
     }
 
 }
-
-?>
