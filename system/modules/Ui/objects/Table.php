@@ -16,7 +16,7 @@ class Table extends \Object
     public $cols = [];
     public $rows = [];
     public $buttons = [];
-    public $name = '&nbsp;';
+    public $name = '';
     public $afterHeader = '';
     public $id = '';
     public $class = 'table table-condensed table-hover';

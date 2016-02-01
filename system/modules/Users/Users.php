@@ -27,12 +27,12 @@ class Users extends Module
         if (filter_input(INPUT_COOKIE, $this->cookiePrefix . '_user_session_hash') && filter_input(INPUT_COOKIE, $this->cookiePrefix . '_user_id')) {
             return $this->cuntinueSession(filter_input(INPUT_COOKIE, $this->cookiePrefix . '_user_session_hash'), filter_input(INPUT_COOKIE, $this->cookiePrefix . '_user_id'));
         }
-        if (isset($_POST['autorization']) && filter_input(INPUT_POST, 'user_login') && filter_input(INPUT_POST, 'user_pass')) {
+        if (isset($_POST['autorization']) && trim(filter_input(INPUT_POST, 'user_login')) && trim(filter_input(INPUT_POST, 'user_pass'))) {
             unset($_POST['autorization']);
-            return $this->autorization(filter_input(INPUT_POST, 'user_login'), filter_input(INPUT_POST, 'user_pass'), strpos(filter_input(INPUT_POST, 'user_login'), '@') ? 'mail' : 'login', false);
+            return $this->autorization(trim(filter_input(INPUT_POST, 'user_login')), trim(filter_input(INPUT_POST, 'user_pass')), strpos(filter_input(INPUT_POST, 'user_login'), '@') ? 'mail' : 'login', false);
         }
         if (isset($_GET['passre']) && filter_input(INPUT_GET, 'user_mail')) {
-            return $this->passre(filter_input(INPUT_GET, 'user_mail'));
+            return $this->passre(trim(filter_input(INPUT_GET, 'user_mail')));
         }
         if (!empty($_GET['passrecont']) && filter_input(INPUT_GET, 'hash')) {
             return $this->passrecont(filter_input(INPUT_GET, 'hash'));
@@ -262,7 +262,6 @@ class Users extends Module
         if (empty($parent_id) && !empty($this->config['defaultPartner'])) {
             $parent_id = $this->config['defaultPartner'];
         }
-
 
         $pass = Tools::randomString(10);
         $user = new Users\User([

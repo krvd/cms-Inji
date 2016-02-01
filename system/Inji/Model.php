@@ -609,7 +609,7 @@ class Model
         if ($col) {
             static::fixPrefix($col);
         }
-        
+
         if (is_array($param)) {
             static::fixPrefix($param, 'first');
         }
@@ -1490,7 +1490,11 @@ class Model
                     $relation['relModel']::fixPrefix($fixedCol);
                     $ids = array_keys($relation['relModel']::getList(['where' => [$this->index(), $this->pk()], 'array' => true, 'key' => $fixedCol]));
                     if (!$ids) {
-                        return [];
+                        if (empty($params['count'])) {
+                            return [];
+                        } else {
+                            return 0;
+                        }
                     }
                     $getType = 'getList';
                     $options = [

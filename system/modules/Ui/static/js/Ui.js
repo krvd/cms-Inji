@@ -29,6 +29,25 @@ Ui.prototype.bindMenu = function (container) {
     }
   });
 }
+Ui.prototype.requestInfo = function (options, callback) {
+  var id = 'resultForm' + inji.randomString();
+  var body = '<form id ="' + id + '">';
+  body += '<h2>' + options.header + '</h2>';
+  for (var key in options.inputs) {
+    body += '<div class = "form-group">';
+    body += '<label>' + options.inputs[key].label + '</label>';
+    body += '<input type = "' + options.inputs[key].type + '" name = "' + key + '" class ="form-control" />';
+    body += '</div>';
+  }
+  body += '<button class = "btn btn-primary">' + options.btn + '</button>';
+  body += '</form>';
+  var modal = inji.Ui.modals.show('', body);
+  $('#' + id).on('submit', function () {
+    callback($('#' + id).serializeArray());
+    modal.modal('hide');
+    return false;
+  });
+}
 /**
  * Editors
  * 
@@ -303,6 +322,15 @@ function DataManager(element) {
     instance.load();
     return false;
   });
+  self = this;
+  $(document).on('scroll', function () {
+    self.flowPanel();
+  });
+  $(window).on('resize', function () {
+    self.flowPanel();
+  });
+  self.flowPanel();
+
   this.load();
 }
 DataManager.prototype.delRow = function (key) {
@@ -467,6 +495,7 @@ DataManager.prototype.load = function (options) {
     success: function (data) {
       dataManager.element.find('tbody').html(data.rows);
       dataManager.element.find('.pagesContainer').html(data.pages);
+      //dataManager.flowPages();
       if (dataManager.options.sortMode) {
         dataManager.element.find('.modesContainer').html('<a class ="btn btn-xs btn-default" data-mode="sort">' + (dataManager.mode != 'sort' ? 'Включить' : 'Выключить') + ' режим сортировки</a>');
       }
@@ -538,6 +567,18 @@ DataManager.prototype.load = function (options) {
 DataManager.prototype.switchCategory = function (categoryBtn) {
   this.categoryPath = $(categoryBtn).data('path');
   this.reload();
+}
+DataManager.prototype.flowPanel = function () {
+
+  var elHeight = $(this.element).offset().top + $(this.element).height();
+  var scrollHeight = $(document).scrollTop() + $(window).height();
+  if (elHeight > scrollHeight && scrollHeight < scrollHeight + 37) {
+    $(this.element).find('.dataManager-bottomFloat').css('right', $(window).width() - ($(this.element).offset().left + $(this.element).width()) + 'px');
+    $(this.element).find('.dataManager-bottomFloat').css('position', 'fixed');
+  } else {
+    $(this.element).find('.dataManager-bottomFloat').css('right', 'auto');
+    $(this.element).find('.dataManager-bottomFloat').css('position', 'relative');
+  }
 }
 /**
  * Forms object

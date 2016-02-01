@@ -54,7 +54,11 @@ Server.prototype.request = function (options, btn) {
               callback(data.content, textStatus, jqXHR)
             });
           }
-          inji.loadScripts(data.scripts, 0);
+          if (data.scripts.length > 0) {
+            inji.loadScripts(data.scripts, 0);
+          } else {
+            inji.startCallbacks();
+          }
         } else {
           if (callback !== null) {
             callback(data.content, textStatus, jqXHR);

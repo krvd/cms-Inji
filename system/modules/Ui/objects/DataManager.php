@@ -24,26 +24,40 @@ class DataManager extends \Object
     public $cols = [];
     public $managerId = '';
 
-    function __construct($modelName, $dataManager = 'manager', $options = [])
+    /**
+     * Construct new data manager
+     * 
+     * @param string $modelName
+     * @param string|array $dataManager
+     * @throws Exception
+     */
+    function __construct($modelName, $dataManager = 'manager')
     {
+        if (!class_exists($modelName)) {
+            throw Exception("model {$modelName} not exists");
+        }
+
         $this->modelName = $modelName;
+
         if (is_string($dataManager)) {
             $this->managerName = $dataManager;
-            $dataManager = \App::$cur->ui->getModelManager($modelName, $dataManager);
+            $dataManager = !empty($modelName::$dataManagers[$dataManager]) ? $modelName::$dataManagers[$dataManager] : [];
         }
         $this->managerOptions = $dataManager;
 
-        if (empty($this->managerOptions)) {
+        if (!$this->managerOptions || !is_array($this->managerOptions)) {
             throw Exception('empty DataManager');
         }
 
         if (!empty($this->managerOptions['name'])) {
             $this->name = $this->managerOptions['name'];
-        } elseif ($modelName && class_exists($modelName) && isset($modelName::$objectName)) {
+        } elseif ($modelName && isset($modelName::$objectName)) {
             $this->name = $modelName::$objectName;
         } else {
             $this->name = $modelName;
         }
+
+        $this->managerId = str_replace('\\', '_', 'dataManager_' . $this->modelName . '_' . $this->managerName . '_' . \Tools::randomString());
     }
 
     /**
@@ -54,10 +68,6 @@ class DataManager extends \Object
      */
     function getButtons($params = [], $model = null)
     {
-        $modelName = $this->modelName;
-        if (!class_exists($modelName)) {
-            return [];
-        }
         $formModelName = $modelName = $this->modelName;
         $formParams = [
             'dataManagerParams' => $params
@@ -65,16 +75,31 @@ class DataManager extends \Object
         if ($model) {
             $formModelName = get_class($model);
             $relations = $formModelName::relations();
-            $formParams['preset'] = [
-                $relations[$params['relation']]['col'] => $model->pk()
-            ];
+            $type = !empty($relations[$params['relation']]['type']) ? $relations[$params['relation']]['type'] : 'to';
+            switch ($type) {
+                case 'relModel':
+                    $formParams['preset'] = [
+                        $formModelName::index() => $model->pk()
+                    ];
+                    break;
+                default:
+                    $formParams['preset'] = [
+                        $relations[$params['relation']]['col'] => $model->pk()
+                    ];
+            }
         }
 
-        $buttons = [
-            [
-                'text' => 'Добавить элемент',
-                'onclick' => 'inji.Ui.forms.popUp("' . str_replace('\\', '\\\\', $modelName) . '",' . json_encode($formParams) . ')',
-            ]
+        $buttons = [];
+        if (!empty($this->managerOptions['filters'])) {
+            $buttons[] = [
+                'text' => 'Фильтры',
+                'onclick' => '  var modal = $("#' . $this->managerId . '_filters");
+                modal.modal("show");',
+            ];
+        }
+        $buttons[] = [
+            'text' => 'Добавить элемент',
+            'onclick' => 'inji.Ui.forms.popUp("' . str_replace('\\', '\\\\', $modelName) . '",' . json_encode($formParams) . ')',
         ];
 
         return $buttons;
@@ -176,7 +201,7 @@ class DataManager extends \Object
                 $colInfo = $modelName::getColInfo($col);
                 switch ($colInfo['colParams']['type']) {
                     case 'select':
-                        if (!$params['filters'][$col]['value']) {
+                        if (empty($params['filters'][$col]['value'])) {
                             continue;
                         }
                         foreach ($params['filters'][$col]['value'] as $key => $value) {
@@ -321,6 +346,11 @@ class DataManager extends \Object
         if (!empty($modelName::$cols[$colName]['relation'])) {
             $type = !empty($relations[$modelName::$cols[$colName]['relation']]['type']) ? $relations[$modelName::$cols[$colName]['relation']]['type'] : 'to';
             switch ($type) {
+                case 'relModel':
+                    $managerParams = ['relation' => $modelName::$cols[$colName]['relation']];
+                    $count = $item->{$modelName::$cols[$colName]['relation']}(array_merge($params, ['count' => 1]));
+                    return "<a class = 'btn btn-xs btn-primary' onclick = 'inji.Ui.dataManagers.popUp(\"" . str_replace('\\', '\\\\', $modelName) . ":" . $item->pk() . "\"," . json_encode(array_merge($params, $managerParams)) . ")'>{$count} " . \Tools::getNumEnding($count, ['Элемент', 'Элемента', 'Элементов']) . "</a>";
+                    break;
                 case 'many':
                     $managerParams = ['relation' => $modelName::$cols[$colName]['relation']];
                     $count = $item->{$modelName::$cols[$colName]['relation']}(array_merge($params, ['count' => 1]));
@@ -443,7 +473,7 @@ class DataManager extends \Object
                 $colInfo = $modelName::getColInfo($col);
                 switch ($colInfo['colParams']['type']) {
                     case 'select':
-                        if (!$params['filters'][$col]['value']) {
+                        if (empty($params['filters'][$col]['value'])) {
                             continue;
                         }
                         foreach ($params['filters'][$col]['value'] as $key => $value) {
@@ -538,26 +568,18 @@ class DataManager extends \Object
         if (!class_exists($modelName)) {
             return false;
         }
-        $this->managerId = str_replace('\\', '_', 'dataManager_' . $this->modelName . '_' . $this->managerName . '_' . \Tools::randomString());
         $this->predraw = true;
         $modelName = $this->modelName;
 
-        $buttons = $this->getButtons($params, $model);
         $cols = $this->getCols();
 
         $this->table = new Table();
-        $this->table->name = $this->name;
         $tableCols = [];
         foreach ($cols as $colName => $colOptions) {
             $tableCols[] = !empty($colOptions['label']) ? $colOptions['label'] : $colName;
         }
         $tableCols[] = '';
         $this->table->setCols($tableCols);
-        $this->table->afterHeader = '<div class="modesContainer pull-left"></div>
-                                    <div class="pagesContainer pull-right"></div>';
-        foreach ($buttons as $button) {
-            $this->table->addButton($button);
-        }
     }
 
     function draw($params = [], $model = null)

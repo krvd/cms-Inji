@@ -19,27 +19,10 @@ class Ui extends Module
         App::$cur->view->customAsset('css', '/static/moduleAsset/Ui/css/Ui.css');
     }
 
-    function getModelManager($modelName, $dataManagerName = '')
-    {
-        if (!$dataManagerName) {
-            $dataManagerName = 'manger';
-        }
-        $managers = $this->getModelManagers($modelName);
-        return !empty($managers[$dataManagerName]) ? $managers[$dataManagerName] : [];
-    }
-
-    function getModelManagers($modelName)
-    {
-        if (class_exists($modelName)) {
-            return $modelName::$dataManagers;
-        }
-        return [];
-    }
-
     function getModelForm($modelName, $formName = '')
     {
         if (!$formName) {
-            $formName = 'manger';
+            $formName = 'manager';
         }
         $forms = $this->getModelForms($modelName);
         return !empty($forms[$formName]) ? $forms[$formName] : [];
