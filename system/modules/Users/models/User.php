@@ -125,7 +125,7 @@ class User extends \Model
             ],
             'map' => [
                 ['pass'],
-                ['form:info:manager']
+                ['form:info:profile']
             ]
         ]
     ];
