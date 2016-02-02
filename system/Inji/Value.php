@@ -14,19 +14,20 @@ class Value
     public $model = null;
     public $type = 'string';
 
-    function __construct($model, $key)
+    public function __construct($model, $key)
     {
         $this->model = $model;
         $this->valueKey = $key;
     }
 
-    function forView($options = [])
+    public function forView($options = [])
     {
         $modelName = get_class($this->model);
         $colInfo = $modelName::getColInfo($this->valueKey);
         $type = !empty($colInfo['colParams']['type']) ? $colInfo['colParams']['type'] : 'string';
         switch ($type) {
             case 'dateTime':
+                //fall
             case 'date':
                 $yy = (int) substr($this->model->{$this->valueKey}, 0, 4);
                 $mm = (int) substr($this->model->{$this->valueKey}, 5, 2);
@@ -37,15 +38,14 @@ class Value
                 $month = array('января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря');
                 $yearPosrfix = isset($options['yearPostfix']) ? $options['yearPostfix'] : " г.";
                 return ($dd > 0 ? $dd . " " : '') . $month[$mm - 1] . " " . $yy . $yearPosrfix . (empty($options['notime']) ? " " . $hours : '');
-                break;
-            case'select':
+            case 'select':
                 switch ($colInfo['colParams']['source']) {
                     case 'model':
-                        if ($item->$colName) {
-                            $sourceValue = $colInfo['colParams']['model']::get($item->$colName);
+                        $sourceValue = false;
+                        if ($this->model->{$this->valueKey}) {
+                            $sourceValue = $colInfo['colParams']['model']::get($this->model->{$this->valueKey});
                         }
-                        $value = $sourceValue ? $sourceValue->name() : 'Не задано';
-                        break;
+                        return $sourceValue ? $sourceValue->name() : 'Не задано';
                     case 'array':
                         return !empty($colInfo['colParams']['sourceArray'][$this->model->{$this->valueKey}]) ? $colInfo['colParams']['sourceArray'][$this->model->{$this->valueKey}] : 'Не задано';
                     case 'method':
@@ -60,14 +60,6 @@ class Value
                         $relValue = $relations[$colInfo['colParams']['relation']]['model']::get($this->model->{$this->valueKey});
                         return $relValue ? $relValue->name() : 'Не задано';
                 }
-                $value = !empty($_GET['datamanagerFilters'][$col]['value']) ? $_GET['datamanagerFilters'][$col]['value'] : '';
-                ?>
-                <div class="filter_form_field filter_select">
-                  <?php
-                  $form->input('select', "datamanagerFilters[{$col}][value]", $colInfo['label'], ['value' => $value, 'values' => $values, 'noContainer' => true])
-                  ?>
-                </div>
-                <?php
                 break;
             case 'image':
                 $file = Files\File::get($this->model->{$this->valueKey});
@@ -76,10 +68,8 @@ class Value
                 } else {
                     return '<img src="/static/system/images/no-image.png?resize=60x120" />';
                 }
-                break;
             case 'bool':
                 return $this->model->{$this->valueKey} ? 'Да' : 'Нет';
-
             default:
                 return $this->model->{$this->valueKey};
         }

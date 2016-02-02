@@ -10,7 +10,7 @@
  */
 class Dashboard extends Module
 {
-    function itemHref($item, $col, $colParam)
+    public function itemHref($item, $col, $colParam)
     {
         $modelName = $item->model;
         $relItem = $modelName::get($item->$col);

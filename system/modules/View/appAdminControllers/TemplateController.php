@@ -12,7 +12,7 @@
  */
 class TemplateController extends \Controller
 {
-    function indexAction($templateName)
+    public function indexAction($templateName)
     {
         $template = \View\Template::get($templateName, \App::$primary);
         $this->view->setTitle($templateName);

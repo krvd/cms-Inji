@@ -11,4 +11,3 @@ if (!$userCards) {
 } else {
     echo '<p><button type="button" onclick="inji.Ecommerce.Cart.calcSum();" class ="btn btn-primary btn-xs"><b>Применить дисконтную карту</b></button></p>';
 }
-?>

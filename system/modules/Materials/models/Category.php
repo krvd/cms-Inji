@@ -13,9 +13,9 @@ namespace Materials;
 
 class Category extends \Model
 {
-    static $objectName = 'Категория';
-    static $treeCategory = 'Materials\Material';
-    static $labels = [
+    public static $objectName = 'Категория';
+    public static $treeCategory = 'Materials\Material';
+    public static $labels = [
         'name' => 'Название',
         'description' => 'Описание',
         'image_file_id' => 'Изображение',
@@ -26,7 +26,7 @@ class Category extends \Model
         'material_viewer' => 'Тип страниц по умолчанию',
         'material_template' => 'Шаблон страниц по умолчанию',
     ];
-    static $cols = [
+    public static $cols = [
 
         'name' => ['type' => 'text'],
         'alias' => ['type' => 'text'],
@@ -41,7 +41,7 @@ class Category extends \Model
         'tree_path' => ['type' => 'text'],
         'weight' => ['type' => 'number'],
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'options' => [
                 'access' => [
@@ -57,7 +57,7 @@ class Category extends \Model
             ],
         ]
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'options' => [
                 'access' => [
@@ -76,14 +76,14 @@ class Category extends \Model
         ]
     ];
 
-    function beforeDelete()
+    public function beforeDelete()
     {
         foreach ($this->childs as $child) {
             $child->delete();
         }
     }
 
-    function getRoot()
+    public function getRoot()
     {
         $treePath = array_values(array_filter(explode('/', $this->tree_path)));
         if (!empty($treePath[0])) {
@@ -95,7 +95,7 @@ class Category extends \Model
         return $this;
     }
 
-    function getHref()
+    public function getHref()
     {
         $href = !empty(\App::$primary->config['defaultModule']) && \App::$primary->config['defaultModule'] == 'Materials' ? '/category' : '/materials/category';
         $treePath = array_filter(explode('/', $this->tree_path));
@@ -108,7 +108,7 @@ class Category extends \Model
         return $href . "/" . ($this->alias ? $this->alias : $this->pk());
     }
 
-    static function relations()
+    public static function relations()
     {
         return [
             'parent' => [
@@ -136,7 +136,7 @@ class Category extends \Model
         ];
     }
 
-    function resolveTemplate($material = false)
+    public function resolveTemplate($material = false)
     {
         $param = $material ? 'material_template' : 'template';
         if ($this->$param !== 'inherit') {
@@ -148,7 +148,7 @@ class Category extends \Model
         }
     }
 
-    function resolveViewer($material = false)
+    public function resolveViewer($material = false)
     {
         $param = $material ? 'material_viewer' : 'viewer';
         if ($this->$param !== 'inherit') {

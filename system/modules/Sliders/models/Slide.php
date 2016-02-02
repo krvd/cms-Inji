@@ -36,7 +36,7 @@ class Slide extends \Model
         'weight' => 'Вес',
         'image_file_id' => 'Изображение',
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'name' => 'Слайды',
             'cols' => [
@@ -45,7 +45,7 @@ class Slide extends \Model
             'sortMode' => true
         ],
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['name', 'link'],

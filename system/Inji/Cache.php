@@ -15,26 +15,26 @@ class Cache
      * 
      * @var Memcache 
      */
-    static $server = null;
+    public static $server = null;
 
     /**
      * Truing to connect flag
      * 
      * @var boolean 
      */
-    static $connectTrying = false;
+    public static $connectTrying = false;
 
     /**
      * Connected flag
      * 
      * @var boolean 
      */
-    static $connected = false;
+    public static $connected = false;
 
     /**
      * Try connect to memcache server
      */
-    static function connect()
+    public static function connect()
     {
         if (!self::$connectTrying && class_exists('Memcache', false)) {
             self::$server = new Memcache();
@@ -53,7 +53,7 @@ class Cache
      * @param callable $callback
      * @return boolean
      */
-    static function get($name, $params = [], $callback = null)
+    public static function get($name, $params = [], $callback = null)
     {
         if (!self::$connected) {
             self::connect();
@@ -86,7 +86,7 @@ class Cache
      * @param int $lifeTime
      * @return boolean
      */
-    static function set($name, $params = [], $val = '', $lifeTime = 3600)
+    public static function set($name, $params = [], $val = '', $lifeTime = 3600)
     {
         if (!self::$connected) {
             self::connect();
@@ -106,9 +106,8 @@ class Cache
      * @param array $options
      * @return string
      */
-    static function file($file, $options = [])
+    public static function file($file, $options = [])
     {
-        $dir = App::$primary->path;
         $sizes = !empty($options['resize']) ? $options['resize'] : [];
         $crop = !empty($options['crop']) ? $options['crop'] : '';
         $pos = !empty($options['pos']) ? $options['pos'] : 'center';
@@ -135,7 +134,7 @@ class Cache
      * @param App $app
      * @return string
      */
-    static function getDir($app = null)
+    public static function getDir($app = null)
     {
         if (!$app) {
             $app = App::$primary;

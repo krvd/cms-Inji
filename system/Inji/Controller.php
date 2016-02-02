@@ -15,7 +15,7 @@ class Controller
      * 
      * @var Controller 
      */
-    static $cur = null;
+    public static $cur = null;
 
     /**
      * Requested params for method
@@ -62,7 +62,7 @@ class Controller
     /**
      * Run controller
      */
-    function run()
+    public function run()
     {
         if (!empty($this->params[0]) && method_exists($this, $this->params[0] . 'Action')) {
             $this->method = $this->params[0];
@@ -80,7 +80,7 @@ class Controller
     /**
      * Reference to short access core modules
      */
-    function __get($name)
+    public function __get($name)
     {
         return App::$cur->__get($name);
     }
@@ -88,7 +88,7 @@ class Controller
     /**
      * Reference to short access core modules
      */
-    function __call($name, $params)
+    public function __call($name, $params)
     {
         return App::$cur->__call($name, $params);
     }
@@ -98,7 +98,7 @@ class Controller
      * 
      * @return boolean
      */
-    function checkAccess()
+    public function checkAccess()
     {
         if ($this->module->app->access) {
             return $this->module->app->access->checkAccess($this);

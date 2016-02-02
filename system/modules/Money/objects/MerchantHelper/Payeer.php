@@ -13,7 +13,7 @@ namespace Money\MerchantHelper;
 
 class Payeer extends \Money\MerchantHelper
 {
-    static function goToMerchant($payId, $amount, $currency, $description = '', $success = '/', $false = '/')
+    public static function goToMerchant($payId, $amount, $currency, $description = '', $success = '/', $false = '/')
     {
         $config = static::getConfig();
 
@@ -37,7 +37,7 @@ class Payeer extends \Money\MerchantHelper
         \Tools::redirect('http://payeer.com/merchant/?' . http_build_query($data));
     }
 
-    static function reciver($data, $status)
+    public static function reciver($data, $status)
     {
         $config = static::getConfig();
 

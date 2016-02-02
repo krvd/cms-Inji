@@ -10,12 +10,12 @@
  */
 class Recaptcha extends Module
 {
-    function init()
+    public function init()
     {
         App::$cur->view->customAsset('js', 'https://www.google.com/recaptcha/api.js');
     }
 
-    function show()
+    public function show()
     {
         if (!$this->config['sitekey']) {
             echo 'SiteKey not set for reCAPTCHA';
@@ -24,7 +24,7 @@ class Recaptcha extends Module
         }
     }
 
-    function check($gResponse)
+    public function check($gResponse)
     {
         $data['secret'] = $this->config['secret'];
         $data['response'] = $gResponse;

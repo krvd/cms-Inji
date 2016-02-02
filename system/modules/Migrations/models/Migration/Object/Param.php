@@ -13,24 +13,24 @@ namespace Migrations\Migration\Object;
 
 class Param extends \Model
 {
-    static $objectName = 'Параметр объекта миграции';
-    static $labels = [
+    public static $objectName = 'Параметр объекта миграции';
+    public static $labels = [
         'code' => 'Код',
         'type' => 'Тип',
         'object_id' => 'Миграция данных'
     ];
-    static $cols = [
+    public static $cols = [
         'code' => ['type' => 'text'],
         'type' => ['type' => 'text'],
         'object_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'object'],
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'name' => 'Параметры объекта миграции',
             'cols' => ['code', 'type', 'object_id']
         ]
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['code', 'type', 'object_id'],
@@ -38,7 +38,7 @@ class Param extends \Model
         ]
     ];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'object' => [

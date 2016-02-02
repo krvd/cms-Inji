@@ -14,19 +14,19 @@ namespace Users\User\Invite;
 class History extends \Model
 {
     public static $objectName = "История кода пришлашения";
-    static $labels = [
+    public static $labels = [
         'user_invite_id' => 'Приглашение',
         'type' => 'Тип',
         'user_id' => 'Пользователь',
         'date_create' => 'Дата',
     ];
-    static $cols = [
+    public static $cols = [
         'type' => ['type' => 'text'],
         'user_invite_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'invite'],
         'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
         'date_create' => ['type' => 'dateTime'],
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'cols' => [
                 'user_invite_id',
@@ -36,7 +36,7 @@ class History extends \Model
             ],
         ],
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['user_invite_id', 'type'],
@@ -45,7 +45,7 @@ class History extends \Model
         ]
     ];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'user' => [
@@ -59,7 +59,7 @@ class History extends \Model
         ];
     }
 
-    function name()
+    public function name()
     {
         return $this->code;
     }

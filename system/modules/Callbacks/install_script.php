@@ -1,6 +1,6 @@
 <?php
 
-return function ($step = NULL, $params = array()) {
+return function ($step = NULL, $params = []) {
     //Категории
     App::$cur->db->createTable('callbacks_category', [
         'category_id' => 'pk',

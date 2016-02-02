@@ -13,8 +13,8 @@ namespace Money;
 
 class Currency extends \Model
 {
-    static $objectName = 'Валюта';
-    static $labels = [
+    public static $objectName = 'Валюта';
+    public static $labels = [
         'name' => 'Название',
         'code' => 'Обозначение',
         'wallet' => 'Кошелек на сайте',
@@ -24,7 +24,7 @@ class Currency extends \Model
         'round_precision' => 'Количество занков после запятов при округдлении',
         'date_create' => 'Дата создания',
     ];
-    static $cols = [
+    public static $cols = [
         'name' => ['type' => 'text'],
         'code' => ['type' => 'text'],
         'refill' => ['type' => 'bool'],
@@ -33,13 +33,13 @@ class Currency extends \Model
         'round_type' => ['type' => 'text'],
         'round_precision' => ['type' => 'number'],
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'name' => 'Валюты',
             'cols' => ['name', 'code', 'wallet', 'refill', 'transfer', 'date_create']
         ]
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['name', 'code'],
@@ -48,12 +48,12 @@ class Currency extends \Model
         ]
     ];
 
-    function acronym()
+    public function acronym()
     {
         return "<acronym title='{$this->name()}'>{$this->code}</acronym>";
     }
 
-    function beforeDelete()
+    public function beforeDelete()
     {
         if ($this->id) {
             $wallets = Wallet::getList(['where' => ['currency_id', $this->id]]);

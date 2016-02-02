@@ -20,4 +20,3 @@ if (!empty($templates['app']['installed']))
         ]);
     }
 $table->draw();
-?>

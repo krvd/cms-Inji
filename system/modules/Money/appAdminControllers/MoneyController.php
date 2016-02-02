@@ -10,7 +10,7 @@
  */
 class MoneyController extends adminController
 {
-    function manualClosePayAction($payId)
+    public function manualClosePayAction($payId)
     {
         $pay = \Money\Pay::get((int) $payId);
         $result = new Server\Result();

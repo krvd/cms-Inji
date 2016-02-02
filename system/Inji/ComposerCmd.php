@@ -10,7 +10,7 @@
  */
 class ComposerCmd
 {
-    static function check()
+    public static function check()
     {
         if (!file_exists('composer/vendor/autoload.php')) {
             self::installComposer();
@@ -20,7 +20,7 @@ class ComposerCmd
         }
     }
 
-    static function installComposer()
+    public static function installComposer()
     {
         if (!file_exists('composer/bin/composer')) {
             Tools::createDir('composer');
@@ -35,7 +35,7 @@ class ComposerCmd
         }
     }
 
-    static function initComposer()
+    public static function initComposer()
     {
 
         $path = App::$primary->path . '/';
@@ -58,7 +58,7 @@ class ComposerCmd
         self::command('install', false, $path);
     }
 
-    static function command($command, $needOutput = true, $path = null)
+    public static function command($command, $needOutput = true, $path = null)
     {
         include_once 'composer/vendor/autoload.php';
         if ($needOutput) {
@@ -75,7 +75,7 @@ class ComposerCmd
         chdir($dir);
     }
 
-    static function requirePackage($packageName, $version = '')
+    public static function requirePackage($packageName, $version = '')
     {
         $path = App::$primary->path . '/';
         if (file_exists($path . 'composer.lock')) {

@@ -10,12 +10,12 @@
  */
 class Notifications extends Module
 {
-    function init()
+    public function init()
     {
         App::$cur->view->customAsset('js', '/moduleAsset/Notifications/js/Notifications.js');
     }
 
-    function subscribe($chanelAlias)
+    public function subscribe($chanelAlias)
     {
         $chanel = $this->getChanel($chanelAlias);
         $subscriber = $this->getCurSubscriber();
@@ -34,7 +34,7 @@ class Notifications extends Module
         $response->send();
     }
 
-    function getChanel($alias)
+    public function getChanel($alias)
     {
         $chanel = \Notifications\Chanel::get($alias, 'alias');
         if (!$chanel) {
@@ -46,7 +46,7 @@ class Notifications extends Module
         return $chanel;
     }
 
-    function getCurSubscriber()
+    public function getCurSubscriber()
     {
         $device = $this->getCurDevice();
         if (!$device->subscriber) {
@@ -69,7 +69,7 @@ class Notifications extends Module
         return $device->subscriber;
     }
 
-    function getCurDevice()
+    public function getCurDevice()
     {
         if (empty($_COOKIE['notification-device'])) {
             $deviceKey = Tools::randomString(70);

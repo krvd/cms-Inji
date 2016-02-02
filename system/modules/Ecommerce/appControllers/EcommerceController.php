@@ -10,11 +10,12 @@
  */
 class ecommerceController extends Controller
 {
-    function buyCardAction()
+    public function buyCardAction()
     {
         $this->view->setTitle('Покупка карты');
         $bread = [];
         $bread[] = ['text' => 'Покупка карты'];
+        $user = Users\User::$cur;
         if (!empty($_POST) && !empty($_POST['card_id'])) {
             $error = false;
             $card = \Ecommerce\Card::get((int) $_POST['card_id']);
@@ -27,11 +28,10 @@ class ecommerceController extends Controller
                 $user_id = $this->Users->registration($_POST, true);
                 if (!$user_id) {
                     $error = true;
+                    $user = null;
                 } else {
                     $user = Users\User::get($user_id);
                 }
-            } else {
-                $user = Users\User::$cur;
             }
             $userCard = \Ecommerce\Card\Item::get([['card_id', $card->id], ['user_id', $user->id]]);
             if ($userCard) {
@@ -47,25 +47,24 @@ class ecommerceController extends Controller
                 }
             }
             if (!$error) {
+                $cardItem = new \Ecommerce\Card\Item();
+                $cardItem->card_id = $card->id;
+                $cardItem->user_id = $user->id;
+                $cardItem->save();
+
                 $cart = new \Ecommerce\Cart();
                 $cart->user_id = $user->user_id;
-                $cart->useradds_id = $userAdds;
                 $cart->cart_status_id = 2;
                 $cart->comment = htmlspecialchars($_POST['comment']);
                 $cart->date_status = date('Y-m-d H:i:s');
                 $cart->complete_data = date('Y-m-d H:i:s');
                 if (!empty($_SESSION['cart']['cart_id'])) {
-                    $curCart = Ecommerce\Cart::get($_SESSION['cart']['cart_id']);
                     $cart->card_item_id = $cardItem->id;
                 }
                 $cart->save();
 
                 $this->module->parseFields($_POST['userAdds']['fields'], $cart);
 
-                $cardItem = new \Ecommerce\Card\Item();
-                $cardItem->card_id = $card->id;
-                $cardItem->user_id = $user->id;
-                $cardItem->save();
 
                 $extra = new \Ecommerce\Cart\Extra();
                 $extra->name = $card->name;
@@ -80,11 +79,10 @@ class ecommerceController extends Controller
         $this->view->page(['data' => compact('bread')]);
     }
 
-    function autoCompleteAction()
+    public function autoCompleteAction()
     {
         $return = Cache::get('itemsAutocomplete');
         if (!$return) {
-            $count = $this->ecommerce->getItemsCount();
             $items = $this->ecommerce->getItems();
             $return = [];
             foreach ($items as $item) {
@@ -96,12 +94,12 @@ class ecommerceController extends Controller
         echo $return;
     }
 
-    function indexAction()
+    public function indexAction()
     {
         Tools::redirect('/ecommerce/itemList');
     }
 
-    function itemListAction($category_id = 0)
+    public function itemListAction($category_id = 0)
     {
         //search
         if (!empty($_GET['search'])) {
@@ -189,7 +187,7 @@ class ecommerceController extends Controller
             'data' => compact('active', 'category', 'sort', 'search', 'pages', 'items', 'categorys', 'bread')]);
     }
 
-    function viewAction($id = '')
+    public function viewAction($id = '')
     {
         $item = \Ecommerce\Item::get((int) $id);
         if (!$item) {
@@ -217,5 +215,3 @@ class ecommerceController extends Controller
     }
 
 }
-
-?>

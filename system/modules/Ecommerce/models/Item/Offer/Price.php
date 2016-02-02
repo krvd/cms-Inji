@@ -13,20 +13,20 @@ namespace Ecommerce\Item\Offer;
 
 class Price extends \Model
 {
-    static $objectName = 'Цена';
-    static $cols = [
+    public static $objectName = 'Цена';
+    public static $cols = [
         'price' => ['type' => 'text'],
         'item_offer_price_type_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'type'],
         'item_offer_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'offer'],
         'currency_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'currency'],
     ];
-    static $labels = [
+    public static $labels = [
         'price' => 'Цена',
         'item_offer_price_type_id' => 'Тип цены',
         'item_offer_id' => 'Товар',
         'currency_id' => 'Валюта',
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'name' => 'Цены',
             'cols' => [
@@ -36,7 +36,7 @@ class Price extends \Model
             ]
         ],
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['price', 'currency_id',],
@@ -44,7 +44,7 @@ class Price extends \Model
             ]
     ]];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'offer' => [

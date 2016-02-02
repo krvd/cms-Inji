@@ -13,7 +13,7 @@ namespace Migrations\Parser\Object;
 
 class ObjectLink extends \Migrations\Parser
 {
-    function parse()
+    public function parse()
     {
         $object = \Migrations\Migration\Object::get($this->param->value);
         $objectId = \Migrations\Id::get([['parse_id', (string) $this->reader], ['type', $object->model]]);

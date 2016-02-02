@@ -1,5 +1,5 @@
 <script>
-    function exist(widget) {
+    public function exist(widget) {
       var params = widget.replace(/^{WIDGET:/ig, '').replace(/}$/g, '').split(':');
       $('#widgetChooser option[data-filename="' + params[0] + '"]')[0].selected = true;
       $('#widgetChooser').change();
@@ -10,7 +10,7 @@
         }
       })
     }
-    function genCode() {
+    public function genCode() {
       if ($('#widgetChooser')) {
         var code = '{WIDGET:' + ($('#widgetChooser option:selected').data('filename'));
         $.each($('#params' + $('#widgetChooser').val() + ' .form-control'), function () {
@@ -21,7 +21,7 @@
       }
       return '';
     }
-    function selectChange(select) {
+    public function selectChange(select) {
       $('.widgetParams').hide();
       $('#params' + $(select).val()).show();
     }

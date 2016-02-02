@@ -13,7 +13,7 @@ namespace Ui\ActiveForm\Input;
 
 class DataManager extends \Ui\ActiveForm\Input
 {
-    function draw()
+    public function draw()
     {
         $inputOptions = [];
         $modelName = $this->modelName;

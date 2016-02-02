@@ -13,12 +13,12 @@ namespace Chats;
 
 class Chat extends \Model
 {
-    static $cols = [
+    public static $cols = [
         'name' => ['type' => 'text'],
         'code' => ['type' => 'text'],
     ];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'events' => [

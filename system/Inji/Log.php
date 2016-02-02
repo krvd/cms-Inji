@@ -10,13 +10,13 @@
  */
 class Log
 {
-    public $log = array();
+    public $log = [];
     public $lastLog = 0;
     public $run = true;
     public $startTime = 0;
     public $template_parsed = false;
 
-    function __construct()
+    public function __construct()
     {
         if (!empty($_SERVER['REQUEST_TIME_FLOAT'])) {
             $this->startTime = $_SERVER['REQUEST_TIME_FLOAT'];
@@ -28,7 +28,7 @@ class Log
         $this->log[] = array('name' => 'System init', 'start' => $this->startTime, 'end' => microtime(true));
     }
 
-    function start($name)
+    public function start($name)
     {
         if ($this->run) {
             $this->log[] = array('name' => $name, 'start' => microtime(true));
@@ -37,7 +37,7 @@ class Log
         }
     }
 
-    function end($key = false)
+    public function end($key = false)
     {
         if ($this->run) {
             if ($key === false) {
@@ -48,29 +48,29 @@ class Log
         }
     }
 
-    function event($name, $status = 'info')
+    public function event($name, $status = 'info')
     {
         if ($this->run) {
             $this->log[] = array('name' => $name, 'status' => $status, 'time' => microtime(true));
         }
     }
 
-    function clean()
+    public function clean()
     {
-        $this->log = array();
+        $this->log = [];
     }
 
-    function stop()
+    public function stop()
     {
         $this->run = false;
     }
 
-    function run()
+    public function run()
     {
         $this->run = true;
     }
 
-    function view()
+    public function view()
     {
         echo '<div onclick="var image = document.getElementById(\'Inji_debug_window\');
     image.style.display = (image.style.display == \'none\') ? \'block\' : \'none\';" style = "background:#fff;position:fixed;bottom:0;right:0;opacity:0.3;z-index:1000001;cursor:pointer;">debug</div>';
@@ -90,7 +90,7 @@ class Log
         echo '<tr><th>Memory</th><th>' . $this->convertSize(memory_get_peak_usage()) . ' of ' . ini_get('memory_limit') . '</th></tr></table></div>';
     }
 
-    function convertSize($size)
+    public function convertSize($size)
     {
 
         if ($size < 1024)
@@ -101,7 +101,7 @@ class Log
             return round($size / 1048576, 2) . "MB";
     }
 
-    function __destruct()
+    public function __destruct()
     {
         if ($this->run && $_SERVER['REMOTE_ADDR'] == '127.0.0.1' && $this->template_parsed) {
             $this->view();

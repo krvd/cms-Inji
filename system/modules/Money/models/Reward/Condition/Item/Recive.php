@@ -13,7 +13,7 @@ namespace Money\Reward\Condition\Item;
 
 class Recive extends \Model
 {
-    static $cols = [
+    public static $cols = [
         'reward_condition_item_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'item'],
         'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
         'count' => ['type' => 'number'],
@@ -21,7 +21,7 @@ class Recive extends \Model
         'expired_date' => ['type' => 'dateTime']
     ];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'item' => [

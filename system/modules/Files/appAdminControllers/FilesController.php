@@ -11,7 +11,7 @@
 
 class FilesController extends adminController
 {
-    function managerForEditorAction()
+    public function managerForEditorAction()
     {
         $this->view->page(['page' => 'blank']);
     }

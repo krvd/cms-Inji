@@ -25,7 +25,7 @@ class Config extends \Model
         'value' => 'Значение',
         'date_create' => 'Дата создания'
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'name' => "Опции коннектора с социальными сетями",
             'cols' => [
@@ -33,7 +33,7 @@ class Config extends \Model
             ]
         ]
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['name'],
@@ -42,7 +42,7 @@ class Config extends \Model
         ]
     ];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'social' => [

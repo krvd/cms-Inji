@@ -12,12 +12,12 @@ class StaticLoader extends Module
 {
     public $mimes = [];
 
-    function init()
+    public function init()
     {
         $this->mimes = $this->config['mimes'];
     }
 
-    function parsePath($path)
+    public function parsePath($path)
     {
         $path = Tools::parsePath($path);
 
@@ -53,7 +53,6 @@ class StaticLoader extends Module
         switch ($type) {
             case 'libs':
                 return App::$cur->Libs->getPath(array_slice(explode('/', $path),2));
-                break;
             case 'templates':
                 $path = substr($path, strpos($path, '/') + 1);
                 return $scriptApp->view->templatesPath . '/' . $path;
@@ -80,12 +79,10 @@ class StaticLoader extends Module
         }
     }
 
-    function giveFile($file)
+    public function giveFile($file)
     {
-        $convet = FALSE;
         if (!file_exists($file) && file_exists(mb_convert_encoding($file, 'Windows-1251', 'UTF-8'))) {
             $file = mb_convert_encoding($file, 'Windows-1251', 'UTF-8');
-            $convet = true;
         }
         if (!file_exists($file)) {
             header('HTTP/1.1 404 Not Found');

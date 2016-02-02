@@ -10,7 +10,7 @@
  */
 class MaterialsController extends Controller
 {
-    function indexAction()
+    public function indexAction()
     {
         $args = func_get_args();
         $category = null;
@@ -69,7 +69,7 @@ class MaterialsController extends Controller
         }
     }
 
-    function categoryAction()
+    public function categoryAction()
     {
         $args = func_get_args();
         $path = trim(implode('/', $args));
@@ -104,7 +104,7 @@ class MaterialsController extends Controller
         }
     }
 
-    function viewAction($material_id = 0)
+    public function viewAction()
     {
         $args = func_get_args();
         $alias = trim(implode('/', $args));

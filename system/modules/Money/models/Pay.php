@@ -13,7 +13,7 @@ namespace Money;
 
 class Pay extends \Model
 {
-    static function relations()
+    public static function relations()
     {
         return [
             'currency' => [
@@ -31,7 +31,7 @@ class Pay extends \Model
         ];
     }
 
-    static $cols = [
+    public static $cols = [
         'currency_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'currency'],
         'pay_status_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'status'],
         'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
@@ -43,7 +43,7 @@ class Pay extends \Model
         'data' => ['type' => 'text'],
         'date_recive' => ['type' => 'dateTime']
     ];
-    static $labels = [
+    public static $labels = [
         'currency_id' => 'Валюта',
         'pay_status_id' => 'Статус',
         'sum' => 'Сумма',
@@ -56,7 +56,7 @@ class Pay extends \Model
         'date_recive' => 'Дата получения',
         'date_create' => 'Дата создания'
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'name' => 'Счета оплаты',
             'cols' => [
@@ -80,7 +80,7 @@ class Pay extends \Model
             'rowButtonsWidget' => 'Money\adminButtons'
         ]
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'name' => 'Счет оплаты',
             'map' => [

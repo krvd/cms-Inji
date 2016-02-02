@@ -13,20 +13,20 @@ namespace Ecommerce\Card;
 
 class Level extends \Model
 {
-    static $objectName = 'Уровень карты';
-    static $cols = [
+    public static $objectName = 'Уровень карты';
+    public static $cols = [
         'name' => ['type' => 'text'],
         'sum' => ['type' => 'text'],
         'card_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'card'],
         'discount_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'discount'],
     ];
-    static $labels = [
+    public static $labels = [
         'name' => 'Название',
         'card_id' => 'Карта',
         'discount_id' => 'Скидка',
         'sum' => 'Порог накопления',
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'name' => 'Бонусные карты',
             'cols' => [
@@ -37,7 +37,7 @@ class Level extends \Model
             ],
         ],
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['name', 'sum'],
@@ -45,7 +45,7 @@ class Level extends \Model
             ]
     ]];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'card' => [

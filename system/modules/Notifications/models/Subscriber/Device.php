@@ -13,7 +13,7 @@ namespace Notifications\Subscriber;
 
 class Device extends \Model
 {
-    static function relations()
+    public static function relations()
     {
         return [
             'subscriber' => [

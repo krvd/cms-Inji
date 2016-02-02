@@ -13,8 +13,8 @@ namespace Libs;
 
 class PrettyPhoto extends \Object
 {
-    static $name = 'PrettyPhoto';
-    static $files = [
+    public static $name = 'PrettyPhoto';
+    public static $files = [
         'js' => [
             '/static/moduleAsset/libs/libs/prettyPhoto/js/jquery.prettyPhoto.js',
         ],
@@ -22,7 +22,7 @@ class PrettyPhoto extends \Object
             '/static/moduleAsset/libs/libs/prettyPhoto/css/prettyPhoto.css'
         ]
     ];
-    static $requiredLibs = [
+    public static $requiredLibs = [
         'jquery'
     ];
 

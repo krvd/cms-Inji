@@ -13,7 +13,7 @@ namespace Migrations\Parser\Object;
 
 class Relation extends \Migrations\Parser
 {
-    function parse()
+    public function parse()
     {
         $options = $this->param->options ? json_decode($this->param->options, true) : [];
         $modelName = get_class($this->object->model);

@@ -13,22 +13,22 @@ namespace Ecommerce\Card;
 
 class Item extends \Model
 {
-    static $objectName = 'Карта пользователя';
-    static $cols = [
+    public static $objectName = 'Карта пользователя';
+    public static $cols = [
         'card_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'card'],
         'card_level_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'level'],
         'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
         'sum' => ['type' => 'text'],
         'code' => ['type' => 'text'],
     ];
-    static $labels = [
+    public static $labels = [
         'card_id' => 'Карта',
         'card_level_id' => 'Уровень карты',
         'user_id' => 'Пользователь',
         'sum' => 'Накопления',
         'code' => 'Уникальный код',
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'name' => 'Карты пользователей',
             'cols' => [
@@ -40,7 +40,7 @@ class Item extends \Model
             ],
         ],
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['card_id', 'card_level_id'],
@@ -49,7 +49,7 @@ class Item extends \Model
             ]
     ]];
 
-    function beforeSave()
+    public function beforeSave()
     {
         foreach ($this->card->levels as $level) {
             if ((float) $level->sum <= (float) $this->sum) {
@@ -58,7 +58,7 @@ class Item extends \Model
         }
     }
 
-    static function relations()
+    public static function relations()
     {
         return [
             'card' => [
@@ -76,7 +76,7 @@ class Item extends \Model
         ];
     }
 
-    function name()
+    public function name()
     {
         return $this->code ? $this->code : $this->id . ' - ' . $this->user->name();
     }

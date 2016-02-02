@@ -10,12 +10,12 @@
  */
 class UsersController extends Controller
 {
-    function indexAction()
+    public function indexAction()
     {
         Tools::redirect('/users/cabinet/profile');
     }
 
-    function cabinetAction($activeSection = '')
+    public function cabinetAction($activeSection = '')
     {
         $bread = [];
 
@@ -31,7 +31,7 @@ class UsersController extends Controller
         $this->view->page(['data' => compact('widgets', 'sections', 'activeSection', 'bread')]);
     }
 
-    function loginAction()
+    public function loginAction()
     {
         $this->view->setTitle('Авторизация');
         $bread = [];
@@ -39,7 +39,7 @@ class UsersController extends Controller
         $this->view->page(['data' => compact('bread')]);
     }
 
-    function registrationAction()
+    public function registrationAction()
     {
         $this->view->setTitle('Регистрация');
         if (Users\User::$cur->user_id) {
@@ -71,7 +71,7 @@ class UsersController extends Controller
         $this->view->page(['data' => compact('bread')]);
     }
 
-    function activationAction($userId = 0, $hash = '')
+    public function activationAction($userId = 0, $hash = '')
     {
         $user = \Users\User::get((int) $userId);
         if (!$user || !$hash || $user->activation !== (string) $hash) {
@@ -83,7 +83,7 @@ class UsersController extends Controller
         Tools::redirect('/', 'Вы успешно активировали ваш аккаунт', 'success');
     }
 
-    function attachEmailAction()
+    public function attachEmailAction()
     {
         if (Users\User::$cur->mail) {
             Tools::redirect('/', 'К вашему аккаунту уже привязан E-Mail');
@@ -117,7 +117,7 @@ class UsersController extends Controller
         $this->view->page();
     }
 
-    function resendActivationAction($userId = 0)
+    public function resendActivationAction($userId = 0)
     {
         $user = \Users\User::get((int) $userId);
         if (!$user) {
@@ -134,7 +134,7 @@ class UsersController extends Controller
         Tools::redirect('/', 'На указанный почтовый ящик была выслана ваша ссылка для подтверждения E-Mail', 'success');
     }
 
-    function getPartnerInfoAction($userId = 0)
+    public function getPartnerInfoAction($userId = 0)
     {
         $userId = (int) $userId;
         $result = new \Server\Result();

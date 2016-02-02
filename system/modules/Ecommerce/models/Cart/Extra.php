@@ -13,21 +13,21 @@ namespace Ecommerce\Cart;
 
 class Extra extends \Model
 {
-    static $labels = [
+    public static $labels = [
         'name' => 'Название',
         'price' => 'Цена',
         'count' => 'Количество',
         'cart_id' => 'Корзина',
         'currency_id' => 'Валюта',
     ];
-    static $cols = [
+    public static $cols = [
         'cart_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'cart'],
         'name' => ['type' => 'text'],
         'price' => ['type' => 'decimal'],
         'count' => ['type' => 'decimal'],
         'currency_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'currency']
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'name' => 'Дополнительно',
             'cols' => [
@@ -38,7 +38,7 @@ class Extra extends \Model
             ],
         ],
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['name'],
@@ -48,12 +48,12 @@ class Extra extends \Model
         ]
     ];
 
-    function afterSave()
+    public function afterSave()
     {
         $this->cart->calc();
     }
 
-    static function relations()
+    public static function relations()
     {
         return [
             'cart' => [

@@ -13,7 +13,7 @@ namespace Exchange1c;
 
 class Exchange extends \Model
 {
-    static $labels = [
+    public static $labels = [
         'type' => 'Тип',
         'session' => 'Сессия',
         'path' => 'Директория',
@@ -22,7 +22,7 @@ class Exchange extends \Model
         'date_create' => 'Дата начала',
         'date_end' => 'Дата окончания',
     ];
-    static $cols = [
+    public static $cols = [
         'type' => ['type' => 'text'],
         'session' => ['type' => 'text'],
         'path' => ['type' => 'text'],
@@ -31,7 +31,7 @@ class Exchange extends \Model
         'date_create' => ['type' => 'dateTime'],
         'date_end' => ['type' => 'dateTime'],
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'name' => 'История обмена',
             'cols' => ['type', 'session', 'path', 'log', 'file', 'date_create'],
@@ -43,7 +43,7 @@ class Exchange extends \Model
         ]
     ];
 
-    static function relations()
+    public static function relations()
     {
         return[
             'logs' => [

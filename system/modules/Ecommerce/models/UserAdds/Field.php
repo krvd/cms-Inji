@@ -13,21 +13,21 @@ namespace Ecommerce\UserAdds;
 
 class Field extends \Model
 {
-    static $objectName = 'Поле информации при заказе';
-    static $cols = [
+    public static $objectName = 'Поле информации при заказе';
+    public static $cols = [
         'name' => ['type' => 'text'],
         'type' => ['type' => 'text'],
         'required' => ['type' => 'bool'],
         'save' => ['type' => 'bool'],
         'weight' => ['type' => 'number'],
     ];
-    static $labels = [
+    public static $labels = [
         'name' => 'Название',
         'type' => 'Тип',
         'required' => 'Обязательно',
         'save' => 'Сохраняется'
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'cols' => [
                 'name', 'type', 'required', 'save'
@@ -35,7 +35,7 @@ class Field extends \Model
             'sortMode'=>true
         ]
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['name', 'type'],

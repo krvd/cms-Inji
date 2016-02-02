@@ -13,11 +13,11 @@ namespace Ecommerce\Item\Option;
 
 class Item extends \Model
 {
-    static $objectName = 'Элемент коллекции опции';
-    static $cols = [
+    public static $objectName = 'Элемент коллекции опции';
+    public static $cols = [
         'value' => ['type' => 'text']
     ];
-    static $labels = [
+    public static $labels = [
         'value' => 'Значение'
     ];
 

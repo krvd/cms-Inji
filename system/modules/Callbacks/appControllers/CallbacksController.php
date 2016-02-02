@@ -10,7 +10,7 @@
  */
 class CallbacksController extends Controller
 {
-    function indexAction($categoryCode = '')
+    public function indexAction($categoryCode = '')
     {
         $category = null;
         if ($categoryCode) {
@@ -32,7 +32,7 @@ class CallbacksController extends Controller
         ]);
     }
 
-    function viewAction($callbackId)
+    public function viewAction($callbackId)
     {
         $callback = Callbacks\Callback::get((int) $callbackId);
         if (!$callback) {

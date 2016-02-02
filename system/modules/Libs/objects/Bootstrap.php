@@ -13,11 +13,11 @@ namespace Libs;
 
 class Bootstrap extends \Object
 {
-    static $name = 'BootStrap';
-    static $composerPacks = [
+    public static $name = 'BootStrap';
+    public static $composerPacks = [
         'twbs/bootstrap' => '3.*'
     ];
-    static $files = [
+    public static $files = [
         'js' => [
             'twbs/bootstrap/dist/js/bootstrap.min.js',
             '/static/moduleAsset/libs/libs/bootstrap/js/modalStack.js'
@@ -26,10 +26,10 @@ class Bootstrap extends \Object
             'twbs/bootstrap/dist/css/bootstrap.min.css'
         ]
     ];
-    static $staticDirs = [
+    public static $staticDirs = [
         'twbs/bootstrap/dist'
     ];
-    static $requiredLibs = [
+    public static $requiredLibs = [
         'jquery'
     ];
 

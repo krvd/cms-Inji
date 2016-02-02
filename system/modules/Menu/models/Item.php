@@ -13,8 +13,8 @@ namespace Menu;
 
 class Item extends \Model
 {
-    static $objectName = 'Пункт меню';
-    static $labels = [
+    public static $objectName = 'Пункт меню';
+    public static $labels = [
         'type' => 'Тип',
         'name' => 'Название',
         'tooltip' => 'Подсказка',
@@ -22,8 +22,8 @@ class Item extends \Model
         'Menu_id' => 'Меню',
         'parent_id' => 'Дочерний пункт'
     ];
-    static $storage = ['type' => 'moduleConfig'];
-    static $cols = [
+    public static $storage = ['type' => 'moduleConfig'];
+    public static $cols = [
         'type' => ['type' => 'select', 'source' => 'array', 'sourceArray' => [
                 'href' => 'Ссылка',
             /*
@@ -56,7 +56,7 @@ class Item extends \Model
         'weight' => ['type' => 'number'],
         'Menu_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'menu', 'showCol' => 'name'],
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'cols' => [
                 'type',
@@ -68,7 +68,7 @@ class Item extends \Model
             'sortMode' => true
         ]
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['aditional'],
@@ -79,7 +79,7 @@ class Item extends \Model
         ]
     ];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'menu' => [
@@ -89,7 +89,7 @@ class Item extends \Model
         ];
     }
 
-    static function index()
+    public static function index()
     {
         return 'id';
     }

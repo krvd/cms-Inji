@@ -10,7 +10,7 @@
  */
 class MapController extends Controller
 {
-    function indexAction()
+    public function indexAction()
     {
         $this->view->setTitle('Карты миграции данных');
 

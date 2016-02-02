@@ -13,7 +13,7 @@ namespace Money\MerchantHelper;
 
 class WalletOne extends \Money\MerchantHelper
 {
-    static function reciver($data, $status)
+    public static function reciver($data, $status)
     {
         $config = static::getConfig();
         $skey = $config['secret'];
@@ -81,7 +81,7 @@ class WalletOne extends \Money\MerchantHelper
         return $result;
     }
 
-    static function goToMerchant($payId, $amount, $currency, $description = '', $success = '/', $false = '/')
+    public static function goToMerchant($payId, $amount, $currency, $description = '', $success = '/', $false = '/')
     {
         $config = static::getConfig();
         $merchantCurrency = static::getMerchantCurrency($currency);
@@ -92,7 +92,7 @@ class WalletOne extends \Money\MerchantHelper
         //Секретный ключ интернет-магазина
         $key = $config['secret'];
 
-        $fields = array();
+        $fields = [];
 
         // Добавление полей формы в ассоциативный массив
         $fields["WMI_MERCHANT_ID"] = $config['shopId'];

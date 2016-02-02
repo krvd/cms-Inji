@@ -10,7 +10,7 @@
  */
 class Libs extends Module
 {
-    function loadLib($libName, $options = [])
+    public function loadLib($libName, $options = [])
     {
 
         $className = 'Libs\\' . ucfirst($libName);
@@ -46,7 +46,7 @@ class Libs extends Module
         }
     }
 
-    function staticCalled($file, $dir)
+    public function staticCalled($file, $dir)
     {
         $libPath = preg_replace('!^libs/!', '', $file);
         $libName = substr($libPath, 0, strpos($libPath, '/'));
@@ -65,7 +65,7 @@ class Libs extends Module
         return $dir . $file;
     }
 
-    function getPath($args)
+    public function getPath($args)
     {
         if (!empty($args[0])) {
             $libName = 'Libs\\' . ucfirst($args[0]);

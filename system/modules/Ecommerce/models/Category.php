@@ -11,9 +11,9 @@ namespace Ecommerce;
 
 class Category extends \Model
 {
-    static $objectName = 'Категория магазина';
-    static $treeCategory = 'Ecommerce\Item';
-    static $cols = [
+    public static $objectName = 'Категория магазина';
+    public static $treeCategory = 'Ecommerce\Item';
+    public static $cols = [
         'name' => ['type' => 'text'],
         'alias' => ['type' => 'text'],
         'parent_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'parent'],
@@ -25,7 +25,7 @@ class Category extends \Model
         'template' => ['type' => 'select', 'source' => 'method', 'method' => 'templatesCategoryList', 'module' => 'Ecommerce'],
         'weight' => ['type' => 'number']
     ];
-    static $labels = [
+    public static $labels = [
         'name' => 'Название',
         'alias' => 'Алиас',
         'parent_id' => 'Родитель',
@@ -34,7 +34,7 @@ class Category extends \Model
         'options_inherit' => 'Наследовать набор свойств',
         'options' => 'Свойства товаров',
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['name', 'alias'],
@@ -47,7 +47,7 @@ class Category extends \Model
         ]
     ];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'items' => [
@@ -76,7 +76,7 @@ class Category extends \Model
         ];
     }
 
-    function resolveTemplate()
+    public function resolveTemplate()
     {
         if ($this->template !== 'inherit') {
             return $this->template;
@@ -87,7 +87,7 @@ class Category extends \Model
         }
     }
 
-    function resolveViewer()
+    public function resolveViewer()
     {
         if ($this->viewer !== 'inherit') {
             return $this->viewer;

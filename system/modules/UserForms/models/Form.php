@@ -13,22 +13,22 @@ namespace UserForms;
 
 class Form extends \Model
 {
-    static $objectName = 'Форма обращения с сайта';
-    static $labels = [
+    public static $objectName = 'Форма обращения с сайта';
+    public static $labels = [
         'name' => 'Название',
         'description' => 'Описание',
         'user_id' => 'Пользователь',
         'inputs' => 'Поля формы',
         'date_create' => 'Дата'
     ];
-    static $cols = [
+    public static $cols = [
         'name' => ['type' => 'text'],
         'description' => ['type' => 'html'],
         'user_id' => [ 'type' => 'select', 'source' => 'relation', 'relation' => 'user'],
         'inputs' => [ 'type' => 'dataManager', 'relation' => 'inputs'],
         'date_create' => ['type' => 'dateTime'],
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'cols' => [
                 'name',
@@ -37,7 +37,7 @@ class Form extends \Model
             ]
         ]
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'name' => 'Форма приема обращений с сайта',
             'map' => [
@@ -48,7 +48,7 @@ class Form extends \Model
         ]
     ];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'user' => [

@@ -13,14 +13,14 @@ namespace Chats\Chat;
 
 class Message extends \Model
 {
-    static $cols = [
+    public static $cols = [
         'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
         'text' => ['type' => 'textarea'],
         'parent_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'parent'],
         'chat_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'chat'],
     ];
 
-    static function relations()
+    public static function relations()
     {
         return[
             'user' => [

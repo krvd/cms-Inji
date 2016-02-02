@@ -14,7 +14,7 @@ namespace Users\User;
 class Invite extends \Model
 {
     public static $objectName = "Код пришлашения";
-    static $labels = [
+    public static $labels = [
         'code' => 'Код',
         'type' => 'Тип',
         'user_id' => 'Пользователь',
@@ -22,7 +22,7 @@ class Invite extends \Model
         'count' => 'Использовано',
         'date_create' => 'Дата',
     ];
-    static $cols = [
+    public static $cols = [
         'code' => ['type' => 'text'],
         'type' => ['type' => 'text'],
         'limit' => ['type' => 'number'],
@@ -30,7 +30,7 @@ class Invite extends \Model
         'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
         'date_create' => ['type' => 'dateTime']
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'cols' => [
                 'code',
@@ -42,7 +42,7 @@ class Invite extends \Model
             ],
         ],
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['code', 'type',],
@@ -52,7 +52,7 @@ class Invite extends \Model
         ]
     ];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'user' => [
@@ -62,7 +62,7 @@ class Invite extends \Model
         ];
     }
 
-    function name()
+    public function name()
     {
         return $this->code;
     }

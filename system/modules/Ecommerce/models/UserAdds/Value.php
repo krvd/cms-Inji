@@ -13,22 +13,22 @@ namespace Ecommerce\UserAdds;
 
 class Value extends \Model
 {
-    static $labels = [
+    public static $labels = [
         'useradds_field_id' => 'Поле',
         'value' => 'Значение'
     ];
-    static $cols = [
+    public static $cols = [
         'useradds_field_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'field'],
         'value' => ['type' => 'text']
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['useradds_field_id', 'value']
             ]
         ]
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'cols' => [
                 'useradds_field_id',
@@ -37,7 +37,7 @@ class Value extends \Model
         ]
     ];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'field' => [

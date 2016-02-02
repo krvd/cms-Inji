@@ -9,7 +9,7 @@
  */
 class Materials extends Module
 {
-    function viewsList()
+    public function viewsList()
     {
         $return = [
             'inherit' => 'Как у родителя',
@@ -29,7 +29,7 @@ class Materials extends Module
         return $return;
     }
 
-    function templatesList()
+    public function templatesList()
     {
         $return = [
             'inherit' => 'Как у родителя',
@@ -46,7 +46,7 @@ class Materials extends Module
         return $return;
     }
 
-    function viewsCategoryList()
+    public function viewsCategoryList()
     {
         $return = [
             'inherit' => 'Как у родителя',
@@ -65,7 +65,7 @@ class Materials extends Module
         return $return;
     }
 
-    function templatesCategoryList()
+    public function templatesCategoryList()
     {
         $return = [
             'inherit' => 'Как у родителя',
@@ -83,5 +83,3 @@ class Materials extends Module
     }
 
 }
-
-?>

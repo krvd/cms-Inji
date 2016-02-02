@@ -10,7 +10,7 @@
  */
 class LibsController extends Controller
 {
-    function vendorAction()
+    public function vendorAction()
     {
         $args = func_get_args();
         $path = $this->module->getPath($args);

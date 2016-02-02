@@ -13,8 +13,8 @@ namespace Money;
 
 class Merchant extends \Model
 {
-    static $objectName = 'Система оплаты';
-    static $cols = [
+    public static $objectName = 'Система оплаты';
+    public static $cols = [
         'name' => ['type' => 'text'],
         'object_name' => ['type' => 'text'],
         'image_file_id' => ['type' => 'image'],
@@ -25,7 +25,7 @@ class Merchant extends \Model
         'config' => ['type' => 'dataManager', 'relation' => 'configs'],
         'currency' => ['type' => 'dataManager', 'relation' => 'currencies']
     ];
-    static $labels = [
+    public static $labels = [
         'name' => 'Название',
         'image_file_id' => 'Иконка',
         'preview_image_file_id' => 'Превью экрана оплаты',
@@ -34,7 +34,7 @@ class Merchant extends \Model
         'pay' => 'Оплата',
         'object_name' => 'Класс обработчика',
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'name' => 'Системы оплаты',
             'cols' => [
@@ -46,7 +46,7 @@ class Merchant extends \Model
             ],
         ],
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['name'],
@@ -58,7 +58,7 @@ class Merchant extends \Model
             ]
     ]];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'configs' => [
@@ -82,7 +82,7 @@ class Merchant extends \Model
         ];
     }
 
-    function allowCurrencies($pay)
+    public function allowCurrencies($pay)
     {
         $allowCurrencies = [];
         foreach ($this->currencies as $merchantCurrency) {

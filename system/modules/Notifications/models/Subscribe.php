@@ -13,7 +13,7 @@ namespace Notifications;
 
 class Subscribe extends \Model
 {
-    static function relations()
+    public static function relations()
     {
         return [
             'chanel' => [

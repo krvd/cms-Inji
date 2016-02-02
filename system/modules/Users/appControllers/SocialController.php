@@ -11,7 +11,7 @@
 
 class SocialController extends Controller
 {
-    function authAction($socialCode = '')
+    public function authAction($socialCode = '')
     {
         if (!$socialCode) {
             Tools::redirect('/', 'Не указана соц сеть');
@@ -24,7 +24,7 @@ class SocialController extends Controller
         $helper::auth();
     }
 
-    function disconnectAction($socialCode = '')
+    public function disconnectAction($socialCode = '')
     {
         if (!$socialCode) {
             Tools::redirect('/', 'Не указана соц сеть');

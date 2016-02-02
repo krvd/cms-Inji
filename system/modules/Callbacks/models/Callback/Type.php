@@ -21,7 +21,7 @@ class Type extends \Model
         'name' => 'Название',
         'date_create' => 'Дата создания'
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'cols' => [
                 'name', 'date_create'
@@ -31,7 +31,7 @@ class Type extends \Model
             ]
         ]
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['name'],

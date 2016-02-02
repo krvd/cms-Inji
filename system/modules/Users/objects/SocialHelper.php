@@ -13,7 +13,7 @@ namespace Users;
 
 class SocialHelper extends \Object
 {
-    static function getObject()
+    public static function getObject()
     {
         $class = get_called_class();
         $class = substr($class, strrpos($class, '\\') + 1);
@@ -21,7 +21,7 @@ class SocialHelper extends \Object
         return $object;
     }
 
-    static function getConfig()
+    public static function getConfig()
     {
         $object = static::getObject();
         $configs = [];

@@ -13,7 +13,7 @@ namespace Files;
 
 class Type extends \Model
 {
-    static $cols = [
+    public static $cols = [
         'dir' => ['type' => 'text'],
         'ext' => ['type' => 'text'],
         'group' => ['type' => 'text'],

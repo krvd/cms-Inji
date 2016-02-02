@@ -10,7 +10,7 @@
  */
 class Main extends Module
 {
-    function init()
+    public function init()
     {
         $config = Config::share();
         if (!empty($config['failTry']) && $config['failTry'] > 3) {

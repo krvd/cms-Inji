@@ -13,7 +13,7 @@ namespace Chats\Chat\Member;
 
 class Status extends \Model
 {
-    static $cols = [
+    public static $cols = [
         'name' => ['type' => 'text']
     ];
 

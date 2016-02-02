@@ -11,18 +11,18 @@ namespace Users;
 
 class Group extends \Model
 {
-    static $objectName = 'Группа пользователей';
-    static $labels = [
+    public static $objectName = 'Группа пользователей';
+    public static $labels = [
         'name' => 'Название',
         'user' => 'Пользователи',
         'role' => 'Роли'
     ];
-    static $cols = [
+    public static $cols = [
         'name' => ['type' => 'text'],
         'user' => ['type' => 'select', 'source' => 'relation', 'relation' => 'users'],
         'role' => ['type' => 'select', 'source' => 'relation', 'relation' => 'roles'],
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'name' => 'Группы пользователей',
             'cols' => [
@@ -30,7 +30,7 @@ class Group extends \Model
             ]
         ]
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['name']
@@ -38,7 +38,7 @@ class Group extends \Model
         ]
     ];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'roles' => [

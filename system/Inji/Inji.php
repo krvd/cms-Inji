@@ -43,10 +43,10 @@ class Inji
      * 
      * @param string $eventName
      * @param string $listenCode
-     * @param array|function $callback
+     * @param array|closure $callback
      * @param boolean $save
      */
-    function listen($eventName, $listenCode, $callback, $save = false)
+    public function listen($eventName, $listenCode, $callback, $save = false)
     {
         if ($save) {
             $config = Config::custom(App::$primary->path . '/config/events.php');
@@ -64,7 +64,7 @@ class Inji
      * @param mixed $eventObject
      * @return mixed
      */
-    function event($eventName, $eventObject = null)
+    public function event($eventName, $eventObject = null)
     {
         $event = [
             'eventName' => $eventName,
@@ -107,7 +107,7 @@ class Inji
      * @param string $listenCode
      * @param boolean $save
      */
-    function unlisten($eventName, $listenCode, $save = false)
+    public function unlisten($eventName, $listenCode, $save = false)
     {
         if ($save) {
             $config = Config::custom(App::$primary->path . '/config/events.php');

@@ -10,7 +10,7 @@
  */
 class MenuController extends adminController
 {
-    function indexAction($appType = 'app')
+    public function indexAction($appType = 'app')
     {
         $this->view->setTitle('Меню сайта');
         if (!$appType) {
@@ -20,5 +20,3 @@ class MenuController extends adminController
     }
 
 }
-
-?>

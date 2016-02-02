@@ -10,12 +10,12 @@
  */
 class Ecommerce extends Module
 {
-    function init()
+    public function init()
     {
         App::$primary->view->customAsset('js', '/moduleAsset/Ecommerce/js/cart.js');
     }
 
-    function getPayTypeHandlers($forSelect = false)
+    public function getPayTypeHandlers($forSelect = false)
     {
         if (!$forSelect) {
             return $this->getSnippets('payTypeHandler');
@@ -30,7 +30,7 @@ class Ecommerce extends Module
         return $handlers;
     }
 
-    function cartPayRecive($data)
+    public function cartPayRecive($data)
     {
         $cart = Ecommerce\Cart::get($data['pay']->data);
         if ($cart) {
@@ -46,7 +46,7 @@ class Ecommerce extends Module
         }
     }
 
-    function parseFields($data, $cart)
+    public function parseFields($data, $cart)
     {
         $fields = \Ecommerce\UserAdds\Field::getList();
         $name = '';
@@ -104,7 +104,7 @@ class Ecommerce extends Module
         return $userAdds;
     }
 
-    function getCurCart($create = true)
+    public function getCurCart($create = true)
     {
         $cart = false;
         if (!empty($_SESSION['cart']['cart_id'])) {
@@ -124,24 +124,7 @@ class Ecommerce extends Module
         return $cart;
     }
 
-    function getBreadcrumb()
-    {
-        $bread = [];
-        $bread['/ecommerce'] = 'Онлайн-магазин';
-        if (!empty($this->view->content_data['catalog'])) {
-
-            $ids = explode('/', $this->view->content_data['catalog']->catalog_tree_path);
-            foreach ($ids as $id) {
-                if ($catalog = Catalog::get((int) $id)) {
-                    $bread['/ecommerce/itemList/' . $id] = $catalog->catalog_name;
-                }
-            }
-            $bread['/ecommerce/itemList/' . $this->view->content_data['catalog']->catalog_id] = $this->view->content_data['catalog']->catalog_name;
-        }
-        return $bread;
-    }
-
-    function parseOptions($options = [])
+    public function parseOptions($options = [])
     {
         $selectOptions = [
             'where' => !empty($options['where']) ? $options['where'] : [],
@@ -235,7 +218,7 @@ class Ecommerce extends Module
                     $searchArr[] = ['search_index', '%' . $part . '%', 'LIKE'];
                 }
             }
-            if ($searchArr) {
+            if (!empty($searchArr)) {
                 $selectOptions['where'][] = $searchArr;
             }
         }
@@ -286,9 +269,9 @@ class Ecommerce extends Module
      * @param array $params
      * @return array
      */
-    function getItems($options = [])
+    public function getItems($params = [])
     {
-        $selectOptions = $this->parseOptions($options);
+        $selectOptions = $this->parseOptions($params);
         $items = Ecommerce\Item::getList($selectOptions);
         return $items;
     }
@@ -299,9 +282,9 @@ class Ecommerce extends Module
      * @param array $params
      * @return int
      */
-    function getItemsCount($options = [])
+    public function getItemsCount($params = [])
     {
-        $selectOptions = $this->parseOptions($options);
+        $selectOptions = $this->parseOptions($params);
         $selectOptions['distinct'] = \Ecommerce\Item::index();
         $counts = Ecommerce\Item::getCount($selectOptions);
         if (is_array($counts)) {
@@ -314,7 +297,7 @@ class Ecommerce extends Module
         return $counts;
     }
 
-    function viewsCategoryList($inherit = true)
+    public function viewsCategoryList($inherit = true)
     {
         $return = [];
         if ($inherit) {
@@ -332,7 +315,7 @@ class Ecommerce extends Module
         return $return;
     }
 
-    function templatesCategoryList()
+    public function templatesCategoryList()
     {
         $return = [
             'inherit' => 'Как у родителя',
@@ -349,7 +332,7 @@ class Ecommerce extends Module
         return $return;
     }
 
-    function cartStatusDetector($event)
+    public function cartStatusDetector($event)
     {
         $item = $event['eventObject'];
         if (!empty($item->_changedParams['cart_cart_status_id'])) {
@@ -363,7 +346,7 @@ class Ecommerce extends Module
         }
     }
 
-    function cardTrigger($event)
+    public function cardTrigger($event)
     {
         $cart = $event['eventObject'];
         if ($cart->card) {
@@ -380,7 +363,7 @@ class Ecommerce extends Module
         }
     }
 
-    function bonusTrigger($event)
+    public function bonusTrigger($event)
     {
         $cart = $event['eventObject'];
         foreach ($cart->cartItems as $cartItem) {

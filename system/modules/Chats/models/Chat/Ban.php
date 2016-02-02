@@ -13,14 +13,14 @@ namespace Chats\Chat;
 
 class Ban extends \Model
 {
-    static $cols = [
+    public static $cols = [
         'chat_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'chat'],
         'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
         'chat_message_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'message'],
         'comment' => ['type' => 'textarea']
     ];
 
-    static function relations()
+    public static function relations()
     {
         return[
             'user' => [

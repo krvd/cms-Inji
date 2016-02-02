@@ -13,7 +13,7 @@ namespace Migrations\Parser\Object;
 
 class Param extends \Migrations\Parser
 {
-    function parse()
+    public function parse()
     {
         $objectParamValue = [
             'col' => '',
@@ -58,7 +58,7 @@ class Param extends \Migrations\Parser
         }
     }
 
-    function getParam($code)
+    public function getParam($code)
     {
         $param = \Migrations\Migration\Object\Param::get([
                     ['parent_id', $this->param->id],
@@ -75,7 +75,7 @@ class Param extends \Migrations\Parser
         return $param;
     }
 
-    function editor()
+    public function editor()
     {
         return [
             '' => 'Выберите',

@@ -10,100 +10,97 @@
  */
 class DataManagerController extends Controller
 {
-    function indexAction()
+    public function parseRequest()
     {
-        $result = new Server\Result();
-        ob_start();
-        $params = [];
-        if (!empty($_GET['params'])) {
-            $params = $_GET['params'];
-        }
-        if (strpos($_GET['item'], ':')) {
-            $raw = explode(':', $_GET['item']);
-            $modelName = $raw[0];
-            $id = $raw[1];
-            $model = $modelName::get($id, $modelName::index(), $params);
-        } else {
-            $modelName = $_GET['item'];
-            $id = null;
-            $model = null;
-        }
-        if (!empty($_GET['params']['relation'])) {
-            $params['relation'] = $_GET['params']['relation'];
-            $relations = $modelName::relations();
-            $type = !empty($relations[$_GET['params']['relation']]['type']) ? $relations[$_GET['params']['relation']]['type'] : 'to';
+        $args = array(
+            'params' => [
+                'flags' => FILTER_REQUIRE_ARRAY,
+            ],
+        );
+        $return = [];
+        $return['params'] = UserRequest::get('params', 'array', []);
 
-            switch ($type) {
-                case 'relModel':
-                    $modelName = $relations[$_GET['params']['relation']]['relModel'];
-                    break;
-                default:
-                    $modelName = $relations[$_GET['params']['relation']]['model'];
+        $item = UserRequest::get('modelName', 'string', '');
+        if (!$item) {
+            $item = UserRequest::get('item', 'string', '');
+        }
+
+        if (strpos($item, ':')) {
+            $raw = explode(':', $item);
+            $return['modelName'] = $raw[0];
+            $return['model'] = $return['modelName']::get($raw[1], $return['modelName']::index(), $return['params']);
+        } else {
+            $return['modelName'] = $item;
+            $return['model'] = null;
+        }
+        if (!empty($return['params']['relation'])) {
+            $relation = $return['modelName']::getRelation($return['params']['relation']);
+            if (!empty($relation['type']) && $relation['type'] == 'telModlel') {
+                $return['modelName'] = $relation['relModel'];
+            } else {
+                $return['modelName'] = $relation['model'];
             }
         }
-        $dataManager = new Ui\DataManager($modelName, 'manager');
-        $dataManager->draw($params, $model);
+        $return['params']['filters'] = UserRequest::get('filters', 'array', []);
+        $return['params']['sortered'] = UserRequest::get('sortered', 'array', []);
+        $return['params']['mode'] = UserRequest::get('mode', 'string', '');
+        $return['params']['all'] = UserRequest::get('all', 'bool', false);
+
+        $return['key'] = UserRequest::get('key', 'int', 0);
+        $return['col'] = UserRequest::get('col', 'string', '');
+        $return['col_value'] = UserRequest::get('col_value', 'string', '');
+
+        $return['action'] = UserRequest::get('action', 'string', '');
+        $return['ids'] = UserRequest::get('ids', 'string', '');
+        $return['adInfo'] = UserRequest::get('adInfo', 'array', []);
+
+        $return['download'] = UserRequest::get('download', 'bool', false);
+        $return['silence'] = UserRequest::get('silence', 'bool', false);
+
+        $return['managerName'] = UserRequest::get('managerName', 'string', 'manager');
+        if (!$return['managerName']) {
+            $return['managerName'] = 'manager';
+        }
+
+        return $return;
+    }
+
+    public function indexAction()
+    {
+        $result = new Server\Result();
+
+        ob_start();
+
+        $request = $this->parseRequest();
+
+        $dataManager = new Ui\DataManager($request['modelName'], $request['managerName']);
+        $dataManager->draw($request['params'], $request['model']);
+
         $result->content = ob_get_contents();
+
         ob_end_clean();
+
         $result->send();
     }
 
-    //function 
-
-    function loadRowsAction()
+    public function loadRowsAction()
     {
         $result = new Server\Result();
         $result->content = [];
+
         ob_start();
-        $params = [];
-        if (!empty($_GET['params'])) {
-            $params = $_GET['params'];
-        }
-        if (strpos($_GET['modelName'], ':')) {
-            $raw = explode(':', $_GET['modelName']);
-            $modelName = $raw[0];
-            $id = $raw[1];
-            $model = $modelName::get($id, $modelName::index(), $params);
-        } else {
-            $modelName = $_GET['modelName'];
-            $id = null;
-            $model = null;
-        }
-        if (!empty($_GET['params']['relation'])) {
-            $params['relation'] = $_GET['params']['relation'];
-            $relations = $modelName::relations();
-            $type = !empty($relations[$_GET['params']['relation']]['type']) ? $relations[$_GET['params']['relation']]['type'] : 'to';
 
-            switch ($type) {
-                case 'relModel':
-                    $modelName = $relations[$_GET['params']['relation']]['relModel'];
-                    break;
-                default:
-                    $modelName = $relations[$_GET['params']['relation']]['model'];
-            }
-        }
-        if (!empty($_GET['filters'])) {
-            $params['filters'] = $_GET['filters'];
-        }
+        $request = $this->parseRequest();
 
-        if (!empty($_GET['sortered'])) {
-            $params['sortered'] = $_GET['sortered'];
-        }
-        if (!empty($_GET['mode'])) {
-            $params['mode'] = $_GET['mode'];
-        }
-        if (!empty($_GET['all'])) {
-            $params['all'] = true;
-        }
-        $dataManager = new Ui\DataManager($modelName, $_GET['managerName']);
-        if (!empty($_GET['download'])) {
-            $params['all'] = true;
-            $params['download'] = true;
+        $dataManager = new Ui\DataManager($request['modelName'], $request['managerName']);
+        if ($request['download']) {
+            $request['params']['all'] = true;
+            $request['params']['download'] = true;
             set_time_limit(0);
             ob_end_clean();
             header('Content-Encoding: UTF-8');
             header("Content-Type: text/csv");
-            header("Content-Disposition: attachment; filename=" . $modelName::$objectName . '.csv');
+            header("Content-Disposition: attachment; filename=" . $request['modelName']::$objectName . '.csv');
             echo "\xEF\xBB\xBF"; // UTF-8 BOM
 
 
@@ -120,9 +117,9 @@ class DataManagerController extends Controller
             echo "\n";
             $endRow = true;
         }
-        $rows = $dataManager->getRows($params, $model);
+        $rows = $dataManager->getRows($request['params'], $request['model']);
         foreach ($rows as $row) {
-            if (!empty($_GET['download'])) {
+            if ($request['download']) {
                 $row = array_slice($row, (!empty($dataManager->managerOptions['groupActions']) ? 1 : 0), -1);
                 foreach ($row as $col) {
                     if (!$endRow) {
@@ -137,15 +134,17 @@ class DataManagerController extends Controller
                 Ui\Table::drawRow($row);
             }
         }
-        if (!empty($_GET['download'])) {
+        if ($request['download']) {
             exit();
         }
+
         $result->content['rows'] = ob_get_contents();
         ob_clean();
-        $result->content['pages'] = '';
-        if (empty($params['all'])) {
-            $pages = $dataManager->getPages($params, $model);
 
+        $result->content['pages'] = '';
+
+        if (!$request['params']['all']) {
+            $pages = $dataManager->getPages($request['params'], $request['model']);
             if ($pages) {
                 $pages->draw();
             }
@@ -155,187 +154,86 @@ class DataManagerController extends Controller
         $result->send();
     }
 
-    function loadCategorysAction()
+    public function loadCategorysAction()
     {
         $result = new Server\Result();
+
         ob_start();
-        if (strpos($_GET['modelName'], ':')) {
-            $raw = explode(':', $_GET['modelName']);
-            $modelName = $raw[0];
-            $id = $raw[1];
-            $model = $modelName::get($id);
-        } else {
-            $modelName = $_GET['modelName'];
-            $id = null;
-            $model = null;
-        }
-        if (!empty($_GET['params'])) {
-            $params = $_GET['params'];
-            if (!empty($params['relation'])) {
-                $relations = $modelName::relations();
-                $modelName = $relations[$params['relation']]['model'];
-            }
-        } else {
-            $params = [];
-        }
-        if (!empty($_GET['filters'])) {
-            $params['filters'] = $_GET['filters'];
-        }
-        $dataManager = new Ui\DataManager($modelName, $_GET['managerName']);
+
+        $request = $this->parseRequest();
+
+        $dataManager = new Ui\DataManager($request['modelName'], $request['managerName']);
         $dataManager->drawCategorys();
+
         $result->content = ob_get_contents();
         ob_end_clean();
+
         $result->send();
     }
 
-    function delRowAction()
+    public function delRowAction()
     {
 
-        if (strpos($_GET['modelName'], ':')) {
-            $raw = explode(':', $_GET['modelName']);
-            $modelName = $raw[0];
-            $id = $raw[1];
-            $model = $modelName::get($id);
-        } else {
-            $modelName = $_GET['modelName'];
-            $id = null;
-            $model = null;
-        }
-        if (!empty($_GET['params'])) {
-            $params = $_GET['params'];
-            if (!empty($params['relation'])) {
-                $relations = $modelName::relations();
+        $request = $this->parseRequest();
 
-                $type = !empty($relations[$_GET['params']['relation']]['type']) ? $relations[$_GET['params']['relation']]['type'] : 'to';
+        $dataManager = new Ui\DataManager($request['modelName'], $request['managerName']);
 
-                switch ($type) {
-                    case 'relModel':
-                        $modelName = $relations[$_GET['params']['relation']]['relModel'];
-                        break;
-                    default:
-                        $modelName = $relations[$_GET['params']['relation']]['model'];
-                }
-            }
-        } else {
-            $params = [];
-        }
-        $dataManager = new Ui\DataManager($modelName, $_GET['managerName']);
         if ($dataManager->checkAccess()) {
-            $model = $modelName::get($_GET['key'], $modelName::index(), !empty($_GET['params']) ? $_GET['params'] : []);
+            $model = $request['modelName']::get($request['key'], $request['modelName']::index(), $request['params']);
             if ($model) {
-                $model->delete(!empty($_GET['params']) ? $_GET['params'] : []);
+                $model->delete($request['params']);
             }
         }
         $result = new Server\Result();
-        $result->successMsg = empty($_GET['silence']) ? 'Запись удалена' : '';
+        $result->successMsg = empty($request['silence']) ? 'Запись удалена' : '';
         $result->send();
     }
 
-    function updateRowAction()
+    public function updateRowAction()
     {
 
-        if (strpos($_GET['modelName'], ':')) {
-            $raw = explode(':', $_GET['modelName']);
-            $modelName = $raw[0];
-            $id = $raw[1];
-            $model = $modelName::get($id);
-        } else {
-            $modelName = $_GET['modelName'];
-            $id = null;
-            $model = null;
-        }
-        $params = [];
-        if (!empty($_GET['params'])) {
-            $params = $_GET['params'];
-            if (!empty($_GET['params']['relation'])) {
-                $relations = $modelName::relations();
-                $type = !empty($relations[$_GET['params']['relation']]['type']) ? $relations[$_GET['params']['relation']]['type'] : 'to';
+        $request = $this->parseRequest();
 
-                switch ($type) {
-                    case 'relModel':
-                        $modelName = $relations[$_GET['params']['relation']]['relModel'];
-                        break;
-                    default:
-                        $modelName = $relations[$_GET['params']['relation']]['model'];
-                }
-            }
-        }
-        $dataManager = new Ui\DataManager($modelName, $_GET['managerName']);
+        $dataManager = new Ui\DataManager($request['modelName'], $request['managerName']);
+
         if ($dataManager->checkAccess()) {
-            $model = $modelName::get($_GET['key'], $modelName::index(), !empty($_GET['params']) ? $_GET['params'] : []);
+            $model = $request['modelName']::get($request['key'], $request['modelName']::index(), $request['params']);
             if ($model) {
-                $model->$_GET['col'] = $_GET['col_value'];
-                $model->save($params);
+                $model->{$request['col']} = $request['col_value'];
+                $model->save($request['params']);
             }
         }
         $result = new Server\Result();
-        $result->successMsg = empty($_GET['silence']) ? 'Запись Обновлена' : '';
+        $result->successMsg = empty($request['silence']) ? 'Запись Обновлена' : '';
         $result->send();
     }
 
-    function groupActionAction()
+    public function groupActionAction()
     {
+        $request = $this->parseRequest();
 
+        $dataManager = new Ui\DataManager($request['modelName'], $request['managerName']);
 
-        if (strpos($_GET['modelName'], ':')) {
-            $raw = explode(':', $_GET['modelName']);
-            $modelName = $raw[0];
-            $id = $raw[1];
-            $model = $modelName::get($id);
-        } else {
-            $modelName = $_GET['modelName'];
-            $id = null;
-            $model = null;
-        }
-        if (!empty($_GET['params'])) {
-            $params = $_GET['params'];
-            if (!empty($params['relation'])) {
-                $relations = $modelName::relations();
-
-                $type = !empty($relations[$_GET['params']['relation']]['type']) ? $relations[$_GET['params']['relation']]['type'] : 'to';
-
-                switch ($type) {
-                    case 'relModel':
-                        $modelName = $relations[$_GET['params']['relation']]['relModel'];
-                        break;
-                    default:
-                        $modelName = $relations[$_GET['params']['relation']]['model'];
-                }
-            }
-        } else {
-            $params = [];
-        }
-        $dataManager = new Ui\DataManager($modelName, $_GET['managerName']);
         if ($dataManager->checkAccess()) {
-            if (!empty($_GET['action']) && !empty($dataManager->managerOptions['groupActions'][$_GET['action']]) && !empty($_GET['ids'])) {
-                $action = $dataManager->managerOptions['groupActions'][$_GET['action']];
+            if (!empty($request['action']) && !empty($dataManager->managerOptions['groupActions'][$request['action']]) && trim($request['ids'], ' ,')) {
+                $ids = trim($request['ids'], ' ,');
+                $action = $dataManager->managerOptions['groupActions'][$request['action']];
                 switch ($action['action']) {
                     case'delete':
-                        $ids = filter_input(INPUT_GET, 'ids', FILTER_SANITIZE_STRING);
-                        if ($ids) {
-                            $ids = trim($ids, ',');
-                            $models = $modelName::getList(['where' => [[$modelName::index(), $ids, 'IN']]]);
-                            foreach ($models as $model) {
-                                $model->delete();
-                            }
+                        $models = $request['modelName']::getList(['where' => [[$request['modelName']::index(), $ids, 'IN']]]);
+                        foreach ($models as $model) {
+                            $model->delete();
                         }
                         break;
                     case 'changeParam':
-                        $ids = filter_input(INPUT_GET, 'ids', FILTER_SANITIZE_STRING);
-                        if ($ids) {
-                            $ids = trim($ids, ',');
-                            $models = $modelName::getList(['where' => [[$modelName::index(), $ids, 'IN']]]);
-                            foreach ($models as $model) {
-                                $model->{$action['col']} = $action['value'];
-                                $model->save(!empty($_GET['params']) ? $_GET['params'] : []);
-                            }
+                        $models = $request['modelName']::getList(['where' => [[$request['modelName']::index(), $ids, 'IN']]]);
+                        foreach ($models as $model) {
+                            $model->{$action['col']} = $action['value'];
+                            $model->save(!empty($_GET['params']) ? $_GET['params'] : []);
                         }
                         break;
                     case 'moduleMethod':
-                        $ids = filter_input(INPUT_GET, 'ids', FILTER_SANITIZE_STRING);
-                        if ($ids) {
-                            $comandResult = App::$cur->$action['module']->$action['method']($dataManager, trim($ids, ','), !empty($_GET['adInfo']) ? $_GET['adInfo'] : []);
-                        }
+                        $comandResult = App::$cur->{$action['module']}->{$action['method']}($dataManager, $ids, $request['adInfo']);
                         break;
                 }
             }
@@ -349,15 +247,18 @@ class DataManagerController extends Controller
         $result->send();
     }
 
-    function delCategoryAction()
+    public function delCategoryAction()
     {
 
-        $dataManager = new Ui\DataManager($_GET['modelName'], $_GET['managerName']);
+        $request = $this->parseRequest();
+
+        $dataManager = new Ui\DataManager($request['modelName'], $request['managerName']);
+
         if ($dataManager->checkAccess() && !empty($dataManager->managerOptions['categorys'])) {
             $categoryModel = $dataManager->managerOptions['categorys']['model'];
-            $model = $categoryModel::get($_GET['key'], $categoryModel::index(), !empty($_GET['params']) ? $_GET['params'] : []);
+            $model = $categoryModel::get($request['key'], $categoryModel::index(), $request['params']);
             if ($model) {
-                $model->delete(!empty($_GET['params']) ? $_GET['params'] : []);
+                $model->delete($request['params']);
             }
         }
         $result = new Server\Result();

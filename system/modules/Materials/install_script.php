@@ -1,6 +1,6 @@
 <?php
 
-return function ($step = NULL, $params = array()) {
+return function ($step = NULL, $params = []) {
     $material = new Materials\Material([
         'name' => 'Главная',
         'text' => '<p>Главная страница сайта</p>',

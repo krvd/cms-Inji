@@ -13,7 +13,7 @@ namespace Migrations\Parser\Object;
 
 class Value extends \Migrations\Parser
 {
-    function parse()
+    public function parse()
     {
         $options = $this->param->options ? json_decode($this->param->options, true) : [];
         $modelName = get_class($this->model);
@@ -61,7 +61,6 @@ class Value extends \Migrations\Parser
                 $valueObject->param_id = $this->param->id;
                 $valueObject->original = $value;
                 $valueObject->save();
-                $value = '';
             } else {
                 $valueObject = $values[$value];
             }

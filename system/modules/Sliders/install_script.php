@@ -1,6 +1,6 @@
 <?php
 
-return function ($step = NULL, $params = array()) {
+return function ($step = NULL, $params = []) {
     App::$cur->db->createTable('sliders_slider', [
         'slider_id' => 'pk',
         'slider_name' => 'varchar(255) NOT NULL',

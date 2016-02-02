@@ -13,7 +13,7 @@ namespace Exchange1c\Mode;
 
 class Import extends \Exchange1c\Mode
 {
-    function process()
+    public function process()
     {
         \App::$cur->Migrations->startMigration(1, strpos($_GET['filename'], 'import') !== false ? 1 : 2, $this->exchange->path . '/' . $_GET['filename']);
         echo 'success';

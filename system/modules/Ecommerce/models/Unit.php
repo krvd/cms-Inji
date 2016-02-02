@@ -13,18 +13,18 @@ namespace Ecommerce;
 
 class Unit extends \Model
 {
-    static $objectName = 'Единица измерения';
-    static $labels = [
+    public static $objectName = 'Единица измерения';
+    public static $labels = [
         'name' => 'Название',
         'code' => 'Код',
         'international' => 'Международное обозначение',
     ];
-    static $cols = [
+    public static $cols = [
         'name' => ['type' => 'text'],
         'code' => ['type' => 'text'],
         'international' => ['type' => 'text'],
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'name' => 'Единицы измерения',
             'cols' => [
@@ -32,7 +32,7 @@ class Unit extends \Model
             ]
         ]
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['name', 'code', 'international']

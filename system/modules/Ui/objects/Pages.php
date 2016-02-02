@@ -15,7 +15,7 @@ class Pages extends \Object
     public $options = [];
     public $params = [];
 
-    function __construct($data, $options = [])
+    public function __construct($data, $options = [])
     {
         $this->data = $data;
         $this->options = $options;
@@ -48,7 +48,7 @@ class Pages extends \Object
         }
     }
 
-    function draw($class = 'pagination pagination-centered margin-none pagination-sm')
+    public function draw($class = 'pagination pagination-centered margin-none pagination-sm')
     {
         $getArr = $this->data;
         $getArr['limit'] = $this->params['limit'];

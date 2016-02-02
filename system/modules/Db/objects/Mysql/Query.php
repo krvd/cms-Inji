@@ -29,7 +29,7 @@ class Query extends \Object
     public $params = [];
     public $distinct = false;
 
-    function __construct($instance = null)
+    public function __construct($instance = null)
     {
         if (!$instance) {
             $this->curInstance = \App::$cur->db->connection;
@@ -38,7 +38,7 @@ class Query extends \Object
         }
     }
 
-    function insert($table, $data)
+    public function insert($table, $data)
     {
         $this->operation = 'INSERT';
         $this->table = $table;
@@ -54,7 +54,7 @@ class Query extends \Object
         return $this->query();
     }
 
-    function update($table, $data)
+    public function update($table, $data)
     {
         $this->operation = 'UPDATE';
         $this->table = $table;
@@ -63,7 +63,7 @@ class Query extends \Object
         return $result->pdoResult->rowCount();
     }
 
-    function delete($table)
+    public function delete($table)
     {
         $this->operation = 'DELETE';
         $this->table = $table;
@@ -71,7 +71,7 @@ class Query extends \Object
         return $result->pdoResult->rowCount();
     }
 
-    function createTable($table_name, $cols, $indexes = [])
+    public function createTable($table_name, $cols, $indexes = [])
     {
         $this->operation = 'CREATE TABLE';
         $this->table = $table_name;
@@ -105,7 +105,7 @@ class Query extends \Object
         }
     }
 
-    function where($where = '', $value = '', $operation = false, $concatenation = 'AND')
+    public function where($where = '', $value = '', $operation = false, $concatenation = 'AND')
     {
         if (!is_array($where)) {
             $this->where[] = [$where, $value, $operation, $concatenation];
@@ -114,7 +114,7 @@ class Query extends \Object
         }
     }
 
-    function group($colname)
+    public function group($colname)
     {
         $this->group[] = $colname;
     }
@@ -144,7 +144,7 @@ class Query extends \Object
             $this->limit .= ",{$len}";
     }
 
-    function buildJoin($table, $where = false, $type = 'LEFT', $alias = '')
+    public function buildJoin($table, $where = false, $type = 'LEFT', $alias = '')
     {
         $join = '';
         if (is_array($table)) {
@@ -162,12 +162,20 @@ class Query extends \Object
         return $join;
     }
 
-    function buildWhere($where = '', $value = '', $operation = false, $concatenation = 'AND')
+    /**
+     * Build where string
+     * 
+     * @param string|array $where
+     * @param mixed $value
+     * @param string $operation
+     * @param string $concatenation
+     */
+    public function buildWhere($where = '', $value = '', $operation = '=', $concatenation = 'AND')
     {
-        $params = [];
         if (!is_array($where)) {
-            if (!$operation)
+            if (empty($operation)) {
                 $operation = '=';
+            }
 
             if ($concatenation === false)
                 $concatenation = 'AND';
@@ -199,10 +207,11 @@ class Query extends \Object
                 $item = $where[$i];
                 if (isset($where[$i + 1]) && !isset($where[$i - 1]) && is_array($where[$i])) {
                     if ($this->whereString != NULL && substr($this->whereString, -1, 1) != '(' && $this->whereString != 'WHERE ') {
-                        if (!isset($item[3]))
+                        if (!isset($item[3])) {
                             $concatenation = 'AND';
-                        else
+                        } else {
                             $concatenation = $item[3];
+                        }
 
                         $this->whereString .= "{$concatenation} ";
                     }
@@ -233,9 +242,8 @@ class Query extends \Object
         }
     }
 
-    function buildQuery()
+    public function buildQuery()
     {
-        $params = [];
         $query = $this->operation;
         $this->operation = strtoupper($this->operation);
 
@@ -257,7 +265,6 @@ class Query extends \Object
         switch ($this->operation) {
             case 'INSERT':
                 $this->params = array_merge($this->params, array_values($this->cols));
-                $colsStr = '`' . implode('`,`', array_keys($this->cols)) . '`';
                 $colsStr = '';
                 if ($this->cols) {
                     $colsStr = '`' . implode('`,`', array_keys($this->cols)) . '`';
@@ -279,6 +286,7 @@ class Query extends \Object
                 $query .= ") ENGINE = INNODB CHARACTER SET utf8 COLLATE utf8_general_ci";
                 break;
             case 'UPDATE':
+                $updates = [];
                 foreach ($this->cols as $key => $item) {
                     if (!in_array($item, array('CURRENT_TIMESTAMP'))) {
                         $this->params[] = $item;
@@ -309,7 +317,13 @@ class Query extends \Object
         return ['query' => $query, 'params' => $this->params];
     }
 
-    function query($query = [])
+    /**
+     * Execute query
+     * 
+     * @param string|array $query
+     * @return \Db\Mysql\Result
+     */
+    public function query($query = [])
     {
         if (!$query) {
             $this->params = [];

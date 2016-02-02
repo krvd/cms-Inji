@@ -10,13 +10,13 @@
  */
 class adminController extends Controller
 {
-    function indexAction()
+    public function indexAction()
     {
         $args = func_get_args();
         call_user_func_array([$this, 'dataManagerAction'], $args);
     }
 
-    function dataManagerAction($model = '', $dataManager = 'manager')
+    public function dataManagerAction($model = '', $dataManager = 'manager')
     {
         if (!$model) {
             $modulePath = Module::getModulePath($this->module->moduleName);
@@ -39,7 +39,7 @@ class adminController extends Controller
         $this->view->page(['module' => 'Ui', 'content' => 'dataManager/manager', 'data' => compact('dataManager')]);
     }
 
-    function viewAction($model, $pk)
+    public function viewAction($model, $pk)
     {
         $fullModelName = $this->module->moduleName . '\\' . ucfirst($model);
         $item = $fullModelName::get($pk);

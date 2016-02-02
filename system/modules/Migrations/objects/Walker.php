@@ -20,7 +20,7 @@ class Walker
     public $mapPathParent = null;
     public $realPath = null;
 
-    function walk($path = '/')
+    public function walk($path = '/')
     {
         if (!$this->realPath) {
             $this->realPath = $path;
@@ -54,7 +54,7 @@ class Walker
         }
     }
 
-    function getInfo($item, $path)
+    public function getInfo($item, $path)
     {
         $this->mapPath = Migration\Map\Path::get([
                     ['path', $path],

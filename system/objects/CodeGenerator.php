@@ -10,7 +10,7 @@
  */
 class CodeGenerator
 {
-    static function genArray($data, $level = 0)
+    public static function genArray($data, $level = 0)
     {
         $return = '';
         if ($level == 0)
@@ -31,7 +31,7 @@ class CodeGenerator
         return $return;
     }
 
-    static function parseClass($path)
+    public static function parseClass($path)
     {
         $code = file_get_contents($path);
 

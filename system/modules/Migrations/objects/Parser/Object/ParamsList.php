@@ -13,7 +13,7 @@ namespace Migrations\Parser\Object;
 
 class ParamsList extends \Migrations\Parser
 {
-    function parse()
+    public function parse()
     {
         foreach ($this->reader->readPath() as $code => $objectParam) {
             $param = $this->getParam($code);
@@ -33,7 +33,7 @@ class ParamsList extends \Migrations\Parser
         }
     }
 
-    function getParam($code)
+    public function getParam($code)
     {
         $param = \Migrations\Migration\Object\Param::get([
                     ['parent_id', $this->param->id],
@@ -51,7 +51,7 @@ class ParamsList extends \Migrations\Parser
         return $param;
     }
 
-    function editor()
+    public function editor()
     {
         return [
             '' => 'Выберите',

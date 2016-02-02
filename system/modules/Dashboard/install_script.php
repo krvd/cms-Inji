@@ -1,6 +1,6 @@
 <?php
 
-return function ($step = NULL, $params = array()) {
+return function ($step = NULL, $params = []) {
     App::$cur->db->createTable('dashboard_comment', [
         'comment_id' => 'pk',
         'comment_text' => 'text NOT NULL',

@@ -19,7 +19,7 @@ class Method extends \Object
     public $propertys = [];
     public $body = '';
 
-    function generate()
+    public function generate()
     {
         $code = $this->security . ' ';
         $code .= $this->static ? 'static ' : '';

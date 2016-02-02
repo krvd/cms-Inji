@@ -10,7 +10,7 @@ class Db extends Module
     public $QueryClassName = '';
     public $ResultClassName = '';
 
-    function init($param = null)
+    public function init($param = null)
     {
         if (!$param) {
             $param = isset($this->config['default']) ? $this->config['default'] : 'local';
@@ -35,7 +35,7 @@ class Db extends Module
         $this->ResultClassName = 'Db\\' . $this->dbConfig['driver'] . '\\Result';
     }
 
-    function __call($name, $params)
+    public function __call($name, $params)
     {
         if (!is_object($this->connection)) {
             return false;
@@ -53,7 +53,7 @@ class Db extends Module
         return false;
     }
 
-    function newQuery()
+    public function newQuery()
     {
         if($this->QueryClassName) {
             return new $this->QueryClassName($this->connection);
@@ -61,7 +61,7 @@ class Db extends Module
         return false;
     }
 
-    function __get($name)
+    public function __get($name)
     {
         if (isset($this->connection->$name)) {
             return $this->connection->$name;
@@ -74,7 +74,7 @@ class Db extends Module
         }
     }
 
-    function __set($name, $value)
+    public function __set($name, $value)
     {
         if (isset($this->connection->$name)) {
             return $this->connection->$name = $value;

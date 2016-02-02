@@ -13,16 +13,16 @@ namespace Migrations\Migration;
 
 class Map extends \Model
 {
-    static $objectName = 'Карта миграции данных';
-    static $labels = [
+    public static $objectName = 'Карта миграции данных';
+    public static $labels = [
         'name' => 'Название',
         'migration_id' => 'Миграция данных'
     ];
-    static $cols = [
+    public static $cols = [
         'name' => ['type' => 'text'],
         'migration_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'migration'],
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'name' => 'Карты миграции данных',
             'cols' => ['name', 'migration_id'],
@@ -31,7 +31,7 @@ class Map extends \Model
             ],
         ]
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['name', 'migration_id']
@@ -39,7 +39,7 @@ class Map extends \Model
         ]
     ];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'migration' => [

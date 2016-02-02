@@ -10,7 +10,7 @@
  */
 class UserFormsController extends Controller
 {
-    function getFormHtmlAction($userForm_id)
+    public function getFormHtmlAction($userForm_id)
     {
         $userForm = \UserForms\Form::get((int) $userForm_id);
         if (!$userForm) {

@@ -13,7 +13,7 @@ namespace Money\Reward;
 
 class Condition extends \Model
 {
-    function checkComplete($userId = 0)
+    public function checkComplete($userId = 0)
     {
         $userId = $userId ? $userId : \Users\User::$cur->id;
         if (!$userId) {
@@ -27,7 +27,7 @@ class Condition extends \Model
         return true;
     }
 
-    static function relations()
+    public static function relations()
     {
         return [
             'reward' => [

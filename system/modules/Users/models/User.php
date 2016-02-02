@@ -13,9 +13,9 @@ namespace Users;
 
 class User extends \Model
 {
-    static $cur;
+    public static $cur;
     public static $objectName = "Пользователь";
-    static $labels = [
+    public static $labels = [
         'login' => 'Логин',
         'mail' => 'E-Mail',
         'pass' => 'Пароль',
@@ -28,7 +28,7 @@ class User extends \Model
         'date_last_active' => 'Последняя активность',
         'date_create' => 'Дата регистрации',
     ];
-    static $cols = [
+    public static $cols = [
         'login' => ['type' => 'text'],
         'mail' => ['type' => 'email'],
         'pass' => ['type' => 'password'],
@@ -41,7 +41,7 @@ class User extends \Model
         'date_last_active' => ['type' => 'dateTime'],
         'date_create' => ['type' => 'dateTime']
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'options' => [
                 'access' => [
@@ -79,7 +79,7 @@ class User extends \Model
             'searchableCols' => ['mail']
         ],
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'inputs' => [
                 'userSearch' => [
@@ -130,7 +130,7 @@ class User extends \Model
         ]
     ];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'group' => [
@@ -144,6 +144,11 @@ class User extends \Model
             'info' => [
                 'type' => 'one',
                 'model' => 'Users\User\Info',
+                'col' => 'user_id'
+            ],
+            'inventory' => [
+                'type' => 'one',
+                'model' => 'Users\User\Inventory',
                 'col' => 'user_id'
             ],
             'socials' => [
@@ -163,7 +168,7 @@ class User extends \Model
         ];
     }
 
-    function name()
+    public function name()
     {
         if ($this->info) {
             return trim($this->info->name());
@@ -172,7 +177,7 @@ class User extends \Model
         }
     }
 
-    function isAdmin()
+    public function isAdmin()
     {
         if ($this->group_id == 3) {
             return true;
@@ -180,7 +185,7 @@ class User extends \Model
         return false;
     }
 
-    function beforeDelete()
+    public function beforeDelete()
     {
         if ($this->info) {
             $this->info->delete();

@@ -12,7 +12,7 @@
  */
 class Migrations extends \Module
 {
-    function startMigration($migrationId, $mapId, $filePath)
+    public function startMigration($migrationId, $mapId, $filePath)
     {
         $log = new \Migrations\Log();
         $log->migration_id = $migrationId;

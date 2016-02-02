@@ -16,9 +16,9 @@ class Options extends \Model
     /**
      * Model options
      */
-    static $objectName = 'Db options';
-    static $storage = ['type' => 'moduleConfig', 'options' => ['share' => true]];
-    static $labels = [
+    public static $objectName = 'Db options';
+    public static $storage = ['type' => 'moduleConfig', 'options' => ['share' => true]];
+    public static $labels = [
         'id' => '#',
         'connect_name' => 'Название',
         'connect_alias' => 'Алиас',
@@ -31,7 +31,7 @@ class Options extends \Model
         'table_prefix' => 'Префикс',
         'port' => 'порт',
     ];
-    static $cols = [
+    public static $cols = [
         'id' => ['type' => 'pk'],
         'connect_name' => ['type' => 'text', 'default' => 'local'],
         'connect_alias' => ['type' => 'text', 'default' => 'local'],
@@ -44,7 +44,7 @@ class Options extends \Model
         'table_prefix' => ['type' => 'text', 'default' => 'inji_'],
         'port' => ['type' => 'text', 'default' => '3306'],
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'setup' => [
             'name' => 'Настройки соединения с БД',
             'options' => [
@@ -64,9 +64,17 @@ class Options extends \Model
             ]
         ]
     ];
-    static $forms = [
-        'manager' => [
+    public static $forms = [
+        'setup' => [
             'name' => 'Соединение с БД',
+            'options' => [
+                'access' => [
+                    'apps' => [
+                        'setup'
+                    ]
+                ]
+            ],
+            'editForm' => 'setup',
             'map' => [
                 ['connect_name', 'connect_alias', 'driver'],
                 ['host', 'user'],
@@ -76,12 +84,12 @@ class Options extends \Model
         ]
     ];
 
-    function name()
+    public function name()
     {
         return $this->connect_name;
     }
 
-    static function index()
+    public static function index()
     {
         return 'id';
     }

@@ -13,13 +13,13 @@ namespace Money\Reward\Level;
 
 class Param extends \Model
 {
-    static $cols = [
+    public static $cols = [
         'reward_level_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'level'],
         'param' => ['type' => 'text'],
         'value' => ['type' => 'text'],
     ];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'level' => [

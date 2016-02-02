@@ -10,14 +10,14 @@
  */
 class DashboardController extends adminController
 {
-    function indexAction()
+    public function indexAction()
     {
         $sections = $this->module->getSnippets('adminDashboardWidget');
         $this->view->setTitle('Панель управления');
         $this->view->page(['data' => compact('sections')]);
     }
 
-    function siteConfigAction()
+    public function siteConfigAction()
     {
         if (isset($_POST['site_name'])) {
             $config = \App::$primary->config;

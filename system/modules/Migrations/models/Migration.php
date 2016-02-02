@@ -13,21 +13,21 @@ namespace Migrations;
 
 class Migration extends \Model
 {
-    static $objectName = 'Миграция данных';
-    static $labels = [
+    public static $objectName = 'Миграция данных';
+    public static $labels = [
         'name' => 'Название',
         'maps' => 'Карты данных'
     ];
-    static $cols = [
+    public static $cols = [
         'name' => ['type' => 'text'],
         'maps' => ['type' => 'dataManager', 'relation' => 'maps']
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'cols' => ['name', 'maps']
         ]
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['name'],
@@ -36,7 +36,7 @@ class Migration extends \Model
         ]
     ];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'maps' => [

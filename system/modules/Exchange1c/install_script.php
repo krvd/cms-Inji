@@ -1,6 +1,6 @@
 <?php
 
-return function ($step = NULL, $params = array()) {
+return function ($step = NULL, $params = []) {
     \App::$cur->db->createTable('exchange1c_exchange', [
         'exchange_id' => 'pk',
         'exchange_type' => 'varchar(255) NOT NULL',

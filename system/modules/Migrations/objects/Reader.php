@@ -16,18 +16,18 @@ class Reader extends \Object
     public $data = NULL;
     public $source = '';
 
-    function loadData($source = '')
+    public function loadData($source = '')
     {
         $this->source = $source;
         return FALSE;
     }
 
-    function readPath($path = '/')
+    public function readPath($path = '/')
     {
         return [];
     }
 
-    function __toString()
+    public function __toString()
     {
         return '';
     }

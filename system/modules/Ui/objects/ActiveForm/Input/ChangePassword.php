@@ -13,7 +13,7 @@ namespace Ui\ActiveForm\Input;
 
 class ChangePassword extends \Ui\ActiveForm\Input
 {
-    function parseRequest($request)
+    public function parseRequest($request)
     {
         if (!empty($request[$this->colName]['pass']) && !empty($request[$this->colName]['pass'])) {
             if (empty($request[$this->colName]['pass'])) {

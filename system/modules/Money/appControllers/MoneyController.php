@@ -10,7 +10,7 @@
  */
 class MoneyController extends Controller
 {
-    function transferAction()
+    public function transferAction()
     {
         $transfer = new Money\Transfer();
         $form = new Ui\ActiveForm($transfer, 'transfer');
@@ -42,7 +42,7 @@ class MoneyController extends Controller
         $this->view->page(['data' => compact('form')]);
     }
 
-    function confirmTransferAction($transferId = 0)
+    public function confirmTransferAction($transferId = 0)
     {
         $transfer = Money\Transfer::get((int) $transferId);
         if (!$transfer || $transfer->user_id != \Users\User::$cur->id || $transfer->complete || $transfer->canceled) {
@@ -65,7 +65,7 @@ class MoneyController extends Controller
         $this->view->page(['data' => compact('transfer')]);
     }
 
-    function cancelTransferAction($transferId = 0)
+    public function cancelTransferAction($transferId = 0)
     {
         $transfer = Money\Transfer::get((int) $transferId);
         if (!$transfer || $transfer->user_id != \Users\User::$cur->id || $transfer->complete || $transfer->canceled) {
@@ -82,7 +82,7 @@ class MoneyController extends Controller
         Tools::redirect('/users/cabinet', 'Перевод был успешно отменен', 'success');
     }
 
-    function refillAction($currencyId = 0)
+    public function refillAction($currencyId = 0)
     {
         $currency = null;
         if (!empty($_POST['currency_id'])) {
@@ -108,7 +108,7 @@ class MoneyController extends Controller
         }
     }
 
-    function exchangeAction()
+    public function exchangeAction()
     {
         $wallets = $this->module->getUserWallets();
         $currency = !empty($_GET['currency_id']) ? \Money\Currency::get((int) $_GET['currency_id']) : null;
@@ -158,7 +158,7 @@ class MoneyController extends Controller
         $this->view->page(['data' => compact('rates', 'currency', 'targetCurrency', 'wallets')]);
     }
 
-    function walletPayAction($payId, $walletId)
+    public function walletPayAction($payId, $walletId)
     {
         $pay = Money\Pay::get((int) $payId);
         if (!$pay || $pay->user_id != \Users\User::$cur->id) {
@@ -193,7 +193,7 @@ class MoneyController extends Controller
         Tools::redirect('/users/cabinet', 'Вы успешно оплатили счет', 'success');
     }
 
-    function primaryPayAction($payId, $currencyId)
+    public function primaryPayAction($payId, $currencyId)
     {
         $pay = Money\Pay::get((int) $payId);
         if (!$pay || $pay->user_id != \Users\User::$cur->id) {

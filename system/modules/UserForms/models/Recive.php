@@ -13,8 +13,8 @@ namespace UserForms;
 
 class Recive extends \Model
 {
-    static $objectName = 'Полученная форма';
-    static $labels = [
+    public static $objectName = 'Полученная форма';
+    public static $labels = [
         'form_title' => 'Название',
         'form_user_id' => 'Пользователь',
         'inputs' => 'Поля формы',
@@ -22,7 +22,7 @@ class Recive extends \Model
         'form_id' => 'Форма',
         'data' => 'Данные',
     ];
-    static $cols = [
+    public static $cols = [
         'form_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'form'],
         'data' => [
             'type' => 'json',
@@ -33,7 +33,7 @@ class Recive extends \Model
             ],
         ],
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'name' => 'Полученные формы',
             'cols' => [
@@ -52,7 +52,7 @@ class Recive extends \Model
         ]
     ];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'form' => [
