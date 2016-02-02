@@ -37,7 +37,7 @@ class ActiveFormController extends Controller
             }
             $activeForm = new Ui\ActiveForm($model, $formName);
             $inputs = $activeForm->getInputs();
-            $inputName = trim(filter_input(INPUT_GET, 'formName', FILTER_SANITIZE_STRING));
+            $inputName = trim(filter_input(INPUT_GET, 'inputName', FILTER_SANITIZE_STRING));
             if (empty($inputs[$inputName])) {
                 throw new Exception('У формы нет такого поля');
             }
