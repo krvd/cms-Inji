@@ -310,7 +310,7 @@ class DataManager extends \Object
         $rows = [];
         foreach ($items as $item) {
             if ($relation && !empty($relation['relModel'])) {
-                $item = $relation['relModel']::get([[$relation['relModel']::index(), $item->id], [$model->index(), $model->id]]);
+                $item = $relation['relModel']::get([[$item->index(), $item->id], [$model->index(), $model->id]]);
             }
             $row = [];
             if (!empty($this->managerOptions['groupActions'])) {
