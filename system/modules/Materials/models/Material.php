@@ -27,7 +27,8 @@ class Material extends \Model
         'description' => 'Описание для поисковиков',
         'keywords' => 'Ключевые слова',
         'user_id' => 'Создатель',
-        'date_create' => 'Дата создания'
+        'date_create' => 'Дата создания',
+        'tag_list' => 'Теги'
     ];
     public static $dataManagers = [
         'manager' => [
@@ -35,7 +36,8 @@ class Material extends \Model
                 'name',
                 'alias',
                 'category_id',
-                'date_create'
+                'date_create',
+                'tag_list'
             ],
             'sortable' => [
                 'name',
@@ -79,6 +81,7 @@ class Material extends \Model
         'tree_path' => ['type' => 'text'],
         'weight' => ['type' => 'number'],
         'date_create' => ['type' => 'dateTime'],
+        'tag_list' => ['type' => 'text'],
     ];
     public static $forms = [
         'manager' => [
@@ -94,6 +97,7 @@ class Material extends \Model
                 ['alias', 'image_file_id'],
                 ['template', 'viewer'],
                 ['keywords', 'description'],
+                ['tag_list'],
                 ['preview'],
                 ['text'],
                 ['link'],
