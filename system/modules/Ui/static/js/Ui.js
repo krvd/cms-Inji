@@ -711,19 +711,23 @@ function ActiveForm() {
   this.index;
   this.element;
   this.load = function () {
-    console.log(this.element.element.id);
+    console.log(this.element.element.id,this.inputs);
     for (var inputName in this.inputs) {
       var inputParams = this.inputs[inputName];
       if (this.inputHandlers[inputParams.type]) {
         var query = '#' + this.element.element.id + ' [name="query-ActiveForm_' + this.formName + '[' + this.modelName.replace('\\', '\\\\') + '][' + inputName + ']"]';
         console.log(query);
+        console.log(3);
         this.inputHandlers[inputParams.type](inji.get(query), inputName, this)
       }
     }
   };
   this.inputHandlers = {
+    
     search: function (element, inputName, activeForm) {
+      console.log(2);
       element.element.onkeyup = function () {
+        console.log(1);
         var inputContainer = element.element.parentNode;
         var selectedDiv = inputContainer.querySelector('.form-search-cur');
         var resultsDiv = inputContainer.querySelector('.form-search-results');

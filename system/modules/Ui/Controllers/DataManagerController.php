@@ -12,11 +12,6 @@ class DataManagerController extends Controller
 {
     public function parseRequest()
     {
-        $args = array(
-            'params' => [
-                'flags' => FILTER_REQUIRE_ARRAY,
-            ],
-        );
         $return = [];
         $return['params'] = UserRequest::get('params', 'array', []);
 
@@ -33,9 +28,10 @@ class DataManagerController extends Controller
             $return['modelName'] = $item;
             $return['model'] = null;
         }
+        
         if (!empty($return['params']['relation'])) {
             $relation = $return['modelName']::getRelation($return['params']['relation']);
-            if (!empty($relation['type']) && $relation['type'] == 'telModlel') {
+            if (!empty($relation['type']) && $relation['type'] == 'relModel') {
                 $return['modelName'] = $relation['relModel'];
             } else {
                 $return['modelName'] = $relation['model'];
