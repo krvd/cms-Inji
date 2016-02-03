@@ -255,7 +255,7 @@ class Users extends Module
         if (!empty($invite_code)) {
             $invite = Users\User\Invite::get($invite_code, 'code');
             if (!$invite) {
-                Msg::add('Такой код пришлашения не найден', 'danger');
+                Msg::add('Такой код приглашения не найден', 'danger');
                 return false;
             }
             if ($invite->limit && !($invite->limit - $invite->count)) {
@@ -263,6 +263,7 @@ class Users extends Module
                 return false;
             }
             $parent_id = $invite->user_id;
+            $inviter = $parent_id;
             $invite->count++;
             $invite->save();
         }
@@ -295,6 +296,8 @@ class Users extends Module
             'phone' => htmlspecialchars($user_phone),
         ]);
         $info->save();
+        if (isset($inviter))
+            $this->AddUserActivity($inviter, 2, "По вашей ссылке зарегистрировался новый партнер, {$info->first_name} {$info->last_name} (id: {$user->id})" );
         if ($autorization) {
             $this->autorization($user_mail, $pass, 'mail');
         }
@@ -354,6 +357,16 @@ class Users extends Module
         }
         $return['count'] = count($return['users']);
         return $return;
+    }
+
+    public function addUserActivity($user_id, $cat_id , $text = '')
+    {
+        $ua = new Users\Activity([
+            'user_id' => $user_id,
+            'category_id' => $cat_id,
+            'text' => $text,
+        ]);
+        $ua->save();
     }
 
 }

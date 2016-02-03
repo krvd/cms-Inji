@@ -62,14 +62,16 @@ if (!empty($wallets[$level->params['currency_id']->value])) {
     if (!$amount) {
         return 0;
     }
+
+    $text = 'Вознаграждение по программе "' . $reward->name . '"';
+    if ($rootUser->id != $user->id) {
+        $text .= ' от ' . $rootUser->name();
+    }
+
     if (!$rewardGet && $reward->block) {
         $block = new \Money\Wallet\Block();
         $block->wallet_id = $wallets[$level->params['currency_id']->value]->id;
         $block->amount = $amount;
-        $text = 'Вознаграждение по программе "' . $reward->name . '"';
-        if ($rootUser->id != $user->id) {
-            $text .= ' от ' . $rootUser->name();
-        }
         $block->comment = $text;
         $block->data = 'reward:' . $reward->id;
         $dateGenerators = $this->getSnippets('expiredDateGenerator');
@@ -84,11 +86,11 @@ if (!empty($wallets[$level->params['currency_id']->value])) {
         }
         $block->save();
     } else {
-        $text = 'Вознаграждение по программе "' . $reward->name . '"';
-        if ($rootUser->id != $user->id) {
-            $text .= ' от ' . $rootUser->name();
-        }
         $wallets[$level->params['currency_id']->value]->diff($amount, $text);
+    }
+
+    foreach ($sums as $key => $sum) {
+        \App::$cur->users->AddUserActivity($user->id, 4, "{$text}");
     }
 }
 return $amount;

@@ -167,7 +167,7 @@ class Money extends Module
         $reward = \Money\Reward::get($reward_id);
         $reward->checkBlocked();
         $reward_count = \Money\Reward\Recive::getCount([ 'where' => [ 'reward_id', $reward_id ]]);
-        if ($reward_count >= $reward->quantity)
+        if ($reward_count >= $reward->quantity && $reward->quantity)
             return false;
         $types = $this->getSnippets('rewardType');
         foreach ($reward->levels(['order' => ['level', 'asc']]) as $level) {

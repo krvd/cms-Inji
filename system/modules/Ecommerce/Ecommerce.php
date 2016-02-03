@@ -340,6 +340,13 @@ class Ecommerce extends Module
             $event = new Ecommerce\Cart\Event(['cart_id' => $item->id, 'user_id' => \Users\User::$cur->id, 'cart_event_type_id' => 5, 'info' => $item->cart_status_id]);
             $event->save();
 
+            $cart = Ecommerce\Cart::get(['id', $item->id]);
+            $prev_status_id = $item->_changedParams['cart_cart_status_id'];
+            $now_status_id = $item->cart_status_id;
+            $status = Ecommerce\Cart\Status::getList(['id', $prev_status_id], ['id', $now_status_id]);
+            $status = array_values($status);
+            \App::$cur->users->AddUserActivity($cart->user_id, 3, "Статус вашего заказа номер {$cart->id} изменился с {$status[0]->name} на {$status[1]->name}");
+
             if ($item->cart_status_id == 5) {
                 Inji::$inst->event('ecommerceCartClosed', $item);
             }
