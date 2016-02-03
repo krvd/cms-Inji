@@ -22,14 +22,14 @@ class Comment extends \Model
     ];
     public static $cols = [
         'user_id' => [
-            'type' => 'relation',
+            'type' => 'select',
+            'source'=>'relation',
             'relation' => 'user',
-            'showCol' => 'mail'
         ],
         'model' => ['type' => 'text'],
         'text' => ['type' => 'html'],
         'item_id' => [
-            'type' => 'void',
+            'type' => 'number',
             'value' => [
                 'type' => 'moduleMethod',
                 'module' => 'Dashboard',
