@@ -22,6 +22,7 @@ class Reward extends \Model
         'round_type' => ['type' => 'text'],
         'round_precision' => ['type' => 'number'],
         'peruser' => ['type' => 'number'],
+        'quantity' => ['type' => 'number'],
     ];
 
     public function checkBlocked()
