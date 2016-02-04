@@ -77,7 +77,9 @@ class Pay extends \Model
             'preSort' => [
                 'date_create' => 'desc'
             ],
-            'rowButtonsWidget' => 'Money\adminButtons'
+            'actions' => [
+                'Money\ClosePayBtn', 'Edit', 'Delete'
+            ]
         ]
     ];
     public static $forms = [

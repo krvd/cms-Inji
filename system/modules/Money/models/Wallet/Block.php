@@ -62,7 +62,7 @@ class Block extends \Model
             'preSort' => [
                 'date_create' => 'desc'
             ],
-            'rowButtons' => []
+            'actions' => []
         ]
     ];
     public static function relations()

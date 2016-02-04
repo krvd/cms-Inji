@@ -60,9 +60,6 @@ class Options extends \Model
                 'db_name'
             ],
             'editForm' => 'setup',
-            'rowButtons' => [
-                'Edit', 'Delete'
-            ]
         ]
     ];
     public static $forms = [

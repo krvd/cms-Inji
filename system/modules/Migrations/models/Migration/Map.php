@@ -26,8 +26,13 @@ class Map extends \Model
         'manager' => [
             'name' => 'Карты миграции данных',
             'cols' => ['name', 'migration_id'],
-            'rowButtons' => [
-                'open', ['href' => '/admin/migrations/map', 'text' => '<i class = "glyphicon glyphicon-cog"></i>'], 'edit', 'delete'
+            'actions' => [
+                'mapEdit' => [
+                    'className' => 'Href',
+                    'href' => '/admin/migrations/map',
+                    'text' => '<i class = "glyphicon glyphicon-cog"></i>'
+                ],
+                'Edit', 'Delete'
             ],
         ]
     ];

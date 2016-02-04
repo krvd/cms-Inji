@@ -28,7 +28,7 @@ class DataManagerController extends Controller
             $return['modelName'] = $item;
             $return['model'] = null;
         }
-        
+
         if (!empty($return['params']['relation'])) {
             $relation = $return['modelName']::getRelation($return['params']['relation']);
             if (!empty($relation['type']) && $relation['type'] == 'relModel') {
@@ -47,7 +47,7 @@ class DataManagerController extends Controller
         $return['col_value'] = UserRequest::get('col_value', 'string', '');
 
         $return['action'] = UserRequest::get('action', 'string', '');
-        $return['ids'] = UserRequest::get('ids', 'string', '');
+        $return['ids'] = trim(UserRequest::get('ids', 'string', ''), ',');
         $return['adInfo'] = UserRequest::get('adInfo', 'array', []);
 
         $return['download'] = UserRequest::get('download', 'bool', false);
@@ -207,39 +207,28 @@ class DataManagerController extends Controller
     public function groupActionAction()
     {
         $request = $this->parseRequest();
-
         $dataManager = new Ui\DataManager($request['modelName'], $request['managerName']);
-
+        $result = new Server\Result();
+        $result->success = false;
+        $result->content = 'Не удалось выполнить операцию';
         if ($dataManager->checkAccess()) {
-            if (!empty($request['action']) && !empty($dataManager->managerOptions['groupActions'][$request['action']]) && trim($request['ids'], ' ,')) {
-                $ids = trim($request['ids'], ' ,');
-                $action = $dataManager->managerOptions['groupActions'][$request['action']];
-                switch ($action['action']) {
-                    case'delete':
-                        $models = $request['modelName']::getList(['where' => [[$request['modelName']::index(), $ids, 'IN']]]);
-                        foreach ($models as $model) {
-                            $model->delete();
-                        }
-                        break;
-                    case 'changeParam':
-                        $models = $request['modelName']::getList(['where' => [[$request['modelName']::index(), $ids, 'IN']]]);
-                        foreach ($models as $model) {
-                            $model->{$action['col']} = $action['value'];
-                            $model->save(!empty($_GET['params']) ? $_GET['params'] : []);
-                        }
-                        break;
-                    case 'moduleMethod':
-                        $comandResult = App::$cur->{$action['module']}->{$action['method']}($dataManager, $ids, $request['adInfo']);
-                        break;
+            $ids = trim($request['ids'], ' ,');
+            if ($request['action'] && $ids) {
+
+                $actions = $dataManager->getActions();
+                if (!empty($actions[$request['action']])) {
+                    $actionParams = $actions[$request['action']];
+                    try {
+                        $result->successMsg = $actionParams['className']::groupAction($dataManager, $ids, $actionParams);
+                        $result->success = true;
+                    } catch (\Exception $e) {
+                        $result->content = $e->getMessage();
+                    }
                 }
             }
+        } else {
+            $result->content = 'У вас нет прав доступа к менеджеру ' . $request['managerName'] . ' модели ' . $request['modelName'];
         }
-        $result = new Server\Result();
-        if (!empty($comandResult)) {
-            $result->success = $comandResult['success'];
-            $result->content = $comandResult['content'];
-        }
-        $result->successMsg = 'Операция выполнена';
         $result->send();
     }
 

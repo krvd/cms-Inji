@@ -61,12 +61,12 @@ $table->draw();
   foreach (\Dashboard\Comment::getList([ 'where' => [
           ['item_id', $item->id],
           ['model', $modelName],
-      ], 'order' => ['date', 'desc']]) as $comment) {
+      ], 'order' => ['date_create', 'desc']]) as $comment) {
       ?>
       <div class="row">
         <div class="col-sm-3" style="max-width: 300px;">
           <a href='/admin/Users/view/User/<?= $comment->user->pk(); ?>'><?= $comment->user->name(); ?></a><br />
-          <?= $comment->date; ?>
+          <?= $comment->date_create; ?>
         </div>
         <div class="col-sm-9">
           <?= $comment->text; ?>

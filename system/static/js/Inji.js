@@ -208,4 +208,3 @@ Inji.prototype.get = function (query) {
   }
 }
 var inji = new Inji();
-

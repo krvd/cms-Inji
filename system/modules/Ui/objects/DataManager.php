@@ -112,6 +112,29 @@ class DataManager extends \Object
         return $buttons;
     }
 
+    function getActions()
+    {
+        $actions = [
+            'Open', 'Edit', 'Delete'
+        ];
+        if (isset($this->managerOptions['actions'])) {
+            $actions = $this->managerOptions['actions'];
+        }
+        $return = [];
+        foreach ($actions as $key => $action) {
+            if (is_array($action)) {
+                $return[$key] = $action;
+            } else {
+                $key = $action;
+                $return[$key] = [
+                    'className' => $action
+                ];
+            }
+            $return[$key]['className'] = strpos($return[$key]['className'], '\\') === false && class_exists('Ui\DataManager\Action\\' . $return[$key]['className']) ? 'Ui\DataManager\Action\\' . $return[$key]['className'] : $action;
+        }
+        return $return;
+    }
+
     /**
      * Get cols for manager
      * 
@@ -125,9 +148,34 @@ class DataManager extends \Object
         }
         $modelName = $this->modelName;
         $cols = [];
-        if (!empty($this->managerOptions['groupActions'])) {
-            $cols[] = ['label' => '<input type="checkbox" />'];
-        }
+        $actions = $this->getActions();
+        ob_start();
+        ?>
+        <div class="dropdown">
+          <a id="dLabel" data-target="#" href="" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+            <i class="glyphicon glyphicon-cog"></i>
+            <span class="caret"></span>
+          </a>
+
+          <ul class="dropdown-menu" aria-labelledby="dLabel">
+            <li><a href ='' onclick='inji.Ui.dataManagers.get(this).rowSelection("selectAll");return false;'>Выделить все</a></li>
+            <li><a href ='' onclick='inji.Ui.dataManagers.get(this).rowSelection("unSelectAll");return false;'>Снять все</a></li>
+            <li><a href ='' onclick='inji.Ui.dataManagers.get(this).rowSelection("inverse");return false;'>Инвертировать</a></li>
+            <li role="separator" class="divider"></li>
+            <?php
+            foreach ($actions as $action => $actionParams) {
+                if (class_exists($actionParams['className']) && $actionParams['className']::$groupAction) {
+                    echo "<li><a href ='' onclick='inji.Ui.dataManagers.get(this).groupAction(\"" . str_replace('\\', '\\\\', $action) . "\");return false;'>{$actionParams['className']::$name}</a></li>";
+                }
+            }
+            ?>
+          </ul>
+        </div>
+        <?php
+        $dropdown = ob_get_contents();
+        ob_end_clean();
+        $cols[] = ['label' => $dropdown];
+
         $cols['id'] = ['label' => '№', 'sortable' => true];
         foreach ($this->managerOptions['cols'] as $key => $col) {
             if (is_array($col)) {
@@ -313,9 +361,7 @@ class DataManager extends \Object
                 $item = $relation['relModel']::get([[$item->index(), $item->id], [$model->index(), $model->id]]);
             }
             $row = [];
-            if (!empty($this->managerOptions['groupActions'])) {
-                $row[] = '<input type ="checkbox" name = "pk[]" value =' . $item->pk() . '>';
-            }
+            $row[] = '<input type ="checkbox" name = "pk[]" value =' . $item->pk() . '>';
             $row[] = $item->pk();
             foreach ($this->managerOptions['cols'] as $key => $colName) {
                 if (!empty($params['download'])) {

@@ -37,8 +37,13 @@ class Exchange extends \Model
             'cols' => ['type', 'session', 'path', 'log', 'file', 'date_create'],
             'sortable' => ['type', 'session', 'path', 'log', 'file', 'date_create'],
             'filters' => ['type', 'session', 'path', 'log', 'file', 'date_create'],
-            'rowButtons' => [
-                'open', ['href' => '/admin/exchange1c/reExchange', 'text' => '<i class = "glyphicon glyphicon-refresh"></i>'], 'edit', 'delete'
+            'actions' => [
+                'reEx' => [
+                    'className' => 'Href',
+                    'href' => '/admin/exchange1c/reExchange',
+                    'text' => '<i class = "glyphicon glyphicon-refresh"></i>'
+                ],
+                'Edit', 'Delete'
             ],
         ]
     ];

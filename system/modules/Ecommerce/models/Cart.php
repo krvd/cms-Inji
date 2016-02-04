@@ -155,7 +155,9 @@ class Cart extends \Model
             'preSort' => [
                 'complete_data' => 'desc'
             ],
-            'rowButtonsWidget' => 'Ecommerce\cart/adminButtons'
+            'actions' => [
+                'Ecommerce\CloseCartBtn', 'Open', 'Edit', 'Delete'
+            ]
         ]
     ];
 
