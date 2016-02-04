@@ -59,8 +59,9 @@ class Options extends \Model
                 'connect_alias',
                 'db_name'
             ],
+            'editForm' => 'setup',
             'rowButtons' => [
-                'edit', 'delete'
+                'Edit', 'Delete'
             ]
         ]
     ];
@@ -74,7 +75,6 @@ class Options extends \Model
                     ]
                 ]
             ],
-            'editForm' => 'setup',
             'map' => [
                 ['connect_name', 'connect_alias', 'driver'],
                 ['host', 'user'],
