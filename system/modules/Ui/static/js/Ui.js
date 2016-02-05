@@ -8,7 +8,6 @@ inji.Ui = new function () {
     inji.Ui.bindMenu($('.nav-list-categorys'));
     inji.Ui.modals = new Modals();
     inji.Ui.forms = new Forms();
-    inji.Ui.activeForms = new ActiveForms();
     inji.Ui.editors = new Editors();
   });
 
@@ -256,30 +255,31 @@ Forms.prototype.checkAditionals = function (select) {
 Forms.prototype.delRowFromList = function (btn) {
   $(btn).closest('tr').remove();
 };
-function ActiveForms() {
+
+inji.Ui.activeForms = new function () {
   this.activeForms = [];
-}
-ActiveForms.prototype.get = function (selector) {
-  var element = inji.get(selector);
-  if (element && element.data('activeFormIndex') !== null) {
-    return this.activeForms[element.data('activeFormIndex')];
+  this.get = function (selector) {
+    var element = inji.get(selector);
+    if (element && element.data('activeFormIndex') !== null) {
+      return this.activeForms[element.data('activeFormIndex')];
+    }
+    this.initial(element);
+  };
+  this.initial = function (element) {
+    var activeForm = new ActiveForm();
+    this.activeForms.push(activeForm);
+
+    activeForm.index = this.activeForms.length - 1;
+    activeForm.element = element;
+    activeForm.modelName = element.data('modelname');
+    activeForm.formName = element.data('formname');
+    activeForm.inputs = element.data('inputs');
+
+    element.element.setAttribute('activeFormIndex', activeForm.index);
+
+    activeForm.load();
   }
-  this.initial(element);
-};
-ActiveForms.prototype.initial = function (element) {
-  var activeForm = new ActiveForm();
-  this.activeForms.push(activeForm);
-
-  activeForm.index = this.activeForms.length - 1;
-  activeForm.element = element;
-  activeForm.modelName = element.data('modelname');
-  activeForm.formName = element.data('formname');
-  activeForm.inputs = element.data('inputs');
-
-  element.element.setAttribute('activeFormIndex', activeForm.index);
-
-  activeForm.load();
-};
+}
 function ActiveForm() {
   this.modelName;
   this.formName;
