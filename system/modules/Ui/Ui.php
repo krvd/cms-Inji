@@ -14,7 +14,7 @@ class Ui extends Module
     {
         $this->app->view->customAsset('js', ['file' => '/static/moduleAsset/Ui/js/Ui.js']);
         $this->app->view->customAsset('js', ['file' => '/static/moduleAsset/Ui/js/DataManager.js']);
-        if ((!$this->app->app->users || \Users\User::$cur->isAdmin()) && $this->app->type == 'app') {
+        if ((!$this->app->users || \Users\User::$cur->isAdmin()) && $this->app->type == 'app') {
             $this->app->view->customAsset('js', ['file' => '/static/moduleAsset/Ui/js/fastEdit.js', 'name' => 'Ui', 'libs' => ['ckeditor']]);
         }
         $this->app->view->customAsset('css', '/static/moduleAsset/Ui/css/Ui.css');
