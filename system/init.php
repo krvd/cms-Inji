@@ -26,17 +26,6 @@ Inji::$inst->listen('Config-change-system', 'systemConfig', function($event) {
 });
 spl_autoload_register('Router::findClass');
 
-if (!function_exists('idn_to_utf8')) {
-    function idn_to_utf8($domain)
-    {
-        if (empty(Inji::$storage['IdnaConvert'])) {
-            Inji::$storage['IdnaConvert'] = new IdnaConvert();
-        }
-        return Inji::$storage['IdnaConvert']->decode($domain);
-    }
-
-}
-
 $apps = Apps\App::getList();
 //Make default app params
 $finalApp = [
@@ -92,7 +81,23 @@ if (empty($shareConfig['installed']) && App::$cur->name != 'setup' && (empty(App
     Tools::redirect('/setup');
 }
 putenv('COMPOSER_HOME=' . getcwd());
-ComposerCmd::check();
+putenv('COMPOSER_CACHE_DIR=' . getcwd() . DIRECTORY_SEPARATOR . 'composerCache');
+ComposerCmd::check('./');
+if (file_exists('vendor/autoload.php')) {
+    include_once 'vendor/autoload.php';
+}
+
+if (!function_exists('idn_to_utf8')) {
+    ComposerCmd::requirePackage("mabrahamde/idna-converter", "dev-master", './');
+    function idn_to_utf8($domain)
+    {
+        if (empty(Inji::$storage['IdnaConvert'])) {
+            Inji::$storage['IdnaConvert'] = new \idna_convert(array('idn_version' => 2008));
+        }
+        return Inji::$storage['IdnaConvert']->decode($domain);
+    }
+
+}
 if (file_exists(App::$primary->path . '/vendor/autoload.php')) {
     include_once App::$primary->path . '/vendor/autoload.php';
 }
