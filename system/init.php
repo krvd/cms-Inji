@@ -82,11 +82,7 @@ if (empty($shareConfig['installed']) && App::$cur->name != 'setup' && (empty(App
 }
 putenv('COMPOSER_HOME=' . getcwd());
 putenv('COMPOSER_CACHE_DIR=' . getcwd() . DIRECTORY_SEPARATOR . 'composerCache');
-ComposerCmd::check('./');
-if (file_exists('vendor/autoload.php')) {
-    include_once 'vendor/autoload.php';
-}
-
+ComposerCmd::check();
 if (!function_exists('idn_to_utf8')) {
     ComposerCmd::requirePackage("mabrahamde/idna-converter", "dev-master", './');
     function idn_to_utf8($domain)
@@ -97,6 +93,9 @@ if (!function_exists('idn_to_utf8')) {
         return Inji::$storage['IdnaConvert']->decode($domain);
     }
 
+}
+if (file_exists('vendor/autoload.php')) {
+    include_once 'vendor/autoload.php';
 }
 if (file_exists(App::$primary->path . '/vendor/autoload.php')) {
     include_once App::$primary->path . '/vendor/autoload.php';

@@ -21,7 +21,7 @@ $levelTypes = [
     'procent' => 'Процент',
     'amount' => 'Сумма',
 ];
-return $levelTypes[$level->params['type']->value] . ': ' . $level->params['amount']->value . ' ' . ($level->params['currency_id']->value ? \Money\Currency::get($level->params['currency_id']->value)->acronym() : '');
+return $levelTypes[$level->params['type']->value] . ': ' . $level->params['amount']->value . ' ' . ($level->params['type']->value == 'procent' ? '%' : ($level->params['currency_id']->value ? \Money\Currency::get($level->params['currency_id']->value)->acronym() : ''));
 },
     'rewarder' => function($reward, $sums, $user, $rootUser, $level, $rewardGet) {
 $wallets = \App::$cur->money->getUserWallets($user->id);
@@ -72,7 +72,7 @@ if (!empty($wallets[$level->params['currency_id']->value])) {
         }
         $block->comment = $text;
         $block->data = 'reward:' . $reward->id;
-        $dateGenerators = $this->getSnippets('expiredDateGenerator');
+        $dateGenerators = \App::$cur->money->getSnippets('expiredDateGenerator');
         if ($reward->block_date_expired && !empty($dateGenerators[$reward->block_date_expired])) {
             $date = $dateGenerators[$reward->block_date_expired]($reward, $user);
             if (!empty($date['date'])) {
