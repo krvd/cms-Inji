@@ -13,5 +13,23 @@ namespace Ecommerce\Cart;
 
 class Status extends \Model
 {
-    
+    public static $objectName = 'Статус корзины';
+    public static $cols = [
+        'name' => ['type'=>'text']
+    ];
+    public static $dataManagers = [
+        'manager' => [
+            'cols' => [
+                'name','date_create'
+            ]
+        ]
+    ];
+    public static $forms = [
+        'manager' => [
+            'map' => [
+                ['name']
+            ]
+        ]
+    ];
+
 }
