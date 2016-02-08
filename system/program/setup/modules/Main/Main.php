@@ -20,17 +20,8 @@ class Main extends Module
             if (empty($config['systemPass'])) {
                 Tools::redirect('/setup/enter', 'Придумайте системный пароль');
             }
-            if (empty($_COOKIE['systemPass'])) {
+            if (empty($_SESSION['systemLogin'])) {
                 Tools::redirect('/setup/enter', 'Введите системный пароль');
-            }
-            if (!empty($_COOKIE['systemPass']) && $_COOKIE['systemPass'] != $config['systemPass']) {
-                if (empty($config['failTry'])) {
-                    $config['failTry'] = 1;
-                } else {
-                    $config['failTry'] ++;
-                }
-                Config::save('share', $config);
-                Tools::redirect('/setup/enter', 'Не верный системный пароль');
             }
         }
     }
