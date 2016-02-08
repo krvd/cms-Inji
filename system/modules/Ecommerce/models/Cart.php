@@ -321,12 +321,4 @@ class Cart extends \Model
         $this->calc(false);
     }
 
-    public function checkFormAccess($formName)
-    {
-        if ($formName == 'manage' && !in_array(Inji::app()->users->cur->user_group_id, array(3, 4))) {
-            return false;
-        }
-        return true;
-    }
-
 }
