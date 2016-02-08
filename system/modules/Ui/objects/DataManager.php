@@ -70,7 +70,8 @@ class DataManager extends \Object
     {
         $modelName = $this->modelName;
         $formParams = [
-            'dataManagerParams' => $params
+            'dataManagerParams' => $params,
+            'formName' => !empty($this->managerOptions['editForm']) ? $this->managerOptions['editForm'] : 'manager'
         ];
         if ($model) {
             $formModelName = get_class($model);
