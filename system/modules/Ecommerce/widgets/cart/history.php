@@ -1,6 +1,7 @@
 <?php
 $pages = new Ui\Pages($_GET, ['count' => Ecommerce\Cart::getCount(['where' => ['user_id', Users\User::$cur->id]]), 'limit' => 10]);
 $carts = Ecommerce\Cart::getList(['where' => ['user_id', Users\User::$cur->id], 'order' => ['date_create', 'desc'], 'start' => $pages->params['start'], 'limit' => $pages->params['limit']]);
+$prefix = isset(App::$cur->ecommerce->config['orderPrefix']) ? $config = App::$cur->ecommerce->config['orderPrefix'] : '';
 ?>
 <h3>История заказов</h3>
 <div class="table-responsive">
@@ -47,7 +48,7 @@ $carts = Ecommerce\Cart::getList(['where' => ['user_id', Users\User::$cur->id], 
           }
           ?>
           <tr>
-            <td class="text-right">#<?= $cart->id; ?></td>
+            <td class="text-right">#<?= $prefix ?><?= $cart->id; ?></td>
             <td class="text-left"><?= $cart->status ? $cart->status->name : 'Наполняется'; ?></td>
             <td class="text-right"><?= count($cart->cartItems); ?></td>
             <td class="text-right"><?php
