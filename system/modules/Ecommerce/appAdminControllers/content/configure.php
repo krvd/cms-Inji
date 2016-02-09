@@ -25,6 +25,7 @@
     if (App::$cur->money) {
         $form->input('select', 'config[defaultCurrency]', 'Валюта по умолчанию', ['value' => App::$cur->ecommerce->config['defaultCurrency'], 'values' => ['' => 'Выберите'] + \Money\Currency::getList()]);
     }
+    $form->input('text', 'config[orderPrefix]', 'Префикс для номеров заказов', ['value' => App::$cur->ecommerce->config['orderPrefix']]);
     $form->input('text', 'config[notify_mail]', 'E-mail оповещений о новых заказах', ['value' => App::$cur->ecommerce->config['notify_mail']]);
     $form->input('hidden', 'config[save]', '', ['value' => 1]);
     $form->end('Сохранить');
