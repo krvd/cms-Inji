@@ -45,7 +45,7 @@
   </div>
 </div>
 <script>
-    public function GetUrlParam(paramName)
+    function GetUrlParam(paramName)
     {
       var oRegex = new RegExp('[\?&]' + paramName + '=([^&]+)', 'i');
       var oMatch = oRegex.exec(window.top.location.search);
@@ -55,7 +55,7 @@
       else
         return '';
     }
-    public function OpenFile(fileUrl)
+    function OpenFile(fileUrl)
     {
       //PATCH: Using CKEditors API we set the file in preview window.	
       funcNum = GetUrlParam('CKEditorFuncNum');

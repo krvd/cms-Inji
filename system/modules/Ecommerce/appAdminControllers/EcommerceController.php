@@ -41,6 +41,7 @@ class EcommerceController extends adminController
             'Ecommerce\Item\Option',
             'Ecommerce\Item\Offer\Price\Type',
             'Ecommerce\UserAdds\Field',
+            'Ecommerce\Cart\Status'
         ];
         $this->view->setTitle('Настройки магазина');
         $this->view->page(['data' => compact('managers')]);

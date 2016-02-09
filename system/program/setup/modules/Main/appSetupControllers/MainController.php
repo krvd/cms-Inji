@@ -21,12 +21,12 @@ class MainController extends Controller
         $config = Config::share();
         if (!empty($_POST['systemPass'])) {
             if (empty($config['systemPass'])) {
-                $config['systemPass'] = $_POST['systemPass'];
+                $config['systemPass'] = password_hash($_POST['systemPass']);
                 $config['installed'] = true;
                 Config::save('share', $config);
             }
-            if ($_POST['systemPass'] == $config['systemPass']) {
-                setcookie('systemPass', $_POST['systemPass'], 0, '/setup');
+            if (password_verify($_POST['systemPass'], $config['systemPass'])) {
+                $_SESSION['systemLogin'] = 1;
             } else {
                 if (empty($config['failTry'])) {
                     $config['failTry'] = 1;

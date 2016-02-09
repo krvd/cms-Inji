@@ -148,8 +148,8 @@ class Template extends \Object
     /**
      * Get posible paths for template page by name
      * 
-     * @param type $page
-     * @return type
+     * @param string $page
+     * @return array
      */
     public function getPagePaths($page = '')
     {

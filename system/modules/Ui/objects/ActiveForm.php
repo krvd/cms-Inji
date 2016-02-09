@@ -40,10 +40,16 @@ class ActiveForm extends \Object
             $this->model = $model;
             $this->modelName = get_class($model);
             if (is_array($form)) {
+                if (empty($form)) {
+                    throw new \Exception('empty form');
+                }
                 $this->form = $form;
             } else {
                 $this->formName = $form;
                 $this->form = \App::$cur->ui->getModelForm($this->modelName, $form);
+                if (empty($this->form)) {
+                    throw new \Exception('empty form');
+                }
                 $this->inputs = $this->getInputs();
             }
         }

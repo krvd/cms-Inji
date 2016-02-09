@@ -59,9 +59,7 @@ class Options extends \Model
                 'connect_alias',
                 'db_name'
             ],
-            'rowButtons' => [
-                'edit', 'delete'
-            ]
+            'editForm' => 'setup',
         ]
     ];
     public static $forms = [
@@ -74,7 +72,6 @@ class Options extends \Model
                     ]
                 ]
             ],
-            'editForm' => 'setup',
             'map' => [
                 ['connect_name', 'connect_alias', 'driver'],
                 ['host', 'user'],

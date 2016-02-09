@@ -52,8 +52,13 @@ class App extends \Model
                 'route',
             ],
             'editForm' => 'setup',
-            'rowButtons' => [
-                ['href' => '/setup/apps/configure', 'text' => '<i class = "glyphicon glyphicon-cog"></i>'], 'edit', 'delete'
+            'actions' => [
+                'manage' => [
+                    'className' => 'Href',
+                    'href' => '/setup/apps/configure',
+                    'text' => '<i class = "glyphicon glyphicon-cog"></i>'
+                ],
+                'Edit', 'Delete'
             ],
         ]
     ];

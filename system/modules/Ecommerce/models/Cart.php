@@ -155,7 +155,9 @@ class Cart extends \Model
             'preSort' => [
                 'complete_data' => 'desc'
             ],
-            'rowButtonsWidget' => 'Ecommerce\cart/adminButtons'
+            'actions' => [
+                'Ecommerce\CloseCartBtn', 'Open', 'Edit', 'Delete'
+            ]
         ]
     ];
 
@@ -317,14 +319,6 @@ class Cart extends \Model
     public function beforeSave()
     {
         $this->calc(false);
-    }
-
-    public function checkFormAccess($formName)
-    {
-        if ($formName == 'manage' && !in_array(Inji::app()->users->cur->user_group_id, array(3, 4))) {
-            return false;
-        }
-        return true;
     }
 
 }

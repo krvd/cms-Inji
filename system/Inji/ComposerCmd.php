@@ -15,6 +15,10 @@ class ComposerCmd
         if (!file_exists('composer/vendor/autoload.php')) {
             self::installComposer();
         }
+        if (!file_exists('vendor/autoload.php')) {
+            ;
+            self::initComposer('./');
+        }
         if (!file_exists(App::$primary->path . '/vendor/autoload.php')) {
             self::initComposer();
         }
@@ -35,13 +39,17 @@ class ComposerCmd
         }
     }
 
-    public static function initComposer()
+    public static function initComposer($path = '')
     {
-
-        $path = App::$primary->path . '/';
+        if (!$path) {
+            $path = App::$primary->path . '/';
+        }
         if (!file_exists($path . 'composer.json')) {
             $json = [
                 "name" => get_current_user() . "/" . App::$primary->name,
+                "config" => [
+                    "cache-dir" => "./composerCache/"
+                ],
                 "authors" => [
                     [
                         "name" => get_current_user(),
@@ -75,9 +83,11 @@ class ComposerCmd
         chdir($dir);
     }
 
-    public static function requirePackage($packageName, $version = '')
+    public static function requirePackage($packageName, $version = '', $path = '')
     {
-        $path = App::$primary->path . '/';
+        if (!$path) {
+            $path = App::$primary->path . '/';
+        }
         if (file_exists($path . 'composer.lock')) {
             $lockFile = json_decode(file_get_contents($path . 'composer.lock'), true);
         }
@@ -89,7 +99,7 @@ class ComposerCmd
             }
         }
 
-        ComposerCmd::command('require ' . $packageName . ($version ? ':' . $version : ''), false);
+        ComposerCmd::command('require ' . $packageName . ($version ? ':' . $version : ''), false, $path);
         return true;
     }
 
