@@ -2,9 +2,8 @@
 $cart = Ecommerce\Cart::getList([
     'where' => [
         ['user_id', Users\User::$cur->id],
-        ['cart_status_id', 2],
     ],
-    'order' => ['date_create', 'desc'],
+    'order' => ['complete_data', 'desc'],
     'limit' => 1
 ]);
 $cart_id = isset(array_values($cart)[0]) ? array_values($cart)[0]->id : '';

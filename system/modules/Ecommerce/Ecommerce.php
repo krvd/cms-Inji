@@ -334,20 +334,21 @@ class Ecommerce extends Module
 
     public function cartStatusDetector($event)
     {
-        $item = $event['eventObject'];
-        if (!empty($item->_changedParams['cart_cart_status_id'])) {
-            $item->date_status = date('Y-m-d H:i:s');
-            $event = new Ecommerce\Cart\Event(['cart_id' => $item->id, 'user_id' => \Users\User::$cur->id, 'cart_event_type_id' => 5, 'info' => $item->cart_status_id]);
+        $cart = $event['eventObject'];
+        if (!empty($cart->_changedParams['cart_cart_status_id'])) {
+            $cart->date_status = date('Y-m-d H:i:s');
+            $event = new Ecommerce\Cart\Event(['cart_id' => $cart->id, 'user_id' => \Users\User::$cur->id, 'cart_event_type_id' => 5, 'info' => $cart->cart_status_id]);
             $event->save();
+            
+            $prev_status_id = $cart->_changedParams['cart_cart_status_id'];
+            $now_status_id = $cart->cart_status_id;
+            
+            $status = Ecommerce\Cart\Status::getList(['where' => ['id', implode(',', [$prev_status_id, $now_status_id]), 'IN']]);
+            
+            $prefix = isset(App::$cur->ecommerce->config['orderPrefix']) ? $config = App::$cur->ecommerce->config['orderPrefix'] : '';
+            \App::$cur->users->AddUserActivity($cart->user_id, 3, "Статус вашего заказа номер {$prefix}{$cart->id} изменился с {$status[$prev_status_id]->name} на {$status[$now_status_id]->name}");
 
-            $cart = Ecommerce\Cart::get(['id', $item->id]);
-            $prev_status_id = $item->_changedParams['cart_cart_status_id'];
-            $now_status_id = $item->cart_status_id;
-            $status = Ecommerce\Cart\Status::getList(['id', $prev_status_id], ['id', $now_status_id]);
-            $status = array_values($status);
-            \App::$cur->users->AddUserActivity($cart->user_id, 3, "Статус вашего заказа номер {$cart->id} изменился с {$status[0]->name} на {$status[1]->name}");
-
-            if ($item->cart_status_id == 5) {
+            if ($cart->cart_status_id == 5) {
                 Inji::$inst->event('ecommerceCartClosed', $item);
             }
         }

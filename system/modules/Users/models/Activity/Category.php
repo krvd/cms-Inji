@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Role
+ * Activity category
  *
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/
