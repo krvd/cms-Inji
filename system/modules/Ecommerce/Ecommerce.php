@@ -349,7 +349,7 @@ class Ecommerce extends Module
             \App::$cur->users->AddUserActivity($cart->user_id, 3, "Статус вашего заказа номер {$prefix}{$cart->id} изменился с {$status[$prev_status_id]->name} на {$status[$now_status_id]->name}");
 
             if ($cart->cart_status_id == 5) {
-                Inji::$inst->event('ecommerceCartClosed', $item);
+                Inji::$inst->event('ecommerceCartClosed', $cart);
             }
         }
     }
