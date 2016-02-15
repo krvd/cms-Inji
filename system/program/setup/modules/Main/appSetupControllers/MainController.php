@@ -21,7 +21,7 @@ class MainController extends Controller
         $config = Config::share();
         if (!empty($_POST['systemPass'])) {
             if (empty($config['systemPass'])) {
-                $config['systemPass'] = password_hash($_POST['systemPass']);
+                $config['systemPass'] = password_hash($_POST['systemPass'], PASSWORD_DEFAULT);
                 $config['installed'] = true;
                 Config::save('share', $config);
             }
