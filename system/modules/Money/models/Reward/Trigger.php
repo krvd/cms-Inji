@@ -13,5 +13,16 @@ namespace Money\Reward;
 
 class Trigger extends \Model
 {
-    
+    public static function relations()
+    {
+        return [
+            'params' => [
+                'type' => 'many',
+                'model' => 'Money\Reward\Trigger\Param',
+                'col' => 'reward_trigger_id',
+                'resultKey' => 'param'
+            ]
+        ];
+    }
+
 }

@@ -180,7 +180,7 @@ class Money extends Module
                 $user = $next;
             }
             if (!$user) {
-                break;
+                continue;
             }
 
             if ($reward->peruser) {

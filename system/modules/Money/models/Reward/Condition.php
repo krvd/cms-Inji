@@ -13,6 +13,12 @@ namespace Money\Reward;
 
 class Condition extends \Model
 {
+    static $cols = [
+        'reward_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'reward'],
+        'name' => ['type' => 'text'],
+        'active' => ['type' => 'bool']
+    ];
+
     public function checkComplete($userId = 0)
     {
         $userId = $userId ? $userId : \Users\User::$cur->id;
