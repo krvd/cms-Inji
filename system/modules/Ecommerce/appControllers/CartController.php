@@ -47,10 +47,10 @@ class CartController extends Controller
                         $cartItem->save();
                         $ids[] = $cartItemId;
                     }
-                    foreach ($cart->cartItems as $cartItem) {
-                        if (!in_array($cartItem->id, $ids)) {
-                            $cartItem->delete();
-                        }
+                }
+                foreach ($cart->cartItems as $cartItem) {
+                    if (!in_array($cartItem->id, $ids)) {
+                        $cartItem->delete();
                     }
                 }
                 $cart = Ecommerce\Cart::get($cart->id);
