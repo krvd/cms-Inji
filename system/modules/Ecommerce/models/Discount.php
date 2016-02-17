@@ -19,6 +19,8 @@ class Discount extends \Model
         'type' => ['type' => 'select', 'source' => 'array', 'sourceArray' => ['sum' => 'Сумма', 'procent' => 'Процент']],
         'amount' => ['type' => 'text'],
         'condition' => ['type' => 'json'],
+        //Системные параметры
+        'date_create' => ['type' => 'dateTime'],
     ];
     public static $labels = [
         'name' => 'Название',

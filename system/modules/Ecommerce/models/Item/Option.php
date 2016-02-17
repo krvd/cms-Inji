@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Item option
  *
@@ -7,12 +8,14 @@
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
+
 namespace Ecommerce\Item;
 
 class Option extends \Model
 {
     public static $objectName = 'Свойство';
     public static $cols = [
+        //Основные параметры
         'name' => ['type' => 'text'],
         'code' => ['type' => 'text'],
         'type' => ['type' => 'text'],
@@ -20,9 +23,10 @@ class Option extends \Model
         'default_val' => ['type' => 'text'],
         'view' => ['type' => 'bool'],
         'searchable' => ['type' => 'bool'],
-        'weight' => ['type' => 'Number'],
-        'advance' => ['type' => 'text'],
+        //Системные
+        'weight' => ['type' => 'number'],
         'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
+        'advance' => ['type' => 'text'],
         'date_create' => ['type' => 'dateTime']
     ];
     public static $labels = [

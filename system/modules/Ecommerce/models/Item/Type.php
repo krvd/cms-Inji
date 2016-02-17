@@ -18,11 +18,13 @@ class Type extends \Model
         'name' => ['type' => 'text'],
         'code' => ['type' => 'text'],
         'electronic' => ['type' => 'bool'],
+        'discount' => ['type' => 'bool'],
     ];
     public static $labels = [
         'name' => 'Название',
         'code' => 'Код',
         'electronic' => 'Электронный',
+        'discount' => 'Скидки',
     ];
     public static $dataManagers = [
         'manager' => [

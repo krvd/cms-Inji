@@ -15,19 +15,25 @@ class Status extends \Model
 {
     public static $objectName = 'Статус корзины';
     public static $cols = [
-        'name' => ['type'=>'text']
+        //Основные параметры
+        'name' => ['type' => 'text'],
+        'type' => ['type' => 'text'],
+        'code' => ['type' => 'text'],
+        //Системные
+        'date_create' => ['type' => 'dateTime'],
     ];
     public static $dataManagers = [
         'manager' => [
             'cols' => [
-                'name','date_create'
+                'name', 'type', 'code', 'date_create'
             ]
         ]
     ];
     public static $forms = [
         'manager' => [
             'map' => [
-                ['name']
+                ['name'],
+                ['type', 'code']
             ]
         ]
     ];

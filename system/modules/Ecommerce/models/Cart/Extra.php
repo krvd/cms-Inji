@@ -23,9 +23,12 @@ class Extra extends \Model
     public static $cols = [
         'cart_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'cart'],
         'name' => ['type' => 'text'],
-        'price' => ['type' => 'decimal'],
+        'info' => ['type' => 'textarea'],
         'count' => ['type' => 'decimal'],
-        'currency_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'currency']
+        'price' => ['type' => 'decimal'],
+        'currency_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'currency'],
+        //Системные параметры
+        'date_create' => ['type' => 'dateTime'],
     ];
     public static $dataManagers = [
         'manager' => [

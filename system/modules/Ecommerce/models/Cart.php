@@ -15,6 +15,31 @@ class Cart extends \Model
 {
     public static $objectName = 'Корзины';
 
+    public static function indexes()
+    {
+        return [
+            'ecommerce_cartStatusBlock' => [
+                'type' => 'INDEX',
+                'cols' => [
+                    'cart_cart_status_id',
+                    'cart_warehouse_block'
+                ]
+            ],
+            'ecommerce_cartStats' => [
+                'type' => 'INDEX',
+                'cols' => [
+                    'cart_cart_status_id',
+                ]
+            ],
+            'ecommerce_cartBlock' => [
+                'type' => 'INDEX',
+                'cols' => [
+                    'cart_warehouse_block'
+                ]
+            ],
+        ];
+    }
+
     public static function relations()
     {
         return [
@@ -103,22 +128,23 @@ class Cart extends \Model
         'sums' => 'Суммы',
     ];
     public static $cols = [
+        //Основные параметры
         'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
-        'info' => ['type' => 'dataManager', 'relation' => 'infos'],
-        'items' => ['type' => 'select', 'source' => 'relation', 'relation' => 'cartItems'],
-        'sum' => ['type' => 'text'],
-        'warehouse_block' => ['type' => 'bool'],
-        'payed' => ['type' => 'bool'],
-        'exported' => ['type' => 'bool'],
-        'comment' => ['type' => 'textarea'],
-        'complete_data' => ['type' => 'dateTime'],
-        'items' => ['type' => 'dataManager', 'relation' => 'cartItems'],
         'cart_status_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'status'],
         'delivery_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'delivery'],
         'paytype_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'payType'],
         'card_item_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'card'],
-        'extra' => ['type' => 'dataManager', 'relation' => 'extras'],
-        'pay' => ['type' => 'dataManager', 'relation' => 'pays'],
+        'warehouse_block' => ['type' => 'bool'],
+        'payed' => ['type' => 'bool'],
+        'comment' => ['type' => 'textarea'],
+        //Системные
+        'sum' => ['type' => 'text'],
+        'exported' => ['type' => 'bool'],
+        'complete_data' => ['type' => 'dateTime'],
+        'date_status' => ['type' => 'dateTime'],
+        'date_last_activ' => ['type' => 'dateTime'],
+        'date_create' => ['type' => 'dateTime'],
+        //Виджеты
         'sums' => [
             'type' => 'void',
             'view' => [
@@ -126,6 +152,11 @@ class Cart extends \Model
                 'widget' => 'Ecommerce\adminSums',
             ],
         ],
+        //Менеджеры
+        'extra' => ['type' => 'dataManager', 'relation' => 'extras'],
+        'pay' => ['type' => 'dataManager', 'relation' => 'pays'],
+        'items' => ['type' => 'dataManager', 'relation' => 'cartItems'],
+        'info' => ['type' => 'dataManager', 'relation' => 'infos'],
     ];
     public static $dataManagers = [
         'manager' => [

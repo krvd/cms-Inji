@@ -20,9 +20,12 @@ class Warehouse extends \Model
         'item_offer_id' => 'Торговое предложение',
     ];
     public static $cols = [
-        'count' => ['type' => 'text'],
+        //Основные параметры
         'warehouse_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'warehouse'],
         'item_offer_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'offer'],
+        'count' => ['type' => 'text'],
+        //Системные
+        'date_create' => ['type' => 'dateTime'],
     ];
     public static $dataManagers = [
         'manager' => [
@@ -40,6 +43,18 @@ class Warehouse extends \Model
                 ['count'],
             ]
     ]];
+
+    public static function indexes()
+    {
+        return [
+            'ecommerce_warehousePriceIndex' => [
+                'type' => 'INDEX',
+                'cols' => [
+                    'item_offer_warehouse_item_offer_id'
+                ]
+            ]
+        ];
+    }
 
     public static function relations()
     {

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Warehouse
  *
@@ -7,6 +8,7 @@
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
+
 namespace Ecommerce;
 
 class Warehouse extends \Model
@@ -16,7 +18,10 @@ class Warehouse extends \Model
         'name' => 'Название',
     ];
     public static $cols = [
+        //Основные параметры
         'name' => ['type' => 'text'],
+        //Системные
+        'date_create' => ['type' => 'dateTime'],
     ];
     public static $dataManagers = [
         'manager' => [

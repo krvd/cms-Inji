@@ -98,12 +98,29 @@ class Item extends \Model
         'final_price' => 'Итоговая цена за единицу',
     ];
     public static $cols = [
-        'item_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'item'],
+        //Основные параметры
         'cart_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'cart'],
-        'item_offer_price_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'price', 'showCol' => 'price'],
         'count' => ['type' => 'text'],
+        'item_offer_price_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'price', 'showCol' => 'price'],
+        'item_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'item'],
         'final_price' => ['type' => 'decimal'],
+        'discount' => ['type' => 'decimal'],
+        //Системные
+        'date_create' => ['type' => 'dateTime'],
     ];
+
+    public static function indexes()
+    {
+        return [
+            'ecommerce_cartItemCart' => [
+                'type' => 'INDEX',
+                'cols' => [
+                    'cart_item_cart_id'
+                ]
+            ]
+        ];
+    }
+
     public static $dataManagers = [
         'manager' => [
             'name' => 'Покупки',

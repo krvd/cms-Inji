@@ -27,16 +27,25 @@ class Item extends \Model
         'offers' => 'Торговые предложения',
     ];
     public static $cols = [
+        //Основные параметры
+        'category_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'category'],
+        'image_file_id' => ['type' => 'image'],
         'name' => ['type' => 'text'],
         'alias' => ['type' => 'text'],
-        'category_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'category'],
         'description' => ['type' => 'html'],
         'item_type_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'type'],
-        'image_file_id' => ['type' => 'image'],
         'best' => ['type' => 'bool'],
+        //Системные
+        'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
+        'weight' => ['type' => 'number'],
+        'sales' => ['type' => 'number'],
+        'imported' => ['type' => 'text'],
+        'tree_path' => ['type' => 'text'],
+        'search_index' => ['type' => 'text'],
+        'date_create' => ['type' => 'dateTime'],
+        //Менеджеры
         'options' => ['type' => 'dataManager', 'relation' => 'options'],
         'offers' => ['type' => 'dataManager', 'relation' => 'offers'],
-        'weight' => ['type' => 'number']
     ];
     public static $dataManagers = [
         'manager' => [
@@ -52,7 +61,7 @@ class Item extends \Model
             'categorys' => [
                 'model' => 'Ecommerce\Category',
             ],
-            'sortMode'=>true
+            'sortMode' => true
         ]
     ];
     public static $forms = [
@@ -66,6 +75,30 @@ class Item extends \Model
                 ['offers'],
             ]
     ]];
+
+    public static function indexes()
+    {
+        return [
+            'ecommerce_item_item_category_id' => [
+                'type' => 'INDEX',
+                'cols' => [
+                    'item_category_id'
+                ]
+            ],
+            'inji_ecommerce_item_item_tree_path' => [
+                'type' => 'INDEX',
+                'cols' => [
+                    'item_tree_path(255)'
+                ]
+            ],
+            'ecommerce_item_item_search_index' => [
+                'type' => 'INDEX',
+                'cols' => [
+                    'item_search_index(255)'
+                ]
+            ],
+        ];
+    }
 
     public function beforeSave()
     {
@@ -117,6 +150,10 @@ class Item extends \Model
             'image' => [
                 'model' => 'Files\File',
                 'col' => 'image_file_id'
+            ],
+            'user' => [
+                'model' => 'Users\User',
+                'col' => 'user_id'
             ]
         ];
     }

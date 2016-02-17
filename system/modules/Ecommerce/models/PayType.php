@@ -21,6 +21,7 @@ class PayType extends \Model
         'icon_file_id' => 'Иконка',
     ];
     public static $cols = [
+        //Основные параметеры
         'name' => ['type' => 'text'],
         'info' => ['type' => 'textarea'],
         'handler' => [
@@ -31,6 +32,9 @@ class PayType extends \Model
             'params' => [true]
         ],
         'icon_file_id' => ['type' => 'image'],
+        //Системные
+        'weight' => ['type' => 'number'],
+        'date_create' => ['type' => 'dateTime'],
     ];
     public static $dataManagers = [
         'manager' => [
@@ -38,6 +42,7 @@ class PayType extends \Model
             'cols' => [
                 'name', 'handler'
             ],
+            'sortMode' => true,
         ],
     ];
     public static $forms = [

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Cart info
  *
@@ -7,6 +8,7 @@
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
+
 namespace Ecommerce\Cart;
 
 class Info extends \Model
@@ -18,10 +20,12 @@ class Info extends \Model
         'cart_id' => 'Корзина'
     ];
     public static $cols = [
-        'useradds_field_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'field'],
-        'cart_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'cart'],
         'name' => ['type' => 'text'],
         'value' => ['type' => 'text'],
+        'cart_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'cart'],
+        'useradds_field_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'field'],
+        //Системные параметры
+        'date_create' => ['type' => 'dateTime'],
     ];
     public static $dataManagers = [
         'manager' => [

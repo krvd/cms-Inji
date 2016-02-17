@@ -14,12 +14,15 @@ namespace Ecommerce\Item\Offer;
 class Bonus extends \Model
 {
     public static $cols = [
+        //Основные параметры
         'item_offer_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'offer'],
         'type' => ['type' => 'text'],
         'value' => ['type' => 'text'],
         'count' => ['type' => 'decimal'],
         'limited' => ['type' => 'bool'],
-        'left' => ['type' => 'number']
+        'left' => ['type' => 'number'],
+        //Системные
+        'date_create' => ['type' => 'dateTime']
     ];
 
     public static function relations()
@@ -32,7 +35,4 @@ class Bonus extends \Model
         ];
     }
 
-
 }
-
-

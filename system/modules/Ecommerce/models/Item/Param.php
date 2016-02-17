@@ -20,10 +20,38 @@ class Param extends \Model
         'value' => 'Значение',
     ];
     public static $cols = [
-        'item_option_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'option'],
+        //Основные параметры
         'item_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'item'],
+        'item_option_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'option'],
         'value' => ['type' => 'dynamicType', 'typeSource' => 'selfMethod', 'selfMethod' => 'realType'],
+        //Системные
+        'date_create' => ['type' => 'dateTime']
     ];
+
+    public static function indexes()
+    {
+        return [
+            'ecommerce_itemOptionRelation' => [
+                'type' => 'INDEX',
+                'cols' => [
+                    'item_param_item_id',
+                    'item_param_item_option_id'
+                ]
+            ],
+            'ecommerce_paramItemIndex' => [
+                'type' => 'INDEX',
+                'cols' => [
+                    'item_param_item_id',
+                ]
+            ],
+            'ecommerce_paramOptionIndex' => [
+                'type' => 'INDEX',
+                'cols' => [
+                    'item_param_item_option_id'
+                ]
+            ],
+        ];
+    }
 
     public function realType()
     {

@@ -15,10 +15,15 @@ class Price extends \Model
 {
     public static $objectName = 'Цена';
     public static $cols = [
-        'price' => ['type' => 'text'],
-        'item_offer_price_type_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'type'],
+        //Основные параметры
         'item_offer_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'offer'],
+        'item_offer_price_type_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'type'],
+        'name' => ['type' => 'text'],
+        'price' => ['type' => 'text'],
         'currency_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'currency'],
+        //Системные
+        'weight' => ['type' => 'text'],
+        'date_create' => ['type' => 'dateTime'],
     ];
     public static $labels = [
         'price' => 'Цена',
