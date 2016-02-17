@@ -430,6 +430,16 @@ class Model
     }
 
     /**
+     * Return cols indexes for create tables
+     * 
+     * @return array
+     */
+    public static function indexes()
+    {
+        return [];
+    }
+
+    /**
      * Generate params string for col by name
      * 
      * @param string $colName
@@ -509,9 +519,11 @@ class Model
         if (!isset($this)) {
             $tableName = static::table();
             $colPrefix = static::colPrefix();
+            $indexes = static::indexes();
         } else {
             $tableName = $this->table();
             $colPrefix = $this->colPrefix();
+            $indexes = $this->indexes();
         }
 
         $cols = [
@@ -533,7 +545,14 @@ class Model
         if (empty($cols[$colPrefix . 'date_create'])) {
             $cols[$colPrefix . 'date_create'] = 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP';
         }
-        $query->createTable($tableName, $cols);
+        $tableIndexes = [];
+        if ($indexes) {
+            foreach ($indexes as $indexName => $index) {
+                $tableIndexes[] = $index['type'] . ' ' . App::$cur->db->table_prefix . $indexName . ' (' . implode(',', $index['cols']) . ')';
+            }
+        }
+
+        $query->createTable($tableName, $cols, $tableIndexes);
         return true;
     }
 
