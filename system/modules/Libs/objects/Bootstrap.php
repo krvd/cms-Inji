@@ -20,10 +20,12 @@ class Bootstrap extends \Object
     public static $files = [
         'js' => [
             'twbs/bootstrap/dist/js/bootstrap.min.js',
-            '/static/moduleAsset/libs/libs/bootstrap/js/modalStack.js'
+            '/static/moduleAsset/libs/libs/bootstrap/js/modalStack.js',
+            '/static/moduleAsset/libs/libs/bootstrap/js/treeView.js'
         ],
         'css' => [
-            'twbs/bootstrap/dist/css/bootstrap.min.css'
+            'twbs/bootstrap/dist/css/bootstrap.min.css',
+            '/static/moduleAsset/libs/libs/bootstrap/css/treeView.css'
         ]
     ];
     public static $staticDirs = [

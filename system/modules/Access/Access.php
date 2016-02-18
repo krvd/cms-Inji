@@ -23,6 +23,7 @@ class Access extends Module
 
     public function checkAccess($element, $user = null)
     {
+
         $access = NULL;
         if ($element instanceof Controller) {
             $path = [
@@ -33,6 +34,38 @@ class Access extends Module
             ];
             if (isset($element->module->config['access'])) {
                 $accesses = $element->module->config['access'];
+                $access = $this->resolvePath($accesses, $path, '_access');
+            }
+            if (is_null($access) && isset($this->config['access'])) {
+                $accesses = $this->config['access'];
+                $access = $this->resolvePath($accesses, $path, '_access');
+            }
+        } elseif ($element instanceof Ui\DataManager) {
+            $path = [
+                'models',
+                $element->modelName,
+                'dataManager',
+                $element->managerName
+            ];
+            $moduleName = explode('\\', $element->modelName)[0];
+            if (isset(\App::$cur->{$moduleName}->config['access'])) {
+                $accesses = \App::$cur->{$moduleName}->config['access'];
+                $access = $this->resolvePath($accesses, $path, '_access');
+            }
+            if (is_null($access) && isset($this->config['access'])) {
+                $accesses = $this->config['access'];
+                $access = $this->resolvePath($accesses, $path, '_access');
+            }
+        } elseif ($element instanceof Ui\ActiveForm) {
+            $path = [
+                'models',
+                $element->modelName,
+                'activeForm',
+                $element->formName
+            ];
+            $moduleName = explode('\\', $element->modelName)[0];
+            if (isset(\App::$cur->{$moduleName}->config['access'])) {
+                $accesses = \App::$cur->{$moduleName}->config['access'];
                 $access = $this->resolvePath($accesses, $path, '_access');
             }
             if (is_null($access) && isset($this->config['access'])) {

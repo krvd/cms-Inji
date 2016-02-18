@@ -322,7 +322,7 @@ DataManager.prototype.load = function (options) {
           active.css('fontWeight', 'bold')
         }
 
-        inji.Ui.bindMenu(dataManager.element.find('.categoryTree .nav-list-categorys'));
+        dataManager.element.find('.treeview').treeview();
         $(instance.element).find('.categoryTree').sortable().sortable("disable");
         if (dataManager.mode == 'sort') {
           $(instance.element).find('.categoryTree ul a[data-path]').map(function () {

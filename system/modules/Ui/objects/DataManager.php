@@ -163,13 +163,13 @@ class DataManager extends \Object
             <li><a href ='' onclick='inji.Ui.dataManagers.get(this).rowSelection("unSelectAll");return false;'>Снять все</a></li>
             <li><a href ='' onclick='inji.Ui.dataManagers.get(this).rowSelection("inverse");return false;'>Инвертировать</a></li>
             <li role="separator" class="divider"></li>
-            <?php
-            foreach ($actions as $action => $actionParams) {
-                if (class_exists($actionParams['className']) && $actionParams['className']::$groupAction) {
-                    echo "<li><a href ='' onclick='inji.Ui.dataManagers.get(this).groupAction(\"" . str_replace('\\', '\\\\', $action) . "\");return false;'>{$actionParams['className']::$name}</a></li>";
-                }
-            }
-            ?>
+              <?php
+              foreach ($actions as $action => $actionParams) {
+                  if (class_exists($actionParams['className']) && $actionParams['className']::$groupAction) {
+                      echo "<li><a href ='' onclick='inji.Ui.dataManagers.get(this).groupAction(\"" . str_replace('\\', '\\\\', $action) . "\");return false;'>{$actionParams['className']::$name}</a></li>";
+                  }
+              }
+              ?>
           </ul>
         </div>
         <?php
@@ -654,63 +654,18 @@ class DataManager extends \Object
         if (!class_exists($this->modelName)) {
             return false;
         }
-        ?>
-        <ul class="nav nav-list-categorys" data-col='tree_path'>
-          <?php
-          $categoryModel = $this->managerOptions['categorys']['model'];
-          $order = [];
-          if (!empty($this->managerOptions['sortMode'])) {
-              $order[] = ['weight', 'asc'];
-          }
-          $categorys = $categoryModel::getList(['order' => $order]);
-          echo "<li>
-                        <label class='nav-header'>
-                            <a href='#' onclick='inji.Ui.dataManagers.get(this).switchCategory(this);return false;' data-path ='/'>/</a> 
-                        </label>
-                    </li>";
-          foreach ($categorys as $category) {
-              if ($category->parent_id == 0)
-                  $this->showCategory($categorys, $category);
-          }
-          ?>
-        </ul>
-        <?php
-    }
-
-    public function showCategory($categorys, $category)
-    {
-        $isset = false;
-        foreach ($categorys as $categoryChild) {
-            if ($categoryChild->parent_id == $category->pk()) {
-                if (!$isset) {
-                    $isset = true;
-                    echo "<li data-id='{$category->pk()}' data-model = '" . get_class($category) . "'>
-                            <label class='nav-toggle nav-header'>
-                                <span class='nav-toggle-icon glyphicon glyphicon-chevron-right'></span> 
-                                <a href='#' onclick='inji.Ui.dataManagers.get(this).switchCategory(this);return false;' data-path ='" . $category->tree_path . ($category->pk() ? $category->pk() . "/" : '') . "'> " . $category->name . "</a> 
+        if (!$this->checkAccess()) {
+            $this->drawError('you not have access to "' . $this->modelName . '" manager with name: "' . $this->managerName . '"');
+            return [];
+        }
+        $tree = new Tree();
+        $tree->ul($this->managerOptions['categorys']['model'], 0, function($category) {
+            return "<a href='#' onclick='inji.Ui.dataManagers.get(this).switchCategory(this);return false;' data-path ='" . $category->tree_path . ($category->pk() ? $category->pk() . "/" : '') . "'> " . $category->name . "</a> 
                                     <a href = '#' onclick = 'inji.Ui.forms.popUp(\"" . str_replace('\\', '\\\\', get_class($category)) . ':' . $category->pk() . "\")' class ='glyphicon glyphicon-edit'></a>&nbsp;    
-                <a onclick='inji.Ui.dataManagers.get(this).delCategory({$category->pk()});return false;' class ='glyphicon glyphicon-remove'></a>
-                    </label>
-                            <ul class='nav nav-list nav-left-ml'>";
-                }
-                $this->showCategory($categorys, $categoryChild);
-            }
-        }
-        if ($isset) {
-            echo '</ul>
-                    </li>';
-        } else {
-            echo "<li data-id='{$category->pk()}' data-model = '" . get_class($category) . "'>
-                <label class='nav-header'>
-                    <span  class=' nav-toggle-icon glyphicon glyphicon-minus'></span>
-                    <div class ='pull-right actions'>
-                        <a href = '#' onclick = 'inji.Ui.forms.popUp(\"" . str_replace('\\', '\\\\', get_class($category)) . ':' . $category->pk() . "\")' class ='glyphicon glyphicon-edit'></a>
-                        <a onclick='inji.Ui.dataManagers.get(this).delCategory({$category->pk()});return false;' class ='glyphicon glyphicon-remove'></a>
-                    </div>
-                    <a href='#' onclick='inji.Ui.dataManagers.get(this).switchCategory(this);return false;' data-path ='" . $category->tree_path . ($category->pk() ? $category->pk() . "/" : '') . "'> " . $category->name . "</a> 
-                </label>
-            </li>";
-        }
+                <a onclick='inji.Ui.dataManagers.get(this).delCategory({$category->pk()});return false;' class ='glyphicon glyphicon-remove'></a>";
+        });
+        ?>
+        <?php
     }
 
     /**
@@ -730,13 +685,16 @@ class DataManager extends \Object
      */
     public function checkAccess()
     {
-        if ($this->managerName == 'manager' && !\Users\User::$cur->isAdmin()) {
+        if (\App::$cur->Access && !\App::$cur->Access->checkAccess($this)) {
             return false;
         }
         if (!empty($this->managerOptions['options']['access']['apps']) && !in_array(\App::$cur->name, $this->managerOptions['options']['access']['apps'])) {
             return false;
         }
         if (!empty($this->managerOptions['options']['access']['groups']) && !in_array(\Users\User::$cur->group_id, $this->managerOptions['options']['access']['groups'])) {
+            return false;
+        }
+        if ($this->managerName == 'manager' && !\Users\User::$cur->isAdmin()) {
             return false;
         }
         return true;

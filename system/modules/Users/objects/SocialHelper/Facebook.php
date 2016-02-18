@@ -132,9 +132,9 @@ class Facebook extends \Users\SocialHelper
             $userSocial->save();
             \App::$cur->users->newSession($user);
             if (!empty(\App::$cur->users->config['loginUrl'][\App::$cur->type])) {
-                \Tools::redirect(\App::$cur->users->config['loginUrl'][\App::$cur->type], 'Вы успешно зарегистрировались через ВКонтакте', 'success');
+                \Tools::redirect(\App::$cur->users->config['loginUrl'][\App::$cur->type], 'Вы успешно зарегистрировались через Facebook', 'success');
             } else {
-                \Tools::redirect('/users/cabinet/profile', 'Вы успешно зарегистрировались через ВКонтакте', 'success');
+                \Tools::redirect('/users/cabinet/profile', 'Вы успешно зарегистрировались через Facebook', 'success');
             }
         }
     }

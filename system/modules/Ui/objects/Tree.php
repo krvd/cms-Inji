@@ -21,10 +21,14 @@ class Tree extends \Object
             };
         }
         ?>
-        <ul class="nav nav-list-categorys" data-col='tree_path'>
+        <ul class="treeview" data-col='tree_path'>
           <?php
-          $class = get_class($objectRoot);
-          $items = $class::getList(['where' => ['parent_id', $objectRoot->pk()]]);
+          if (is_string($objectRoot)) {
+              $items = $objectRoot::getList(['where' => ['parent_id', 0]]);
+          } else {
+              $class = get_class($objectRoot);
+              $items = $class::getList(['where' => ['parent_id', $objectRoot->pk()]]);
+          }
           $count += count($items);
           foreach ($items as $objectChild) {
               $count+=static::showLi($objectChild, 1, $maxDeep, $hrefFunc);
@@ -48,14 +52,11 @@ class Tree extends \Object
                     $isset = true;
                     ?>
                     <li id='<?= str_replace('\\', '_', get_class($object)) . "-{$object->pk()}"; ?>'>
-                      <label class='nav-toggle nav-header'>
-                        <span class='nav-toggle-icon glyphicon glyphicon-chevron-right'></span> 
-                        <?= $hrefFunc ? $hrefFunc($object) : "<a href='#'> {$object->name()}</a> "; ?>
-                      </label>
-                      <ul class='nav nav-list nav-left-ml'>
+                      <?= $hrefFunc ? $hrefFunc($object) : "<a href='#'> {$object->name()}</a> "; ?>
+                      <ul>
                         <?php
                     }
-                    $count+=static::showLi($objectChild, $deep + 1, $maxDeep,$hrefFunc);
+                    $count+=static::showLi($objectChild, $deep + 1, $maxDeep, $hrefFunc);
                 }
             }
             if ($isset) {
@@ -66,10 +67,7 @@ class Tree extends \Object
         } else {
             ?>
             <li id='<?= str_replace('\\', '_', get_class($object)) . "-{$object->pk()}"; ?>'>
-              <label class='nav-toggle nav-header'>
-                <span class=' nav-toggle-icon glyphicon glyphicon-minus'></span> 
-                <?= $hrefFunc ? $hrefFunc($object) : "<a href='#'> {$object->name()}</a> "; ?>
-              </label>
+              <?= $hrefFunc ? $hrefFunc($object) : "<a href='#'> {$object->name()}</a> "; ?>
             </li>
             <?php
         }
