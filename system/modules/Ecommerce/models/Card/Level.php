@@ -15,10 +15,13 @@ class Level extends \Model
 {
     public static $objectName = 'Уровень карты';
     public static $cols = [
+        //Основные параметры
         'name' => ['type' => 'text'],
         'sum' => ['type' => 'text'],
         'card_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'card'],
         'discount_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'discount'],
+        //Системные параметры
+        'date_create' => ['type' => 'dateTime'],
     ];
     public static $labels = [
         'name' => 'Название',

@@ -292,7 +292,7 @@ DataManager.prototype.load = function (options) {
             ids = $(instance.element).find('tbody tr');
             i = 0;
             while (ids[i]) {
-              var key = $(ids[i++]).find('td').get(0).innerHTML;
+              var key = $(ids[i++]).find('td').get(1).innerHTML;
               inji.Server.request({
                 url: 'ui/dataManager/updateRow',
                 data: {params: instance.params, modelName: instance.modelName, key: key, col: 'weight', col_value: i, managerName: instance.managerName, silence: true},
@@ -322,7 +322,7 @@ DataManager.prototype.load = function (options) {
           active.css('fontWeight', 'bold')
         }
 
-        inji.Ui.bindMenu(dataManager.element.find('.categoryTree .nav-list-categorys'));
+        dataManager.element.find('.treeview').treeview();
         $(instance.element).find('.categoryTree').sortable().sortable("disable");
         if (dataManager.mode == 'sort') {
           $(instance.element).find('.categoryTree ul a[data-path]').map(function () {

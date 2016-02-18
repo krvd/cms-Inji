@@ -15,8 +15,14 @@ class Offer extends \Model
 {
     public static $objectName = 'Торговое предложение';
     public static $cols = [
+        //Основные параметры
+        'item_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'item'],
         'name' => ['type' => 'text'],
         'article' => ['type' => 'text'],
+        //Системные
+        'weight' => ['type' => 'number'],
+        'date_create' => ['type' => 'dateTime'],
+        //Менеджеры
         'warehouse' => ['type' => 'dataManager', 'relation' => 'warehouses'],
         'price' => ['type' => 'dataManager', 'relation' => 'prices'],
     ];

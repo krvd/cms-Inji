@@ -131,7 +131,7 @@ class MaterialsController extends Controller
         if ($material->description) {
             $this->view->addMetaTag(['name' => 'description', 'content' => $material->description]);
         }
-        $this->view->addMetaTag(['property' => 'og:title', 'content' => $material->name . ' ' . $material->keywords]);
+        $this->view->addMetaTag(['property' => 'og:title', 'content' => $material->name]);
         $this->view->addMetaTag(['property' => 'og:url', 'content' => 'http://' . idn_to_utf8(INJI_DOMAIN_NAME) . '/' . $material->alias]);
         if ($material->description) {
             $this->view->addMetaTag(['property' => 'og:description', 'content' => 'http://' . idn_to_utf8(INJI_DOMAIN_NAME) . '/' . $material->description]);
@@ -141,7 +141,7 @@ class MaterialsController extends Controller
         } elseif ($logo = Files\File::get('site_logo', 'code')) {
             $this->view->addMetaTag(['property' => 'og:image', 'content' => 'http://' . idn_to_utf8(INJI_DOMAIN_NAME) . $logo->path]);
         }
-        $this->view->setTitle($material->name . ' ' . $material->keywords);
+        $this->view->setTitle($material->name);
         $bread[] = ['text' => $material->name, 'href' => '/' . $material->alias];
         $this->view->page([
             'page' => $material->resolveTemplate(),

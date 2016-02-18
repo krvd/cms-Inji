@@ -13,7 +13,7 @@ class CartController extends Controller
     public function indexAction()
     {
         $cart = '';
-        $deliverys = \Ecommerce\Delivery::getList();
+        $deliverys = \Ecommerce\Delivery::getList(['order' => ['weight', 'ASC']]);
         $payTypes = \Ecommerce\PayType::getList();
         if (!empty($_SESSION['cart']['cart_id'])) {
             $cart = Ecommerce\Cart::get($_SESSION['cart']['cart_id']);
@@ -47,10 +47,10 @@ class CartController extends Controller
                         $cartItem->save();
                         $ids[] = $cartItemId;
                     }
-                    foreach ($cart->cartItems as $cartItem) {
-                        if (!in_array($cartItem->id, $ids)) {
-                            $cartItem->delete();
-                        }
+                }
+                foreach ($cart->cartItems as $cartItem) {
+                    if (!in_array($cartItem->id, $ids)) {
+                        $cartItem->delete();
                     }
                 }
                 $cart = Ecommerce\Cart::get($cart->id);

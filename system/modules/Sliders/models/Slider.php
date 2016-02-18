@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Slider
  *
@@ -7,34 +8,19 @@
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
+
 namespace Sliders;
 
 class Slider extends \Model
 {
     public static $objectName = "Слайдер";
     public static $cols = [
-        'name' => [
-            'type' => 'text'
-        ],
-        'description' => [
-            'type' => 'html'
-        ],
-        'user_id' => [
-            'type' => 'select',
-            'source' => 'relation',
-            'relation' => 'user'
-        ],
-        'image_file_id' => [
-            'type' => 'image'
-        ],
-        'date_create' => [
-            'type' => 'dateTime'
-        ],
-        'slide' => [
-            'type' => 'select',
-            'source' => 'relation',
-            'relation' => 'slides'
-        ],
+        'name' => ['type' => 'text'],
+        'description' => ['type' => 'html'],
+        'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
+        'image_file_id' => ['type' => 'image'],
+        'date_create' => ['type' => 'dateTime'],
+        'slide' => ['type' => 'dataManager', 'relation' => 'slides'],
     ];
     public static $labels = [
         'name' => 'Название',

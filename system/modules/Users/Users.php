@@ -296,8 +296,9 @@ class Users extends Module
             'phone' => htmlspecialchars($user_phone),
         ]);
         $info->save();
-        if (isset($inviter))
-            $this->AddUserActivity($inviter, 2, "По вашей ссылке зарегистрировался новый партнер, {$info->first_name} {$info->last_name} (id: {$user->id})" );
+        if (isset($inviter)) {
+            $this->AddUserActivity($inviter, 2, "По вашей ссылке зарегистрировался новый партнер, {$info->first_name} {$info->last_name} (id: {$user->id})");
+        }
         if ($autorization) {
             $this->autorization($user_mail, $pass, 'mail');
         }
@@ -359,7 +360,7 @@ class Users extends Module
         return $return;
     }
 
-    public function addUserActivity($user_id, $cat_id , $text = '')
+    public function addUserActivity($user_id, $cat_id, $text = '')
     {
         $ua = new Users\Activity([
             'user_id' => $user_id,

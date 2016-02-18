@@ -11,7 +11,7 @@ CKEDITOR.editorConfig = function (config) {
   config.contentsCss = ['/view/editorcss'];
   config.allowedContent = true;
   config.height = '300px';
-  config.extraPlugins = 'injiwidgets,justify';
+  config.extraPlugins = 'injiwidgets,justify,colorbutton';
 };
 CKEDITOR.basePath = inji.options.appRoot + 'static/libs/vendor/ckeditor/ckeditor/ckeditor/';
 CKEDITOR.plugins.basePath = inji.options.appRoot + 'static/libs/vendor/ckeditor/ckeditor/ckeditor/plugins/';

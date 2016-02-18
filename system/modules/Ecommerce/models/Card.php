@@ -15,10 +15,14 @@ class Card extends \Model
 {
     public static $objectName = 'Карта';
     public static $cols = [
+        //Основные параметры
         'name' => ['type' => 'text'],
         'price' => ['type' => 'text'],
-        'level' => ['type' => 'dataManager', 'relation' => 'levels'],
         'image_file_id' => ['type' => 'image'],
+        //Системные параметры
+        'date_create' =>['type' => 'dateTime'],
+        //Менеджеры
+        'level' => ['type' => 'dataManager', 'relation' => 'levels'],
     ];
     public static $labels = [
         'name' => 'Название',

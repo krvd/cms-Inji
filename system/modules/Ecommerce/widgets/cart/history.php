@@ -48,7 +48,7 @@ $prefix = isset(App::$cur->ecommerce->config['orderPrefix']) ? $config = App::$c
           }
           ?>
           <tr>
-            <td class="text-right">#<?= $prefix ?><?= $cart->id; ?></td>
+            <td class="text-right"><?= $prefix ?><?= $cart->id; ?></td>
             <td class="text-left"><?= $cart->status ? $cart->status->name : 'Наполняется'; ?></td>
             <td class="text-right"><?= count($cart->cartItems); ?></td>
             <td class="text-right"><?php

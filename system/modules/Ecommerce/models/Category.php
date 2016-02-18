@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Item Category
  *
@@ -7,6 +8,7 @@
  * @copyright 2015 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
+
 namespace Ecommerce;
 
 class Category extends \Model
@@ -14,16 +16,23 @@ class Category extends \Model
     public static $objectName = 'Категория магазина';
     public static $treeCategory = 'Ecommerce\Item';
     public static $cols = [
+        //Основные параметры
+        'parent_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'parent'],
         'name' => ['type' => 'text'],
         'alias' => ['type' => 'text'],
-        'parent_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'parent'],
-        'image_file_id' => ['type' => 'image'],
-        'description' => ['type' => 'html'],
-        'options_inherit' => ['type' => 'bool'],
-        'options' => ['type' => 'dynamicList', 'relation' => 'options'],
         'viewer' => ['type' => 'select', 'source' => 'method', 'method' => 'viewsCategoryList', 'module' => 'Ecommerce'],
         'template' => ['type' => 'select', 'source' => 'method', 'method' => 'templatesCategoryList', 'module' => 'Ecommerce'],
-        'weight' => ['type' => 'number']
+        'description' => ['type' => 'html'],
+        'image_file_id' => ['type' => 'image'],
+        'options_inherit' => ['type' => 'bool'],
+        //Системные
+        'imported' => ['type' => 'bool'],
+        'weight' => ['type' => 'number'],
+        'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
+        'tree_path' => ['type' => 'text'],
+        'date_create' => ['type' => 'dateTime'],
+        //Менеджеры
+        'options' => ['type' => 'dynamicList', 'relation' => 'options'],
     ];
     public static $labels = [
         'name' => 'Название',
@@ -47,6 +56,24 @@ class Category extends \Model
         ]
     ];
 
+    public static function indexes()
+    {
+        return [
+            'ecommerce_category_category_parent_id' => [
+                'type' => 'INDEX',
+                'cols' => [
+                    'category_parent_id',
+                ]
+            ],
+            'ecommerce_category_category_tree_path' => [
+                'type' => 'INDEX',
+                'cols' => [
+                    'category_tree_path(255)'
+                ]
+            ],
+        ];
+    }
+
     public static function relations()
     {
         return [
@@ -67,6 +94,10 @@ class Category extends \Model
             'image' => [
                 'model' => 'Files\File',
                 'col' => 'image_file_id'
+            ],
+            'user' => [
+                'model' => 'Users\User',
+                'col' => 'user_id'
             ],
             'catalogs' => [
                 'type' => 'many',

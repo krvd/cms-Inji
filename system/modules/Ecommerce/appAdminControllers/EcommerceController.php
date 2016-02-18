@@ -27,6 +27,7 @@ class EcommerceController extends adminController
             $config['notify_mail'] = $_POST['config']['notify_mail'];
             $config['defaultCategoryView'] = $_POST['config']['defaultCategoryView'];
             $config['defaultCurrency'] = $_POST['config']['defaultCurrency'];
+            $config['orderPrefix'] = $_POST['config']['orderPrefix'];
             Config::save('module', $config, 'Ecommerce');
             Tools::redirect('/admin/ecommerce/configure', 'Настройки были изменены', 'success');
         }

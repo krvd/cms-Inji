@@ -15,10 +15,25 @@ class Item extends \Model
 {
     public static $objectName = 'Элемент коллекции опции';
     public static $cols = [
-        'value' => ['type' => 'text']
+        //Основные параметры
+        'item_option_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'option'],
+        'value' => ['type' => 'text'],
+        //Системные
+        'weight' => ['type' => 'number'],
+        'date_create' => ['type' => 'dateTime']
     ];
     public static $labels = [
         'value' => 'Значение'
     ];
+
+    public static function relations()
+    {
+        return [
+            'option' => [
+                'model' => 'Ecommerce\Item\Option',
+                'col' => 'item_option_id'
+            ]
+        ];
+    }
 
 }

@@ -17,6 +17,12 @@ class UserAdds extends \Model
         'value' => 'Информация'
     ];
     public static $cols = [
+        //Основные параметры
+        'name' => ['type' => 'text'],
+        'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
+        //Системные
+        'date_create' => ['type' => 'dateTime'],
+        //Менеджеры
         'value' => ['type' => 'dataManager', 'relation' => 'values'],
     ];
 
@@ -27,7 +33,11 @@ class UserAdds extends \Model
                 'type' => 'many',
                 'model' => 'Ecommerce\UserAdds\Value',
                 'col' => 'useradds_id',
-            ]
+            ],
+            'user' => [
+                'model' => 'Users\User',
+                'col' => 'user_id',
+            ],
         ];
     }
 

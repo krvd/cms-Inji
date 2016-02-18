@@ -8,5 +8,6 @@ return [
     'notify_mail' => '',
     'defaultCategoryView' => 'itemList',
     'defaultCurrency' => 1,
-    'defaultSort' => ['name' => 'asc']
+    'defaultSort' => ['name' => 'asc'],
+    'orderPrefix' => ''
 ];

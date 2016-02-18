@@ -24,6 +24,7 @@ class Input extends \Model
         'label' => ['type' => 'text'],
         'type' => ['type' => 'text'],
         'required' => ['type' => 'bool'],
+        'weight' => ['type' => 'number']
     ];
     public static $dataManagers = [
         'manager' => [
@@ -31,14 +32,15 @@ class Input extends \Model
                 'label',
                 'type',
                 'required',
-            ]
+            ],
+            'sortMode' => true
         ]
     ];
     public static $forms = [
         'manager' => [
             'map' => [
                 ['label'],
-                ['type','required'],
+                ['type', 'required'],
             ]
         ]
     ];

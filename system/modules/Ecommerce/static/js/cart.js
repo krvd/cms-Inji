@@ -37,15 +37,21 @@ inji.Ecommerce = {
       });
     }
     this.delItem = function (cart_item_id) {
-      data = {};
-      data.data = {};
-      data.url = '/ecommerce/cart/delcartitem/' + cart_item_id;
+      var form = $('.ecommerce .cart-order_page form');
       $('.cart_item_id' + cart_item_id).remove();
-      data.success = function (data) {
-        $('#cart').html(data);
-        inji.Ecommerce.Cart.calcSum();
-      }
-      inji.Server.request(data);
+      var formData = new FormData(form[0]);
+      $('.ecommerce .cart-order_page').prepend($('<div style = "position:absolute;width:' + $('.ecommerce .cart-order_page').width() + 'px;height:' + $('.ecommerce .cart-order_page').height() + 'px;background-color: rgba(255, 255, 255, 0.4);z-index:1000000"></div>'));
+      inji.Server.request({
+        url: form.attr('action'),
+        type: 'POST',
+        data: formData,
+        dataType: 'html',
+        processData: false,
+        success: function (data) {
+          var html = $('<div>' + data.replace(/\n/g, " ") + '</div>');
+          $('.ecommerce .cart-order_page').html(html.find('.ecommerce .cart-order_page'));
+        }
+      });
     }
   }
 }

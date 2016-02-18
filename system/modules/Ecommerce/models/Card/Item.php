@@ -10,16 +10,17 @@
  */
 
 namespace Ecommerce\Card;
-
 class Item extends \Model
 {
     public static $objectName = 'Карта пользователя';
     public static $cols = [
-        'card_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'card'],
-        'card_level_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'level'],
-        'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
-        'sum' => ['type' => 'text'],
         'code' => ['type' => 'text'],
+        'sum' => ['type' => 'text'],
+        'card_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'card'],
+        'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
+        'card_level_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'level'],
+        //Системные параметры
+        'date_create' => ['type' => 'dateTime'],
     ];
     public static $labels = [
         'card_id' => 'Карта',

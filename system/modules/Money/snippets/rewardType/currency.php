@@ -88,10 +88,7 @@ if (!empty($wallets[$level->params['currency_id']->value])) {
     } else {
         $wallets[$level->params['currency_id']->value]->diff($amount, $text);
     }
-
-    foreach ($sums as $key => $sum) {
-        \App::$cur->users->AddUserActivity($user->id, 4, "{$text}");
-    }
+    \App::$cur->users->AddUserActivity($user->id, 4, $text);
 }
 return $amount;
 }

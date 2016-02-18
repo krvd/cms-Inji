@@ -18,8 +18,13 @@ class Value extends \Model
         'value' => 'Значение'
     ];
     public static $cols = [
+        //Основные параметры
+        'useradds_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'userAdd'],
         'useradds_field_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'field'],
-        'value' => ['type' => 'text']
+        'value' => ['type' => 'text'],
+        //Системные
+        'weight' => ['type' => 'text'],
+        'date_create' => ['type' => 'dateTime'],
     ];
     public static $forms = [
         'manager' => [
@@ -43,7 +48,11 @@ class Value extends \Model
             'field' => [
                 'model' => 'Ecommerce\UserAdds\Field',
                 'col' => 'useradds_field_id'
-            ]
+            ],
+            'userAdd' => [
+                'model' => 'Ecommerce\UserAdds',
+                'col' => 'useradds_id'
+            ],
         ];
     }
 

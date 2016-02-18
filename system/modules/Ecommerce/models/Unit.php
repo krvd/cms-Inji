@@ -20,9 +20,12 @@ class Unit extends \Model
         'international' => 'Международное обозначение',
     ];
     public static $cols = [
+        //Основные параметры
         'name' => ['type' => 'text'],
         'code' => ['type' => 'text'],
+        //Системные
         'international' => ['type' => 'text'],
+        'date_create' => ['type' => 'dateTime'],
     ];
     public static $dataManagers = [
         'manager' => [

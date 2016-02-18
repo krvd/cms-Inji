@@ -17,7 +17,7 @@ if (!$form) {
   if ($form->description) {
       echo "<p class = 'text-center'>{$form->description}</p>";
   }
-  foreach ($form->inputs as $input) {
+  foreach ($form->inputs(['order' => ['weight']]) as $input) {
       switch ($input->type) {
           case 'text':
               ?>

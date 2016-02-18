@@ -13,5 +13,45 @@ namespace Ecommerce\Warehouse;
 
 class Block extends \Model
 {
-    
+    public static $cols = [
+        //Основные параметры
+        'cart_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'cart'],
+        'item_offer_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'offer'],
+        'count' => ['type' => 'text'],
+        //Системные параметры
+        'date_create' => ['type' => 'dateTime']
+    ];
+
+    public static function relations()
+    {
+        return [
+            'cart' => [
+                'model' => 'Ecommerce\Cart',
+                'col' => 'cart_id'
+            ],
+            'offer' => [
+                'model' => 'Ecommerce\Item\Offer',
+                'col' => 'item_offer_id'
+            ],
+        ];
+    }
+
+    public static function indexes()
+    {
+        return [
+            'ecommerce_warehousesBlockCart' => [
+                'type' => 'INDEX',
+                'cols' => [
+                    'warehouse_block_cart_id'
+                ]
+            ],
+            'ecommerce_warehousesBlockItem' => [
+                'type' => 'INDEX',
+                'cols' => [
+                    'warehouse_block_item_offer_id'
+                ]
+            ],
+        ];
+    }
+
 }

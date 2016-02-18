@@ -285,7 +285,7 @@ class View extends \Module
             }
         }
         $timeMd5 = md5($timeStr);
-        $cacheDir = Cache::getDir();
+        $cacheDir = Cache::getDir('static');
         if (!file_exists($cacheDir . '/all' . $timeMd5 . '.css')) {
             foreach ($urls as $primaryUrl => $url) {
                 $source = file_get_contents($url);
@@ -439,7 +439,7 @@ class View extends \Module
         }
 
         $timeMd5 = md5($timeStr);
-        $cacheDir = Cache::getDir();
+        $cacheDir = Cache::getDir('static');
         if (!file_exists($cacheDir . '/all' . $timeMd5 . '.js')) {
             foreach ($urls as $url) {
                 $scriptAll .= ';' . file_get_contents($url);

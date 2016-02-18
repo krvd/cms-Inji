@@ -72,6 +72,14 @@ class Router
         foreach ($paths as $path) {
             if (file_exists($path)) {
                 include_once $path;
+                if (in_array('Model', class_parents($className, false)) && \App::$primary) {
+                    $filename = Cache::getDir('system') . '/classData.php';
+                    $classData = Config::custom($filename);
+                    if (empty($classData['Model'][$className]['tableCreated'])) {
+                        $classData['Model'][$className]['tableCreated'] = $className::createTable();
+                        Config::save($filename, $classData);
+                    }
+                }
                 return true;
             }
         }

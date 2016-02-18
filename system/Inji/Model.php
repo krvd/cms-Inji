@@ -430,6 +430,16 @@ class Model
     }
 
     /**
+     * Return cols indexes for create tables
+     * 
+     * @return array
+     */
+    public static function indexes()
+    {
+        return [];
+    }
+
+    /**
      * Generate params string for col by name
      * 
      * @param string $colName
@@ -501,6 +511,13 @@ class Model
 
     public static function createTable()
     {
+        if (static::$storage['type'] == 'moduleConfig') {
+            return true;
+        }
+        if (!App::$cur->db) {
+            return false;
+        }
+
         $query = App::$cur->db->newQuery();
         if (!$query) {
             return false;
@@ -509,11 +526,15 @@ class Model
         if (!isset($this)) {
             $tableName = static::table();
             $colPrefix = static::colPrefix();
+            $indexes = static::indexes();
         } else {
             $tableName = $this->table();
             $colPrefix = $this->colPrefix();
+            $indexes = $this->indexes();
         }
-
+        if (App::$cur->db->tableExist($tableName)) {
+            return true;
+        }
         $cols = [
             $colPrefix . 'id' => 'pk'
         ];
@@ -533,7 +554,14 @@ class Model
         if (empty($cols[$colPrefix . 'date_create'])) {
             $cols[$colPrefix . 'date_create'] = 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP';
         }
-        $query->createTable($tableName, $cols);
+        $tableIndexes = [];
+        if ($indexes) {
+            foreach ($indexes as $indexName => $index) {
+                $tableIndexes[] = $index['type'] . ' ' . App::$cur->db->table_prefix . $indexName . ' (' . implode(',', $index['cols']) . ')';
+            }
+        }
+
+        $query->createTable($tableName, $cols, $tableIndexes);
         return true;
     }
 
@@ -685,20 +713,24 @@ class Model
      */
     public static function get_list($options = [])
     {
+        $query = App::$cur->db->newQuery();
+        if (!$query) {
+            return [];
+        }
         if (!empty($options['where']))
-            App::$cur->db->where($options['where']);
+            $query->where($options['where']);
         if (!empty($options['group'])) {
-            App::$cur->db->group($options['group']);
+            $query->group($options['group']);
         }
         if (!empty($options['order']))
-            App::$cur->db->order($options['order']);
+            $query->order($options['order']);
         if (!empty($options['join']))
-            App::$cur->db->join($options['join']);
+            $query->join($options['join']);
         if (!empty($options['distinct']))
-            App::$cur->db->distinct = $options['distinct'];
+            $query->distinct = $options['distinct'];
 
         foreach (static::$relJoins as $join) {
-            App::$cur->db->join($join[0], $join[1]);
+            $query->join($join[0], $join[1]);
         }
         static::$relJoins = [];
         foreach (static::$needJoin as $rel) {
@@ -709,12 +741,12 @@ class Model
                     case 'to':
                         $relCol = $relations[$rel]['col'];
                         static::fixPrefix($relCol);
-                        App::$cur->db->join($relations[$rel]['model']::table(), $relations[$rel]['model']::index() . ' = ' . $relCol);
+                        $query->join($relations[$rel]['model']::table(), $relations[$rel]['model']::index() . ' = ' . $relCol);
                         break;
                     case 'one':
                         $col = $relations[$rel]['col'];
                         $relations[$rel]['model']::fixPrefix($col);
-                        App::$cur->db->join($relations[$rel]['model']::table(), static::index() . ' = ' . $col);
+                        $query->join($relations[$rel]['model']::table(), static::index() . ' = ' . $col);
                         break;
                 }
             }
@@ -732,7 +764,7 @@ class Model
             $start = 0;
         }
         if ($limit || $start) {
-            App::$cur->db->limit($start, $limit);
+            $query->limit($start, $limit);
         }
         if (isset($options['key'])) {
             $key = $options['key'];
@@ -740,12 +772,12 @@ class Model
             $key = static::index();
         }
         try {
-            $result = App::$cur->db->select(static::table());
+            $result = $query->select(static::table());
         } catch (PDOException $exc) {
             if ($exc->getCode() == '42S02') {
                 static::createTable();
             }
-            $result = App::$cur->db->select(static::table());
+            $result = $query->select(static::table());
         }
 
         if (!empty($options['array'])) {
@@ -980,15 +1012,19 @@ class Model
         if (static::$storage['type'] == 'moduleConfig') {
             return static::getCountFromModuleStorage($options);
         }
+        $query = App::$cur->db->newQuery();
+        if (!$query) {
+            return 0;
+        }
         if (!empty($options['where'])) {
             static::fixPrefix($options['where'], 'first');
         }
         if (!empty($options['where']))
-            App::$cur->db->where($options['where']);
+            $query->where($options['where']);
         if (!empty($options['join']))
-            App::$cur->db->join($options['join']);
+            $query->join($options['join']);
         if (!empty($options['order'])) {
-            App::$cur->db->order($options['order']);
+            $query->order($options['order']);
         }
         if (!empty($options['limit']))
             $limit = (int) $options['limit'];
@@ -1001,11 +1037,11 @@ class Model
             $start = 0;
         }
         if ($limit || $start) {
-            App::$cur->db->limit($start, $limit);
+            $query->limit($start, $limit);
         }
 
         foreach (static::$relJoins as $join) {
-            App::$cur->db->join($join[0], $join[1]);
+            $query->join($join[0], $join[1]);
         }
         static::$relJoins = [];
         foreach (static::$needJoin as $rel) {
@@ -1016,12 +1052,12 @@ class Model
                     case 'to':
                         $relCol = $relations[$rel]['col'];
                         static::fixPrefix($relCol);
-                        App::$cur->db->join($relations[$rel]['model']::table(), $relations[$rel]['model']::index() . ' = ' . $relCol);
+                        $query->join($relations[$rel]['model']::table(), $relations[$rel]['model']::index() . ' = ' . $relCol);
                         break;
                     case 'one':
                         $col = $relations[$rel]['col'];
                         $relations[$rel]['model']::fixPrefix($col);
-                        App::$cur->db->join($relations[$rel]['model']::table(), static::index() . ' = ' . $col);
+                        $query->join($relations[$rel]['model']::table(), static::index() . ' = ' . $col);
                         break;
                 }
             }
@@ -1039,17 +1075,17 @@ class Model
             $cols .= '*';
         }
         $cols .=') as `count`' . (!empty($options['cols']) ? ',' . $options['cols'] : '');
-        App::$cur->db->cols = $cols;
+        $query->cols = $cols;
         if (!empty($options['group'])) {
-            App::$cur->db->group($options['group']);
+            $query->group($options['group']);
         }
         try {
-            $result = App::$cur->db->select(static::table());
+            $result = $query->select(static::table());
         } catch (PDOException $exc) {
             if ($exc->getCode() == '42S02') {
                 static::createTable();
             }
-            $result = App::$cur->db->select(static::table());
+            $result = $query->select(static::table());
         }
         if (!empty($options['group'])) {
             $count = $result->getArray();

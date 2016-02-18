@@ -53,7 +53,7 @@ App::$cur->libs->loadLib('typeahead');
             html: true,
             title: function () {
               return '<span class="text-info"><strong>' + $(this).text() + '</strong></span>' +
-                      '<button type="button" class="close" onclick="$(\'#' + $(this).parents('li').attr('id') + '\').find(\'>label>a\').popover(\'hide\');">&times;</button>'
+                      '<button type="button" class="close" onclick="$(\'#' + $(this).parents('li').attr('id') + '\').find(\'>a\').popover(\'hide\');">&times;</button>'
             },
             content: function () {
               var html = '';

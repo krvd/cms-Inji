@@ -15,13 +15,16 @@ class Delivery extends \Model
 {
     public static $objectName = 'Доставка';
     public static $cols = [
+        //Основные параметры
         'name' => ['type' => 'text'],
         'price' => ['type' => 'decimal'],
         'max_cart_price' => ['type' => 'decimal'],
         'icon_file_id' => ['type' => 'image'],
         'currency_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'currency'],
+        'info' => ['type' => 'textarea'],
+        //Системные
         'weight' => ['type' => 'number'],
-        'info' => ['type' => 'textarea']
+        'date_create' => ['type' => 'dateTime'],
     ];
     public static $labels = [
         'name' => 'Название',
