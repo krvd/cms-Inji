@@ -3,6 +3,6 @@ AddDefaultCharset UTF-8
 RewriteEngine on
 RewriteCond %{HTTP:Authorization} ^(.*)
 RewriteRule ^(.*) - [E=HTTP_AUTHORIZATION:%1]
-RewriteCond %{REQUEST_URI} !^/cache/
+RewriteCond %{REQUEST_URI} !^/cache/static/
 RewriteCond %{REQUEST_URI} !^/robots.txt
 RewriteRule (.*) index.php [QSA,L]
