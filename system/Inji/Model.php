@@ -715,7 +715,7 @@ class Model
     {
         $query = App::$cur->db->newQuery();
         if (!$query) {
-            return false;
+            return [];
         }
         if (!empty($options['where']))
             $query->where($options['where']);
@@ -1014,7 +1014,7 @@ class Model
         }
         $query = App::$cur->db->newQuery();
         if (!$query) {
-            return false;
+            return 0;
         }
         if (!empty($options['where'])) {
             static::fixPrefix($options['where'], 'first');
@@ -1082,7 +1082,6 @@ class Model
         try {
             $result = $query->select(static::table());
         } catch (PDOException $exc) {
-            var_dump($exc->getMessage());
             if ($exc->getCode() == '42S02') {
                 static::createTable();
             }
