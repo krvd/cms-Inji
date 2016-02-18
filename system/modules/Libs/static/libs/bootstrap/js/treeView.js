@@ -43,7 +43,7 @@ inji.onLoad(function () {
            *	It also prevents the default function of an anchor and
            *	a button from firing.
            */
-          branch.children('.tree-indicator, button, a').click(function (e) {
+          branch.children('.tree-indicator, button').click(function (e) {
             branch.click();
 
             e.preventDefault();
