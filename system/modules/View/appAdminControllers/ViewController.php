@@ -40,7 +40,9 @@ class ViewController extends Controller
         {HEAD}
     </head>
     <body>
-    {PAGE:map}
+        <div class="container">
+            {CONTENT}
+        </div>
     </body>
 </html>';
             $templates = App::$primary->view->config;
