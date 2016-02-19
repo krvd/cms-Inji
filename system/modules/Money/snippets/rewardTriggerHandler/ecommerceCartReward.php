@@ -17,8 +17,6 @@ return [
                 $sums[$currency_id] += $cartItem->final_price * $cartItem->count;
             }
         }
-        var_dump($rewardItemExist, $trigger->_params, $sums);
-        //exit();
         if ($rewardItemExist) {
             App::$cur->money->reward($trigger->reward_id, $sums, $cart->user);
         }
