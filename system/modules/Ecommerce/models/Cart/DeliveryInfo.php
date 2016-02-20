@@ -1,46 +1,46 @@
 <?php
 
 /**
- * Cart info
- *
+ * Delivery user info
  * @author Alexey Krupskiy <admin@inji.ru>
  * @link http://inji.ru/
- * @copyright 2015 Alexey Krupskiy
+ * @copyright 2016 Alexey Krupskiy
  * @license https://github.com/injitools/cms-Inji/blob/master/LICENSE
  */
 
 namespace Ecommerce\Cart;
 
-class Info extends \Model
+class DeliveryInfo extends \Model
 {
-    public static $objectName = 'Информация';
+    public static $objectName = 'Информация о доставке';
     public static $labels = [
         'name' => 'Название',
+        'cart_id' => 'Корзина',
+        'delivery_field_id' => 'Поле',
         'value' => 'Значение',
-        'useradds_field_id' => 'Поле',
-        'cart_id' => 'Корзина'
     ];
     public static $cols = [
+        //Основные параметры
         'name' => ['type' => 'text'],
-        'value' => ['type' => 'text'],
         'cart_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'cart'],
-        'useradds_field_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'field'],
-        //Системные параметры
+        'delivery_field_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'field'],
+        'value' => ['type' => 'text'],
+        //Системные
         'date_create' => ['type' => 'dateTime'],
-    ];
-    public static $dataManagers = [
-        'manager' => [
-            'cols' => [
-                'name',
-                'value',
-            ],
-        ],
     ];
     public static $forms = [
         'manager' => [
             'map' => [
                 ['name', 'value'],
-                ['useradds_field_id', 'cart_id'],
+                ['delivery_field_id', 'cart_id'],
+            ]
+        ]
+    ];
+    public static $dataManagers = [
+        'manager' => [
+            'cols' => [
+                'name',
+                'value'
             ]
         ]
     ];
@@ -48,14 +48,14 @@ class Info extends \Model
     public static function relations()
     {
         return [
+            'field' => [
+                'model' => 'Ecommerce\Delivery\Field',
+                'col' => 'delivery_field_id'
+            ],
             'cart' => [
                 'model' => 'Ecommerce\Cart',
                 'col' => 'cart_id'
             ],
-            'field' => [
-                'model' => 'Ecommerce\UserAdds\Field',
-                'col' => 'useradds_field_id'
-            ]
         ];
     }
 

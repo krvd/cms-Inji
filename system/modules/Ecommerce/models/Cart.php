@@ -74,6 +74,11 @@ class Cart extends \Model
                 'model' => 'Ecommerce\Cart\Info',
                 'col' => 'cart_id'
             ],
+            'deliveryInfos' => [
+                'type' => 'many',
+                'model' => 'Ecommerce\Cart\DeliveryInfo',
+                'col' => 'cart_id'
+            ],
             'extras' => [
                 'type' => 'many',
                 'model' => 'Ecommerce\Cart\Extra',
@@ -126,6 +131,7 @@ class Cart extends \Model
         'info' => 'Информация',
         'pay' => 'Счета оплаты',
         'sums' => 'Суммы',
+        'deliveryInfo' => 'Для доставки',
     ];
     public static $cols = [
         //Основные параметры
@@ -157,6 +163,7 @@ class Cart extends \Model
         'pay' => ['type' => 'dataManager', 'relation' => 'pays'],
         'items' => ['type' => 'dataManager', 'relation' => 'cartItems'],
         'info' => ['type' => 'dataManager', 'relation' => 'infos'],
+        'deliveryInfo' => ['type' => 'dataManager', 'relation' => 'deliveryInfos'],
     ];
     public static $dataManagers = [
         'manager' => [
@@ -167,6 +174,7 @@ class Cart extends \Model
                 'sums',
                 'cart_status_id',
                 'delivery_id',
+                'deliveryInfo',
                 'payed',
                 'pay',
                 'complete_data',
@@ -242,7 +250,9 @@ class Cart extends \Model
                 ['payed'],
                 ['items'],
                 ['extra'],
-                ['pay']
+                ['pay'],
+                ['info'],
+                ['deliveryInfo']
             ]
         ],
     ];

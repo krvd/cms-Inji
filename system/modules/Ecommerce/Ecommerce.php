@@ -104,6 +104,63 @@ class Ecommerce extends Module
         return $userAdds;
     }
 
+    public function parseDeliveryFields($data, $cart, $fields)
+    {
+        $name = '';
+        foreach ($fields as $field) {
+            if ($field->save && !empty($data[$field->id])) {
+                $name .= htmlspecialchars($data[$field->id]) . ' ';
+            }
+        }
+        $name = trim($name);
+
+        $save = Ecommerce\Delivery\Save::get([['user_id', $cart->user->id], ['name', $name]]);
+        if (!$save) {
+            $save = new Ecommerce\Delivery\Save();
+            $save->user_id = $cart->user->id;
+            $save->name = $name;
+            $save->save();
+            foreach ($fields as $field) {
+                if (!$field->save) {
+                    continue;
+                }
+                $saveValue = new Ecommerce\Delivery\Value();
+                $saveValue->value = htmlspecialchars($data[$field->id]);
+                $saveValue->delivery_field_id = $field->id;
+                $saveValue->delivery_save_id = $save->id;
+                $saveValue->save();
+            }
+        }
+        $user = \Users\User::get($cart->user_id);
+        foreach ($fields as $field) {
+            $info = new \Ecommerce\Cart\DeliveryInfo();
+            $info->name = $field->name;
+            $info->value = htmlspecialchars($data[$field->id]);
+            $info->delivery_field_id = $field->id;
+            $info->cart_id = $cart->id;
+            $info->save();
+            $relations = [];
+            if ($field->userfield) {
+                if (strpos($field->userfield, ':')) {
+                    $path = explode(':', $field->userfield);
+                    if (!$user->{$path[0]}->{$path[1]}) {
+                        $user->{$path[0]}->{$path[1]} = $info->value;
+                        $relations[$path[0]] = $path[0];
+                    }
+                } else {
+                    if (!$user->{$field->userfield}) {
+                        $user->{$field->userfield} = $info->value;
+                    }
+                }
+            }
+            foreach ($relations as $rel) {
+                $user->$rel->save();
+            }
+            $user->save();
+        }
+        return $save;
+    }
+
     public function getCurCart($create = true)
     {
         $cart = false;
@@ -339,12 +396,12 @@ class Ecommerce extends Module
             $cart->date_status = date('Y-m-d H:i:s');
             $event = new Ecommerce\Cart\Event(['cart_id' => $cart->id, 'user_id' => \Users\User::$cur->id, 'cart_event_type_id' => 5, 'info' => $cart->cart_status_id]);
             $event->save();
-            
+
             $prev_status_id = $cart->_changedParams['cart_cart_status_id'];
             $now_status_id = $cart->cart_status_id;
-            
+
             $status = Ecommerce\Cart\Status::getList(['where' => ['id', implode(',', [$prev_status_id, $now_status_id]), 'IN']]);
-            
+
             $prefix = isset(App::$cur->ecommerce->config['orderPrefix']) ? $config = App::$cur->ecommerce->config['orderPrefix'] : '';
             \App::$cur->users->AddUserActivity($cart->user_id, 3, "Статус вашего заказа номер {$prefix}{$cart->id} изменился с {$status[$prev_status_id]->name} на {$status[$now_status_id]->name}");
 
