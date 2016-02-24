@@ -14,7 +14,7 @@ class CartController extends Controller
     {
         $cart = '';
         $deliverys = \Ecommerce\Delivery::getList(['order' => ['weight', 'ASC']]);
-        $payTypes = \Ecommerce\PayType::getList();
+        $payTypes = \Ecommerce\PayType::getList(['order' => ['weight', 'ASC']]);
         if (!empty($_SESSION['cart']['cart_id'])) {
             $cart = Ecommerce\Cart::get($_SESSION['cart']['cart_id']);
             if (!empty($_POST)) {
@@ -71,6 +71,12 @@ class CartController extends Controller
                     Msg::add('Ошибка при выборе способа доставки');
                 } elseif ($deliverys && !empty($deliverys[$_POST['delivery']])) {
                     $cart->delivery_id = $_POST['delivery'];
+                    foreach ($deliverys[$cart->delivery_id]->fields as $field) {
+                        if (empty($_POST['deliveryFields'][$field->id]) && $field->required) {
+                            $error = 1;
+                            Msg::add('Вы не указали: ' . $field->name);
+                        }
+                    }
                 }
                 if ($payTypes && empty($payTypes[$_POST['payType']])) {
                     $error = 1;
@@ -81,8 +87,7 @@ class CartController extends Controller
                 } else {
                     $payType = null;
                 }
-                $fields = \Ecommerce\UserAdds\Field::getList();
-                foreach ($fields as $field) {
+                foreach (\Ecommerce\UserAdds\Field::getList() as $field) {
                     if (empty($_POST['userAdds']['fields'][$field->id]) && $field->required) {
                         $error = 1;
                         Msg::add('Вы не указали: ' . $field->name);
@@ -105,6 +110,9 @@ class CartController extends Controller
                 if (!$error && !empty($_POST['action']) && $_POST['action'] = 'order') {
                     $cart->user_id = $user->user_id;
                     $this->module->parseFields($_POST['userAdds']['fields'], $cart);
+                    if ($payTypes && !empty($payTypes[$cart->paytype_id])) {
+                        $this->module->parseDeliveryFields($_POST['deliveryFields'], $cart, $deliverys[$cart->delivery_id]->fields);
+                    }
                     $cart->cart_status_id = 2;
                     $cart->comment = htmlspecialchars($_POST['comment']);
                     $cart->date_status = date('Y-m-d H:i:s');

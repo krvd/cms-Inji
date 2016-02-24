@@ -18,17 +18,21 @@ class Delivery extends \Model
         //Основные параметры
         'name' => ['type' => 'text'],
         'price' => ['type' => 'decimal'],
+        'price_text' => ['type' => 'textarea'],
         'max_cart_price' => ['type' => 'decimal'],
         'icon_file_id' => ['type' => 'image'],
         'currency_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'currency'],
-        'info' => ['type' => 'textarea'],
+        'info' => ['type' => 'html'],
         //Системные
         'weight' => ['type' => 'number'],
         'date_create' => ['type' => 'dateTime'],
+        //Менеджеры
+        'field' => ['type' => 'dataManager', 'relation' => 'fields']
     ];
     public static $labels = [
         'name' => 'Название',
         'price' => 'Стоимость',
+        'price_text' => 'Текстовое описание стоимости (отображается вместо цены)',
         'max_cart_price' => 'Басплатно при',
         'icon_file_id' => 'Иконка',
         'currency_id' => 'Валюта',
@@ -42,6 +46,7 @@ class Delivery extends \Model
                 'price',
                 'currency_id',
                 'max_cart_price',
+                'field'
             ],
             'sortMode' => true
         ],
@@ -50,9 +55,11 @@ class Delivery extends \Model
         'manager' => [
             'map' => [
                 ['name',],
-                ['price', 'currency_id'],
                 ['max_cart_price', 'icon_file_id'],
-                ['info']
+                ['price', 'currency_id'],
+                ['price_text'],
+                ['info'],
+                ['field']
             ]
     ]];
 
@@ -67,6 +74,11 @@ class Delivery extends \Model
                 'model' => 'Money\Currency',
                 'col' => 'currency_id'
             ],
+            'fields'=>[
+                'type'=>'relModel',
+                'model'=>'Ecommerce\Delivery\Field',
+                'relModel'=>'Ecommerce\Delivery\DeliveryFieldLink'
+            ]
         ];
     }
 

@@ -33,21 +33,33 @@
           <div class="col-sm-4">
             <div class="order_page-info">
               <?php if (!Users\User::$cur->id) { ?>
-                  <fieldset id="account">
-                    <h4>Аккаунт</h4>
-                    <?php $this->widget('Ecommerce\cart/fastLogin', ['form' => $form, 'cart' => $cart]); ?>
-                  </fieldset>
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                      <h3 class="panel-title">Аккаунт</h3>
+                    </div>
+                    <div class="panel-body">
+                      <?php $this->widget('Ecommerce\cart/fastLogin', ['form' => $form, 'cart' => $cart]); ?>
+                    </div>
+                  </div>
               <?php } ?>
               <?php if (Ecommerce\Card::getList()) { ?>
-                  <fieldset id="discount">
-                    <h4>Дисконтная карта</h4>
-                    <?php $this->widget('Ecommerce\cart/cardSelect', ['form' => $form, 'cart' => $cart]); ?>
-                  </fieldset>
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                      <h3 class="panel-title">Дисконтная карта</h3>
+                    </div>
+                    <div class="panel-body">
+                      <?php $this->widget('Ecommerce\cart/cardSelect', ['form' => $form, 'cart' => $cart]); ?>
+                    </div>
+                  </div>
               <?php } ?>
-              <fieldset id="address">
-                <h4>Информация для доставки</h4>
-                <?php $this->widget('Ecommerce\cart/fields', ['form' => $form, 'cart' => $cart]); ?>
-              </fieldset>
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Контактная информация</h3>
+                </div>
+                <div class="panel-body">
+                  <?php $this->widget('Ecommerce\cart/fields', ['form' => $form, 'cart' => $cart]); ?>
+                </div>
+              </div>
               <?php
               $packchecked = '';
               $packItem = false;
@@ -60,7 +72,6 @@
                     <div class=" checkout-payment-form">
                       <div class="form-horizontal form-payment">
                         <div id="payment-new" style="display: block;">
-
                           <div class ='form-group'>
                             <div class = "checkbox">
                               <label>
@@ -84,64 +95,61 @@
           </div>
           <div class="col-sm-8">
             <div class="order_page-options">
-              <div class="row">
-                <div class="col-sm-6">
-                  <div class="order_page-delivery">
-                    <h4>Способ доставки</h4>
-                    <?php
-                    foreach ($deliverys as $delivery) {
-                        if ((!empty($_POST['delivery']) && $_POST['delivery'] == $delivery->id) || $delivery == $cartDelivery) {
-                            $checked = 'checked';
-                        } else {
-                            $checked = '';
-                        }
-                        $helpText = '';
-                        if ((float) $delivery->max_cart_price) {
-                            $helpText.= 'При заказе товаров на сумму от ' . $delivery->max_cart_price . ' руб - бесплатно';
-                        }
-                        if ($delivery->info) {
-                            if ($helpText) {
-                                $helpText .= '<br />';
-                            }
-                            $helpText .= nl2br($delivery->info);
-                        }
-                        $form->input('radio', "delivery", $delivery->name . ((float) $delivery->price ? ' - ' . $delivery->price . ' ' . ($delivery->currency ? $delivery->currency->acronym() : 'руб.') : ''), [
-                            'value' => $delivery->id,
-                            'checked' => $checked,
-                            'helpText' => $helpText,
-                            'attributes' => [
-                                'onclick' => "inji.Ecommerce.Cart.calcSum();"
-                            ]
-                        ]);
-                    }
-                    ?>
+              <div class="order_page-delivery">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">Способ доставки</h3>
+                  </div>
+                  <div class="panel-body">
+                    <?php $this->widget('Ecommerce\cart/delivery', compact('form','cart','deliverys', 'cartDelivery')); ?>
                   </div>
                 </div>
-                <div class="col-sm-6">
-                  <div class="checkout-content checkout-payment-methods">
-                    <h4>Способ оплаты</h4>
-                    <?php
-                    foreach ($payTypes as $payType) {
-                        if ((!empty($_POST['payType']) && $_POST['payType'] == $payType->id) || $payType == $cartPayType) {
-                            $checked = 'checked';
-                        } else {
-                            $checked = '';
-                        }
-                        $helpText = '';
-                        if ($payType->info) {
-                            $helpText .= nl2br($payType->info);
-                        }
-                        $form->input('radio', "payType", $payType->name, [
-                            'value' => $payType->id,
-                            'checked' => $checked,
-                            'helpText' => $helpText
-                        ]);
-                    }
-                    ?>            
-                  </div>                        
-                </div>
+              </div>
+              <div class="checkout-content checkout-payment-methods">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">Способ оплаты</h3>
+                  </div>
+                  <div class="panel-body">
+                    <div class="row">
+                      <div class="col-md-4">
+                        <ul class="nav nav-pills nav-stacked">
+                          <?php
+                          $hiddenId = Tools::randomString();
+                          foreach ($payTypes as $payType) {
+                              if ((!empty($_POST['payType']) && $_POST['payType'] == $payType->id) || $payType->id == $cartPayType->id) {
+                                  $checked = 'checked';
+                              } else {
+                                  $checked = '';
+                              }
+                              echo '<li' . ($checked ? ' class="active"' : '') . '><a href = "#" onclick = "document.getElementById(\'' . $hiddenId . '\').value=\'' . $payType->id . '\';inji.Ecommerce.Cart.calcSum();return false;">';
+                              echo $payType->name;
+                              echo '</a></li>';
+                          }
+                          $form->input('hidden', "payType", '', [
+                              'value' => $cartPayType->id,
+                              'attributes' => [
+                                  'id' => $hiddenId
+                              ],
+                          ]);
+                          ?>
+                        </ul>
+                      </div>
+                      <div class="col-md-8">
+                        <h4>Информация об оплате</h4>
+                        <?php
+                        echo $cartPayType->info;
+                        ?> 
+                      </div>
+                    </div>
+                  </div>
+                </div>      
               </div>
             </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12">
             <div class="order_page-details">
               <h3>Корзина товаров</h3>
               <div class="table-responsive">
@@ -149,7 +157,7 @@
                   <thead>
                     <tr>
                       <td colspan="2">Название товара</td>
-                      <td>Количество</td>
+                      <td style="width:1%;min-width:150px;">Количество</td>
                       <td>Цена</td>
                       <?= $cart->card ? '<td>Скидка</td>' : ''; ?>
                       <td>Итого</td>
@@ -267,16 +275,20 @@
                         <tr class="order_page-deliverySum">
                           <td colspan="<?= $colspan; ?>" class="text-right"><?= $cartDelivery->name; ?>:</td>
                           <td colspan="2" class="text-right"><?php
-                            echo number_format($deliveryPrice, 2, '.', ' ');
-                            if ($deliveryCurrency && App::$cur->money) {
-                                $currency = Money\Currency::get($deliveryCurrency);
-                                if ($currency) {
-                                    echo '&nbsp;' . $currency->acronym();
+                            if ($delivery->price_text) {
+                                echo $delivery->price_text;
+                            } else {
+                                echo number_format($deliveryPrice, 2, '.', ' ');
+                                if ($deliveryCurrency && App::$cur->money) {
+                                    $currency = Money\Currency::get($deliveryCurrency);
+                                    if ($currency) {
+                                        echo '&nbsp;' . $currency->acronym();
+                                    } else {
+                                        echo '&nbsp;руб.';
+                                    }
                                 } else {
                                     echo '&nbsp;руб.';
                                 }
-                            } else {
-                                echo '&nbsp;руб.';
                             }
                             ?></td>
                         </tr>
@@ -334,18 +346,21 @@
                   </tfoot>
                 </table>
               </div>
-            </div>
-            <hr />
-            <div class="order_page-finish">
-              <?php
-              $form->input('textarea', 'comment', 'Вы можете добавить комментарий к своему заказу', ['value' => (!empty($_POST['comment'])) ? $_POST['comment'] : '']);
-              ?>
-              <div class="order_page-orderBtn">
-                <button name ="action" value ="order" data-loading-text="Подождите.." class="btn btn-primary">Подтверждение заказа</button>
+
+              <hr />
+              <div class="clearfix"></div>
+              <div class="order_page-finish">
+                <?php
+                $form->input('textarea', 'comment', 'Вы можете добавить комментарий к своему заказу', ['value' => (!empty($_POST['comment'])) ? $_POST['comment'] : '']);
+                ?>
+                <div class="order_page-orderBtn">
+                  <button name ="action" value ="order" data-loading-text="Подождите.." class="btn btn-primary">Подтверждение заказа</button>
+                </div>
               </div>
             </div>
           </div>
         </div>
+
         <?php
         $form->end(false);
     }

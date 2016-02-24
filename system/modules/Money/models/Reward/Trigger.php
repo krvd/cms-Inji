@@ -13,6 +13,14 @@ namespace Money\Reward;
 
 class Trigger extends \Model
 {
+    public static $cols = [
+        'reward_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'reward'],
+        'type' => ['type' => 'text'],
+        'value' => ['type' => 'text'],
+        'handler' => ['type' => 'text'],
+        'date_create' => ['type' => 'dateTime'],
+    ];
+
     public static function relations()
     {
         return [
@@ -21,7 +29,11 @@ class Trigger extends \Model
                 'model' => 'Money\Reward\Trigger\Param',
                 'col' => 'reward_trigger_id',
                 'resultKey' => 'param'
-            ]
+            ],
+            'reward' => [
+                'model' => 'Money\Reward',
+                'col' => 'reward_id'
+            ],
         ];
     }
 

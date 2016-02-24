@@ -51,6 +51,7 @@ App::$cur->libs->loadLib('typeahead');
             trigger: 'click',
             placement: 'top',
             html: true,
+            container:'body',
             title: function () {
               return '<span class="text-info"><strong>' + $(this).text() + '</strong></span>' +
                       '<button type="button" class="close" onclick="$(\'#' + $(this).parents('li').attr('id') + '\').find(\'>a\').popover(\'hide\');">&times;</button>'
