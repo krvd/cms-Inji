@@ -13,6 +13,12 @@ namespace Money\Reward;
 
 class Level extends \Model
 {
+    public static $cols = [
+        'reward_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'reward'],
+        'level' => ['type' => 'number'],
+        'type' => ['type' => 'text'],
+    ];
+
     public static function relations()
     {
         return [

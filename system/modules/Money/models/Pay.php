@@ -41,7 +41,8 @@ class Pay extends \Model
         'callback_method' => ['type' => 'text'],
         'description' => ['type' => 'textarea'],
         'data' => ['type' => 'text'],
-        'date_recive' => ['type' => 'dateTime']
+        'date_recive' => ['type' => 'dateTime'],
+        'date_create' => ['type' => 'dateTime']
     ];
     public static $labels = [
         'currency_id' => 'Валюта',

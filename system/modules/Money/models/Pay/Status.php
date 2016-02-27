@@ -13,5 +13,11 @@ namespace Money\Pay;
 
 class Status extends \Model
 {
-    
+    public static $cols = [
+
+        'name' => ['type' => 'text'],
+        'code' => ['type' => 'text'],
+        'date_create' => ['type' => 'dateTime']
+    ];
+
 }
