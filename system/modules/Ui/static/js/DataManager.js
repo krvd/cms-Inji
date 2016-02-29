@@ -310,18 +310,7 @@ DataManager.prototype.load = function (options) {
       data: {params: params, modelName: this.modelName, managerName: this.managerName},
       success: function (data) {
         dataManager.element.find('.categoryTree').html(data);
-        var active = dataManager.element.find('.categoryTree [data-path="' + instance.categoryPath + '"]');
-        if (active.length > 0) {
-          var child = $($($(active).parent().parent().get(0)).children().get(1)).children().get(0);
-          if (child) {
-            //$(child).parents().map(function(){$(this).find('.glyphicon-chevron-right:first').removeClass('glyphicon-chevron-right').addClass('glyphicon-chevron-down');});
-            $(child).parents('.nav-left-ml').css('display', 'none');
-          } else {
-            active.parents('.nav-left-ml').css('display', 'none');
-          }
-          active.css('fontWeight', 'bold')
-        }
-
+        dataManager.element.find('.categoryTree [data-path="' + instance.categoryPath + '"]').parent().addClass('active');
         dataManager.element.find('.treeview').treeview();
         $(instance.element).find('.categoryTree').sortable().sortable("disable");
         if (dataManager.mode == 'sort') {
