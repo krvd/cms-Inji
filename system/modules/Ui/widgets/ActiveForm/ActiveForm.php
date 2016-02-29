@@ -44,7 +44,6 @@ foreach ($formInputs as $inputName => $inputParams) {
 </div>
 <script>
     inji.onLoad(function () {
-      console.log('--------------------<?= $id; ?>');
       inji.Ui.activeForms.get('#<?= $id; ?>');
     })
 </script>
