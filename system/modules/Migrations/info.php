@@ -6,7 +6,7 @@ return [
         'appAdmin' => [
             [
                 'name' => 'Миграции данных',
-                'href' => '/admin/migrations',
+                'href' => '/admin/migrations/migration',
                 'childs' => [
                     [
                         'name' => 'История миграций',

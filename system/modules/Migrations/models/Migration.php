@@ -20,11 +20,13 @@ class Migration extends \Model
     ];
     public static $cols = [
         'name' => ['type' => 'text'],
+        'date_create' => ['type' => 'dateTime'],
+        //Менеджеры
         'maps' => ['type' => 'dataManager', 'relation' => 'maps']
     ];
     public static $dataManagers = [
         'manager' => [
-            'cols' => ['name', 'maps']
+            'cols' => ['name', 'maps', 'date_create']
         ]
     ];
     public static $forms = [

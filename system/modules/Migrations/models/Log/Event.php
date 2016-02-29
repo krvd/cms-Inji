@@ -21,8 +21,10 @@ class Event extends \Model
     ];
     public static $cols = [
         'type' => ['type' => 'text'],
-        'info' => ['type' => 'text'],
-        'date_create' => ['type' => 'text'],
+        'info' => ['type' => 'textarea'],
+        'log_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'log'],
+        'map_path_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'path'],
+        'date_create' => ['type' => 'dateTime'],
     ];
     public static $dataManagers = [
         'manager' => [
@@ -37,5 +39,19 @@ class Event extends \Model
             ]
         ]
     ];
+
+    public static function relations()
+    {
+        return [
+            'log' => [
+                'col' => 'log_id',
+                'model' => 'Migrations\Log'
+            ],
+            'path' => [
+                'col' => 'map_path_id',
+                'model' => 'Migrations\Migrations\Map\Path'
+            ]
+        ];
+    }
 
 }

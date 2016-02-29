@@ -13,5 +13,10 @@ namespace Migrations;
 
 class Id extends \Model
 {
-    //put your code here
+    public static $cols = [
+        'object_id' => ['type' => 'number'],
+        'type' => ['type' => 'text'],
+        'parse_id' => ['type' => 'text'],
+    ];
+
 }
