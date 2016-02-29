@@ -13,20 +13,19 @@ namespace Ecommerce\Delivery;
 
 class DeliveryFieldLink extends \Model
 {
-    static $cols = [
+    public static $cols = [
         'delivery_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'delivery'],
         'delivery_field_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'field'],
         'weight' => ['type' => 'number'],
         'date_create' => ['type' => 'dateTime']
     ];
-    static $dataManagers = [
+    public static $dataManagers = [
         'manager' => [
             'name' => 'Поля для доставки',
             'cols' => ['delivery_id', 'delivery_field_id', 'date_create'],
-            //'sortMode' => true
         ]
     ];
-    static $forms = [
+    public static $forms = [
         'manager' => [
             'map' => [
                 ['delivery_id', 'delivery_field_id'],
@@ -34,7 +33,7 @@ class DeliveryFieldLink extends \Model
         ]
     ];
 
-    static function relations()
+    public static function relations()
     {
         return [
             'field' => [
