@@ -20,8 +20,6 @@ class DataManager extends \Ui\ActiveForm\Input
         $inputOptions['relation'] = $modelName::getRelation($this->colParams['relation']);
         $inputOptions['input'] = $this;
         $this->form->input('dataManager', '', '', $inputOptions);
-//        echo '<h4 class=" text-muted">Чтобы добавить связи, сначала создайте объект</h4>';
-//echo '<p class=" text-muted">Просто заполните доступные поля и нажмите кнопку внизу формы. После этого дополнительные поля разблокируются</p>';
     }
 
 }
