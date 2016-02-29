@@ -12,7 +12,7 @@ class Notifications extends Module
 {
     public function init()
     {
-        if (\Notifications\Subscribe::get($this->getCurSubscriber(), 'subscriber_id')) {
+        if (\Notifications\Subscribe::get($this->getCurSubscriber()->id, 'subscriber_id')) {
             App::$cur->view->customAsset('js', '/moduleAsset/Notifications/js/Notifications.js');
         }
     }
