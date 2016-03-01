@@ -186,7 +186,20 @@ class Query extends \Object
                 $this->whereString = ' WHERE ';
 
             if (stristr($operation, 'IN') || stristr($operation, 'NOT IN')) {
-                if (!preg_match('!\(!', $value) && !preg_match('![^0-9,\.\(\) ]!', $value))
+                if (is_array($value)) {
+                    $newValue = '';
+                    foreach ($value as $item) {
+                        if ($newValue) {
+                            $newValue.=',';
+                        }
+                        if (is_string($item)) {
+                            $newValue .='"' . $item . '"';
+                        } else {
+                            $newValue .=$item;
+                        }
+                    }
+                    $value = '(' . $newValue . ')';
+                } elseif (!preg_match('!\(!', $value) && !preg_match('![^0-9,\.\(\) ]!', $value))
                     $value = "({$value})";
                 elseif (preg_match('!\(!', $value) && preg_match('![^0-9,\.\(\) ]!', $value))
                     $value = "\"{$value}\"";
