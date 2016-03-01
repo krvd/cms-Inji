@@ -129,6 +129,7 @@ class Cart extends \Model
         'extra' => 'Дополнительно',
         'card_item_id' => 'Дисконтная карта',
         'info' => 'Информация',
+        'contacts' => 'Информация',
         'pay' => 'Счета оплаты',
         'sums' => 'Суммы',
         'deliveryInfo' => 'Для доставки',
@@ -158,6 +159,13 @@ class Cart extends \Model
                 'widget' => 'Ecommerce\adminSums',
             ],
         ],
+        'contacts' => [
+            'type' => 'void',
+            'view' => [
+                'type' => 'widget',
+                'widget' => 'Ecommerce\admin/contacts',
+            ],
+        ],
         //Менеджеры
         'extra' => ['type' => 'dataManager', 'relation' => 'extras'],
         'pay' => ['type' => 'dataManager', 'relation' => 'pays'],
@@ -168,7 +176,7 @@ class Cart extends \Model
     public static $dataManagers = [
         'manager' => [
             'cols' => [
-                'info',
+                'contacts',
                 'items',
                 'extra',
                 'sums',
