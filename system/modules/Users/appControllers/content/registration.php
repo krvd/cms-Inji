@@ -23,7 +23,7 @@
       <div class ='row'>
         <div class="col-sm-6">
           <?php $form->input('email', 'user_mail', 'Электронная почта', ['required' => true]); ?>
-          <?php $form->input('text', 'user_name', 'Ваше имя'); ?>
+          <?php $form->input('text', 'user_name', 'Ваше имя (не фио)'); ?>
           <?php $form->input('date', 'user_birthday', 'Дата рождения'); ?>
           <?php $form->input('text', 'user_city', 'Город'); ?>
           <?php
