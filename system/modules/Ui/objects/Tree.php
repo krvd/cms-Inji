@@ -44,21 +44,21 @@ class Tree extends \Object
         $count = 0;
         $isset = false;
         $class = get_class($object);
+        $item = $hrefFunc ? $hrefFunc($object) : "<a href='#'> {$object->name()}</a> ";
+        if (is_array($item)) {
+            $liClass = $item['class'];
+            $item = $item['text'];
+        } else {
+            $liClass = '';
+        }
         if (!$maxDeep || $deep < $maxDeep) {
             $items = $class::getList(['where' => ['parent_id', $object->pk()]]);
             $count += count($items);
-            $item = $hrefFunc ? $hrefFunc($object) : "<a href='#'> {$object->name()}</a> ";
-            if (is_array($item)) {
-                $class = $item['class'];
-                $item = $item['text'];
-            } else {
-                $class = '';
-            }
             foreach ($items as $objectChild) {
                 if (!$isset) {
                     $isset = true;
                     ?>
-                    <li id='<?= str_replace('\\', '_', get_class($object)) . "-{$object->pk()}"; ?>' class="<?= $class; ?>">
+                    <li id='<?= str_replace('\\', '_', get_class($object)) . "-{$object->pk()}"; ?>' class="<?= $liClass; ?>">
                       <?= $item; ?>
                       <ul>
                         <?php
@@ -73,7 +73,7 @@ class Tree extends \Object
             <?php
         } else {
             ?>
-            <li id='<?= str_replace('\\', '_', get_class($object)) . "-{$object->pk()}"; ?>' class="<?= $class; ?>">
+            <li id='<?= str_replace('\\', '_', get_class($object)) . "-{$object->pk()}"; ?>' class="<?= $liClass; ?>">
               <?= $item; ?>
             </li>
             <?php
