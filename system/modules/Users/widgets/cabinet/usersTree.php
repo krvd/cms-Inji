@@ -51,7 +51,7 @@ App::$cur->libs->loadLib('typeahead');
             trigger: 'click',
             placement: 'top',
             html: true,
-            container:'body',
+            container: 'body',
             title: function () {
               return '<span class="text-info"><strong>' + $(this).text() + '</strong></span>' +
                       '<button type="button" class="close" onclick="$(\'#' + $(this).parents('li').attr('id') + '\').find(\'>a\').popover(\'hide\');">&times;</button>'
@@ -120,8 +120,8 @@ if ($usersSearch) {
               $('#Users_User-' + userid + ' a').css('fontWeight', 'bold');
               parent = $('#Users_User-' + userid).parent('ul');
               while (parent.length > 0) {
-                if (parent.css('display') == 'none') {
-                  parent.toggle();
+                if (parent.prev().prev().hasClass('glyphicon-chevron-right')) {
+                  parent.prev().prev().click();
                 }
                 parent = $(parent).parent().parent('ul');
               }
