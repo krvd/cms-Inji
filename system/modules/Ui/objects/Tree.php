@@ -17,7 +17,7 @@ class Tree extends \Object
         $count = 0;
         if (!$hrefFunc) {
             $hrefFunc = function($object) {
-                echo "<a href='#'> {$object->name()}</a>";
+                return "<a href='#'> {$object->name()}</a>";
             };
         }
         ?>
