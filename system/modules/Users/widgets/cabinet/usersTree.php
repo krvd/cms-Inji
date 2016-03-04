@@ -117,7 +117,7 @@ if ($usersSearch) {
               $input2.val('');
               $('.userList a').css('fontWeight', 400)
               $('.userList ul[style="display: block;"]').toggle();
-              $('#Users_User-' + userid + ' a').css('fontWeight', 'bold');
+              $('#Users_User-' + userid + '> a').css('fontWeight', 'bold');
               parent = $('#Users_User-' + userid).parent('ul');
               while (parent.length > 0) {
                 if (parent.prev().prev().hasClass('glyphicon-chevron-right')) {
