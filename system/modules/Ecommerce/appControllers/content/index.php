@@ -9,7 +9,7 @@
     </div>
     <div class="col-md-9">
       <div class="ecommerce-presentpage">
-        <?php $this->widget('Sliders\Slider', ['alias' => 'ecommerce-slider']); ?>
+        <?php $this->widget('Sliders\slider', ['alias' => 'ecommerce-slider']); ?>
         <div class="ecommerce-best">
           <h2 class='caption'><span>Рекомендумые товары</span></h2>
           <?php
