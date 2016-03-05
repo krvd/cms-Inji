@@ -275,8 +275,8 @@
                         <tr class="order_page-deliverySum">
                           <td colspan="<?= $colspan; ?>" class="text-right"><?= $cartDelivery->name; ?>:</td>
                           <td colspan="2" class="text-right"><?php
-                            if ($delivery->price_text) {
-                                echo $delivery->price_text;
+                            if ($cartDelivery && $cartDelivery->price_text) {
+                                echo $cartDelivery->price_text;
                             } else {
                                 echo number_format($deliveryPrice, 2, '.', ' ');
                                 if ($deliveryCurrency && App::$cur->money) {

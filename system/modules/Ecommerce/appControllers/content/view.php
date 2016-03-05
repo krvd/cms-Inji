@@ -9,31 +9,46 @@
     </div>
     <div class="col-xs-9">
       <div class="detail_item">
-        <h1><?= $item->name(); ?></h1>
         <div class="row">
           <div class="col-sm-5">
-            <img src="<?= $item->image ? $item->image->path : '/static/system/images/no-image.png'; ?>?resize=220x220&resize_crop=q" class="img-responsive"/>
+            <img src="<?= Statics::file($item->image ? $item->image->path : '/static/system/images/no-image.png', '350x800'); ?>" class="img-responsive"/>
           </div>
           <div class="col-sm-7">
-            <?= $item->decription; ?>
+            <h1><?= $item->name(); ?></h1>
+            <ul class="item-options">
+              <?php
+              foreach ($item->options as $param) {
+                  if (!$param->item_option_view || !$param->value)
+                      continue;
+                  if ($param->item_option_type == 'select') {
+                      if (empty($param->option->items[$param->value]))
+                          continue;
+                      $value = $param->option->items[$param->value]->value;
+                  } else {
+                      $value = $param->value;
+                  }
+                  $paramName = $param->item_option_name;
+                  echo "<li>{$paramName}: {$value} {$param->item_option_postfix}</li>";
+              }
+              ?>
+            </ul>
             <div class="item-actions">
-              <div class="btn btn-default item-price" onclick="inji.Ecommerce.Cart.addItem(<?= $item->getPrice()->id; ?>, 1);">
-                <?= number_format($item->getPrice()->price, 2, '.', ' '); ?>
+              <div class="item-price">
+                <span class="item-price-caption">Цена: </span>
+                <span class="item-price-amount"><?= number_format($item->getPrice()->price, 2, '.', ' '); ?></span>
+                <span class="item-price-currency">руб</span>
               </div>
-              <div class="item-currency">
-                руб
-              </div>
-              <div class="btn btn-primary item-addtocart">
+              <div class="btn btn-primary item-addtocart" onclick="inji.Ecommerce.Cart.addItem(<?= $item->getPrice()->id; ?>, 1);">
                 <i class="glyphicon glyphicon-shopping-cart"></i> Добавить в корзину
               </div>
             </div>
           </div>
-          <div class="item-options">
-            <?php
-            foreach ($item->options as $option) {
-                echo "{$option->option->name}: " . $option->value();
-            }
-            ?>
+        </div>
+        <div class="row">
+          <div class="col-xs-12">
+            <div class="item-description">
+              <?= $item->description; ?>
+            </div>
           </div>
         </div>
       </div>

@@ -18,7 +18,7 @@ class Price extends \Model
         //Основные параметры
         'item_offer_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'offer'],
         'item_offer_price_type_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'type'],
-        'name' => ['type' => 'text'],
+        'name' => ['type' => 'decimal'],
         'price' => ['type' => 'text'],
         'currency_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'currency'],
         //Системные

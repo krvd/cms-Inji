@@ -1,8 +1,11 @@
 <div class="ecommerce-sidebar-categorys">
   <?php
+  if(empty($category)){
+      $category = [];
+  }
   $tree = new Ui\Tree();
   $tree->ul('\Ecommerce\Category', 0, function($categoryItem) use($category) {
-      if ($category->id == $categoryItem->id) {
+      if ($category && $category->id == $categoryItem->id) {
           $class = 'active';
       } else {
           $class = '';

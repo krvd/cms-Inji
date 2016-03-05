@@ -20,7 +20,7 @@ class Ecommerce extends Module
         if (!$forSelect) {
             return $this->getSnippets('payTypeHandler');
         }
-        $handlers = [];
+        $handlers = ['' => 'Не выбрано'];
         foreach ($this->getSnippets('payTypeHandler') as $key => $handler) {
             if (empty($handler)) {
                 continue;
