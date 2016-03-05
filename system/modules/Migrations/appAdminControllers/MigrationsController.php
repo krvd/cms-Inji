@@ -13,7 +13,7 @@ class MigrationsController extends adminController
     public function manualAction()
     {
         if (!empty($_POST)) {
-            $this->module->startMigration($_POST['migration'], $_POST['map'], $_FILES['file']['tmp_name']);
+            $this->module->startMigration(\Migrations\Migration\Map::get($_POST['map'])->migration_id, $_POST['map'], $_FILES['file']['tmp_name']);
         }
         $selectArray = [
             '' => 'Выберите'
