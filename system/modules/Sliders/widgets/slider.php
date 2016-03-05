@@ -2,7 +2,12 @@
 if (!empty($params[0])) {
     $sliderId = $params[0];
 }
-$slider = \Sliders\Slider::get($sliderId);
+if (!empty($sliderId)) {
+    $slider = \Sliders\Slider::get($sliderId);
+}
+if (!empty($alias)) {
+    $slider = Sliders\Slider::get($alias, 'alias');
+}
 $slides = $slider->slides(['order' => ['weight', 'ASC']]);
 ?>
 <div id="sliderWidget-<?= $slider; ?>" class="carousel slide" data-ride="carousel">

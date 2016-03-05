@@ -16,6 +16,7 @@ class Slider extends \Model
     public static $objectName = "Слайдер";
     public static $cols = [
         'name' => ['type' => 'text'],
+        'alias' => ['type' => 'text'],
         'description' => ['type' => 'html'],
         'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
         'image_file_id' => ['type' => 'image'],
@@ -24,6 +25,7 @@ class Slider extends \Model
     ];
     public static $labels = [
         'name' => 'Название',
+        'alias' => 'Алиас',
         'date_create' => 'Дата создания слайдера',
         'slide' => 'Слайды',
         'description' => 'Описание',
@@ -34,14 +36,15 @@ class Slider extends \Model
         'manager' => [
             'name' => 'Слайдеры',
             'cols' => [
-                'name', 'slide', 'user_id', 'date_create'
+                'name', 'alias', 'slide', 'user_id', 'date_create'
             ]
         ]
     ];
     public static $forms = [
         'manager' => [
             'map' => [
-                ['name', 'image_file_id'],
+                ['name', 'alias'],
+                ['image_file_id'],
                 ['description']
             ]
         ]
