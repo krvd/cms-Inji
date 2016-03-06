@@ -17,6 +17,7 @@
     <div class="col-md-9">
       <h2 class="category-name"><?= $category ? $category->name : 'Каталог продукции'; ?></h2>
       <?php $this->widget('Ecommerce\items/icons', compact('items')); ?>
+      <?php $this->widget('Ecommerce\items/table', compact('items')); ?>
       <div class="text-center">
         <?= $pages->draw(); ?>
       </div>
