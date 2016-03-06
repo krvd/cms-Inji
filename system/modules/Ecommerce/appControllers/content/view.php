@@ -1,13 +1,13 @@
 <div class="ecommerce">
   <div class="row">
-    <div class="col-xs-3 item-sidebar">
+    <div class="col-md-3 item-sidebar">
       <div class="sidebar-block">
         <div class="items">
           <?php $this->widget('Ecommerce\categorys'); ?>
         </div>
       </div>
     </div>
-    <div class="col-xs-9">
+    <div class="col-md-9">
       <div class="detail_item">
         <div class="row">
           <div class="col-sm-5">
