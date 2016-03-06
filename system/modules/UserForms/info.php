@@ -5,9 +5,14 @@ return [
     'menu' => [
         'appAdmin' => [
             [
-                'name' => 'Полученные формы',
-                'href' => '/admin/userForms/recive',
-                'childs' => []
+                'name' => 'Формы связи',
+                'href' => '/admin/userForms/Form',
+                'childs' => [
+                    [
+                        'name' => 'Полученные формы',
+                        'href' => '/admin/userForms/recive',
+                    ],
+                ]
             ]
         ]
     ]

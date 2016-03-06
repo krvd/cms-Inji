@@ -24,6 +24,9 @@ class Input extends \Model
         'label' => ['type' => 'text'],
         'type' => ['type' => 'text'],
         'required' => ['type' => 'bool'],
+        'form_id' => [ 'type' => 'select', 'source' => 'relation', 'relation' => 'form'],
+        'user_id' => [ 'type' => 'select', 'source' => 'relation', 'relation' => 'user'],
+        'input_params' => ['type' => 'textarea'],
         'weight' => ['type' => 'number']
     ];
     public static $dataManagers = [
@@ -39,10 +42,24 @@ class Input extends \Model
     public static $forms = [
         'manager' => [
             'map' => [
-                ['label'],
+                ['label', 'form_id'],
                 ['type', 'required'],
             ]
         ]
     ];
+
+    public static function relations()
+    {
+        return [
+            'user' => [
+                'model' => '\Users\User',
+                'col' => 'user_id'
+            ],
+            'form' => [
+                'model' => '\UserForms\Form',
+                'col' => 'form_id',
+            ],
+        ];
+    }
 
 }
