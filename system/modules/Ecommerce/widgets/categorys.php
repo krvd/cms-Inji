@@ -1,6 +1,6 @@
 <div class="ecommerce-sidebar-categorys">
   <?php
-  if(empty($category)){
+  if (empty($category)) {
       $category = [];
   }
   $tree = new Ui\Tree();
@@ -11,7 +11,9 @@
           $class = '';
       }
       return [
-          'class' => $class,
+          'attributes' => [
+              'class' => $class,
+          ],
           'text' => "<a {$class} href = '/ecommerce/itemList/{$categoryItem->id}'>{$categoryItem->name}</a>"
       ];
   });

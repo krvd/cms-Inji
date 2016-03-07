@@ -45,11 +45,14 @@ class Tree extends \Object
         $isset = false;
         $class = get_class($object);
         $item = $hrefFunc ? $hrefFunc($object) : "<a href='#'> {$object->name()}</a> ";
+        $attributes = [];
+        
         if (is_array($item)) {
-            $liClass = $item['class'];
+            $attributes = $item['attributes'];
             $item = $item['text'];
-        } else {
-            $liClass = '';
+        }
+        if (!isset($attributes['id'])) {
+            $attributes['id'] = str_replace('\\', '_', get_class($object)) . "-{$object->pk()}";
         }
         if (!$maxDeep || $deep < $maxDeep) {
             $items = $class::getList(['where' => ['parent_id', $object->pk()]]);
@@ -57,26 +60,16 @@ class Tree extends \Object
             foreach ($items as $objectChild) {
                 if (!$isset) {
                     $isset = true;
-                    ?>
-                    <li id='<?= str_replace('\\', '_', get_class($object)) . "-{$object->pk()}"; ?>' class="<?= $liClass; ?>">
-                      <?= $item; ?>
-                      <ul>
-                        <?php
-                    }
-                    $count+=static::showLi($objectChild, $deep + 1, $maxDeep, $hrefFunc);
+                    echo \Html::el('li', $attributes, $item, true);
+                    echo '<ul>';
                 }
+                $count+=static::showLi($objectChild, $deep + 1, $maxDeep, $hrefFunc);
             }
-            if ($isset) {
-                ?>
-              </ul>
-            </li>
-            <?php
+        }
+        if ($isset) {
+            echo '</ul></li>';
         } else {
-            ?>
-            <li id='<?= str_replace('\\', '_', get_class($object)) . "-{$object->pk()}"; ?>' class="<?= $liClass; ?>">
-              <?= $item; ?>
-            </li>
-            <?php
+            echo \Html::el('li', $attributes, $item);
         }
         return $count;
     }
