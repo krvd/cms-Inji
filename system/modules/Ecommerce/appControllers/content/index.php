@@ -19,6 +19,7 @@
               $bestItems = array_slice($bestItems, 0, 3);
           }
           $this->widget('Ecommerce\items/icons', ['items' => $bestItems]);
+          $this->widget('Ecommerce\items/table', ['items'=>$bestItems,'hide'=>true]);
           ?>
         </div>
       </div>
@@ -27,6 +28,7 @@
 
       $bestItems = App::$cur->ecommerce->getItems(['sort' => ['sales' => 'desc'], 'start' => 0, 'count' => 6]);
       $this->widget('Ecommerce\items/icons', ['items' => $bestItems]);
+      $this->widget('Ecommerce\items/table', ['items'=>$bestItems,'hide'=>true]);
       ?>
       <a class="ecommerce-showmore" href="/ecommerce/itemList">Показать больше товаров</a>
     </div>
