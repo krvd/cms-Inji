@@ -20,8 +20,7 @@ class Exchange1cController extends adminController
         $exchange = new \Exchange1c\Exchange();
         $exchange->type = $reExchange->type;
         $exchange->save();
-        $exchange->path = App::$primary->path . '/tmp/Exchange1c/' . date('Y-m-d') . '/' . $exchange->id;
-        Tools::createDir($exchange->path);
+        $exchange->path = $reExchange->path;
         $exchange->save();
 
         foreach ($reExchange->files as $reFile) {
