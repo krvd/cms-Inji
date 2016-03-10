@@ -38,7 +38,7 @@ class Slide extends \Model
         'manager' => [
             'name' => 'Слайды',
             'cols' => [
-                'name', 'link', 'date_create'
+                'image_file_id', 'name', 'link', 'date_create'
             ],
             'sortMode' => true
         ],

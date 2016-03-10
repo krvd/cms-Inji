@@ -20,9 +20,11 @@ class MoneyController extends Controller
             $transfer->user_id = \Users\User::$cur->id;
             $transfer->code = Tools::randomString();
             $transfer->save();
-            
+
             $wallets = $this->money->getUserWallets();
-            $wallets[$transfer->currency_id]->diff(-$transfer->amount, 'Перевод средств для ' . $transfer->toUser->name());
+            $text = 'Перевод средств для ' . $transfer->toUser->name();
+            $wallets[$transfer->currency_id]->diff(-$transfer->amount, $text);
+            \App::$cur->users->AddUserActivity($transfer->user_id, 4, $text . '<br />' . (float) $transfer->amount . ' ' . $wallets[$transfer->currency_id]->currency->acronym());
 
             $block = new Money\Wallet\Block();
             $block->wallet_id = $wallets[$transfer->currency_id]->id;
@@ -56,7 +58,9 @@ class MoneyController extends Controller
                 $block = Money\Wallet\Block::get('Money\Transfer:' . $transfer->id, 'data');
                 $block->delete();
                 $wallets = $this->money->getUserWallets($transfer->to_user_id);
-                $wallets[$transfer->currency_id]->diff($transfer->amount, 'Перевод средств от ' . $transfer->user->name());
+                $text = 'Перевод средств от ' . $transfer->user->name() . '.' . ($transfer->comment ? ' Комментарий:' . $transfer->comment : '');
+                $wallets[$transfer->currency_id]->diff($transfer->amount, $text);
+                \App::$cur->users->AddUserActivity($transfer->to_user_id, 4, $text . '<br />' . (float) $transfer->amount . ' ' . $wallets[$transfer->currency_id]->currency->acronym());
                 $transfer->save();
                 Tools::redirect('/users/cabinet', 'Перевод был успешно завершен', 'success');
             }
@@ -77,7 +81,9 @@ class MoneyController extends Controller
             $block->delete();
         }
         $wallets = $this->money->getUserWallets();
-        $wallets[$transfer->currency_id]->diff($transfer->amount, 'Отмена перевода средств');
+        $text = 'Отмена перевода средств';
+        $wallets[$transfer->currency_id]->diff($transfer->amount, $text);
+        \App::$cur->users->AddUserActivity($transfer->user_id, 4, $text . '<br />' . (float) $transfer->amount . ' ' . $wallets[$transfer->currency_id]->currency->acronym());
         $transfer->save();
         Tools::redirect('/users/cabinet', 'Перевод был успешно отменен', 'success');
     }

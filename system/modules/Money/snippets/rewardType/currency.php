@@ -88,7 +88,7 @@ if (!empty($wallets[$level->params['currency_id']->value])) {
     } else {
         $wallets[$level->params['currency_id']->value]->diff($amount, $text);
     }
-    \App::$cur->users->AddUserActivity($user->id, 4, $text);
+    \App::$cur->users->AddUserActivity($user->id, 4, $text . '<br />' . $amount.' '.$wallets[$level->params['currency_id']->value]->currency->acronym());
 }
 return $amount;
 }

@@ -99,11 +99,13 @@ class Input extends \Object
         return !empty($this->activeForm->form['userGroupReadonly'][\Users\User::$cur->group_id]) && in_array($this->colName, $this->activeForm->form['userGroupReadonly'][\Users\User::$cur->group_id]);
     }
 
-    public function validate($request)
+    public function validate(&$request)
     {
         if (empty($request[$this->colName]) && !empty($this->colParams['required'])) {
             throw new \Exception('Вы не заполнили: ' . $this->colLabel());
         }
+        //var_dump($this->colName,$this->colParams);
+        //exit();
         if (!empty($this->colParams['validator'])) {
             $modelName = $this->modelName;
             $validator = $modelName::validator($this->colParams['validator']);
