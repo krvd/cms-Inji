@@ -1,7 +1,7 @@
 <tr>		
   <td class="item-image">
     <a href="/ecommerce/view/<?= $item->id; ?>">
-      <img src="<?= Statics::file($item->image ? $item->image->path : '/static/system/images/no-image.png', '50x50', 'q'); ?>" class="img-responsive" style = 'margin:0 auto;'/>
+      <img src="<?= Statics::file($item->image ? $item->image->path : '/static/system/images/no-image.png', '50x50'); ?>" />
     </a>
   </td>
   <td class="item-name">
