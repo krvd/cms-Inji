@@ -8,8 +8,11 @@
           <?php $this->widget('Ecommerce\items/item-icon', ['item' => $item]); ?>
         </div>
         <?php
-        if (!( ++$i % 3)) {
-            echo '</div><div class="row">';
+        ++$i;
+        if (!( $i % 3)) {
+            echo '<div class="clearfix hidden-xs"></div>';
+        } else if (!( $i % 2)) {
+            echo '<div class="clearfix visible-xs"></div>';
         }
     }
     ?>
