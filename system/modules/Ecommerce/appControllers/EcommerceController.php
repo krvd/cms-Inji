@@ -99,7 +99,7 @@ class ecommerceController extends Controller
         if (empty($this->module->config['catalogPresentPage'])) {
             Tools::redirect('/ecommerce/itemList');
         }
-        $this->view->setTitle('Каталог');
+        //$this->view->setTitle('Каталог');
         $this->view->page();
     }
 
