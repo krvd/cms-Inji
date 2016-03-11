@@ -11,7 +11,8 @@
         ++$i;
         if (!( $i % 3)) {
             echo '<div class="clearfix hidden-xs"></div>';
-        } else if (!( $i % 2)) {
+        }
+        if (!( $i % 2)) {
             echo '<div class="clearfix visible-xs"></div>';
         }
     }
