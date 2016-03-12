@@ -60,6 +60,10 @@ class Recive extends \Model
                 'model' => '\Users\User',
                 'col' => 'user_id'
             ],
+            'form' => [
+                'model' => '\UserForms\Form',
+                'col' => 'form_id'
+            ],
         ];
     }
 
