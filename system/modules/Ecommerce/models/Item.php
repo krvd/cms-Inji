@@ -151,6 +151,11 @@ class Item extends \Model
                 'model' => 'Files\File',
                 'col' => 'image_file_id'
             ],
+            'images' => [
+                'type' => 'many',
+                'model' => 'Ecommerce\Item\Image',
+                'col' => 'item_id'
+            ],
             'user' => [
                 'model' => 'Users\User',
                 'col' => 'user_id'
