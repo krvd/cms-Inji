@@ -23,6 +23,7 @@ class Activity extends \Model
         'text' => ['type' => 'text'],
         'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
         'category_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'category'],
+        'date_create' => ['type' => 'dateTime'],
     ];
     public static $dataManagers = [
         'manager' => [

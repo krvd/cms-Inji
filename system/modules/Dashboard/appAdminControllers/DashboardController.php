@@ -22,6 +22,7 @@ class DashboardController extends adminController
         if (isset($_POST['site_name'])) {
             $config = \App::$primary->config;
             $config['site']['name'] = $_POST['site_name'];
+            $config['site']['company_name'] = $_POST['company_name'];
             $config['site']['email'] = $_POST['site_email'];
             $config['site']['keywords'] = $_POST['site_keywords'];
             $config['site']['description'] = $_POST['site_description'];

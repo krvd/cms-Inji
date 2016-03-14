@@ -96,7 +96,11 @@ class ecommerceController extends Controller
 
     public function indexAction()
     {
-        Tools::redirect('/ecommerce/itemList');
+        if (empty($this->module->config['catalogPresentPage'])) {
+            Tools::redirect('/ecommerce/itemList');
+        }
+        //$this->view->setTitle('Каталог');
+        $this->view->page();
     }
 
     public function itemListAction($category_id = 0)

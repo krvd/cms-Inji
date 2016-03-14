@@ -16,7 +16,8 @@ class Wallet extends \Model
     public static $cols = [
         'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
         'currency_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'currency'],
-        'amount' => ['type' => 'decimal']
+        'amount' => ['type' => 'decimal'],
+        'date_create' => ['type' => 'dateTime']
     ];
     public static $labels = [
         'user_id' => 'Пользователь',

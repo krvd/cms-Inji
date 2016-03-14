@@ -23,7 +23,8 @@ class Merchant extends \Model
         'refill' => ['type' => 'bool'],
         'pay' => ['type' => 'bool'],
         'config' => ['type' => 'dataManager', 'relation' => 'configs'],
-        'currency' => ['type' => 'dataManager', 'relation' => 'currencies']
+        'currency' => ['type' => 'dataManager', 'relation' => 'currencies'],
+        'date_create' => ['type' => 'dateTime']
     ];
     public static $labels = [
         'name' => 'Название',

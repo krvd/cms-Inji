@@ -21,9 +21,13 @@ class Log extends \Model
         'date_create' => 'Дата начала'
     ];
     public static $cols = [
+        'migration_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'migration'],
+        'migration_map_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'map'],
         'result' => ['type' => 'text'],
         'source' => ['type' => 'text'],
-        'date_create' => ['type' => 'text'],
+        'date_end' => ['type' => 'dateTime'],
+        'date_create' => ['type' => 'dateTime'],
+        //Менеджеры
         'event' => ['type' => 'dataManager', 'relation' => 'events']
     ];
     public static $dataManagers = [
@@ -48,6 +52,14 @@ class Log extends \Model
                 'type' => 'many',
                 'model' => 'Migrations\Log\Event',
                 'col' => 'log_id'
+            ],
+            'migration' => [
+                'col' => 'migration_id',
+                'model' => 'Migrations\Migration'
+            ],
+            'map' => [
+                'col' => 'migration_map_id',
+                'model' => 'Migrations\Migration\Map'
             ]
         ];
     }

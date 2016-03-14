@@ -267,7 +267,7 @@ class DataManager extends \Object
                         if (!$params['filters'][$col]['value']) {
                             continue;
                         }
-                        $queryParams['where'][] = [$col, implode(',', $params['filters'][$col]['value']), 'IN'];
+                        $queryParams['where'][] = [$col, $params['filters'][$col]['value'], 'IN'];
                         break;
                     case 'bool':
 
@@ -537,7 +537,7 @@ class DataManager extends \Object
                         if (!$params['filters'][$col]['value']) {
                             continue;
                         }
-                        $queryParams['where'][] = [$col, implode(',', $params['filters'][$col]['value']), 'IN'];
+                        $queryParams['where'][] = [$col, $params['filters'][$col]['value'], 'IN'];
                         break;
                     case 'bool':
 

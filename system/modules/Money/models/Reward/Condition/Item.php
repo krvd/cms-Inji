@@ -30,6 +30,15 @@ class Item extends \Model
         return $count;
     }
 
+    public static $cols = [
+        'reward_condition_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'condition'],
+        'type' => ['type' => 'text'],
+        'value' => ['type' => 'text'],
+        'reciver' => ['type' => 'text'],
+        'count' => ['type' => 'number'],
+        'expired' => ['type' => 'text'],
+    ];
+
     public function checkComplete($userId = 0)
     {
         return $this->count <= $this->recivedCount($userId);

@@ -19,11 +19,13 @@ class Transfer extends \Model
         'currency_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'currency'],
         'amount' => ['type' => 'decimal'],
         'code' => ['type' => 'text'],
+        'comment' => ['type' => 'textarea', 'validator' => 'commentClean'],
         'complete' => ['type' => 'bool'],
         'canceled' => ['type' => 'bool'],
     ];
     public static $labels = [
-        'amount' => 'Сумма'
+        'amount' => 'Сумма',
+        'comment' => 'Комментарий',
     ];
 
     public static function itemName($item)
@@ -74,7 +76,8 @@ class Transfer extends \Model
             ],
             'map' => [
                 ['userSearch'],
-                ['wallets', 'amount']
+                ['wallets', 'amount'],
+                ['comment']
             ]
         ]
     ];
@@ -124,6 +127,9 @@ class Transfer extends \Model
                     throw new \Exception('У вас недостаточно средств на кошельке');
                 }
                 return true;
+            },
+            'commentClean' => function($activeForm, &$request) {
+                $request['comment'] = trim(htmlspecialchars(urldecode($request['comment'])));
             }
         ];
     }

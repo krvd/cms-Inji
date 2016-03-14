@@ -17,7 +17,7 @@ class Tree extends \Object
         $count = 0;
         if (!$hrefFunc) {
             $hrefFunc = function($object) {
-                echo "<a href='#'> {$object->name()}</a>";
+                return "<a href='#'> {$object->name()}</a>";
             };
         }
         ?>
@@ -44,32 +44,32 @@ class Tree extends \Object
         $count = 0;
         $isset = false;
         $class = get_class($object);
+        $item = $hrefFunc ? $hrefFunc($object) : "<a href='#'> {$object->name()}</a> ";
+        $attributes = [];
+        
+        if (is_array($item)) {
+            $attributes = $item['attributes'];
+            $item = $item['text'];
+        }
+        if (!isset($attributes['id'])) {
+            $attributes['id'] = str_replace('\\', '_', get_class($object)) . "-{$object->pk()}";
+        }
         if (!$maxDeep || $deep < $maxDeep) {
             $items = $class::getList(['where' => ['parent_id', $object->pk()]]);
             $count += count($items);
             foreach ($items as $objectChild) {
                 if (!$isset) {
                     $isset = true;
-                    ?>
-                    <li id='<?= str_replace('\\', '_', get_class($object)) . "-{$object->pk()}"; ?>'>
-                      <?= $hrefFunc ? $hrefFunc($object) : "<a href='#'> {$object->name()}</a> "; ?>
-                      <ul>
-                        <?php
-                    }
-                    $count+=static::showLi($objectChild, $deep + 1, $maxDeep, $hrefFunc);
+                    echo \Html::el('li', $attributes, $item, true);
+                    echo '<ul>';
                 }
+                $count+=static::showLi($objectChild, $deep + 1, $maxDeep, $hrefFunc);
             }
-            if ($isset) {
-                ?>
-              </ul>
-            </li>
-            <?php
+        }
+        if ($isset) {
+            echo '</ul></li>';
         } else {
-            ?>
-            <li id='<?= str_replace('\\', '_', get_class($object)) . "-{$object->pk()}"; ?>'>
-              <?= $hrefFunc ? $hrefFunc($object) : "<a href='#'> {$object->name()}</a> "; ?>
-            </li>
-            <?php
+            echo \Html::el('li', $attributes, $item);
         }
         return $count;
     }

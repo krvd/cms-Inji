@@ -17,6 +17,8 @@ class Config extends \Model
     public static $cols = [
         'name' => ['type' => 'text'],
         'value' => ['type' => 'textarea'],
+        'merchant_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'merchant'],
+        'date_create' => ['type' => 'dateTime']
     ];
     public static $labels = [
         'name' => 'Название',

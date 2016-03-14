@@ -72,7 +72,7 @@ class Value extends \Migrations\Parser
                 $dir = pathinfo($this->reader->source, PATHINFO_DIRNAME);
                 if ($this->model->{$this->param->value}) {
                     $file = \Files\File::get($this->model->{$this->param->value});
-                    if ($file && $value && file_exists($dir . '/' . $value) && file_exists(App::$primary->path . $file->path) && md5_file($dir . '/' . $value) == md5_file(App::$primary->path . $file->path)) {
+                    if ($file && $value && file_exists($dir . '/' . $value) && file_exists(\App::$primary->path . $file->path) && md5_file($dir . '/' . $value) == md5_file(\App::$primary->path . $file->path)) {
                         $notEq = false;
                     }
                     if ($file && $notEq) {

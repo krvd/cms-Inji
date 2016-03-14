@@ -110,7 +110,7 @@ class CartController extends Controller
                 if (!$error && !empty($_POST['action']) && $_POST['action'] = 'order') {
                     $cart->user_id = $user->user_id;
                     $this->module->parseFields($_POST['userAdds']['fields'], $cart);
-                    if ($payTypes && !empty($payTypes[$cart->paytype_id])) {
+                    if ($payTypes && !empty($payTypes[$cart->paytype_id]) && !empty($_POST['deliveryFields'])) {
                         $this->module->parseDeliveryFields($_POST['deliveryFields'], $cart, $deliverys[$cart->delivery_id]->fields);
                     }
                     $cart->cart_status_id = 2;

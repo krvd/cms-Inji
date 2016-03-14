@@ -476,6 +476,7 @@ class Model
             case 'textarea':
             case 'json':
             case 'password':
+            case 'dynamicType':
                 $params = 'text NOT NULL';
                 break;
             case 'bool':

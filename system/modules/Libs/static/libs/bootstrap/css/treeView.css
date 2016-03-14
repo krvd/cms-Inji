@@ -51,7 +51,6 @@ div.treeview ul:first-child:before {
   margin:0;
   padding:0 1em;
   line-height:2em;
-  font-weight:700;
   position:relative
 }
 .treeview ul li:before {

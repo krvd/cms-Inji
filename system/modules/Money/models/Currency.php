@@ -32,6 +32,7 @@ class Currency extends \Model
         'transfer' => ['type' => 'bool'],
         'round_type' => ['type' => 'text'],
         'round_precision' => ['type' => 'number'],
+        'date_create' => ['type' => 'dateTime']
     ];
     public static $dataManagers = [
         'manager' => [

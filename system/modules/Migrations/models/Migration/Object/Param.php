@@ -22,7 +22,11 @@ class Param extends \Model
     public static $cols = [
         'code' => ['type' => 'text'],
         'type' => ['type' => 'text'],
+        'value' => ['type' => 'text'],
+        'options' => ['type' => 'textarea'],
         'object_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'object'],
+        'parent_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'parent'],
+        'date_create' => ['type' => 'dateTime'],
     ];
     public static $dataManagers = [
         'manager' => [
@@ -44,6 +48,10 @@ class Param extends \Model
             'object' => [
                 'model' => 'Migrations\Migration\Object',
                 'col' => 'object_id'
+            ],
+            'parent' => [
+                'model' => 'Migrations\Migration\Object\Param',
+                'col' => 'parent_id'
             ],
             'values' => [
                 'type' => 'many',

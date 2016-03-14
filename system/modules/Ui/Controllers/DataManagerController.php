@@ -143,6 +143,7 @@ class DataManagerController extends Controller
             $pages = $dataManager->getPages($request['params'], $request['model']);
             if ($pages) {
                 $pages->draw();
+                echo '<div style="background:#fff;">записей: <b>' . $pages->options['count'] . '</b>. страница <b>' . $pages->params['page'] . '</b> из <b>' . $pages->params['pages'] . '</b></div>';
             }
             $result->content['pages'] = ob_get_contents();
             ob_end_clean();

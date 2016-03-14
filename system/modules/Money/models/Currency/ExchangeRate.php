@@ -23,6 +23,7 @@ class ExchangeRate extends \Model
         'currency_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'currency'],
         'target_currency_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'targetCurrency'],
         'rate' => ['type' => 'text'],
+        'date_create' => ['type' => 'dateTime']
     ];
     public static $dataManagers = [
         'manager' => [

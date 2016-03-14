@@ -14,6 +14,11 @@ namespace Ecommerce\Item\Option;
 class Relation extends \Model
 {
     public static $objectName = 'Связь каталога и опций';
+    public static $labels = [
+        'category_id' => 'Категория',
+        'item_option_id' => 'Свойство',
+        'date_create' => 'Свойство',
+    ];
     public static $cols = [
         //Основные параметры
         'category_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'category'],
@@ -21,6 +26,20 @@ class Relation extends \Model
         //Системные
         'weight' => ['type' => 'number'],
         'date_create' => ['type' => 'dateTime']
+    ];
+    public static $forms = [
+        'manager' => [
+            'map' => [
+                ['category_id', 'item_option_id']
+            ]
+        ]
+    ];
+    public static $dataManagers = [
+        'manager' => [
+            'cols' => [
+                'item_option_id', 'date_create'
+            ]
+        ]
     ];
 
     public static function relations()

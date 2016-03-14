@@ -16,21 +16,28 @@ class Migration extends \Model
     public static $objectName = 'Миграция данных';
     public static $labels = [
         'name' => 'Название',
+        'alias' => 'Алиас',
+        'secret' => 'Секрет',
         'maps' => 'Карты данных'
     ];
     public static $cols = [
         'name' => ['type' => 'text'],
+        'alias' => ['type' => 'text'],
+        'secret' => ['type' => 'text'],
+        'date_create' => ['type' => 'dateTime'],
+        //Менеджеры
         'maps' => ['type' => 'dataManager', 'relation' => 'maps']
     ];
     public static $dataManagers = [
         'manager' => [
-            'cols' => ['name', 'maps']
+            'cols' => ['name', 'maps', 'date_create']
         ]
     ];
     public static $forms = [
         'manager' => [
             'map' => [
-                ['name'],
+                ['name', 'alias'],
+                ['secret'],
                 ['maps']
             ]
         ]

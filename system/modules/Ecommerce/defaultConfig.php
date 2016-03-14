@@ -9,5 +9,6 @@ return [
     'defaultCategoryView' => 'itemList',
     'defaultCurrency' => 1,
     'defaultSort' => ['name' => 'asc'],
-    'orderPrefix' => ''
+    'orderPrefix' => '',
+    'catalogPresentPage' => false
 ];

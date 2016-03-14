@@ -1,5 +1,16 @@
 <?php
 
 return [
-    'name' => 'Слайдеры'
+    'name' => 'Слайдеры',
+    'requires' => [
+        'Files'
+    ],
+    'menu' => [
+        'appAdmin' => [
+            [
+                'name' => 'Слайдеры',
+                'href' => '/admin/Sliders/Slider',
+            ]
+        ]
+    ]
 ];

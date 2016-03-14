@@ -21,8 +21,9 @@ class Object extends \Model
     public static $cols = [
         'name' => ['type' => 'text'],
         'code' => ['type' => 'text'],
-        'type' => ['type' => 'text'],
+        'model' => ['type' => 'text'],
         'migration_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'migration'],
+        'date_create' => ['type' => 'dateTime'],
     ];
     public static $dataManagers = [
         'manager' => [

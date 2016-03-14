@@ -297,7 +297,7 @@ class Users extends Module
         ]);
         $info->save();
         if (isset($inviter)) {
-            $this->AddUserActivity($inviter, 2, "По вашей ссылке зарегистрировался новый партнер, {$info->first_name} {$info->last_name} (id: {$user->id})");
+            $this->AddUserActivity($inviter, 2, "У вас зарегистрировался новый партнер, {$info->first_name} {$info->last_name} (id: {$user->id}, email: {$user->mail})");
         }
         if ($autorization) {
             $this->autorization($user_mail, $pass, 'mail');

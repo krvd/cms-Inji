@@ -2,6 +2,9 @@
 
 return [
     'name' => 'Финансы',
+    'requireds' => [
+        'Files'
+    ],
     'menu' => [
         'appAdmin' => [
             [

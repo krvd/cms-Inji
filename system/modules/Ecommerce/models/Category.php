@@ -32,7 +32,7 @@ class Category extends \Model
         'tree_path' => ['type' => 'text'],
         'date_create' => ['type' => 'dateTime'],
         //Менеджеры
-        'options' => ['type' => 'dynamicList', 'relation' => 'options'],
+        'options' => ['type' => 'dataManager', 'relation' => 'options'],
     ];
     public static $labels = [
         'name' => 'Название',
@@ -49,8 +49,8 @@ class Category extends \Model
                 ['name', 'alias'],
                 ['parent_id', 'image_file_id'],
                 ['viewer', 'template'],
-                //['options_inherit'],
-                //['options'],
+                ['options_inherit'],
+                ['options'],
                 ['description']
             ]
         ]

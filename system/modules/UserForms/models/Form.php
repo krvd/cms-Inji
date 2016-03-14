@@ -25,13 +25,15 @@ class Form extends \Model
         'name' => ['type' => 'text'],
         'description' => ['type' => 'html'],
         'user_id' => [ 'type' => 'select', 'source' => 'relation', 'relation' => 'user'],
-        'inputs' => [ 'type' => 'dataManager', 'relation' => 'inputs'],
         'date_create' => ['type' => 'dateTime'],
+        //Менеджеры
+        'inputs' => [ 'type' => 'dataManager', 'relation' => 'inputs'],
     ];
     public static $dataManagers = [
         'manager' => [
             'cols' => [
                 'name',
+                'inputs',
                 'user_id',
                 'date_create',
             ]

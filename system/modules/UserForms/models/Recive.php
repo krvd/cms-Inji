@@ -24,6 +24,7 @@ class Recive extends \Model
     ];
     public static $cols = [
         'form_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'form'],
+        'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
         'data' => [
             'type' => 'json',
             'view' => [
@@ -55,6 +56,10 @@ class Recive extends \Model
     public static function relations()
     {
         return [
+            'user' => [
+                'model' => '\Users\User',
+                'col' => 'user_id'
+            ],
             'form' => [
                 'model' => '\UserForms\Form',
                 'col' => 'form_id'

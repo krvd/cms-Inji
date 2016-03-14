@@ -17,7 +17,7 @@ date_default_timezone_set('Asia/Krasnoyarsk');
 define('INJI_TIME_START', microtime(true));
 // system files dir
 define('INJI_SYSTEM_DIR', __DIR__ . '/system');
-// sites files dir
+// apps files dir
 define('INJI_PROGRAM_DIR', __DIR__ . '/program');
 
 // check base config
