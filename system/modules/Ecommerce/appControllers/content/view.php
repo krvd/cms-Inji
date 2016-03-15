@@ -8,7 +8,7 @@
       </div>
     </div>
     <div class="col-md-9">
-      <div class="detail_item">
+      <div class="detail_item content">
         <div class="row">
           <div class="col-sm-5">
             <img src="<?= Statics::file($item->image ? $item->image->path : '/static/system/images/no-image.png', '350x800'); ?>" class="img-responsive"/>

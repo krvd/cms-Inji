@@ -1,3 +1,3 @@
-<?php
-
-echo $text;
+<div class="content">
+  <?= $text; ?>
+</div>

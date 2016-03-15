@@ -1,4 +1,4 @@
-<div class ="materials-material">
+<div class ="materials-material content">
   <h2 class="material-name"><?= $material->name; ?></h2>
   <div class="material-text">
     <?= Ui\FastEdit::block($material, 'text', null, true); ?>
