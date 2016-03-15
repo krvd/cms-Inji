@@ -7,16 +7,24 @@ if (empty($code)) {
     $code = 'main';
 }
 $menu = \Menu\Menu::get($code, 'code');
-if ($menu)
-    foreach ($menu->items(['order' => ['weight', 'ASC']]) as $item) {
-        $href = $item->href;
-        if ($item->type == 'materialCategory') {
-            $category = \Materials\Category::get($item->aditional);
-            $href = $category->alias ? "/materials/{$category->alias}" : "/materials/category/{$category->id}";
-        }
-        if (urldecode($_SERVER['REQUEST_URI']) == $href)
+if ($menu) {
+    foreach ($menu->items(['where' => ['parent_id', 0], 'order' => ['weight', 'asc']]) as $item) {
+        if (urldecode($_SERVER['REQUEST_URI']) == $item->href)
             $active = ' class = "active" ';
         else
             $active = '';
-        echo "<li {$active}><a href = '{$href}'>{$item->name}</a></li>";
+        echo "<li {$active}><a href = '{$item->href}'>{$item->name}</a>";
+        if ($item->childs(['order' => ['weight', 'asc']])) {
+            echo "<ul>";
+            foreach ($item->childs as $item) {
+                if (urldecode($_SERVER['REQUEST_URI']) == $item->href)
+                    $active = ' class = "active" ';
+                else
+                    $active = '';
+                echo "<li {$active}><a href = '{$item->href}'>{$item->name}</a>";
+            }
+            echo "</ul>";
+        }
+        echo "</li>";
     }
+}
