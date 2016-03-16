@@ -75,16 +75,7 @@ class MoneyController extends Controller
         if (!$transfer || $transfer->user_id != \Users\User::$cur->id || $transfer->complete || $transfer->canceled) {
             Tools::redirect('/', 'Такой перевод не найден');
         }
-        $transfer->canceled = 1;
-        $block = Money\Wallet\Block::get('Money\Transfer:' . $transfer->id, 'data');
-        if ($block) {
-            $block->delete();
-        }
-        $wallets = $this->money->getUserWallets();
-        $text = 'Отмена перевода средств';
-        $wallets[$transfer->currency_id]->diff($transfer->amount, $text);
-        \App::$cur->users->AddUserActivity($transfer->user_id, 4, $text . '<br />' . (float) $transfer->amount . ' ' . $wallets[$transfer->currency_id]->currency->acronym());
-        $transfer->save();
+        $transfer->cancel();
         Tools::redirect('/users/cabinet', 'Перевод был успешно отменен', 'success');
     }
 

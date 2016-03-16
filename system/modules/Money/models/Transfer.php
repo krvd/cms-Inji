@@ -22,10 +22,18 @@ class Transfer extends \Model
         'comment' => ['type' => 'textarea', 'validator' => 'commentClean'],
         'complete' => ['type' => 'bool'],
         'canceled' => ['type' => 'bool'],
+        'date_create' => ['type' => 'dateTime'],
     ];
     public static $labels = [
+        'user_id' => 'От кого',
+        'to_user_id' => 'Кому',
+        'currency_id' => 'Валюта',
         'amount' => 'Сумма',
+        'code' => 'Код подтверждения',
         'comment' => 'Комментарий',
+        'complete' => 'Завершен',
+        'canceled' => 'Отменен',
+        'date_create' => 'Дата создания',
     ];
 
     public static function itemName($item)
@@ -33,6 +41,26 @@ class Transfer extends \Model
         return $item->pk() . '. ' . $item->name();
     }
 
+    public static $dataManagers = [
+        'manager' => [
+            'preSort' => [
+                'date_create' => 'desc'
+            ],
+            'name' => 'Переводы',
+            'cols' => [
+                'user_id', 'to_user_id', 'currency_id', 'amount', 'comment', 'complete', 'canceled','date_create'
+            ],
+            'actions' => [
+                'Money\CancelTransfer', 'Money\CompleteTransfer'
+            ],
+            'sortable' => [
+                'user_id', 'to_user_id', 'currency_id', 'amount', 'comment', 'complete', 'canceled','date_create'
+            ],
+            'filters' => [
+                'user_id', 'to_user_id', 'currency_id', 'amount', 'comment', 'complete', 'canceled','date_create'
+            ]
+        ]
+    ];
     public static $forms = [
         'transfer' => [
             'name' => 'Перевод средств',
@@ -155,6 +183,44 @@ class Transfer extends \Model
     public function name()
     {
         return 'Перевод на сумму ' . $this->amount . ' ' . $this->currency->name . ' от ' . $this->user->name() . ' для ' . $this->toUser->name();
+    }
+
+    public function cancel()
+    {
+        if ($this->canceled || $this->complete) {
+            return false;
+        }
+
+        $this->canceled = 1;
+        $block = \Money\Wallet\Block::get('Money\Transfer:' . $this->id, 'data');
+        if ($block) {
+            $block->delete();
+        }
+        $wallets = \App::$cur->money->getUserWallets($this->user_id);
+        $text = 'Отмена перевода средств';
+        $wallets[$this->currency_id]->diff($this->amount, $text);
+        \App::$cur->users->AddUserActivity($this->user_id, 4, $text . '<br />' . (float) $this->amount . ' ' . $wallets[$this->currency_id]->currency->acronym());
+        $this->save();
+        return true;
+    }
+
+    public function complete()
+    {
+        if ($this->canceled || $this->complete) {
+            return false;
+        }
+
+        $this->complete = 1;
+        $block = \Money\Wallet\Block::get('Money\Transfer:' . $this->id, 'data');
+        if ($block) {
+            $block->delete();
+        }
+        $wallets = \App::$cur->money->getUserWallets($this->to_user_id);
+        $text = 'Перевод средств от ' . $this->user->name() . '.' . ($this->comment ? ' Комментарий:' . $this->comment : '');
+        $wallets[$this->currency_id]->diff($this->amount, $text);
+        \App::$cur->users->AddUserActivity($this->to_user_id, 4, $text . '<br />' . (float) $this->amount . ' ' . $wallets[$this->currency_id]->currency->acronym());
+        $this->save();
+        return true;
     }
 
 }
