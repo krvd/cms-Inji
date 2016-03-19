@@ -38,6 +38,30 @@ class Item extends \Model
         'count' => ['type' => 'number'],
         'expired' => ['type' => 'text'],
     ];
+    public static $labels = [
+        'reward_condition_id' => 'Условие',
+        'type' => 'Тип',
+        'value' => 'Значение',
+        'reciver' => 'Обработчик',
+        'count' => 'Необходимое кол-во',
+        'expired' => 'Срок жизни',
+    ];
+    public static $dataManagers = [
+        'manager' => [
+            'name' => 'Условия',
+            'cols' => ['type', 'value', 'reciver', 'count', 'expired']
+        ]
+    ];
+    public static $forms = [
+        'manager' => [
+            'name' => 'Условие',
+            'map' => [
+                ['type', 'value'],
+                ['count', 'expired'],
+                ['reciver', 'reward_condition_id'],
+            ]
+        ]
+    ];
 
     public function checkComplete($userId = 0)
     {

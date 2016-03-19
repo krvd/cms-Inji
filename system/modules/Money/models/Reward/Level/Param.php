@@ -18,6 +18,17 @@ class Param extends \Model
         'param' => ['type' => 'text'],
         'value' => ['type' => 'text'],
     ];
+    public static $labels = [
+        'reward_level_id' => 'Уровень',
+        'param' => 'Параметр',
+        'value' => 'Значение',
+    ];
+    public static $dataManagers = [
+        'manager' => [
+            'name' => 'Параметры',
+            'cols' => ['param', 'value']
+        ]
+    ];
 
     public static function relations()
     {

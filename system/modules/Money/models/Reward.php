@@ -23,6 +23,41 @@ class Reward extends \Model
         'round_precision' => ['type' => 'number'],
         'peruser' => ['type' => 'number'],
         'quantity' => ['type' => 'number'],
+        'condition' => ['type' => 'dataManager', 'relation' => 'conditions'],
+        'level' => ['type' => 'dataManager', 'relation' => 'levels']
+    ];
+    public static $labels = [
+        'name' => 'Название',
+        'active' => 'Активно',
+        'lasthaveall' => 'Все излишки на последнего',
+        'block' => 'Блокировка в случае не исполнения условий',
+        'block_date_expired' => 'Срок блокировки',
+        'round_type' => 'Тип округления',
+        'round_precision' => 'Число после запятой',
+        'peruser' => 'Лимит для одного',
+        'quantity' => 'Лимит всего',
+        'condition' => 'Условие',
+        'level' => 'Уровни',
+    ];
+    public static $dataManagers = [
+        'manager' => [
+            'name' => 'Вознаграждения',
+            'cols' => [
+                'name', 'condition', 'level', 'active', 'lasthaveall', 'block', 'block_date_expired', 'round_type', 'round_precision', 'peruser', 'quantity'
+            ]
+        ]
+    ];
+    public static $forms = [
+        'manager' => [
+            'name' => 'Вознаграждение',
+            'map' => [
+                ['name'],
+                ['active', 'lasthaveall'],
+                ['block', 'block_date_expired'],
+                ['round_type', 'round_precision'],
+                ['peruser', 'quantity']
+            ]
+        ]
     ];
 
     public function checkBlocked()
@@ -67,9 +102,9 @@ class Reward extends \Model
                 'col' => 'reward_id'
             ],
             'conditions' => [
-                'type' => 'many',
+                'type' => 'relModel',
                 'model' => 'Money\Reward\Condition',
-                'col' => 'reward_id'
+                'relModel'=>'Money\Reward\ConditionRewardLnk'
             ]
         ];
     }

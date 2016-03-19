@@ -17,6 +17,31 @@ class Level extends \Model
         'reward_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'reward'],
         'level' => ['type' => 'number'],
         'type' => ['type' => 'text'],
+        'param' => ['type' => 'dataManager', 'relation' => 'params'],
+        'nocondition' => ['type' => 'bool']
+    ];
+    public static $labels = [
+        'reward_id' => 'Вознаграждение',
+        'level' => 'Уровень',
+        'type' => 'Тип',
+        'param' => 'Параметры',
+        'nocondition' => 'Не требуется выполнение условий',
+    ];
+    public static $dataManagers = [
+        'manager' => [
+            'name' => 'Уровни',
+            'cols' => ['level', 'type', 'nocondition', 'param']
+        ]
+    ];
+    public static $forms = [
+        'manager' => [
+            'name' => 'Уровень',
+            'map' => [
+                ['level', 'reward_id'],
+                ['type', 'nocondition'],
+                ['param']
+            ]
+        ]
     ];
 
     public static function relations()
@@ -25,10 +50,6 @@ class Level extends \Model
             'reward' => [
                 'model' => 'Money\Reward',
                 'col' => 'reward_id'
-            ],
-            'currency' => [
-                'model' => 'Money\Currency',
-                'col' => 'currency_id'
             ],
             'params' => [
                 'type' => 'many',

@@ -166,7 +166,7 @@ class Money extends Module
         $rootUser = $rootUser ? $rootUser : \Users\User::$cur;
         $reward = \Money\Reward::get($reward_id);
         $reward->checkBlocked();
-        $reward_count = \Money\Reward\Recive::getCount([ 'where' => [ 'reward_id', $reward_id ]]);
+        $reward_count = \Money\Reward\Recive::getCount([ 'where' => [ 'reward_id', $reward_id]]);
         if ($reward_count >= $reward->quantity && $reward->quantity)
             return false;
         $types = $this->getSnippets('rewardType');
@@ -194,14 +194,16 @@ class Money extends Module
                 }
             }
             $rewardGet = true;
-            foreach ($reward->conditions as $condition) {
-                if (!$condition->checkComplete($user->id)) {
-                    $rewardGet = false;
-                    break;
+            if (!$level->nocondition) {
+                foreach ($reward->conditions as $condition) {
+                    if (!$condition->checkComplete($user->id)) {
+                        $rewardGet = false;
+                        break;
+                    }
                 }
-            }
-            if (!$rewardGet && !$reward->block) {
-                continue;
+                if (!$rewardGet && !$reward->block) {
+                    continue;
+                }
             }
             $recive = new \Money\Reward\Recive();
             $recive->reward_id = $reward->id;
