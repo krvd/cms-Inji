@@ -154,8 +154,10 @@ class Money extends Module
             $recivers = $this->getSnippets('rewardConditionItemReciver');
             if (!empty($recivers[$item->reciver])) {
                 $recivers[$item->reciver]['reciver']($event['eventObject'], $item);
-                if ($item->condition->reward->block) {
-                    $item->condition->reward->checkBlocked();
+                foreach ($item->condition->rewards as $reward) {
+                    if ($reward->block) {
+                        $reward->checkBlocked();
+                    }
                 }
             }
         }

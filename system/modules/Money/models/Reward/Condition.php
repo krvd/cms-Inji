@@ -57,9 +57,10 @@ class Condition extends \Model
     public static function relations()
     {
         return [
-            'reward' => [
+            'rewards' => [
+                'type' => 'relModel',
+                'relModel'=>'Money\Reward\ConditionRewardLnk',
                 'model' => 'Money\Reward',
-                'col' => 'reward_id'
             ],
             'items' => [
                 'type' => 'many',
