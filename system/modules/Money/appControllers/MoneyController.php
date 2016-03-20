@@ -175,7 +175,7 @@ class MoneyController extends Controller
             $sum = $pay->sum;
         }
         if ($sum > $wallet->amount) {
-            Tools::redirect('/money/merchants/pay/' . $pay->id, 'На вашем счете недостаточно средств');
+            Tools::redirect('/money/merchants/pay/' . $pay->id, 'На вашем счете недостаточно средств', 'danger');
         }
         $wallet->diff(-$sum, 'Оплата счета №' . $payId);
         $statuses = \Money\Pay\Status::getList(['key' => 'code']);
