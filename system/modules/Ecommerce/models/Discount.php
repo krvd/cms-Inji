@@ -17,7 +17,7 @@ class Discount extends \Model
     public static $cols = [
         'name' => ['type' => 'text'],
         'type' => ['type' => 'select', 'source' => 'array', 'sourceArray' => ['sum' => 'Сумма', 'procent' => 'Процент']],
-        'amount' => ['type' => 'text'],
+        'amount' => ['type' => 'decimal'],
         'condition' => ['type' => 'json'],
         //Системные параметры
         'date_create' => ['type' => 'dateTime'],

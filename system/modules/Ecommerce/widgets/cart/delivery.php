@@ -4,7 +4,7 @@
       <?php
       $hiddenId = Tools::randomString();
       foreach ($deliverys as $delivery) {
-          if ((!empty($_POST['delivery']) && $_POST['delivery'] == $delivery->id) || $delivery->id == $cartDelivery->id) {
+          if ((!empty($_POST['delivery']) && $_POST['delivery'] == $delivery->id) || ($cart->delivery && $delivery->id == $cart->delivery->id)) {
               $checked = 'checked';
           } else {
               $checked = '';
@@ -14,7 +14,7 @@
           echo '</a></li>';
       }
       $form->input('hidden', "delivery", '', [
-          'value' => $cartDelivery->id,
+          'value' => $cart->delivery_id,
           'attributes' => [
               'id' => $hiddenId
           ],
@@ -23,21 +23,25 @@
     </ul>
   </div>
   <div class="col-md-8">
-    <h4>Информация о доставке</h4>
     <?php
-    $delivery = $cartDelivery;
-    if ($delivery->price_text || $delivery->price) {
-        echo "<div>Стоимость доставки: <b>" . ($delivery->price_text ? $delivery->price_text : ( $delivery->price . ' ' . ($delivery->currency ? $delivery->currency->acronym() : 'руб.') )) . '</b></div>';
-    }
-    if ((float) $delivery->max_cart_price) {
-        echo '<div>При заказе товаров на сумму от ' . $delivery->max_cart_price . ' руб - бесплатно</div>';
-    }
-    echo $delivery->info;
-    if($delivery->fields) {
-        echo '<hr \>';
-        foreach ($delivery->fields as $field) {
-            $form->input($field->type, "deliveryFields[{$field->id}]", $field->name, ['required' => $field->required]);
+    if ($cart->delivery) {
+        echo "<h4>Информация о доставке</h4>";
+        if ($cart->delivery->price_text || $cart->delivery->price) {
+            echo "<div>Стоимость доставки: <b>" . ($cart->delivery->price_text ? $cart->delivery->price_text : ( $cart->delivery->price . ' ' . ($cart->delivery->currency ? $cart->delivery->currency->acronym() : 'руб.') )) . '</b></div>';
         }
+        if ((float) $cart->delivery->max_cart_price) {
+            echo '<div>При заказе товаров на сумму от ' . $cart->delivery->max_cart_price . ' руб - бесплатно</div>';
+        }
+        echo $cart->delivery->info;
+        if ($cart->delivery->fields) {
+            echo '<hr \>';
+            foreach ($cart->delivery->fields as $field) {
+                $form->input($field->type, "deliveryFields[{$field->id}]", $field->name, ['required' => $field->required]);
+            }
+        }
+    }
+    else {
+        echo "<h4>Выберите способ доставки</h4>";
     }
     ?>
   </div>

@@ -4,24 +4,8 @@ return [
     'name' => 'Онлайн оплата',
     'handler' => function($cart) {
         if (\App::$cur->money) {
-            $sums = [];
-            foreach ($cart->cartItems as $cartItem) {
-                $currency_id = $cartItem->price->currency ? $cartItem->price->currency->id : \App::$cur->ecommerce->config['defaultCurrency'];
-                if (empty($sums[$currency_id])) {
-                    $sums[$currency_id] = $cartItem->final_price * $cartItem->count;
-                } else {
-                    $sums[$currency_id] += $cartItem->final_price * $cartItem->count;
-                }
-            }
-            if ($cart->delivery && $cart->delivery->price) {
-                $currency_id = $cart->delivery->currency_id;
-                if (empty($sums[$currency_id])) {
-                    $sums[$currency_id] = $cart->delivery->price;
-                } else {
-                    $sums[$currency_id] += $cart->delivery->price;
-                }
-            }
-            foreach ($sums as $currency_id => $sum) {
+            $sums = $cart->finalSum();
+            foreach ($sums->sums as $currency_id => $sum) {
                 if (!$currency_id) {
                     continue;
                 }
@@ -48,7 +32,7 @@ return [
                     $pay->save();
                 }
             }
-            return ['/money/merchants/pay/?data=' . $cart->id, 'Ваш заказ был создан. Вам необходимо оплатить счета, после чего с вами свяжется администратор для уточнения дополнительной информации'];
+            return ['/money/merchants/pay/?data=' . $cart->id, 'Ваш заказ был создан. Вам необходимо оплатить счета, после чего с вами свяжется администратор для уточнения дополнительной информации', 'success'];
         }
     }
         ];

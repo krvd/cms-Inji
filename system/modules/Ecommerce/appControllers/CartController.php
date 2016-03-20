@@ -68,7 +68,7 @@ class CartController extends Controller
                 }
                 if ($deliverys && empty($deliverys[$_POST['delivery']])) {
                     $error = 1;
-                    Msg::add('Ошибка при выборе способа доставки');
+                    Msg::add('Выберите способ доставки');
                 } elseif ($deliverys && !empty($deliverys[$_POST['delivery']])) {
                     $cart->delivery_id = $_POST['delivery'];
                     foreach ($deliverys[$cart->delivery_id]->fields as $field) {
@@ -80,7 +80,7 @@ class CartController extends Controller
                 }
                 if ($payTypes && empty($payTypes[$_POST['payType']])) {
                     $error = 1;
-                    Msg::add('Ошибка при выборе способа оплаты');
+                    Msg::add('Выберите способ оплаты');
                 } elseif ($payTypes && !empty($payTypes[$_POST['payType']])) {
                     $payType = $payTypes[$_POST['payType']];
                     $cart->paytype_id = $payType->id;
@@ -103,10 +103,9 @@ class CartController extends Controller
                         Msg::add('Это не ваша карта');
                     } else {
                         $cart->card_item_id = $userCard->id;
-                        $cart->save();
                     }
                 }
-
+                $cart->save();
                 if (!$error && !empty($_POST['action']) && $_POST['action'] = 'order') {
                     $cart->user_id = $user->user_id;
                     $this->module->parseFields($_POST['userAdds']['fields'], $cart);
@@ -126,6 +125,7 @@ class CartController extends Controller
                         $cartItem->final_price = $cartItem->price->price - $cartItem->discount;
                         $cartItem->save();
                     }
+                    $cart = \Ecommerce\Cart::get($cart->id);
                     if (!empty(\App::$cur->ecommerce->config['notify_mail'])) {
                         $text = 'Перейдите в админ панель чтобы просмотреть новый заказ <a href = "http://' . idn_to_utf8(INJI_DOMAIN_NAME) . '/admin/ecommerce/Cart">Админ панель</a>';
                         $title = 'Новый заказ в интернет магазине на сайте ' . idn_to_utf8(INJI_DOMAIN_NAME);
@@ -226,7 +226,7 @@ class CartController extends Controller
         }
         $newCart = $this->ecommerce->getCurCart();
         foreach ($cart->cartItems as $cartitem) {
-            $newCart->addItem($cartitem->item_id, $cartitem->item_offer_price_id, $cartitem->count);
+            $newCart->addItem($cartitem->item_offer_price_id, $cartitem->count);
         }
 
         $newCart->save();
@@ -284,6 +284,7 @@ class CartController extends Controller
             $count = (float) $_GET['count'];
 
         $cart = $this->ecommerce->getCurCart();
+        $stages = Ecommerce\Cart\Stage::getList();
 
         if (empty($this->module->config['sell_over_warehouse']) && $price->offer->warehouseCount() < $count) {
             $result->success = false;
@@ -301,7 +302,7 @@ class CartController extends Controller
             }
         }
         if (!$isset) {
-            $cart->addItem($item->id, $price->id, $count);
+            $cart->addItem($price->id, $count);
         }
         $cart->calc();
         $result->successMsg = '<a href="/ecommerce/view/' . $item->id . '">' . $item->name() . ($price->offer->name() ? ' (' . $price->offer->name() . ')' : '') . '</a> добавлен <a href="/ecommerce/cart">в корзину покупок</a>!';
