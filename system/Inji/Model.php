@@ -1608,20 +1608,17 @@ class Model
      */
     public function addRelation($relName, $objectId)
     {
-        $relations = $this->relations();
-        if (isset($relations[$relName])) {
-            $relation = $relations[$relName];
-            App::$cur->db->where($relation['relTablePrefix'] . $this->index(), $this->pk());
-            App::$cur->db->where($relation['relTablePrefix'] . $relation['model']::index(), $objectId);
-            $isset = App::$cur->db->select($relation['relTable'])->fetch_assoc();
-            if ($isset)
-                return true;
-
-            App::$cur->db->insert($relation['relTable'], [
-                $relation['relTablePrefix'] . $this->index() => $this->{$this->index()},
-                $relation['relTablePrefix'] . $relation['model']::index() => $objectId
-            ]);
-            return true;
+        $relation = $this->getRelation($relName);
+        if ($relation) {
+            $rel = $relation['relModel']::get([[$relation['model']::index(), $objectId], [$this->index(), $this->pk()]]);
+            if (!$rel) {
+                $rel = new $relation['relModel']([
+                    $relation['model']::index() => $objectId,
+                    $this->index() => $this->pk()
+                ]);
+                $rel->save();
+            }
+            return $rel;
         }
         return false;
     }
