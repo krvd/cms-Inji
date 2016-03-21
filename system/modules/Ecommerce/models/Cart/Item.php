@@ -68,26 +68,33 @@ class Item extends \Model
         } elseif ($block) {
             $block->delete();
         }
-        $this->cart->save();
+        $this->cart->checkStage();
     }
 
     public function afterDelete()
     {
         $event = new Event(['cart_id' => $this->cart_id, 'user_id' => \Users\User::$cur->id, 'cart_event_type_id' => 2, 'info' => $this->item_offer_price_id]);
         $event->save();
-        $block = \Ecommerce\Warehouse\Block::get([['cart_id', $this->cart->id], ['item_offer_id', $this->price->item_offer_id]]);
-        if ($block) {
-            $block->delete();
-        }
-        $this->cart->save();
+        \Ecommerce\Warehouse\Block::deleteList([['cart_id', $this->cart->id], ['item_offer_id', $this->price->item_offer_id]]);
+        $this->cart->checkStage();
     }
 
     public function discount()
     {
-        if ($this->cart->card && $this->price->offer->item->type && $this->price->offer->item->type->discount) {
-            return round($this->price->price * $this->cart->card->level->discount->amount, 2);
+        $discountSum = 0;
+        if ($this->item->type && $this->item->type->discount) {
+            foreach ($this->cart->discounts as $discount) {
+                switch ($discount->type) {
+                    case 'procent':
+                        $discountSum += round($this->price->price * ($discount->amount / 100), 2);
+                        break;
+                    case 'amount':
+                        $discountSum += round($this->price->price + $discount->amount, 2);
+                        break;
+                }
+            }
         }
-        return 0;
+        return $discountSum;
     }
 
     public static $labels = [
@@ -100,7 +107,7 @@ class Item extends \Model
     public static $cols = [
         //Основные параметры
         'cart_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'cart'],
-        'count' => ['type' => 'text'],
+        'count' => ['type' => 'decimal'],
         'item_offer_price_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'price', 'showCol' => 'price'],
         'item_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'item'],
         'final_price' => ['type' => 'decimal'],

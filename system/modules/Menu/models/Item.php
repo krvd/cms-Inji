@@ -54,7 +54,8 @@ class Item extends \Model
         'href' => ['type' => 'text'],
         'tooltip' => ['type' => 'text'],
         'weight' => ['type' => 'number'],
-        'Menu_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'menu', 'showCol' => 'name'],
+        'Menu_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'menu'],
+        'parent_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'parent'],
     ];
     public static $dataManagers = [
         'manager' => [
@@ -63,6 +64,7 @@ class Item extends \Model
                 'name',
                 'tooltip',
                 'href',
+                'parent_id',
                 'Menu_id'
             ],
             'sortMode' => true
@@ -74,7 +76,7 @@ class Item extends \Model
                 ['aditional'],
                 ['type', 'Menu_id'],
                 ['name', 'href'],
-                ['tooltip']
+                ['parent_id', 'tooltip']
             ]
         ]
     ];
@@ -85,6 +87,15 @@ class Item extends \Model
             'menu' => [
                 'model' => 'Menu\Menu',
                 'col' => 'Menu_id'
+            ],
+            'childs' => [
+                'type' => 'many',
+                'model' => 'Menu\Item',
+                'col' => 'parent_id'
+            ],
+            'parent' => [
+                'model' => 'Menu\Item',
+                'col' => 'parent_id'
             ]
         ];
     }

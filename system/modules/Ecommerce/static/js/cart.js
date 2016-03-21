@@ -10,7 +10,8 @@ inji.Ecommerce = {
           itemOfferPriceId: itemOfferPriceId,
           count: count,
         },
-        success: function () {
+        success: function (data) {
+          console.log(data);
           inji.Server.request({
             url: 'ecommerce/cart/getCart',
             success: function (data) {

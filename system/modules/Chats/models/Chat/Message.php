@@ -18,6 +18,7 @@ class Message extends \Model
         'text' => ['type' => 'textarea'],
         'parent_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'parent'],
         'chat_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'chat'],
+        'delete' => ['type' => 'bool']
     ];
 
     public static function relations()

@@ -28,4 +28,29 @@ class MoneyController extends adminController
         $result->send();
     }
 
+    public function cancelTransferAction($transferId)
+    {
+        $transfer = Money\Transfer::get($transferId);
+        $result = new Server\Result();
+
+        $result->success = $transfer->cancel();
+
+        $result->successMsg = 'Перевод был отменен';
+        $result->content = 'Не удалось отменить перевод';
+        $result->send();
+    }
+
+    public function completeTransferAction($transferId)
+    {
+        $transfer = Money\Transfer::get($transferId);
+
+        $result = new Server\Result();
+
+        $result->success = $transfer->complete();
+
+        $result->successMsg = 'Перевод был завершен';
+        $result->content = 'Не удалось завершить перевод';
+        $result->send();
+    }
+
 }

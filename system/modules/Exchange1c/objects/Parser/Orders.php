@@ -151,7 +151,7 @@ class Orders extends \Object
         }
         if ($cItems) {
             foreach ($cItems as $cItem) {
-                $cart->addItem($cItem['item_id'], $cItem['item_offer_price_id'], $cItem['count'], $cItem['final_price']);
+                $cart->addItem($cItem['item_offer_price_id'], $cItem['count'], $cItem['final_price']);
             }
         }
         $cart->calc();

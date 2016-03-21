@@ -38,6 +38,7 @@ class EcommerceController extends adminController
             'Ecommerce\Unit',
             'Ecommerce\Card',
             'Ecommerce\Discount',
+            'Ecommerce\Cart\Stage',
             'Ecommerce\Item\Type',
             'Ecommerce\Item\Option',
             'Ecommerce\Item\Offer\Price\Type',

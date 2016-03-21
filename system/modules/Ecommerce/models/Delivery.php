@@ -18,10 +18,10 @@ class Delivery extends \Model
         //Основные параметры
         'name' => ['type' => 'text'],
         'price' => ['type' => 'decimal'],
+        'currency_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'currency'],
         'price_text' => ['type' => 'textarea'],
         'max_cart_price' => ['type' => 'decimal'],
         'icon_file_id' => ['type' => 'image'],
-        'currency_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'currency'],
         'info' => ['type' => 'html'],
         //Системные
         'weight' => ['type' => 'number'],
@@ -74,10 +74,10 @@ class Delivery extends \Model
                 'model' => 'Money\Currency',
                 'col' => 'currency_id'
             ],
-            'fields'=>[
-                'type'=>'relModel',
-                'model'=>'Ecommerce\Delivery\Field',
-                'relModel'=>'Ecommerce\Delivery\DeliveryFieldLink'
+            'fields' => [
+                'type' => 'relModel',
+                'model' => 'Ecommerce\Delivery\Field',
+                'relModel' => 'Ecommerce\Delivery\DeliveryFieldLink'
             ]
         ];
     }

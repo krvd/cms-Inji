@@ -16,7 +16,28 @@ class Condition extends \Model
     static $cols = [
         'reward_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'reward'],
         'name' => ['type' => 'text'],
-        'active' => ['type' => 'bool']
+        'active' => ['type' => 'bool'],
+        'item' => ['type' => 'dataManager', 'relation' => 'items']
+    ];
+    static $labels = [
+        'reward_id' => 'Вознаграждение',
+        'name' => 'Название',
+        'active' => 'Активно',
+        'item' => 'Условия',
+    ];
+    public static $dataManagers = [
+        'manager' => [
+            'name' => 'Условия',
+            'cols' => ['name', 'active', 'item']
+        ]
+    ];
+    public static $forms = [
+        'manager' => [
+            'name' => 'Условие',
+            'map' => [
+                ['name', 'active'],
+            ]
+        ]
     ];
 
     public function checkComplete($userId = 0)
@@ -36,9 +57,10 @@ class Condition extends \Model
     public static function relations()
     {
         return [
-            'reward' => [
+            'rewards' => [
+                'type' => 'relModel',
+                'relModel'=>'Money\Reward\ConditionRewardLnk',
                 'model' => 'Money\Reward',
-                'col' => 'reward_id'
             ],
             'items' => [
                 'type' => 'many',

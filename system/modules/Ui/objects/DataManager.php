@@ -407,11 +407,13 @@ class DataManager extends \Object
                 case 'relModel':
                     $managerParams = ['relation' => $modelName::$cols[$colName]['relation']];
                     $count = $item->{$modelName::$cols[$colName]['relation']}(array_merge($params, ['count' => 1]));
-                    return "<a class = 'btn btn-xs btn-primary' onclick = 'inji.Ui.dataManagers.popUp(\"" . str_replace('\\', '\\\\', $modelName) . ":" . $item->pk() . "\"," . json_encode(array_merge($params, $managerParams)) . ")'>{$count} " . \Tools::getNumEnding($count, ['Элемент', 'Элемента', 'Элементов']) . "</a>";
+                    $count = $count ? $count : 'Нет';
+                    return "<a class = 'btn btn-xs btn-primary' onclick = 'inji.Ui.dataManagers.popUp(\"" . str_replace('\\', '\\\\', $modelName) . ":" . $item->pk() . "\"," . json_encode(array_merge($params, $managerParams)) . ")'>{$count}</a>";
                 case 'many':
                     $managerParams = ['relation' => $modelName::$cols[$colName]['relation']];
                     $count = $item->{$modelName::$cols[$colName]['relation']}(array_merge($params, ['count' => 1]));
-                    return "<a class = 'btn btn-xs btn-primary' onclick = 'inji.Ui.dataManagers.popUp(\"" . str_replace('\\', '\\\\', $modelName) . ":" . $item->pk() . "\"," . json_encode(array_merge($params, $managerParams)) . ")'>{$count} " . \Tools::getNumEnding($count, ['Элемент', 'Элемента', 'Элементов']) . "</a>";
+                    $count = $count ? $count : 'Нет';
+                    return "<a class = 'btn btn-xs btn-primary' onclick = 'inji.Ui.dataManagers.popUp(\"" . str_replace('\\', '\\\\', $modelName) . ":" . $item->pk() . "\"," . json_encode(array_merge($params, $managerParams)) . ")'>{$count}</a>";
                 default :
                     if ($item->{$modelName::$cols[$colName]['relation']}) {
                         if (\App::$cur->name == 'admin') {

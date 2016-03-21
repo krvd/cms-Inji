@@ -92,6 +92,11 @@ class Cart extends \Model
                 'type' => 'many',
                 'model' => 'Money\Pay',
                 'col' => 'data'
+            ],
+            'discounts' => [
+                'type' => 'relModel',
+                'relModel' => 'Ecommerce\Cart\Discount',
+                'model' => 'Ecommerce\Discount',
             ]
         ];
     }
@@ -114,7 +119,6 @@ class Cart extends \Model
 
     public static $labels = [
         'user_id' => 'Пользователь',
-        'sum' => 'Сумма',
         'cart_status_id' => 'Статус',
         'delivery_id' => 'Доставка',
         'comment' => 'Комментарий',
@@ -126,13 +130,14 @@ class Cart extends \Model
         'payed' => 'Оплачен',
         'exported' => 'Выгружено',
         'warehouse_block' => 'Блокировка товаров',
-        'extra' => 'Дополнительно',
+        'extra' => 'Доп.',
         'card_item_id' => 'Дисконтная карта',
         'info' => 'Информация',
         'contacts' => 'Информация',
-        'pay' => 'Счета оплаты',
+        'pay' => 'Счета',
         'sums' => 'Суммы',
         'deliveryInfo' => 'Для доставки',
+        'discount' => 'Скидки',
     ];
     public static $cols = [
         //Основные параметры
@@ -145,7 +150,6 @@ class Cart extends \Model
         'payed' => ['type' => 'bool'],
         'comment' => ['type' => 'textarea'],
         //Системные
-        'sum' => ['type' => 'text'],
         'exported' => ['type' => 'bool'],
         'complete_data' => ['type' => 'dateTime'],
         'date_status' => ['type' => 'dateTime'],
@@ -172,6 +176,7 @@ class Cart extends \Model
         'items' => ['type' => 'dataManager', 'relation' => 'cartItems'],
         'info' => ['type' => 'dataManager', 'relation' => 'infos'],
         'deliveryInfo' => ['type' => 'dataManager', 'relation' => 'deliveryInfos'],
+        'discount' => ['type' => 'dataManager', 'relation' => 'discounts'],
     ];
     public static $dataManagers = [
         'manager' => [
@@ -179,6 +184,7 @@ class Cart extends \Model
                 'contacts',
                 'items',
                 'extra',
+                'discount',
                 'sums',
                 'cart_status_id',
                 'delivery_id',
@@ -265,18 +271,42 @@ class Cart extends \Model
         ],
     ];
 
-    public function addPacks($count = 1)
+    public function checkStage()
     {
-        $this->addItem(Inji::app()->ecommerce->modConf['packItem']['ci_id'], Inji::app()->ecommerce->modConf['packItem']['ciprice_id'], $count);
+        $sum = $this->itemsSum();
+        $stages = Cart\Stage::getList(['order' => ['sum', 'asc']]);
+        $curStage = false;
+        $groups = [];
+        foreach ($stages as $stage) {
+            if ($sum->greater(new \Money\Sums([$stage->currency_id => $stage->sum])) || $sum->equal(new \Money\Sums([$stage->currency_id => $stage->sum]))) {
+                $groups[$stage->group] = $stage;
+            }
+        }
+        $discounts = Cart\Discount::getList(['where'=>['cart_id',$this->id]]);
+        foreach ($discounts as $discount) {
+            if (!isset($groups[$discount->group]) && $discount->auto) {
+                $discount->delete();
+            }
+            if (isset($groups[$discount->group]) && $groups[$discount->group]->type == 'discount') {
+                $discount->discount_id = $groups[$discount->group]->value;
+                $discount->save();
+                unset($groups[$discount->group]);
+            }
+        }
+        foreach ($groups as $group) {
+            if ($group && $group->type == 'discount') {
+                $rel = $this->addRelation('discounts', $group->value);
+                $rel->auto = true;
+                $rel->group = 'discount';
+                $rel->save();
+            }
+        }
     }
 
     public function needDelivery()
     {
         foreach ($this->cartItems as $cartItem) {
-            if (!$cartItem->item->type) {
-                continue;
-            }
-            if ($cartItem->item->type->cit_warehouse) {
+            if ($cartItem->item->type && $cartItem->item->type->delivery) {
                 return true;
             }
         }
@@ -285,49 +315,61 @@ class Cart extends \Model
 
     public function deliverySum()
     {
-
-        if ($this->needDelivery() && $this->delivery && $this->sum < $this->delivery->cd_max_cart_price) {
-            return $this->delivery->cd_price;
+        $sum = new \Money\Sums([]);
+        if ($this->needDelivery()) {
+            $sums = new \Money\Sums($this->itemsSum());
+            $deliveryPrice = new \Money\Sums([$this->delivery->currency_id => $this->delivery->max_cart_price]);
+            if ($sums->greater($deliveryPrice) || $sums->equal($deliveryPrice)) {
+                $sum->sums = [$this->delivery->currency_id => 0];
+            } else {
+                $sum->sums = [$this->delivery->currency_id => $this->delivery->price];
+            }
         }
-        return 0;
+        return $sum;
     }
 
-    public function discountSun()
+    public function hasDiscount()
     {
-        $discountSum = 0;
+        return (bool) $this->card || $this->discounts;
+    }
+
+    public function discountSum()
+    {
+        $sums = [];
         foreach ($this->cartItems as $cartItem) {
-            $discountSum += $cartItem->discount();
+            $sums[$cartItem->price->currency_id] = isset($sums[$cartItem->price->currency_id]) ? $sums[$cartItem->price->currency_id] + $cartItem->discount() : $cartItem->discount();
         }
-        return $discountSum;
+        return new \Money\Sums($sums);
     }
 
     public function finalSum()
     {
-        return $this->sum + $this->deliverySum() - $this->disountSum();
+        $sums = $this->itemsSum();
+        $sums = $sums->minus($this->discountSum());
+        $sums = $sums->plus($this->deliverySum());
+        return $sums;
     }
 
-    public function itemSum()
+    public function itemsSum()
     {
-        return $this->sum;
-    }
-
-    public function addItem($item_id, $offer_price_id, $count = 1, $final_price = 0)
-    {
-        $item = Item::get((int) $item_id);
-
-        if (!$item) {
-            return false;
-        }
-
-        $price = false;
-        foreach ($item->offers as $offer) {
-            if (!empty($offer->prices[(int) $offer_price_id])) {
-                $price = $offer->prices[(int) $offer_price_id];
-                break;
+        $cart = Cart::get($this->id);
+        $sums = [];
+        foreach ($cart->cartItems as $cartItem) {
+            if (!$cartItem->price) {
+                continue;
             }
+            $sums[$cartItem->price->currency_id] = isset($sums[$cartItem->price->currency_id]) ? $sums[$cartItem->price->currency_id] + $cartItem->price->price * $cartItem->count : $cartItem->price->price * $cartItem->count;
         }
-        if (!$price)
+        return new \Money\Sums($sums);
+    }
+
+    public function addItem($offer_price_id, $count = 1, $final_price = 0)
+    {
+        $price = Item\Offer\Price::get((int) $offer_price_id);
+
+        if (!$price) {
             return false;
+        }
 
         if ($count <= 0) {
             $count = 1;
@@ -335,7 +377,7 @@ class Cart extends \Model
 
         $cartItem = new Cart\Item();
         $cartItem->cart_id = $this->id;
-        $cartItem->item_id = $item->id;
+        $cartItem->item_id = $price->offer->item->id;
         $cartItem->count = $count;
         $cartItem->item_offer_price_id = $price->id;
         $cartItem->final_price = $final_price ? $final_price : $price->price;
@@ -345,29 +387,9 @@ class Cart extends \Model
 
     public function calc($save = true)
     {
-        if (!$this->id) {
-            return;
-        }
-
-        $this->sum = 0;
-        $cart = Cart::get($this->id);
-        foreach ($cart->cartItems as $cartItem) {
-            if (!$cartItem->price) {
-                continue;
-            }
-            $this->sum += (float) ($cartItem->price->price - $cartItem->discount()) * (float) $cartItem->count;
-        }
-        foreach ($cart->extras as $extra) {
-            $this->sum += $extra->price * $extra->count;
-        }
         if ($save) {
             $this->save();
         }
-    }
-
-    public function beforeSave()
-    {
-        $this->calc(false);
     }
 
 }

@@ -19,27 +19,31 @@ class Type extends \Model
         'code' => ['type' => 'text'],
         'electronic' => ['type' => 'bool'],
         'discount' => ['type' => 'bool'],
+        'delivery' => ['type' => 'bool'],
     ];
     public static $labels = [
         'name' => 'Название',
         'code' => 'Код',
         'electronic' => 'Электронный',
         'discount' => 'Скидки',
+        'delivery' => 'Осуществляется доставка',
     ];
     public static $dataManagers = [
         'manager' => [
             'cols' => [
                 'name',
                 'code',
-                'electronic'
+                'electronic',
+                'delivery',
+                'discount'
             ]
         ]
     ];
     public static $forms = [
         'manager' => [
             'map' => [
-                ['name'],
-                ['code', 'electronic']
+                ['name', 'code'],
+                ['delivery', 'electronic','discount']
             ]
         ]
     ];

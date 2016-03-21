@@ -19,7 +19,10 @@ class ChatsController extends Controller
             $result->content = 'Такого чата не существует';
             $result->send();
         }
-        $where = [['chat_id', $chatId]];
+        $where = [
+            ['chat_id', $chatId],
+            ['delete', 0]
+        ];
         if (!empty($_GET['lastEventDate'])) {
             $where[] = ['date_create', $_GET['lastEventDate'], '>'];
         }
@@ -60,6 +63,55 @@ class ChatsController extends Controller
         $result->send();
     }
 
+    function deleteMsgAction($messageId)
+    {
+        $result = new Server\Result();
+        if (!\Users\User::$cur->isAdmin()) {
+            $result->success = false;
+            $result->content = 'Вы не админ';
+            $result->send();
+        }
+        $msg = Chats\Chat\Message::get((int) $messageId);
+        if (!$msg) {
+            $result->success = false;
+            $result->content = 'Сообщение не найдено';
+            $result->send();
+        }
+        $msg->delete = 1;
+        $msg->save();
+        $result->successMsg = 'Сообщение удалено';
+        $result->send();
+    }
+
+    function banUserAction($messageId)
+    {
+        $result = new Server\Result();
+        if (!\Users\User::$cur->isAdmin()) {
+            $result->success = false;
+            $result->content = 'Вы не админ';
+            $result->send();
+        }
+        $msg = Chats\Chat\Message::get((int) $messageId);
+        if (!$msg) {
+            $result->success = false;
+            $result->content = 'Сообщение не найдено';
+            $result->send();
+        }
+        $ban = new Chats\Chat\Ban();
+        $ban->user_id = $msg->user_id;
+        $ban->chat_id = $msg->chat_id;
+        $ban->chat_message_id = $msg->id;
+        $ban->save();
+        $msgs = Chats\Chat\Message::getList(['where' => ['user_id', $ban->user_id]]);
+        foreach ($msgs as $msg) {
+            $msg->delete = 1;
+            $msg->save();
+        }
+        $result->content = array_flip(array_keys($msgs));
+        $result->successMsg = 'Сообщение удалено';
+        $result->send();
+    }
+
     public function sendFormAction($chatId = 0)
     {
         $chatId = (int) $chatId;
@@ -77,6 +129,11 @@ class ChatsController extends Controller
         if (empty($_POST['chat-message']) || !trim($_POST['chat-message'])) {
             $result->success = false;
             $result->content = 'Сообщение не может быть пустым';
+            $result->send();
+        }
+        if (Chats\Chat\Ban::get(['user_id', \Users\User::$cur->id])) {
+            $result->success = false;
+            $result->content = 'Вы не можете писать в чат';
             $result->send();
         }
         $message = new \Chats\Chat\Message();
