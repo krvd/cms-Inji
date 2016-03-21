@@ -6,37 +6,21 @@ if (empty($form_id)) {
     echo('form not found');
     return;
 }
-$form = \UserForms\Form::get((int) $form_id);
-if (!$form) {
+$userForm = \UserForms\Form::get((int) $form_id);
+if (!$userForm) {
     echo('form not found');
     return;
 }
+$form = new Ui\Form();
+$form->begin();
 ?>
-<form method = "POST" action = "">
-  <?php
-  if ($form->description) {
-      echo "<p class = 'text-center'>{$form->description}</p>";
-  }
-  foreach ($form->inputs(['order' => ['weight']]) as $input) {
-      switch ($input->type) {
-          case 'text':
-              ?>
-              <div class ='form-group'>
-                <label><?= $input->label; ?></label>
-                <input class ='form-control' type ='text' name ='UserForms[<?= (int) $form_id; ?>][input<?= $input->id; ?>]' <?= $input->required ? 'required' : ''; ?> />
-              </div>
-              <?php
-              break;
-          case 'textarea':
-              ?>
-              <div class ='form-group'>
-                <label><?= $input->label; ?></label>
-                <textarea class ='form-control' name ='UserForms[<?= (int) $form_id; ?>][input<?= $input->id; ?>]' <?= $input->required ? 'required' : ''; ?> /></textarea>
-              </div>
-              <?php
-              break;
-      }
-  }
-  ?>
-  <button class = 'btn btn-success btn-block'>Отправить</button>
+<?php
+if ($userForm->description) {
+    echo "<p class = 'text-center'>{$userForm->description}</p>";
+}
+foreach ($userForm->inputs(['order' => ['weight']]) as $input) {
+    $form->input($input->type, 'UserForms[' . (int) $form_id . '][input' . $input->id . ']', $input->label, ['required' => $input->required]);
+}
+?>
+<button class = 'btn btn-success btn-block'>Отправить</button>
 </form>
