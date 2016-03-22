@@ -18,9 +18,9 @@ return [
             $rewardItemExist = true;
             $currency_id = $cartItem->price->currency ? $cartItem->price->currency->id : \App::$cur->ecommerce->config['defaultCurrency'];
             if (empty($sums[$currency_id])) {
-                $sums[$currency_id] = $cartItem->price->price * $cartItem->count;
+                $sums[$currency_id] = $cartItem->final_price * $cartItem->count;
             } else {
-                $sums[$currency_id] += $cartItem->price->price * $cartItem->count;
+                $sums[$currency_id] += $cartItem->final_price * $cartItem->count;
             }
         }
 
