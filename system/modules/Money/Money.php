@@ -178,6 +178,9 @@ class Money extends Module
             $user = $rootUser;
             for ($i = 0; $i < $level->level; $i++) {
                 $next = $user && $user->parent ? $user->parent : false;
+                if (!$next && $reward->lasthaveall) {
+                    break;
+                }
                 $noActive = $next->blocked;
                 foreach ($checkers as $checker) {
                     if ($noActive) {
@@ -194,9 +197,6 @@ class Money extends Module
                     $user = Users\User::get($user->id);
                     $rootUser = Users\User::get($rootUser->id);
                     continue;
-                }
-                if (!$next && $reward->lasthaveall) {
-                    break;
                 }
                 $user = $next;
             }
