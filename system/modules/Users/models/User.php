@@ -185,6 +185,18 @@ class User extends \Model
         return false;
     }
 
+    public function beforeSave()
+    {
+        if (isset($this->_changedParams['user_parent_id'])) {
+            $parenthistory = new User\ParentHistory([
+                'user_id' => $this->id,
+                'old' => $this->_changedParams['user_parent_id'],
+                'new' => $this->parent_id
+            ]);
+            $parenthistory->save();
+        }
+    }
+
     public function beforeDelete()
     {
         if ($this->info) {
