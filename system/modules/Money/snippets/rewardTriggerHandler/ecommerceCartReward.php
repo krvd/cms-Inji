@@ -12,7 +12,6 @@ return [
             $allowTypes = [];
         }
         foreach ($cart->cartItems as $cartItem) {
-            var_dump($cartItem->item->item_type_id);
             if ($allowTypes && !in_array($cartItem->item->item_type_id, $allowTypes)) {
                 continue;
             }
