@@ -5,12 +5,14 @@ return [
     'handler' => function($cart, $trigger) {
         $sums = [];
         $rewardItemExist = empty($trigger->params['item_type_id']);
+
         if (!$rewardItemExist) {
-            $allowTypes = explode(',', $trigger->params['item_type_id']);
+            $allowTypes = explode(',', $trigger->params['item_type_id']->value);
         } else {
             $allowTypes = [];
         }
         foreach ($cart->cartItems as $cartItem) {
+            var_dump($cartItem->item->item_type_id);
             if ($allowTypes && !in_array($cartItem->item->item_type_id, $allowTypes)) {
                 continue;
             }
@@ -22,6 +24,7 @@ return [
                 $sums[$currency_id] += $cartItem->price->price * $cartItem->count;
             }
         }
+
         if ($rewardItemExist) {
             App::$cur->money->reward($trigger->reward_id, $sums, $cart->user);
         }
