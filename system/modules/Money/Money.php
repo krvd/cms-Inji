@@ -169,13 +169,32 @@ class Money extends Module
         $reward = \Money\Reward::get($reward_id);
         $reward->checkBlocked();
         $reward_count = \Money\Reward\Recive::getCount([ 'where' => [ 'reward_id', $reward_id]]);
-        if ($reward_count >= $reward->quantity && $reward->quantity)
+        if ($reward_count >= $reward->quantity && $reward->quantity) {
             return false;
+        }
         $types = $this->getSnippets('rewardType');
+        $checkers = $this->getSnippets('userActivity');
         foreach ($reward->levels(['order' => ['level', 'asc']]) as $level) {
             $user = $rootUser;
             for ($i = 0; $i < $level->level; $i++) {
                 $next = $user && $user->parent ? $user->parent : false;
+                $noActive = $next->blocked;
+                foreach ($checkers as $checker) {
+                    if ($noActive) {
+                        break;
+                    }
+                    $noActive = !$checker['checker']($next);
+                }
+                if ($next && $next->parent_id && $noActive) {
+                    foreach ($next->users as $childUser) {
+                        $childUser->parent_id = $next->parent_id;
+                        $childUser->save();
+                    }
+                    $i--;
+                    $user = Users\User::get($user->id);
+                    $rootUser = Users\User::get($rootUser->id);
+                    continue;
+                }
                 if (!$next && $reward->lasthaveall) {
                     break;
                 }
