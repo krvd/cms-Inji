@@ -9,6 +9,10 @@
     <input class ="form-control" type = 'text' name = 'company_name' value = '<?php if (!empty(\App::$primary->config['site']['company_name'])) echo \App::$primary->config['site']['company_name']; ?>' />
   </div>
   <div class ="form-group">
+    <label>Основной домен</label>
+    <input class ="form-control" type = 'text' name = 'site_domain' value = '<?php if (!empty(\App::$primary->config['site']['domain'])) echo \App::$primary->config['site']['domain']; ?>' />
+  </div>
+  <div class ="form-group">
     <label>Контактный email</label>
     <input class ="form-control" type = 'text' name = 'site_email' value = '<?php if (!empty(\App::$primary->config['site']['email'])) echo \App::$primary->config['site']['email']; ?>' />
   </div>
