@@ -101,7 +101,7 @@
                               </a>
                             </td>
                             <td class="text-left name">
-                              <a href="/ecommerce/view/<?= $cartItem->item->id; ?>"><?= $cartItem->item->name() . ($cartItem->price->offer->name ? ' (' . $cartItem->price->offer->name() . ')' : ''); ?></a>
+                              <a href="/ecommerce/view/<?= $cartItem->item->id; ?>"><?= $cartItem->item->name() . ($cartItem->price->offer->name && $cartItem->price->offer->name != $cartItem->item->name() ? ' (' . $cartItem->price->offer->name . ')' : ''); ?></a>
                             </td>
                             <td class="text-left quantity">
                               <?php $this->widget('Ecommerce\cart/ranger', compact('form', 'cart', 'cartItem')); ?>
