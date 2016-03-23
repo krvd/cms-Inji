@@ -196,10 +196,9 @@ class Query extends \Exchange1c\Mode
                     addToXml($xml, $req, 'Значение', $string);
                 }
             }
-
             foreach ($cart->infos as $value) {
                 $req = $reqs->appendChild($xml->createElement('ЗначениеРеквизита'));
-                addToXml($xml, $req, 'Наименование', $value->field->name);
+                addToXml($xml, $req, 'Наименование', $value->name);
                 addToXml($xml, $req, 'Значение', $value->value);
             }
 
