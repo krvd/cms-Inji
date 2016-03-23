@@ -5,8 +5,9 @@ return [
     'handler' => function($cart, $trigger) {
         $sums = [];
         $rewardItemExist = empty($trigger->params['item_type_id']);
+
         if (!$rewardItemExist) {
-            $allowTypes = explode(',', $trigger->params['item_type_id']);
+            $allowTypes = explode(',', $trigger->params['item_type_id']->value);
         } else {
             $allowTypes = [];
         }
@@ -17,11 +18,12 @@ return [
             $rewardItemExist = true;
             $currency_id = $cartItem->price->currency ? $cartItem->price->currency->id : \App::$cur->ecommerce->config['defaultCurrency'];
             if (empty($sums[$currency_id])) {
-                $sums[$currency_id] = $cartItem->price->price * $cartItem->count;
+                $sums[$currency_id] = $cartItem->final_price * $cartItem->count;
             } else {
-                $sums[$currency_id] += $cartItem->price->price * $cartItem->count;
+                $sums[$currency_id] += $cartItem->final_price * $cartItem->count;
             }
         }
+
         if ($rewardItemExist) {
             App::$cur->money->reward($trigger->reward_id, $sums, $cart->user);
         }

@@ -275,7 +275,6 @@ class Cart extends \Model
     {
         $sum = $this->itemsSum();
         $stages = Cart\Stage::getList(['order' => ['sum', 'asc']]);
-        $curStage = false;
         $groups = [];
         foreach ($stages as $stage) {
             if ($sum->greater(new \Money\Sums([$stage->currency_id => $stage->sum])) || $sum->equal(new \Money\Sums([$stage->currency_id => $stage->sum]))) {
@@ -316,7 +315,7 @@ class Cart extends \Model
     public function deliverySum()
     {
         $sum = new \Money\Sums([]);
-        if ($this->needDelivery()) {
+        if ($this->delivery && $this->needDelivery()) {
             $sums = new \Money\Sums($this->itemsSum());
             $deliveryPrice = new \Money\Sums([$this->delivery->currency_id => $this->delivery->max_cart_price]);
             if ($sums->greater($deliveryPrice) || $sums->equal($deliveryPrice)) {

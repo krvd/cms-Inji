@@ -1604,7 +1604,7 @@ class Model
      * 
      * @param string $relName
      * @param \Model $objectId
-     * @return boolean
+     * @return \Model|boolean
      */
     public function addRelation($relName, $objectId)
     {
