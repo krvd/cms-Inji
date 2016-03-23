@@ -215,6 +215,7 @@ class ecommerceController extends Controller
         if (isset($_GET['quickview'])) {
             $options['page'] = 'blank';
         }
+        $options['content'] = $item->view ? $item->view : 'view';
         $this->view->page($options);
     }
 
