@@ -773,12 +773,19 @@ class Model
             $key = static::index();
         }
         try {
-            $result = $query->select(static::table());
+            $query->operation = 'SELECT';
+            $query->table = static::table();
+            $queryArr = $query->buildQuery();
+            $result = $query->query($queryArr);
         } catch (PDOException $exc) {
             if ($exc->getCode() == '42S02') {
                 static::createTable();
+                $result = $query->query($queryArr);
             }
-            $result = $query->select(static::table());
+            else {
+                throw $exc;
+            }
+            
         }
 
         if (!empty($options['array'])) {
