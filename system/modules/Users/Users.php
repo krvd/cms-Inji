@@ -74,6 +74,10 @@ class Users extends Module
             return;
         }
         if ($session && $session->user && !$session->user->blocked) {
+            if (!headers_sent()) {
+                setcookie($this->cookiePrefix . "_user_session_hash", $session->hash, time() + 360000, "/");
+                setcookie($this->cookiePrefix . "_user_id", $session->user_id, time() + 360000, "/");
+            }
             if ($session->user->activation) {
                 Msg::add('Этот аккаунт ещё не активирован, не все функции могут быть доступны. <br />Если вы не получали письмо с ссылкой для активации, нажмите на - <a href = "/users/resendActivation/' . $session->user->id . '"><b>повторно выслать ссылку активации</b></a>');
             }
