@@ -11,7 +11,7 @@ config.filebrowserImageBrowseUrl = '/admin/files/managerForEditor';
 config.contentsCss = ['/view/editorcss'];
 config.allowedContent = true;
 config.height = '300px';
-config.extraPlugins = 'injiwidgets,justify,colorbutton';
+config.extraPlugins = 'injiwidgets,justify,colorbutton,font';
 <?php
 if (!empty(App::$cur->libs->config['libConfig']['ckeditor']['pasteFromWordRemoveStyle'])) {
     echo 'config.pasteFromWordRemoveStyle = true;';
