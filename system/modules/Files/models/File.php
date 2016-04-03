@@ -22,8 +22,17 @@ class File extends \Model
         'name' => ['type' => 'text'],
         'about' => ['type' => 'html'],
         'original_name' => ['type' => 'text'],
+        'md5' => ['type' => 'text'],
         'date_create' => ['type' => 'dateTime'],
     ];
+
+    public function beforeSave()
+    {
+        $path = $this->getRealPath();
+        if (!$this->md5 && $this->path && file_exists($path)) {
+            $this->md5 = md5_file($path);
+        }
+    }
 
     public function beforeDelete()
     {
@@ -36,7 +45,7 @@ class File extends \Model
     public function getRealPath()
     {
         $sitePath = \App::$primary->path;
-        return "{$sitePath}/{$this->file_path}";
+        return "{$sitePath}{$this->path}";
     }
 
     public static function relations()
