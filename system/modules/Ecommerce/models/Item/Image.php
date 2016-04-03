@@ -17,7 +17,8 @@ class Image extends \Model
         'file_id' => ['type' => 'image'],
         'item_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'item'],
         'name' => ['type' => 'text'],
-        'description' => ['type' => 'html']
+        'description' => ['type' => 'html'],
+        'weight' => ['type' => 'number'],
     ];
 
     static function relations()

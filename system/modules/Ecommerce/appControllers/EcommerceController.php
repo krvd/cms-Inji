@@ -205,7 +205,9 @@ class ecommerceController extends Controller
         $catalogIds = array_values(array_filter(explode('/', $item->tree_path)));
         foreach ($catalogIds as $id) {
             $cat = Ecommerce\Category::get($id);
-            $bread[] = ['text' => $cat->name, 'href' => '/ecommerce/itemList/' . $cat->id];
+            if ($cat) {
+                $bread[] = ['text' => $cat->name, 'href' => '/ecommerce/itemList/' . $cat->id];
+            }
         }
         $bread[] = ['text' => $item->name()];
         $this->view->setTitle($item->name());
