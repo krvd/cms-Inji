@@ -16,7 +16,7 @@ class Relation extends \Migrations\Parser
     public function parse()
     {
         $options = $this->param->options ? json_decode($this->param->options, true) : [];
-        $modelName = get_class($this->object->model);
+        $modelName = $this->object->object->model;
         $relation = $modelName::getRelation($this->param->value);
         $object = \Migrations\Migration\Object::get([
                     ['model', $relation['model']],
@@ -34,38 +34,60 @@ class Relation extends \Migrations\Parser
         }
         if (!empty($relation['type']) && $relation['type'] == 'many') {
             $ids = [];
-            foreach ($this->reader->readPath() as $code => $item) {
-                if ($newObject) {
-                    $object->code = $code;
-                    $object->name = $code;
-                    $object->save();
-                    $newObject = false;
-                }
-                $objectParser = new \Migrations\Parser\Object();
-                $objectParser->object = $object;
-                $objectParser->parentObject = $this->object;
-                $objectParser->parentParam = $this;
-                $objectParser->reader = $item;
-                $objectParser->setModel();
-                if ($objectParser->model) {
-                    if (!$this->object->model->pk()) {
-                        $this->object->model->save();
+            if ($this->data) {
+                foreach ($this->data as $code => &$item) {
+                    if (!\Tools::isAssoc($this->data)) {
+                        foreach ($this->data as &$item) {
+                            if ($newObject) {
+                                $object->code = $code;
+                                $object->name = $code;
+                                $object->save();
+                                $newObject = false;
+                            }
+                            $objectParser = new \Migrations\Parser\Object();
+                            $objectParser->object = $object;
+                            $objectParser->parentObject = $this->object;
+                            $objectParser->parentModel = $this->model;
+                            $objectParser->walker = $this->object->walker;
+                            $objectParser->parentParam = $this;
+                            $objectParser->data = &$item;
+                            
+
+                            if (!$this->model->pk()) {
+                                $this->model->save();
+                            }
+                            $ids = array_merge($ids, $objectParser->parse([$relation['col'] => $this->model->pk()]));
+                        }
+                    } else {
+                        if ($newObject) {
+                            $object->code = $code;
+                            $object->name = $code;
+                            $object->save();
+                            $newObject = false;
+                        }
+                        $objectParser = new \Migrations\Parser\Object();
+                        $objectParser->object = $object;
+                        $objectParser->parentObject = $this->object;
+                        $objectParser->parentModel = $this->model;
+                        $objectParser->walker = $this->object->walker;
+                        $objectParser->parentParam = $this;
+                        $objectParser->data = &$item;
+                        if (!$this->model->pk()) {
+                            $this->model->save();
+                        }
+                        $ids = array_merge($ids, $objectParser->parse([$relation['col'] => $this->model->pk()]));
                     }
-                    $objectParser->model->{$relation['col']} = $this->object->model->pk();
-                }
-                $objectParser->parse();
-                if ($objectParser->model && $objectParser->model->pk()) {
-                    $ids[] = $objectParser->model->pk();
                 }
             }
             if (!empty($options['clearMissing'])) {
                 $where = [];
-                $where[] = [$relation['col'], $this->object->model->pk()];
+                $where[] = [$relation['col'], $this->model->pk()];
                 if ($ids) {
                     $where[] = ['id', implode(',', $ids), 'NOT IN'];
                 }
                 $modelName = $relation['model'];
                 $objects = $modelName::getList(['where' => $where]);
+
                 foreach ($objects as $object) {
                     $object->delete();
                 }
@@ -74,13 +96,13 @@ class Relation extends \Migrations\Parser
             $objectParser = new \Migrations\Parser\Object();
             $objectParser->object = $object;
             $objectParser->parentObject = $this->object;
+            $objectParser->parentModel = $this->model;
             $objectParser->parentParam = $this;
-            $objectParser->reader = $this->reader;
-            $objectParser->setModel();
-            if ($objectParser->model) {
-                $this->object->model->{$relation['col']} = $objectParser->model->pk();
+            $objectParser->data = &$this->data;
+            $id = $objectParser->parse();
+            if ($id) {
+                $this->model->{$relation['col']} = $id[0];
             }
-            $objectParser->parse();
         }
     }
 

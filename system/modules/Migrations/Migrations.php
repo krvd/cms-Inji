@@ -31,7 +31,8 @@ class Migrations extends \Module
         $walker = new \Migrations\Walker();
         $walker->migration = Migrations\Migration::get($migrationId);
         $walker->map = Migrations\Migration\Map::get($mapId);
-        $walker->reader = $reader;
+        $walker->data = $reader->getArray();
+        $walker->migtarionLog = $log;
         $walker->walk();
         $log->result = 'success';
         $log->save();

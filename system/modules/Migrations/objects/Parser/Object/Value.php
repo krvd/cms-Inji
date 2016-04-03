@@ -18,7 +18,7 @@ class Value extends \Migrations\Parser
         $options = $this->param->options ? json_decode($this->param->options, true) : [];
         $modelName = get_class($this->model);
         $cols = $modelName::$cols;
-        $value = (string) $this->reader;
+        $value = $this->data;
         if (!empty($cols[$this->param->value])) {
             $col = $cols[$this->param->value];
             if ($col['type'] == 'dynamicType') {
@@ -40,7 +40,7 @@ class Value extends \Migrations\Parser
                                 $relation = $modelName::getRelation($type['relation']);
                                 $sourceModel = $relation['model'];
                             }
-                            $objectId = \Migrations\Id::get([['parse_id', (string) $this->reader], ['type', $sourceModel]]);
+                            $objectId = \Migrations\Id::get([['parse_id', (string) $value], ['type', $sourceModel]]);
                             if ($objectId) {
                                 $value = $objectId->object_id;
                             }
@@ -69,7 +69,7 @@ class Value extends \Migrations\Parser
         switch ($type) {
             case 'image':
                 $notEq = true;
-                $dir = pathinfo($this->reader->source, PATHINFO_DIRNAME);
+                $dir = pathinfo($this->object->walker->migtarionLog->source, PATHINFO_DIRNAME);
                 if ($this->model->{$this->param->value}) {
                     $file = \Files\File::get($this->model->{$this->param->value});
                     if ($file && $value && file_exists($dir . '/' . $value) && file_exists(\App::$primary->path . $file->path) && md5_file($dir . '/' . $value) == md5_file(\App::$primary->path . $file->path)) {
@@ -85,6 +85,9 @@ class Value extends \Migrations\Parser
                 }
                 break;
             default:
+                if(is_array($value)){
+                    $value = implode(' ', $value);
+                }
                 $this->model->{$this->param->value} = $value;
         }
     }

@@ -15,40 +15,51 @@ class ParamsList extends \Migrations\Parser
 {
     public function parse()
     {
-        foreach ($this->reader->readPath() as $code => $objectParam) {
-            $param = $this->getParam($code);
+        $walked = [];
+        $params = \Migrations\Migration\Object\Param::getList(['where'=>[
+                    ['parent_id', $this->param->id],
+                    ['object_id', $this->object->object->id],
+        ]]);
+        foreach ($params as $param) {
             if ($this->model) {
                 if ($param->type == 'custom') {
                     $parserName = $param->value;
                 } else {
                     $parserName = '\Migrations\Parser\Object\\' . ucfirst($param->type);
                 }
-                $parser = new $parserName;
-                $parser->reader = $objectParam;
-                $parser->param = $param;
-                $parser->model = $this->model;
-                $parser->object = $this->object;
-                $parser->parse();
+                if (!\Tools::isAssoc($this->data)) {
+                    foreach ($this->data as $data) {
+                        $parser = new $parserName;
+                        $parser->data = &$data;
+                        $parser->param = $param;
+                        $parser->model = $this->model;
+                        $parser->object = $this->object;
+                        $parser->parse();
+                    }
+                } else {
+                    $parser = new $parserName;
+                    $parser->data = &$this->data[$param->code];
+                    $parser->param = $param;
+                    $parser->model = $this->model;
+                    $parser->object = $this->object;
+                    $parser->parse();
+                }
             }
+            $walked[$param->code] = true;
         }
-    }
-
-    public function getParam($code)
-    {
-        $param = \Migrations\Migration\Object\Param::get([
-                    ['parent_id', $this->param->id],
-                    ['object_id', $this->object->object->id],
-                    ['code', $code]
-        ]);
-        if (!$param) {
+        //check unparsed params
+        foreach ($this->data as $key => $data) {
+            //skip parsed and attribtes
+            if ($key == '@attributes' || !empty($walked[$key])) {
+                continue;
+            }
             $param = new \Migrations\Migration\Object\Param();
             $param->parent_id = $this->param->id;
             $param->object_id = $this->object->object->id;
-            $param->code = $code;
+            $param->code = $key;
             $param->type = 'param';
             $param->save();
         }
-        return $param;
     }
 
     public function editor()

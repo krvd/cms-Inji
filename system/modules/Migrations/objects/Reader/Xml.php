@@ -36,6 +36,11 @@ class Xml extends \Migrations\Reader
         }
     }
 
+    public function getArray()
+    {
+        return json_decode(json_encode($this->data), true);
+    }
+
     public function __toString()
     {
         return (string) $this->data;

@@ -15,50 +15,93 @@ class Object extends \Object
 {
     public $object;
     public $parentObject;
+    public $parentModel;
     public $parentParam;
-    public $reader;
-    public $model;
+    public $data;
 
-    public function parse()
+    public function parse($preset = [])
     {
-        if (!$this->model) {
-            $this->setModel();
-        }
-        foreach ($this->reader->readPath() as $code => $objectParam) {
-            $param = $this->getParam($code);
-            if ($this->model && $param->type && $param->type != 'item_key') {
-                if ($param->type == 'object') {
-                    $object = \Migrations\Migration\Object::get($param->value);
-                    $parser = new \Migrations\Parser\Object;
-                    $parser->reader = $objectParam;
-                    $parser->object = $object;
-                    $parser->parentObject = $this;
-                    $parser->parse();
-                } else {
-                    if ($param->type == 'custom') {
-                        $parserName = $param->value;
-                    } else {
-                        $parserName = '\Migrations\Parser\Object\\' . ucfirst($param->type);
-                    }
-                    $parser = new $parserName;
-                    $parser->reader = $objectParam;
-                    $parser->param = $param;
-                    $parser->model = $this->model;
-                    $parser->object = $this;
-                    $parser->parse();
+        $ids = [];
+        if (!\Tools::isAssoc($this->data)) {
+            foreach ($this->data as &$data) {
+                $id = $this->parseData($data, $preset);
+                if ($id) {
+                    $ids[] = $id;
                 }
             }
+        } else {
+            $id = $this->parseData($this->data, $preset);
+            if ($id) {
+                $ids[] = $id;
+            }
         }
-        if ($this->model) {
-            $this->model->save();
-        }
+        return $ids;
     }
 
-    public function setModel()
+    private function parseData($data, $preset)
     {
+        $model = $this->setModel($data);
+        if ($model) {
+            foreach ($preset as $col => $value) {
+                $model->{$col} = $value;
+            }
+
+            $walked = [];
+            foreach ($this->object->params as $param) {
+                if ($model && $param->type && $param->type != 'item_key') {
+                    if ($param->type == 'object') {
+                        $object = \Migrations\Migration\Object::get($param->value);
+                        $parser = new \Migrations\Parser\Object;
+                        $parser->data = &$data[$param->code];
+                        $parser->object = $object;
+                        $parser->parentObject = $this;
+                        $parser->parentModel = $model;
+                        $parser->walker = $this->walker;
+                        $parser->parse();
+                    } else {
+                        if ($param->type == 'custom') {
+                            $parserName = $param->value;
+                        } else {
+                            $parserName = '\Migrations\Parser\Object\\' . ucfirst($param->type);
+                        }
+                        if (!in_array($parserName, ['\Migrations\Parser\Object\ObjectLink','Exchange1c\Parser\Item\Images', '\Migrations\Parser\Object\Value', '\Migrations\Parser\Object\Relation', '\Migrations\Parser\Object\ParamsList'])) {
+                            var_dump($parserName);
+                            exit();
+                        }
+                        $parser = new $parserName;
+                        $parser->data = &$data[$param->code];
+                        $parser->param = $param;
+                        $parser->model = $model;
+                        $parser->object = $this;
+                        $parser->parse();
+                    }
+                }
+                $walked[$param->code] = true;
+            }
+            //check unparsed params
+            foreach ($data as $key => $item) {
+                //skip parsed and attribtes
+                if ($key == '@attributes' || !empty($walked[$key])) {
+                    continue;
+                }
+                $param = new \Migrations\Migration\Object\Param();
+                $param->object_id = $this->object->id;
+                $param->code = $key;
+                $param->save();
+            }
+            if ($model) {
+                $model->save();
+                return $model->pk();
+            }
+        }
+        return 0;
+    }
+
+    private function setModel($data)
+    {
+        $model = null;
         $keyCol = null;
         $uniques = [];
-
         foreach ($this->object->params as $param) {
             $options = $param->options ? json_decode($param->options, true) : [];
             if ($param->type == 'item_key') {
@@ -68,30 +111,30 @@ class Object extends \Object
                 $uniques[$param->code] = $param;
             }
         }
-        if ($keyCol && $this->reader->__isset($keyCol)) {
-            $objectId = \Migrations\Id::get([['parse_id', (string) $this->reader->$keyCol], ['type', $this->object->model]]);
+        if ($keyCol && isset($data[$keyCol])) {
+            $objectId = \Migrations\Id::get([['parse_id', (string) $data[$keyCol]], ['type', $this->object->model]]);
             if ($objectId) {
                 $modelName = $this->object->model;
-                $this->model = $modelName::get($objectId->object_id);
+                $model = $modelName::get($objectId->object_id);
             } else {
-                $this->model = new $this->object->model;
-                $this->model->save(['empty' => true]);
+                $model = new $this->object->model;
+                $model->save(['empty' => true]);
                 $objectId = new \Migrations\Id();
-                $objectId->object_id = $this->model->id;
-                $objectId->parse_id = (string) $this->reader->$keyCol;
+                $objectId->object_id = $model->id;
+                $objectId->parse_id = (string) $data[$keyCol];
                 $objectId->type = $this->object->model;
                 $objectId->save();
             }
         } elseif ($uniques) {
             $where = [];
             foreach ($uniques as $code => $param) {
-                if (!$this->reader->__isset($code)) {
+                if (!isset($data[$code])) {
                     return;
                 }
                 switch ($param->type) {
                     case 'objectLink':
                         $object = \Migrations\Migration\Object::get($param->value);
-                        $objectId = \Migrations\Id::get([['parse_id', (string) $this->reader->$code], ['type', $object->model]]);
+                        $objectId = \Migrations\Id::get([['parse_id', (string) $data[$code]], ['type', $object->model]]);
                         if (!$objectId) {
                             return;
                         }
@@ -102,7 +145,7 @@ class Object extends \Object
                     case 'relation':
                         $modelName = $this->object->model;
                         $relation = $modelName::getRelation($param->value);
-                        $objectId = \Migrations\Id::get([['parse_id', (string) $this->reader->$code], ['type', $relation['model']]]);
+                        $objectId = \Migrations\Id::get([['parse_id', (string) $data[$code]], ['type', $relation['model']]]);
                         if (!$objectId) {
                             return;
                         }
@@ -114,42 +157,28 @@ class Object extends \Object
             }
             if ($where) {
                 if ($this->parentParam) {
-                    $modelName = get_class($this->parentObject->model);
+                    $modelName = $this->parentObject->object->model;
                     $relation = $modelName::getRelation($this->parentParam->param->value);
                     if (!empty($relation['type']) && $relation['type'] == 'many') {
-                        $where[] = [$relation['col'], $this->parentObject->model->pk()];
+                        $where[] = [$relation['col'], $this->parentModel->pk()];
                     }
                 } elseif ($this->parentObject) {
-                    $modelName = get_class($this->parentObject->model);
-                    $where[] = [$modelName::index(), $this->parentObject->model->pk()];
+                    $modelName = $this->parentObject->object->model;
+                    $where[] = [$modelName::index(), $this->parentModel->pk()];
                 }
             }
             if ($where) {
                 $modelName = $this->object->model;
-                $this->model = $modelName::get($where);
-                if (!$this->model) {
-                    $this->model = new $this->object->model;
+                $model = $modelName::get($where);
+                if (!$model) {
+                    $model = new $this->object->model;
                     foreach ($where as $item) {
-                        $this->model->{$item[0]} = $item[1];
+                        $model->{$item[0]} = $item[1];
                     }
                 }
             }
         }
-    }
-
-    public function getParam($code)
-    {
-        $param = \Migrations\Migration\Object\Param::get([
-                    ['object_id', $this->object->id],
-                    ['code', $code]
-        ]);
-        if (!$param) {
-            $param = new \Migrations\Migration\Object\Param();
-            $param->object_id = $this->object->id;
-            $param->code = $code;
-            $param->save();
-        }
-        return $param;
+        return $model;
     }
 
 }

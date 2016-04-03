@@ -16,10 +16,10 @@ class ObjectLink extends \Migrations\Parser
     public function parse()
     {
         $object = \Migrations\Migration\Object::get($this->param->value);
-        $objectId = \Migrations\Id::get([['parse_id', (string) $this->reader], ['type', $object->model]]);
+        $objectId = \Migrations\Id::get([['parse_id', (string) $this->data], ['type', $object->model]]);
         $modelName = $object->model;
         $model = $modelName::get($objectId->object_id);
-        $this->object->model->{$model->index()} = $model->pk();
+        $this->model->{$model->index()} = $model->pk();
     }
 
 }

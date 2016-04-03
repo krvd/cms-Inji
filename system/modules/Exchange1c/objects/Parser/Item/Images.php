@@ -15,25 +15,53 @@ class Images extends \Migrations\Parser
 {
     public function parse()
     {
-        $value = (string) $this->reader;
-        $notEq = true;
-        $dir = pathinfo($this->reader->source, PATHINFO_DIRNAME);
-        foreach ($this->object->model->images as $image) {
-            $file = $image->file;
-            if ($file && $value && file_exists($dir . '/' . $value) && file_exists(\App::$primary->path . $file->path) && md5_file($dir . '/' . $value) == md5_file(\App::$primary->path . $file->path)) {
-                $notEq = false;
+        $value = $this->data;
+        if (!is_array($value)) {
+            $value = [$value];
+        }
+        $ids = [];
+        $dir = pathinfo($this->object->walker->migtarionLog->source, PATHINFO_DIRNAME);
+        $this->model->image_file_id = 0;
+        foreach ($value as $key => $imagePath) {
+            if (!$imagePath || !file_exists($dir . '/' . $imagePath)) {
+                continue;
+            }
+            $notEq = true;
+            $md5Cur = md5_file($dir . '/' . $imagePath);
+            foreach ($this->model->images as $imageId => $image) {
+                $file = $image->file;
+                $md5File = '';
+                if ($file->md5) {
+                    $md5File = $file->md5;
+                } elseif (file_exists($file->getRealPath())) {
+                    $md5File = $file->md5 = md5_file($file->getRealPath());
+                    $file->save();
+                }
+
+                if ($file && $imagePath && file_exists($dir . '/' . $imagePath) && file_exists(\App::$primary->path . $file->path) && $md5Cur == $md5File) {
+                    $notEq = false;
+                    break;
+                    $ids[] = $imageId;
+                }
+            }
+            if ($notEq) {
+                $file_id = \App::$primary->files->uploadFromUrl($dir . '/' . $imagePath, ['accept_group' => 'image', 'upload_code' => 'MigrationUpload']);
+                $image = new \Ecommerce\Item\Image([
+                    'item_id' => $this->model->pk(),
+                    'file_id' => $file_id
+                ]);
+                $image->save();
+            } else {
+                $image->weight = $key;
+            }
+            if ($image && !$this->model->image_file_id) {
+                $this->model->image_file_id = $image->file_id;
             }
         }
-        if ($notEq) {
-            $file_id = \App::$primary->files->uploadFromUrl($dir . '/' . $value, ['accept_group' => 'image', 'upload_code' => 'MigrationUpload']);
-            $image = new \Ecommerce\Item\Image([
-                'item_id' => $this->object->model->pk(),
-                'file_id' => $file_id
-            ]);
-            $image->save();
-        }
-        if ($image && !$this->object->model->image_file_id) {
-            $this->object->model->image_file_id = $image->file_id;
+        foreach ($this->model->images as $imageId => $image) {
+            if (!in_array($imageId, $ids)) {
+                $image->delete();
+            }
         }
     }
 
