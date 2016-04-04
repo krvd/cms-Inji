@@ -210,7 +210,7 @@ class Ecommerce extends Module
                 }
             }
         }
-
+        $selectOptions['where'][] = ['deleted', 0];
         if (empty($this->config['view_empty_image'])) {
             $selectOptions['where'][] = ['image_file_id', 0, '!='];
         }

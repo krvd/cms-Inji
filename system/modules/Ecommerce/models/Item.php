@@ -27,6 +27,7 @@ class Item extends \Model
         'offers' => 'Торговые предложения',
         'widget' => 'Виджет для отображения в каталоге',
         'view' => 'Шаблон для отображения полной информации',
+        'deleted' => 'Удален',
     ];
     public static $cols = [
         //Основные параметры
@@ -37,6 +38,7 @@ class Item extends \Model
         'description' => ['type' => 'html'],
         'item_type_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'type'],
         'best' => ['type' => 'bool'],
+        'deleted' => ['type' => 'bool'],
         //Системные
         'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
         'weight' => ['type' => 'number'],
@@ -59,6 +61,7 @@ class Item extends \Model
                 'category_id',
                 'item_type_id',
                 'best',
+                'deleted',
                 'options',
                 'offers',
             ],
@@ -72,7 +75,7 @@ class Item extends \Model
         'manager' => [
             'map' => [
                 ['name', 'alias'],
-                ['category_id', 'item_type_id'],
+                ['category_id', 'item_type_id', 'deleted'],
                 ['widget', 'view'],
                 ['best', 'image_file_id'],
                 ['description'],
