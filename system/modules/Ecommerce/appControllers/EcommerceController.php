@@ -177,6 +177,26 @@ class ecommerceController extends Controller
             'filters' => !empty($_GET['filters']) ? $_GET['filters'] : []
         ]);
 
+        //params 
+        if (empty(App::$cur->ecommerce->config['filtersInLast'])) {
+            $options = \Ecommerce\Item\Option::getList(['where' => ['item_option_searchable', 1]]);
+        } else {
+            $params = $this->ecommerce->getItemsParams([
+                'parent' => $category_id,
+                'search' => trim($search),
+                'filters' => !empty($_GET['filters']) ? $_GET['filters'] : []
+            ]);
+            $ids = [];
+            foreach ($params as $param) {
+                $ids[] = $param->item_option_id;
+            }
+            if ($ids) {
+                $options = \Ecommerce\Item\Option::getList(['where' => ['id', $ids, 'IN']]);
+            } else {
+                $options = [];
+            }
+        }
+
         //child categorys
         if ($category) {
             $categorys = $category->catalogs;
@@ -188,7 +208,7 @@ class ecommerceController extends Controller
         $this->view->page([
             'page' => $category ? $category->resolveTemplate() : 'current',
             'content' => $category ? $category->resolveViewer() : (!empty(App::$cur->ecommerce->config['defaultCategoryView']) ? App::$cur->ecommerce->config['defaultCategoryView'] : 'itemList'),
-            'data' => compact('active', 'category', 'sort', 'search', 'pages', 'items', 'categorys', 'bread')]);
+            'data' => compact('active', 'category', 'sort', 'search', 'pages', 'items', 'categorys', 'bread', 'options')]);
     }
 
     public function viewAction($id = '')

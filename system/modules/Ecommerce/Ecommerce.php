@@ -321,6 +321,24 @@ class Ecommerce extends Module
     }
 
     /**
+     * Getting items params with params
+     * 
+     * @param array $params
+     * @return array
+     */
+    public function getItemsParams($params = [])
+    {
+        $selectOptions = $this->parseOptions($params);
+        $items = Ecommerce\Item::getList($selectOptions);
+        $items = Ecommerce\Item\Param::getList([
+                    'where' => ['item_id', array_keys($items), 'IN'],
+                    'join' => [[Ecommerce\Item\Option::table(), Ecommerce\Item\Option::index() . ' = ' . \Ecommerce\Item\Param::colPrefix() .Ecommerce\Item\Option::index(). ' and ' . \Ecommerce\Item\Option::colPrefix() . 'searchable = 1', 'inner']],
+                    'distinct' => \Ecommerce\Item\Option::index()
+        ]);
+        return $items;
+    }
+
+    /**
      * Getting items with params
      * 
      * @param array $params
