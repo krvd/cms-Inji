@@ -816,6 +816,9 @@ class Model
         if (!empty($options['where'])) {
             static::fixPrefix($options['where'], 'first');
         }
+        if (!empty($options['group'])) {
+            static::fixPrefix($options['group'], 'first');
+        }
         if (!empty($options['order'])) {
             static::fixPrefix($options['order'], 'first');
         }
