@@ -121,7 +121,7 @@ inji.Chats.init = function (chatIndex) {
     });
   };
   updater();
-  inji.Chats.chats[chatIndex].timer = setInterval(updater, 3000);
+  inji.Chats.chats[chatIndex].timer = setInterval(updater, 5000);
 }
 inji.Chats.sendForm = function (form, id) {
   var chat = inji.Chats.get(id);
