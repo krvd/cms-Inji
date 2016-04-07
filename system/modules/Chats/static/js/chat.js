@@ -68,7 +68,7 @@ inji.Chats.get = function (id, params) {
   return inji.Chats.chats[chatElement.data('chats-index')];
 }
 inji.Chats.init = function (chatIndex) {
-  inji.Chats.chats[chatIndex].timer = setInterval(function () {
+  updater = function () {
     inji.Server.request({
       url: 'chats/events/' + inji.Chats.chats[chatIndex].chatId,
       data: {
@@ -119,7 +119,9 @@ inji.Chats.init = function (chatIndex) {
         }
       }
     });
-  }, 3000);
+  };
+  updater();
+  inji.Chats.chats[chatIndex].timer = setInterval(updater, 3000);
 }
 inji.Chats.sendForm = function (form, id) {
   var chat = inji.Chats.get(id);

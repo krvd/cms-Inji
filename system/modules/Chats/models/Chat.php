@@ -17,6 +17,18 @@ class Chat extends \Model
         'name' => ['type' => 'text'],
         'code' => ['type' => 'text'],
     ];
+    public static $dataManagers = [
+        'manager' => [
+            'cols' => ['name', 'code']
+        ]
+    ];
+    public static $forms = [
+        'manager' => [
+            'map' => [
+                ['name', 'code']
+            ]
+        ]
+    ];
 
     public static function relations()
     {
