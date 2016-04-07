@@ -167,6 +167,9 @@ class Money extends Module
     {
         $rootUser = $rootUser ? $rootUser : \Users\User::$cur;
         $reward = \Money\Reward::get($reward_id);
+        if (!$reward->active) {
+            return false;
+        }
         $reward->checkBlocked();
         $reward_count = \Money\Reward\Recive::getCount([ 'where' => [ 'reward_id', $reward_id]]);
         if ($reward_count >= $reward->quantity && $reward->quantity) {

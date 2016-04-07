@@ -15,7 +15,7 @@ class WarehouseSum extends \Migrations\Parser
 {
     public function parse()
     {
-        $count = (string) $this->reader;
+        $count = (string) $this->data;
         $warehouse = \Ecommerce\Warehouse::get(['name', 'Общий склад 1с']);
         if (!$warehouse) {
             $warehouse = new \Ecommerce\Warehouse();

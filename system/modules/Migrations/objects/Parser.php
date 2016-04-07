@@ -13,10 +13,11 @@ namespace Migrations;
 
 class Parser
 {
-    public $reader;
+    public $data;
     public $param;
     public $model;
     public $object;
+    public $walker;
 
     public function parse()
     {

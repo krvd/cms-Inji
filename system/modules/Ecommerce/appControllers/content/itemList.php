@@ -10,7 +10,7 @@
       <div class="sidebar-block">
         <div class="head">Фильтры</div>
         <div class="items">
-          <?php $this->widget('Ecommerce\filters'); ?>
+          <?php $this->widget('Ecommerce\filters', compact('options')); ?>
         </div>
       </div>
     </div>

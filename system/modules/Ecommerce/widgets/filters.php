@@ -14,10 +14,10 @@
         </div>
         <?php
     }
-    $options = \Ecommerce\Item\Option::getList(['where' => ['item_option_searchable', 1]]);
     foreach ($options as $option) {
         ?>
-        <div class="filter">    
+        <div class="filter">  
+          <label><?= $option->name; ?></label>
           <?php
           switch ($option->type) {
               case 'radio':
@@ -32,6 +32,18 @@
                       ]);
                   }
                   break;
+              case 'select':
+                  foreach ($option->items as $item) {
+                      ?>
+                      <div class="radio">
+                        <label>
+                          <input type="radio" name = 'filters[options][<?= $option->id; ?>]' value ="<?= $item->id; ?>" <?= !empty($_GET['filters']['options'][$option->id]) && $_GET['filters']['options'][$option->id] == $item->id ? 'checked' : ''; ?>>
+                          <?= $item->value; ?>
+                        </label>
+                      </div>
+                      <?php
+                  }
+                  break;
               default:
                   $this->widget('Ui\Form/' . $option->type, [
                       'label' => $option->name,
@@ -40,16 +52,6 @@
                           'value' => !empty($_GET['filters']['options'][$option->id]) ? $_GET['filters']['options'][$option->id] : '',
                       ]
                   ]);
-          }
-          foreach ($option->items as $item) {
-              ?>
-              <div class="radio">
-                <label>
-                  <input type="radio" name = 'filters[options][<?= $option->id; ?>]' value ="<?= $item->id; ?>" <?= !empty($_GET['filters']['options'][$option->id]) && $_GET['filters']['options'][$option->id] == $item->id ? 'checked' : ''; ?>>
-                  <?= $item->value; ?>
-                </label>
-              </div>
-              <?php
           }
           ?>
         </div>

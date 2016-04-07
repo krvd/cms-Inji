@@ -421,4 +421,16 @@ class Tools extends Model
         return false;
     }
 
+    /**
+     * check array is associative
+     *
+     * @author http://stackoverflow.com/a/173479
+     * @param array $arr
+     * @return boolean
+     */
+    public static function isAssoc(&$arr)
+    {
+        return array_keys($arr) !== range(0, count($arr) - 1);
+    }
+
 }

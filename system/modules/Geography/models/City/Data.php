@@ -17,24 +17,26 @@ class Data extends \Model
     public static $labels = [
         'code' => 'Код',
         'data' => 'Данные',
+        'type' => 'Тип',
         'city_id' => 'Город',
         'date_create' => 'Дата создания',
     ];
     public static $cols = [
         'code' => ['type' => 'text'],
         'data' => ['type' => 'textarea'],
+        'type' => ['type' => 'text'],
         'city_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'city'],
-        'date_create' => ['type'=>'dateTime'],
+        'date_create' => ['type' => 'dateTime'],
     ];
     public static $dataManagers = [
         'manager' => [
-            'cols' => ['code', 'data', 'date_create']
+            'cols' => ['code', 'text', 'data', 'date_create']
         ]
     ];
     public static $forms = [
         'manager' => [
             'map' => [
-                ['code', 'city_id'],
+                ['code', 'city_id', 'text'],
                 ['data']
             ]
         ]

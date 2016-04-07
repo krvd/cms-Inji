@@ -75,9 +75,10 @@ class Notifications extends Module
     {
         if (empty($_COOKIE['notification-device'])) {
             $deviceKey = Tools::randomString(70);
-            setcookie("notification-device", $deviceKey, 0, "/");
+            setcookie("notification-device", $deviceKey, time() + 360000, "/");
         } else {
             $deviceKey = $_COOKIE['notification-device'];
+            setcookie("notification-device", $_COOKIE['notification-device'], time() + 360000, "/");
         }
         $device = \Notifications\Subscriber\Device::get($deviceKey, 'key');
         if (!$device) {

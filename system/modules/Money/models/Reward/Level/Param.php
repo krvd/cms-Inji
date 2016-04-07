@@ -29,6 +29,14 @@ class Param extends \Model
             'cols' => ['param', 'value']
         ]
     ];
+    public static $forms = [
+        'manager' => [
+            'map' => [
+                ['param', 'value'],
+                ['reward_level_id']
+            ]
+        ]
+    ];
 
     public static function relations()
     {

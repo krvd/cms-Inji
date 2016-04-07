@@ -15,12 +15,28 @@ class Param extends \Migrations\Parser
 {
     public function parse()
     {
+        $params = \Migrations\Migration\Object\Param::getList(['where' => [
+                        ['parent_id', $this->param->id],
+                        ['object_id', $this->object->object->id],
+        ]]);
+        if (!\Tools::isAssoc($this->data)) {
+            foreach ($this->data as &$data) {
+                $this->parseData($data, $params);
+            }
+        } else {
+            $this->parseData($this->data, $params);
+        }
+    }
+
+    private function parseData(&$data, $params)
+    {
         $objectParamValue = [
             'col' => '',
             'value' => ''
         ];
-        foreach ($this->reader->readPath() as $code => $objectParam) {
-            $param = $this->getParam($code);
+        $walked = [];
+        foreach ($params as $param) {
+            $objectParam = $data[$param->code];
             if ($this->model && $param->type) {
                 switch ($param->type) {
                     case 'paramName':
@@ -52,27 +68,23 @@ class Param extends \Migrations\Parser
                         break;
                 }
             }
+            $walked[$param->code] = true;
         }
         if ($objectParamValue['col']) {
             $this->model->{$objectParamValue['col']} = $objectParamValue['value'];
         }
-    }
-
-    public function getParam($code)
-    {
-        $param = \Migrations\Migration\Object\Param::get([
-                    ['parent_id', $this->param->id],
-                    ['object_id', $this->object->object->id],
-                    ['code', $code]
-        ]);
-        if (!$param) {
+        //check unparsed params
+        foreach ($data as $key => $item) {
+            //skip parsed and attribtes
+            if ($key == '@attributes' || !empty($walked[$key])) {
+                continue;
+            }
             $param = new \Migrations\Migration\Object\Param();
             $param->parent_id = $this->param->id;
             $param->object_id = $this->object->object->id;
-            $param->code = $code;
+            $param->code = $key;
             $param->save();
         }
-        return $param;
     }
 
     public function editor()
