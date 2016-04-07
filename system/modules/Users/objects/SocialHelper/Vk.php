@@ -133,7 +133,7 @@ class Vk extends \Users\SocialHelper
             $userSocial->user_id = $user->id;
             $userSocial->save();
             \App::$cur->users->newSession($user);
-            \Tools::redirect('/users/cabinet/profile', 'Вы успешно зарегистрировались через ВКонтакте', 'success');
+            \Tools::redirect(\App::$cur->users->config['loginUrl'][\App::$cur->type], 'Вы успешно зарегистрировались через ВКонтакте', 'success');
         }
     }
 
