@@ -3,6 +3,18 @@
     <div class='row'>
       <div class = 'box col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1'>
         <h3>Вход</h3>
+        <div class="form-group">
+          <?php
+          $socials = Users\Social::getList(['where' => ['active', 1]]);
+          if ($socials) {
+              echo 'Войти через: ';
+              foreach (Users\Social::getList(['where' => ['active', 1]]) as $social) {
+                  $text = $social->image ? '<img src ="' . Statics::file($social->image->path, '25x25', 'q') . '">' : $social->name();
+                  echo "<a href = '/users/social/auth/{$social->code}'>{$text}</a> ";
+              }
+          }
+          ?>
+        </div>
         <form action = '' method = 'POST' >
           <div class ='row'>
             <div class="col-sm-6">
@@ -17,13 +29,6 @@
                 <input type ='password' name ='user_pass' class ='form-control' placeholder ='Пароль' required />
               </div>
             </div>
-          </div>
-          <div class="form-group">
-            <?php
-            foreach (Users\Social::getList(['where' => ['active', 1]]) as $social) {
-                echo "<a href = '/users/social/auth/{$social->code}'>{$social->name()}</a> ";
-            }
-            ?>
           </div>
           <input type ='hidden' name ='autorization' value ='1' />
           <div class="form-actions text-center">

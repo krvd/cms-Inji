@@ -18,6 +18,7 @@ class Social extends \Model
         'name' => ['type' => 'text'],
         'code' => ['type' => 'text'],
         'active' => ['type' => 'bool'],
+        'image_file_id' => ['type' => 'image'],
         'object_name' => ['type' => 'text'],
         'config' => ['type' => 'dataManager', 'relation' => 'configs'],
         'date_create' => ['type' => 'dateTime']
@@ -34,7 +35,7 @@ class Social extends \Model
         'manager' => [
             'name' => "Коннекторы с социальными сетями",
             'cols' => [
-                'name', 'active', 'code', 'object_name', 'config', 'date_create'
+                'name', 'image_file_id', 'active', 'code', 'object_name', 'config', 'date_create'
             ]
         ]
     ];
@@ -43,6 +44,7 @@ class Social extends \Model
             'map' => [
                 ['name', 'code'],
                 ['object_name', 'active'],
+                ['image_file_id'],
                 ['config']
             ]
         ]
@@ -55,6 +57,10 @@ class Social extends \Model
                 'type' => 'many',
                 'model' => 'Users\Social\Config',
                 'col' => 'social_id'
+            ],
+            'image' => [
+                'model' => 'Files\File',
+                'col' => 'image_file_id'
             ]
         ];
     }
