@@ -1130,7 +1130,7 @@ class Model
         }
 
         if (!empty($where)) {
-            static::fixPrefix($where, 'key');
+            static::fixPrefix($where, 'first');
 
             App::$cur->db->where($where);
         }
