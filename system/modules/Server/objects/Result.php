@@ -16,6 +16,7 @@ class Result extends \Object
     public $content = null;
     public $success = true;
     public $successMsg = '';
+    public $commands = [];
     public $scripts = [];
 
     public function send()
@@ -31,6 +32,7 @@ class Result extends \Object
         if (!headers_sent()) {
             header('Content-type: application/json');
         }
+        $return['commands'] = $this->commands;
         $return['scripts'] = \App::$cur->view->getScripts();
         echo json_encode($return);
         exit();

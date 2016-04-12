@@ -12,6 +12,24 @@
 function Server() {
 
 }
+Server.prototype.runCommands = function (commands) {
+  for (var key in commands) {
+    var command = commands[key];
+    var callPath = command.call.split('.');
+    var curPath = window;
+    for (var keyPath in callPath) {
+      if (typeof curPath[callPath[keyPath]] == 'undefined') {
+        console.log('undefined call path ' + callPath[keyPath] + ' in ' + command.call);
+        curPath = null;
+        break;
+      }
+      curPath = curPath[callPath[keyPath]];
+    }
+    if (curPath !== null) {
+      curPath.apply(null, command.params);
+    }
+  }
+}
 Server.prototype.request = function (options, btn) {
   var ajaxOptions = {
     url: '',
@@ -49,22 +67,25 @@ Server.prototype.request = function (options, btn) {
         }
         if (typeof data.scripts == 'object') {
           inji.loaded = false;
-          if (callback !== null) {
-            inji.onLoad(function () {
+          inji.onLoad(function () {
+            inji.Server.runCommands(data.commands);
+            if (callback !== null) {
               callback(data.content, textStatus, jqXHR)
-            });
-          }
+            }
+          });
           if (data.scripts.length > 0) {
             inji.loadScripts(data.scripts, 0);
           } else {
             inji.startCallbacks();
           }
         } else {
+          inji.Server.runCommands(data.commands);
           if (callback !== null) {
             callback(data.content, textStatus, jqXHR);
           }
         }
       } else {
+        inji.Server.runCommands(data.commands);
         noty({text: data.error, type: 'warning', timeout: 3500, layout: 'center'});
       }
     }
