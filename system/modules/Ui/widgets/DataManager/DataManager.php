@@ -9,13 +9,13 @@ echo Html::el('div', [
     'data-options' => $dataManager->managerOptions
         ], '', true);
 ?>
-<h2 class="dataManager-title"><?= $dataManager->name; ?> 
+<h3 class="dataManager-title"><?= $dataManager->name; ?> 
   <div class ='pull-right dataManager-managerButtons'>
     <div class="btn-group">
       <?php $this->widget('Ui\DataManager/managerButtons', ['buttons' => $dataManager->getButtons($params, $model)]); ?>
     </div>
   </div>
-</h2>
+</h3>
 <?php
 $mainCol = [
     'class' => 'mainTableWrap table-responsive',
