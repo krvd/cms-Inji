@@ -143,6 +143,10 @@ DataManager.prototype.reload = function () {
   this.load();
 }
 DataManager.prototype.load = function (options) {
+  if($('#'+this.element.attr('id')).length==0){
+    delete inji.Ui.dataManagers[this.element.attr('id')];
+    return;
+  }
   var dataManager = this;
   if (typeof this.params == 'string') {
     var params = JSON.parse(this.params);
