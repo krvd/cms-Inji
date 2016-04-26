@@ -68,7 +68,7 @@ inji.Chats.get = function (id, params) {
   return inji.Chats.chats[chatElement.data('chats-index')];
 }
 inji.Chats.init = function (chatIndex) {
-  updater = function () {
+  var updater = function () {
     inji.Server.request({
       url: 'chats/events/' + inji.Chats.chats[chatIndex].chatId,
       data: {
