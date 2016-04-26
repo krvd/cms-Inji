@@ -43,5 +43,8 @@ return [
         'app' => '/',
         'appAdmin' => '/admin'
     ],
-    'invites' => false
+    'invites' => false,
+    'needActivation' => false,
+    'noActivationNotify' => '',
+    'noMailNotify' => ''
 ];
