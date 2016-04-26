@@ -199,12 +199,12 @@ class Query extends \Object
                         }
                     }
                     $value = '(' . $newValue . ')';
-                } elseif (!preg_match('!\(!', $value) && !preg_match('![^0-9,\.\(\) ]!', $value))
+                } elseif (!preg_match('!\(!', $value) && !preg_match('![^0-9,\.\(\) ]!', $value)) {
                     $value = "({$value})";
-                elseif (preg_match('!\(!', $value) && preg_match('![^0-9,\.\(\) ]!', $value))
+                } elseif (preg_match('!\(!', $value) && preg_match('![^0-9,\.\(\) ]!', $value)) {
                     $value = "\"{$value}\"";
-            }
-            elseif (!in_array($value, array('CURRENT_TIMESTAMP'))) {
+                }
+            } elseif (!in_array($value, array('CURRENT_TIMESTAMP'))) {
                 $this->params[] = $value;
                 $value = "?";
             }
@@ -346,6 +346,7 @@ class Query extends \Object
         if (is_string($query)) {
             $query = ['query' => $query, 'params' => $this->params];
         }
+        //var_dump($query);
         $prepare = $this->curInstance->pdo->prepare($query['query']);
         $prepare->execute($query['params']);
         $this->curInstance->lastQuery = $query;
