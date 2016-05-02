@@ -51,5 +51,9 @@ class Image extends \Model
             ]
         ]
     ];
+    function beforeDelete()
+    {
+        $this->file->delete();
+    }
 
 }

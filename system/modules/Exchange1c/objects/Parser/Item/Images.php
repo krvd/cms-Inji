@@ -38,10 +38,10 @@ class Images extends \Migrations\Parser
                     $file->save();
                 }
 
-                if ($file && $imagePath && file_exists($dir . '/' . $imagePath) && file_exists(\App::$primary->path . $file->path) && $md5Cur == $md5File) {
+                if ($file && file_exists($file->getRealPath()) && $md5Cur == $md5File) {
                     $notEq = false;
-                    break;
                     $ids[] = $imageId;
+                    break;
                 }
             }
             if ($notEq) {
@@ -51,6 +51,7 @@ class Images extends \Migrations\Parser
                     'file_id' => $file_id
                 ]);
                 $image->save();
+                $ids[] = $image->id;
             } else {
                 $image->weight = $key;
             }
