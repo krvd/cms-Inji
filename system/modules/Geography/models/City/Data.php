@@ -36,7 +36,7 @@ class Data extends \Model
     public static $forms = [
         'manager' => [
             'map' => [
-                ['code', 'city_id', 'text'],
+                ['code', 'city_id'],
                 ['data']
             ]
         ]
