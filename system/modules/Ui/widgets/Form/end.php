@@ -1,16 +1,20 @@
 <?php
-if ($btnText !== false) {
+if (empty($params['activeForm']) || $options['activeForm']->parent === null) {
+    if ($btnText !== false) {
+        ?>
+        <div class="form-group">
+          <button class ='btn btn-primary' 
+                  <?php
+                  foreach ($attributs as $attribute => $value) {
+                      echo " {$attribute} = '{$value}' ";
+                  }
+                  ?>
+                  ><?= $btnText; ?></button>
+        </div>
+        <?php
+    }
     ?>
-    <div class="form-group">
-        <button class ='btn btn-primary' 
-                <?php
-                foreach ($attributs as $attribute => $value) {
-                    echo " {$attribute} = '{$value}' ";
-                }
-                ?>
-                ><?= $btnText; ?></button>
-    </div>
+    </form>
     <?php
 }
 ?>
-</form>
