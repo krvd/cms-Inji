@@ -122,7 +122,7 @@ class DataManagerController extends Controller
                         echo ";";
                     }
                     $endRow = false;
-                    echo '"' . str_replace("\n", '', $col) . '"';
+                    echo '"' . str_replace(["\n", '"'], ['“'], $col) . '"';
                 }
                 echo "\n";
                 $endRow = true;
@@ -215,15 +215,18 @@ class DataManagerController extends Controller
         if ($dataManager->checkAccess()) {
             $ids = trim($request['ids'], ' ,');
             if ($request['action'] && $ids) {
-
                 $actions = $dataManager->getActions();
                 if (!empty($actions[$request['action']])) {
                     $actionParams = $actions[$request['action']];
-                    try {
-                        $result->successMsg = $actionParams['className']::groupAction($dataManager, $ids, $actionParams);
-                        $result->success = true;
-                    } catch (\Exception $e) {
-                        $result->content = $e->getMessage();
+                    if (!empty($actionParams['access']['groups']) && !in_array(\Users\User::$cur->group_id, $actionParams['access']['groups'])) {
+                        $result->content = 'У вас нет прав доступа к операции ' . (!isset($actionParams['name']) ? $actionParams['className']::$name : $actionParams['name']);
+                    } else {
+                        try {
+                            $result->successMsg = $actionParams['className']::groupAction($dataManager, $ids, $actionParams, !empty($_GET['adInfo']) ? $_GET['adInfo'] : []);
+                            $result->success = true;
+                        } catch (\Exception $e) {
+                            $result->content = $e->getMessage();
+                        }
                     }
                 }
             }

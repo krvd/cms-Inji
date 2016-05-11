@@ -74,11 +74,11 @@ function DataManager(element) {
   $(this.element).find('thead [type="checkbox"],tfoot [type="checkbox"]').click(function () {
     var index = $(this).closest('th').index();
     if (!this.checked) {
-      $(instance.element).find('tbody tr').each(function () {
+      $(instance.element).find('.datamanagertable tbody tr').each(function () {
         $($(this).find('td').get(index)).find('[type="checkbox"]')[0].checked = false;
       });
     } else {
-      $(instance.element).find('tbody tr').each(function () {
+      $(instance.element).find('.datamanagertable tbody tr').each(function () {
         $($(this).find('td').get(index)).find('[type="checkbox"]')[0].checked = true;
       });
     }
@@ -143,7 +143,7 @@ DataManager.prototype.reload = function () {
   this.load();
 }
 DataManager.prototype.load = function (options) {
-  if($('#'+this.element.attr('id')).length==0){
+  if ($('#' + this.element.attr('id')).length == 0) {
     delete inji.Ui.dataManagers[this.element.attr('id')];
     return;
   }
@@ -169,13 +169,21 @@ DataManager.prototype.load = function (options) {
       if (!filters[maths[0]]) {
         filters[maths[0]] = {};
       }
-      if ($(this).attr('type') == 'checkbox' && !$(this)[0].checked) {
-        filters[maths[0]][maths[1]] = 0;
+      if (typeof maths[2] != 'undefined') {
+        if (!filters[maths[0]][maths[1]]) {
+          filters[maths[0]][maths[1]] = {};
+        }
+        filters[maths[0]][maths[1]][maths[2]] = $(this).val();
       } else {
-        filters[maths[0]][maths[1]] = $(this).val();
+        if ($(this).attr('type') == 'checkbox' && !$(this)[0].checked) {
+          filters[maths[0]][maths[1]] = 0;
+        } else {
+          filters[maths[0]][maths[1]] = $(this).val();
+        }
       }
     });
   }
+  console.log(filters);
   if (this.options.sortable) {
     sortableIndexes = [];
     var i = 0;
@@ -272,14 +280,14 @@ DataManager.prototype.load = function (options) {
     window.location = url + '?' + $.param(data);
     return;
   }
-  dataManager.element.find('tbody').html('<tr><td colspan="' + dataManager.element.find('thead tr th').length + '"><div class = "text-center"><img src = "' + inji.options.appRoot + 'static/moduleAsset/Ui/images/ajax-loader.gif" /></div></td></tr>');
+  dataManager.element.find('.datamanagertable tbody').html('<tr><td colspan="' + dataManager.element.find('thead tr th').length + '"><div class = "text-center"><img src = "' + inji.options.appRoot + 'static/moduleAsset/Ui/images/ajax-loader.gif" /></div></td></tr>');
   var instance = this;
 
   inji.Server.request({
     url: this.ajaxUrl,
     data: data,
     success: function (data) {
-      dataManager.element.find('tbody').html(data.rows);
+      dataManager.element.find('.datamanagertable tbody').html(data.rows);
       dataManager.element.find('.pagesContainer').html(data.pages);
       //dataManager.flowPages();
       if (dataManager.options.sortMode) {
@@ -289,11 +297,11 @@ DataManager.prototype.load = function (options) {
           dataManager.element.find('.modeBtn').addClass('active');
         }
       }
-      $(instance.element).find('tbody').sortable().sortable("disable");
+      $(instance.element).find('.datamanagertable tbody').sortable().sortable("disable");
       if (dataManager.mode == 'sort') {
-        $(instance.element).find('tbody').sortable({
+        $(instance.element).find('.datamanagertable tbody').sortable({
           stop: function (event, ui) {
-            ids = $(instance.element).find('tbody tr');
+            ids = $(instance.element).find('.datamanagertable tbody tr');
             i = 0;
             while (ids[i]) {
               var key = $(ids[i++]).find('td').get(1).innerHTML;
@@ -362,24 +370,59 @@ DataManager.prototype.flowPanel = function () {
 DataManager.prototype.groupAction = function (actionName) {
   var ids = '';
   var rows = {};
-  $(this.element).find('tbody tr').each(function () {
+  $(this.element).find('.datamanagertable tbody tr').each(function () {
     if ($($(this).find('td').get(0)).find('[type="checkbox"]')[0].checked) {
       ids += ',' + $($(this).find('td').get(0)).find('[type="checkbox"]').val();
       rows[$($(this).find('td').get(0)).find('[type="checkbox"]').val()] = $(this);
     }
   });
   if (ids != '') {
-    inji.Server.request({
-      url: 'ui/dataManager/groupAction',
-      data: {params: this.params, modelName: this.modelName, ids: ids, managerName: this.managerName, action: actionName},
-      success: function () {
-        inji.Ui.dataManagers.reloadAll();
+    var action = this.options.actions[actionName];
+    if (action.customJsChecker) {
+      if (!window[action.customJsChecker](this, rows)) {
+        return;
       }
-    });
+    }
+    if (action.aditionalInfo) {
+      var id = inji.randomString();
+      var html = '<form id ="' + id + '"><h3>Для этой груповой операции требуется дополнительная информация</h3>';
+      for (key in action.aditionalInfo) {
+        var input = action.aditionalInfo[key];
+        html += '<div class = "form-group"><label>' + input.label + '</label><input type="' + input.type + '" name ="' + key + '" class = "form-control" value = "" /></div>';
+      }
+      html += '<div class = "form-group"><button class="btn btn-primary" >' + action.name + '</button></div></form>';
+      inji.Ui.modals.show('Дополнительная информация', html, 'modal' + id);
+      var instance = this;
+      $('#' + id).submit(function () {
+        $(this).closest('.modal').modal('hide');
+        var adInfo = {};
+        if ($(this).find('input').length > 0) {
+          $.each($(this).find('input'), function () {
+            adInfo[$(this).attr('name')] = $(this).val();
+          });
+        }
+        inji.Server.request({
+          url: 'ui/dataManager/groupAction',
+          data: {params: instance.params, modelName: instance.modelName, ids: ids, managerName: instance.managerName, action: actionName, adInfo: adInfo},
+          success: function () {
+            inji.Ui.dataManagers.reloadAll();
+          }
+        });
+        return false;
+      });
+    } else {
+      inji.Server.request({
+        url: 'ui/dataManager/groupAction',
+        data: {params: this.params, modelName: this.modelName, ids: ids, managerName: this.managerName, action: actionName},
+        success: function () {
+          inji.Ui.dataManagers.reloadAll();
+        }
+      });
+    }
   }
 }
 DataManager.prototype.rowSelection = function (type) {
-  $(this.element).find('tbody tr').each(function () {
+  $(this.element).find('.datamanagertable tbody tr').each(function () {
     if ($($(this).find('td').get(0)).find('[type="checkbox"]')[0].checked && (type == 'unSelectAll' || type == 'inverse')) {
       $($(this).find('td').get(0)).find('[type="checkbox"]')[0].checked = false;
     } else if (!$($(this).find('td').get(0)).find('[type="checkbox"]')[0].checked && (type == 'selectAll' || type == 'inverse')) {

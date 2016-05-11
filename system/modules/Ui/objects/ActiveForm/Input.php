@@ -19,15 +19,17 @@ class Input extends \Object
     public $modelName = '';
     public $colName = '';
     public $colParams = [];
+    public $options = [];
 
     public function draw()
     {
         $inputName = $this->colName();
         $inputLabel = $this->colLabel();
-        $inputOptions = [
-            'value' => $this->value(),
-            'disabled' => $this->readOnly()
-        ];
+        
+        $inputOptions = $this->options;
+        $inputOptions['value'] = $this->value();
+        $inputOptions['disabled'] = $this->readOnly();
+        
         $preset = $this->preset();
         if ($preset !== null) {
             $inputOptions['disabled'] = true;
@@ -104,8 +106,6 @@ class Input extends \Object
         if (empty($request[$this->colName]) && !empty($this->colParams['required'])) {
             throw new \Exception('Вы не заполнили: ' . $this->colLabel());
         }
-        //var_dump($this->colName,$this->colParams);
-        //exit();
         if (!empty($this->colParams['validator'])) {
             $modelName = $this->modelName;
             $validator = $modelName::validator($this->colParams['validator']);

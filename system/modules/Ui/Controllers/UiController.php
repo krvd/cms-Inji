@@ -32,7 +32,7 @@ class UiController extends Controller
             $params['appType'] = $_GET['params']['dataManagerParams']['appType'];
         }
 
-        $formName = !empty($_GET['params']['formName']) ? $_GET['params']['formName'] : 'manager';
+        $formName = !empty($_GET['formName']) ? $_GET['formName'] : (!empty($_GET['params']['formName']) ? $_GET['params']['formName'] : 'manager');
         $form = new Ui\ActiveForm($model, $formName);
         if (!empty($_GET['_']) || !empty($_POST['_'])) {
             $return = new Server\Result();

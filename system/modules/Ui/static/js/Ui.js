@@ -23,26 +23,26 @@ inji.Ui = new function () {
         $(this).removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-right');
       }
     });
-  },
-          this.requestInfo = function (options, callback) {
-            var id = 'resultForm' + inji.randomString();
-            var body = '<form id ="' + id + '">';
-            body += '<h2>' + options.header + '</h2>';
-            for (var key in options.inputs) {
-              body += '<div class = "form-group">';
-              body += '<label>' + options.inputs[key].label + '</label>';
-              body += '<input type = "' + options.inputs[key].type + '" name = "' + key + '" class ="form-control" />';
-              body += '</div>';
-            }
-            body += '<button class = "btn btn-primary">' + options.btn + '</button>';
-            body += '</form>';
-            var modal = inji.Ui.modals.show('', body);
-            $('#' + id).on('submit', function () {
-              callback($('#' + id).serializeArray());
-              modal.modal('hide');
-              return false;
-            });
-          }
+  };
+  this.requestInfo = function (options, callback) {
+    var id = 'resultForm' + inji.randomString();
+    var body = '<form id ="' + id + '">';
+    body += '<h2>' + options.header + '</h2>';
+    for (var key in options.inputs) {
+      body += '<div class = "form-group">';
+      body += '<label>' + options.inputs[key].label + '</label>';
+      body += '<input type = "' + options.inputs[key].type + '" name = "' + key + '" class ="form-control" />';
+      body += '</div>';
+    }
+    body += '<button class = "btn btn-primary">' + options.btn + '</button>';
+    body += '</form>';
+    var modal = inji.Ui.modals.show('', body);
+    $('#' + id).on('submit', function () {
+      callback($('#' + id).serializeArray());
+      modal.modal('hide');
+      return false;
+    });
+  }
 }
 
 
