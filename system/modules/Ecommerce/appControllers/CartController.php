@@ -285,7 +285,6 @@ class CartController extends Controller
 
         $cart = $this->ecommerce->getCurCart();
         $stages = Ecommerce\Cart\Stage::getList();
-
         if (empty($this->module->config['sell_over_warehouse']) && $price->offer->warehouseCount() < $count) {
             $result->success = false;
             $result->content = 'На складе недостаточно товара! Доступно: ' . $price->offer->warehouseCount();
@@ -304,6 +303,7 @@ class CartController extends Controller
         if (!$isset) {
             $cart->addItem($price->id, $count);
         }
+        $cart->date_last_activ = date('Y-m-d H:i:s');
         $cart->calc();
         $result->successMsg = '<a href="/ecommerce/view/' . $item->id . '">' . $item->name() . ($price->offer->name() ? ' (' . $price->offer->name() . ')' : '') . '</a> добавлен <a href="/ecommerce/cart">в корзину покупок</a>!';
         $result->send();
