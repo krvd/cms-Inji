@@ -15,21 +15,26 @@ class Warehouse extends \Migrations\Parser
 {
     public function parse()
     {
-        $count = $this->reader->data['КоличествоНаСкладе'];
-        $objectId = \Migrations\Id::get([['parse_id', (string) $this->reader->data['ИдСклада']], ['type', 'Ecommerce\Warehouse']]);
-        if ($objectId) {
-            $modelName = get_class($this->object->model);
-            $warehouse = \Ecommerce\Item\Offer\Warehouse::get([[$modelName::index(), $this->object->model->pk()], [\Ecommerce\Warehouse::index(), $objectId->object_id]]);
-            if (!$warehouse) {
-                $warehouse = new \Ecommerce\Item\Offer\Warehouse([
-                    $modelName::index() => $this->object->model->pk(),
-                    \Ecommerce\Warehouse::index() => $objectId->object_id,
-                    'count' => $count
-                ]);
-            } else {
-                $warehouse->count = $count;
+        if (is_array($this->data) && empty($this->data['@attributes'])) {
+            foreach ($this->data as $warehouseCount) {
+                $count = $warehouseCount['@attributes']['КоличествоНаСкладе'];
+
+                $objectId = \Migrations\Id::get([['parse_id', (string) $warehouseCount['@attributes']['ИдСклада']], ['type', 'Ecommerce\Warehouse']]);
+                if ($objectId) {
+                    $modelName = get_class($this->model);
+                    $warehouse = \Ecommerce\Item\Offer\Warehouse::get([[$modelName::index(), $this->model->pk()], [\Ecommerce\Warehouse::index(), $objectId->object_id]]);
+                    if (!$warehouse) {
+                        $warehouse = new \Ecommerce\Item\Offer\Warehouse([
+                            $modelName::index() => $this->model->pk(),
+                            \Ecommerce\Warehouse::index() => $objectId->object_id,
+                            'count' => $count
+                        ]);
+                    } else {
+                        $warehouse->count = $count;
+                    }
+                    $warehouse->save();
+                }
             }
-            $warehouse->save();
         }
     }
 

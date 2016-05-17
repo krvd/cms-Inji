@@ -64,7 +64,7 @@ class Object extends \Object
                         } else {
                             $parserName = '\Migrations\Parser\Object\\' . ucfirst($param->type);
                         }
-                        if (!in_array($parserName, ['\Migrations\Parser\Object\ObjectLink','Exchange1c\Parser\Item\Images', '\Migrations\Parser\Object\Value', '\Migrations\Parser\Object\Relation', '\Migrations\Parser\Object\ParamsList'])) {
+                        if (!in_array($parserName, ['\Migrations\Parser\Object\ObjectLink','Exchange1c\Parser\Item\Images', '\Migrations\Parser\Object\Value', '\Migrations\Parser\Object\Relation', '\Migrations\Parser\Object\ParamsList','Exchange1c\Parser\Item\Offer\Warehouse'])) {
                             var_dump($parserName);
                             exit();
                         }
