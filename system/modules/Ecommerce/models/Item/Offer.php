@@ -91,6 +91,18 @@ class Offer extends \Model
 
     public function warehouseCount($cart_id = 0)
     {
+        $warehouseIds = [];
+        if (class_exists('Geography\City\Data')) {
+            $warehouses = \Geography\City\Data::get([['code', 'warehouses'], ['city_id', \Geography\City::$cur->id]]);
+            if ($warehouses && $warehouses->data) {
+                foreach (explode(',', $warehouses->data) as $id) {
+                    $warehouseIds[$id] = $id;
+                }
+            }
+        }
+        if ($warehouseIds) {
+            \App::$cur->db->where(\Ecommerce\Item\Offer\Warehouse::colPrefix() . \Ecommerce\Warehouse::index(), $warehouseIds, 'IN');
+        }
         \App::$cur->db->where(\Ecommerce\Item\Offer\Warehouse::colPrefix() . \Ecommerce\Item\Offer::index(), $this->id);
         \App::$cur->db->cols = 'COALESCE(sum(' . \Ecommerce\Item\Offer\Warehouse::colPrefix() . 'count),0) as `sum` ';
         $warehouse = \App::$cur->db->select(\Ecommerce\Item\Offer\Warehouse::table())->fetch();

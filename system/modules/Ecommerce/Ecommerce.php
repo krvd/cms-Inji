@@ -280,11 +280,21 @@ class Ecommerce extends Module
             }
         }
         if (empty($this->config['view_empty_warehouse'])) {
+            $warehouseIds = [];
+            if (class_exists('Geography\City\Data')) {
+                $warehouses = \Geography\City\Data::get([['code', 'warehouses'], ['city_id', \Geography\City::$cur->id]]);
+                if ($warehouses && $warehouses->data) {
+                    foreach (explode(',', $warehouses->data) as $id) {
+                        $warehouseIds[$id] = $id;
+                    }
+                }
+            }
             $selectOptions['where'][] = [
                 '(
           (SELECT COALESCE(sum(`' . \Ecommerce\Item\Offer\Warehouse::colPrefix() . 'count`),0) 
             FROM ' . \App::$cur->db->table_prefix . \Ecommerce\Item\Offer\Warehouse::table() . ' iciw 
             WHERE iciw.' . \Ecommerce\Item\Offer\Warehouse::colPrefix() . \Ecommerce\Item\Offer::index() . ' = ' . \Ecommerce\Item\Offer::index() . '
+                ' . ($warehouseIds ? ' AND iciw.' . \Ecommerce\Item\Offer\Warehouse::colPrefix() . \Ecommerce\Warehouse::index() . ' IN(' . implode(',', $warehouseIds) . ')' : '') . '
             )
           -
           (SELECT COALESCE(sum(' . \Ecommerce\Warehouse\Block::colPrefix() . 'count) ,0)
@@ -332,7 +342,7 @@ class Ecommerce extends Module
         $items = Ecommerce\Item::getList($selectOptions);
         $items = Ecommerce\Item\Param::getList([
                     'where' => ['item_id', array_keys($items), 'IN'],
-                    'join' => [[Ecommerce\Item\Option::table(), Ecommerce\Item\Option::index() . ' = ' . \Ecommerce\Item\Param::colPrefix() .Ecommerce\Item\Option::index(). ' and ' . \Ecommerce\Item\Option::colPrefix() . 'searchable = 1', 'inner']],
+                    'join' => [[Ecommerce\Item\Option::table(), Ecommerce\Item\Option::index() . ' = ' . \Ecommerce\Item\Param::colPrefix() . Ecommerce\Item\Option::index() . ' and ' . \Ecommerce\Item\Option::colPrefix() . 'searchable = 1', 'inner']],
                     'distinct' => \Ecommerce\Item\Option::index()
         ]);
         return $items;
