@@ -40,7 +40,7 @@ class Value extends \Migrations\Parser
                                 $relation = $modelName::getRelation($type['relation']);
                                 $sourceModel = $relation['model'];
                             }
-                            $objectId = \Migrations\Id::get([['parse_id', (string) $value], ['type', $sourceModel]]);
+                            $objectId = \App::$cur->migrations->findObject((string) $value, $sourceModel);
                             if ($objectId) {
                                 $value = $objectId->object_id;
                             }
@@ -85,7 +85,7 @@ class Value extends \Migrations\Parser
                 }
                 break;
             default:
-                if(is_array($value)){
+                if (is_array($value)) {
                     $value = implode(' ', $value);
                 }
                 $this->model->{$this->param->value} = $value;

@@ -18,8 +18,7 @@ class Warehouse extends \Migrations\Parser
         if (is_array($this->data) && empty($this->data['@attributes'])) {
             foreach ($this->data as $warehouseCount) {
                 $count = $warehouseCount['@attributes']['КоличествоНаСкладе'];
-
-                $objectId = \Migrations\Id::get([['parse_id', (string) $warehouseCount['@attributes']['ИдСклада']], ['type', 'Ecommerce\Warehouse']]);
+                $objectId = \App::$cur->migrations->findObject((string) $warehouseCount['@attributes']['ИдСклада'], 'Ecommerce\Warehouse');
                 if ($objectId) {
                     $modelName = get_class($this->model);
                     $warehouse = \Ecommerce\Item\Offer\Warehouse::get([[$modelName::index(), $this->model->pk()], [\Ecommerce\Warehouse::index(), $objectId->object_id]]);
@@ -29,10 +28,13 @@ class Warehouse extends \Migrations\Parser
                             \Ecommerce\Warehouse::index() => $objectId->object_id,
                             'count' => $count
                         ]);
+                        $warehouse->save();
                     } else {
-                        $warehouse->count = $count;
+                        if ($warehouse->count != $count) {
+                            $warehouse->count = $count;
+                            $warehouse->save();
+                        }
                     }
-                    $warehouse->save();
                 }
             }
         }
