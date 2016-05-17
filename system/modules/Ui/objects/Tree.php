@@ -12,7 +12,7 @@ namespace Ui;
 
 class Tree extends \Object
 {
-    public static function ul($objectRoot, $maxDeep = 0, $hrefFunc = null)
+    public static function ul($objectRoot, $maxDeep = 0, $hrefFunc = null, $order = [])
     {
         $count = 0;
         if (!$hrefFunc) {
@@ -27,11 +27,11 @@ class Tree extends \Object
               $items = $objectRoot::getList(['where' => ['parent_id', 0]]);
           } else {
               $class = get_class($objectRoot);
-              $items = $class::getList(['where' => ['parent_id', $objectRoot->pk()]]);
+              $items = $class::getList(['where' => ['parent_id', $objectRoot->pk()], 'order' => $order]);
           }
           $count += count($items);
           foreach ($items as $objectChild) {
-              $count+=static::showLi($objectChild, 1, $maxDeep, $hrefFunc);
+              $count+=static::showLi($objectChild, 1, $maxDeep, $hrefFunc, $order);
           }
           ?>
         </ul>
@@ -39,14 +39,14 @@ class Tree extends \Object
         return $count;
     }
 
-    public static function showLi($object, $deep = 1, $maxDeep = 0, $hrefFunc = null)
+    public static function showLi($object, $deep = 1, $maxDeep = 0, $hrefFunc = null, $order = [])
     {
         $count = 0;
         $isset = false;
         $class = get_class($object);
         $item = $hrefFunc ? $hrefFunc($object) : "<a href='#'> {$object->name()}</a> ";
         $attributes = [];
-        
+
         if (is_array($item)) {
             $attributes = $item['attributes'];
             $item = $item['text'];
@@ -55,7 +55,7 @@ class Tree extends \Object
             $attributes['id'] = str_replace('\\', '_', get_class($object)) . "-{$object->pk()}";
         }
         if (!$maxDeep || $deep < $maxDeep) {
-            $items = $class::getList(['where' => ['parent_id', $object->pk()]]);
+            $items = $class::getList(['where' => ['parent_id', $object->pk()], 'order' => $order]);
             $count += count($items);
             foreach ($items as $objectChild) {
                 if (!$isset) {
@@ -63,7 +63,7 @@ class Tree extends \Object
                     echo \Html::el('li', $attributes, $item, true);
                     echo '<ul>';
                 }
-                $count+=static::showLi($objectChild, $deep + 1, $maxDeep, $hrefFunc);
+                $count+=static::showLi($objectChild, $deep + 1, $maxDeep, $hrefFunc, $order);
             }
         }
         if ($isset) {
