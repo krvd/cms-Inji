@@ -21,7 +21,8 @@ class Wallet extends \Model
     ];
     public static $labels = [
         'user_id' => 'Пользователь',
-        'currency_id' => 'Валюта'
+        'currency_id' => 'Валюта',
+        'amount' => 'Сумма',
     ];
 
     public static function relations()
@@ -37,6 +38,14 @@ class Wallet extends \Model
             ],
         ];
     }
+
+    public static $dataManagers = [
+        'manager' => [
+            'cols' => ['user:id', 'user_id', 'currency_id', 'amount'],
+            'sortable' => ['user:id', 'user_id', 'currency_id', 'amount'],
+            'filters' => [ 'currency_id'],
+        ]
+    ];
 
     public function beforeSave()
     {
