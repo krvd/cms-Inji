@@ -10,7 +10,7 @@
  */
 class Access extends Module
 {
-    public $accessGetters = [];
+    public $accessCheckers = [];
 
     public function init()
     {
