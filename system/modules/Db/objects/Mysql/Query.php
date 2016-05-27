@@ -239,11 +239,14 @@ class Query extends \Object
                     call_user_func_array(array($this, 'buildWhere'), $where);
                     break;
                 } else {
-                    if ($this->whereString != NULL && substr($this->whereString, -1, 1) != '(')
+                    if ($this->whereString != NULL && substr($this->whereString, -1, 1) != '(') {
                         if (!isset($item[3]))
                             $concatenation = 'AND';
                         else
                             $concatenation = $item[3];
+
+                        $this->whereString .= "{$concatenation} ";
+                    }
                     elseif (substr($this->whereString, -1, 1) != '(')
                         $this->whereString = 'WHERE ';
 
