@@ -239,21 +239,11 @@ class Query extends \Object
                     call_user_func_array(array($this, 'buildWhere'), $where);
                     break;
                 } else {
-                    if ($this->whereString != NULL && substr($this->whereString, -1, 1) != '(') {
-                        if (!isset($item[3]))
-                            $concatenation = 'AND';
-                        else
-                            $concatenation = $item[3];
-
-                        $this->whereString .= "{$concatenation} ";
-                    }
-                    elseif (substr($this->whereString, -1, 1) != '(')
-                        $this->whereString = 'WHERE ';
-
                     $this->buildWhere($item);
                 }
-                if (!isset($where[$i + 1]) && isset($where[$i - 1]))
+                if (!isset($where[$i + 1]) && isset($where[$i - 1])) {
                     $this->whereString .= ') ';
+                }
             }
         }
     }
@@ -351,7 +341,14 @@ class Query extends \Object
         }
         //var_dump($query);
         $prepare = $this->curInstance->pdo->prepare($query['query']);
-        $prepare->execute($query['params']);
+        try {
+            $prepare->execute($query['params']);
+        } catch (\PDOException $ex) {
+            var_dump($query);
+            var_dump($ex);
+            exit();
+        }
+
         $this->curInstance->lastQuery = $query;
         $result = new Result();
         $result->pdoResult = $prepare;
