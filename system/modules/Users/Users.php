@@ -150,7 +150,7 @@ class Users extends Module
 
         $user = $this->get($login, $ltype);
         if ($user && $this->verifypass($pass, $user->pass) && !$user->blocked) {
-            if (!empty($this->config['needActivation']) && $session->user->activation) {
+            if (!empty($this->config['needActivation']) && $user->activation) {
                 Tools::redirect('/', 'Этот аккаунт ещё не активирован. <br />Если вы не получали письмо с ссылкой для активации, нажмите на - <a href = "/users/resendActivation/' . $session->user->id . '"><b>повторно выслать ссылку активации</b></a>');
             } elseif ($user->activation) {
                 Msg::add('Этот аккаунт ещё не активирован, не все функции могут быть доступны. <br />Если вы не получали письмо с ссылкой для активации, нажмите на - <a href = "/users/resendActivation/' . $user->id . '"><b>повторно выслать ссылку активации</b></a>');
