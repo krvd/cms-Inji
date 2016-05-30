@@ -38,6 +38,11 @@ class Item extends \Model
         ]
     ];
 
+    function name()
+    {
+        return $this->value;
+    }
+
     public static function relations()
     {
         return [
