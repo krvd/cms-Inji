@@ -147,6 +147,34 @@ class Module
     }
 
     /**
+     * Find module controllers
+     * 
+     * @param string $moduleName
+     * @return array
+     */
+    public static function getModuleControllers($moduleName)
+    {
+        $controllers = [];
+        $moduleDirs = static::getModulePaths($moduleName);
+        foreach ($moduleDirs as $moduleDir) {
+            if (is_dir($moduleDir)) {
+                foreach (scandir($moduleDir) as $dir) {
+                    if (preg_match('!Controllers$!', $dir) && is_dir($moduleDir . '/' . $dir)) {
+                        $path = $moduleDir . '/' . $dir;
+                        foreach (scandir($path) as $file) {
+                            if (preg_match('!Controller\.php$!', $file) && is_file($path . '/' . $file)) {
+                                $controllerName = preg_replace('!Controller\.php$!', '', $file);
+                                $controllers[preg_replace('!Controllers$!', '', $dir)][$controllerName] = $path . '/' . $file;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return $controllers;
+    }
+
+    /**
      * Find module by request
      * 
      * @param \App $app
