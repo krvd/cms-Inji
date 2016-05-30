@@ -161,3 +161,11 @@
 h1 {
   font-size: 40px;
 }
+
+
+.categoryTree .active a {
+  font-weight: bold;
+}
+.categoryTree .active a.glyphicon {
+  font-weight: normal;
+}
