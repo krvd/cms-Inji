@@ -60,10 +60,15 @@ function DataManager(element) {
   this.modelName = element.data('modelname');
   this.managerName = element.data('managername');
   this.options = element.data('options');
+
+  this.categoryModel = this.options.categorys && this.options.categorys.model ? this.options.categorys.model : '';
+  this.categoryPath = '/';
+  this.categoryId = 0;
+
   this.limit = 30;
   this.page = 1;
   this.sortered = {};
-  this.categoryPath = '/';
+  this.categoryIndex = '';
   this.mode = '';
   this.all = 0;
   this.ajaxUrl = 'ui/dataManager/loadRows';
@@ -114,6 +119,12 @@ function DataManager(element) {
   self.flowPanel();
 
   this.load();
+}
+
+DataManager.prototype.newCategory = function () {
+  var options = {preset: {}};
+  options.preset['parent_id'] = this.categoryId;
+  inji.Ui.forms.popUp(this.categoryModel, options);
 }
 DataManager.prototype.delRow = function (key) {
   if (confirm('Вы уверены, что хотите удалить элемент?'))
@@ -353,6 +364,8 @@ DataManager.prototype.load = function (options) {
 }
 DataManager.prototype.switchCategory = function (categoryBtn) {
   this.categoryPath = $(categoryBtn).data('path');
+  this.categoryId = $(categoryBtn).data('id');
+  this.categoryIndex = $(categoryBtn).data('index');
   this.reload();
 }
 DataManager.prototype.flowPanel = function () {

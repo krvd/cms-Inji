@@ -137,7 +137,7 @@ class ActiveForm extends \Object
                         $error = true;
                     }
                 }
-                if (!$error) {
+                if (!$error && empty($_GET['notSave'])) {
                     foreach ($presets as $col => $preset) {
                         if (!empty($preset['value'])) {
                             $this->model->$col = $preset['value'];

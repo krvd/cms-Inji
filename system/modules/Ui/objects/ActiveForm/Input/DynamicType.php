@@ -28,8 +28,29 @@ class DynamicType extends \Ui\ActiveForm\Input
             return true;
         }
         $classPath = explode('\\', get_called_class());
-        $inputType = lcfirst(array_pop($classPath));
-        $this->form->input('text', $inputName, $inputLabel, $inputOptions);
+        $inputType = 'text';
+
+        switch ($this->colParams['typeSource']) {
+            case'selfMethod':
+                $type = $this->activeForm->model->{$this->colParams['selfMethod']}();
+                if (is_array($type)) {
+                    $inputType = $type['type'];
+                    if (strpos($type['relation'], ':')) {
+                        $relationPath = explode(':', $type['relation']);
+                        $relationName = array_pop($relationPath);
+                        $item = $this->activeForm->model;
+                        foreach ($relationPath as $path) {
+                            $item = $item->$path;
+                        }
+
+                        $inputOptions['values'] = $item->{$relationName}(['forSelect' => true]);
+                    } else {
+                        $inputOptions['values'] = $this->activeForm->model->{$type['relation']}(['forSelect' => true]);
+                    }
+                }
+                break;
+        }
+        $this->form->input($inputType, $inputName, $inputLabel, $inputOptions);
         return true;
     }
 

@@ -195,7 +195,7 @@ Forms.prototype.popUp = function (item, params) {
   });
   //}
 }
-Forms.prototype.submitAjax = function (form) {
+Forms.prototype.submitAjax = function (form, params) {
   inji.Ui.editors.beforeSubmit(form);
   var form = $(form);
   var container = form.parent().parent();
@@ -204,9 +204,19 @@ Forms.prototype.submitAjax = function (form) {
   btn[0].disabled = true;
   btn.data('loading-text', "Подождите");
 
+  var url = form.attr('action');
+  if (params) {
+    var first = true;
+    if (url.indexOf('?') >= 0) {
+      first = false;
+    }
+    for (var key in params) {
+      url += (first ? '?' : '&') + key + '=' + params[key];
+    }
+  }
   var formData = new FormData(form[0]);
   inji.Server.request({
-    url: form.attr('action'),
+    url: url,
     type: 'POST',
     data: formData,
     processData: false,
@@ -291,19 +301,22 @@ function ActiveForm() {
     console.log(this.element.element.id, this.inputs);
     for (var inputName in this.inputs) {
       var inputParams = this.inputs[inputName];
+      var self = this;
       if (this.inputHandlers[inputParams.type]) {
-        var query = '#' + this.element.element.id + ' [name="query-ActiveForm_' + this.formName + '[' + this.modelName.replace('\\', '\\\\') + '][' + inputName + ']"]';
-        console.log(query);
-        console.log(3);
-        this.inputHandlers[inputParams.type](inji.get(query), inputName, this)
+        var query = '#' + this.element.element.id + ' [name="query-ActiveForm_' + this.formName + '[' + this.modelName.replace(/\\/g, '\\\\') + '][' + inputName + ']"]';
+        this.inputHandlers[inputParams.type](inji.get(query), inputName, this);
+      }
+      if (inputParams.onChange == 'reloadForm') {
+        var query = '#' + this.element.element.id + ' [name="ActiveForm_' + this.formName + '[' + this.modelName.replace(/\\/g, '\\\\') + '][' + inputName + ']"]';
+        $(query).on('change', function () {
+          inji.Ui.forms.submitAjax($('#' + self.element.element.id + ' form')[0], {notSave: true});
+        })
       }
     }
   };
   this.inputHandlers = {
     search: function (element, inputName, activeForm) {
-      console.log(2);
       element.element.onkeyup = function () {
-        console.log(1);
         var inputContainer = element.element.parentNode;
         var selectedDiv = inputContainer.querySelector('.form-search-cur');
         var resultsDiv = inputContainer.querySelector('.form-search-results');
