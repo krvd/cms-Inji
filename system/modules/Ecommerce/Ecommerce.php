@@ -312,15 +312,22 @@ class Ecommerce extends Module
 
 
         $selectOptions['join'][] = [Ecommerce\Item\Offer::table(), Ecommerce\Item::index() . ' = ' . Ecommerce\Item\Offer::colPrefix() . Ecommerce\Item::index(), 'inner'];
+
         $selectOptions['join'][] = [Ecommerce\Item\Offer\Price::table(),
-            Ecommerce\Item\Offer::index() . ' = ' . Ecommerce\Item\Offer\Price::colPrefix() . Ecommerce\Item\Offer::index() . ' and ' . Ecommerce\Item\Offer\Price::colPrefix() . 'price>0', 'inner'];
+            Ecommerce\Item\Offer::index() . ' = ' . Ecommerce\Item\Offer\Price::colPrefix() . Ecommerce\Item\Offer::index() .
+            (empty($this->config['show_zero_price']) ? ' and ' . Ecommerce\Item\Offer\Price::colPrefix() . 'price>0' : ''),
+            empty($this->config['show_without_price']) ? 'inner' : 'left'];
+
         $selectOptions['join'][] = [
-            Ecommerce\Item\Offer\Price\Type::table(), Ecommerce\Item\Offer\Price::colPrefix() . Ecommerce\Item\Offer\Price\Type::index() . ' = ' . Ecommerce\Item\Offer\Price\Type::index() .
-            ' and (' . Ecommerce\Item\Offer\Price\Type::colPrefix() . 'roles="" || ' . Ecommerce\Item\Offer\Price\Type::colPrefix() . 'roles LIKE "%|' . \Users\User::$cur->role_id . '|%")'
+            Ecommerce\Item\Offer\Price\Type::table(), Ecommerce\Item\Offer\Price::colPrefix() . Ecommerce\Item\Offer\Price\Type::index() . ' = ' . Ecommerce\Item\Offer\Price\Type::index()
         ];
+
         $selectOptions['where'][] = [
-            [Ecommerce\Item\Offer\Price::colPrefix() . Ecommerce\Item\Offer\Price\Type::index(), 0],
-            [Ecommerce\Item\Offer\Price\Type::index(), 0, '>', 'OR']
+            [Ecommerce\Item\Offer\Price\Type::index(), NULL, 'is'],
+            [
+                [Ecommerce\Item\Offer\Price\Type::colPrefix() . 'roles', '', '=', 'OR'],
+                [Ecommerce\Item\Offer\Price\Type::colPrefix() . 'roles', '%|' . \Users\User::$cur->role_id . '|%', 'LIKE', 'OR'],
+            ],   
         ];
 
 
