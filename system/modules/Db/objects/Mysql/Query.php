@@ -339,15 +339,9 @@ class Query extends \Object
         if (is_string($query)) {
             $query = ['query' => $query, 'params' => $this->params];
         }
-        //var_dump($query);
+
         $prepare = $this->curInstance->pdo->prepare($query['query']);
-        try {
-            $prepare->execute($query['params']);
-        } catch (\PDOException $ex) {
-            var_dump($query);
-            var_dump($ex);
-            exit();
-        }
+        $prepare->execute($query['params']);
 
         $this->curInstance->lastQuery = $query;
         $result = new Result();
