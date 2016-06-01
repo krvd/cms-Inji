@@ -39,7 +39,11 @@ class UiController extends Controller
             ob_start();
             $form->checkRequest($params, true);
             $_GET['item'] = get_class($form->model) . ($model->pk() ? ':' . $model->pk() : '');
-            $form->action = (App::$cur->system ? '/' . App::$cur->name : '') . '/ui/formPopUp/?' . http_build_query($_GET);
+            $get = $_GET;
+            if (isset($get['notSave'])) {
+                unset($get['notSave']);
+            }
+            $form->action = (App::$cur->system ? '/' . App::$cur->name : '') . '/ui/formPopUp/?' . http_build_query($get);
             $form->draw($params, true);
             $return->content = ob_get_contents();
             ob_end_clean();
@@ -47,7 +51,11 @@ class UiController extends Controller
         } else {
             $form->checkRequest($params);
             $_GET['item'] = get_class($form->model) . ($model->pk() ? ':' . $model->pk() : '');
-            $form->action = (App::$cur->system ? '/' . App::$cur->name : '') . '/ui/formPopUp/?' . http_build_query($_GET);
+            $get = $_GET;
+            if (isset($get['notSave'])) {
+                unset($get['notSave']);
+            }
+            $form->action = (App::$cur->system ? '/' . App::$cur->name : '') . '/ui/formPopUp/?' . http_build_query($get);
             $this->view->setTitle(($model && $model->pk() ? 'Изменить ' : 'Создать ') . $form->header);
             $this->view->page(['content' => 'form', 'data' => compact('form', 'params')]);
         }
