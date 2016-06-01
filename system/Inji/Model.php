@@ -261,6 +261,9 @@ class Model
                                 $value = $item->$colName;
                             }
                         }
+                        else {
+                            $value = $item->$colName;
+                        }
                         break;
                 }
                 break;
