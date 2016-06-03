@@ -164,6 +164,7 @@ class ecommerceController extends Controller
                 $cat = Ecommerce\Category::get($id);
                 $bread[] = array('text' => $cat->name, 'href' => '/ecommerce/itemList/' . $cat->id);
             }
+            $bread[] = array('text' => $category->name);
             $this->view->setTitle($category->name);
         }
 
