@@ -163,9 +163,9 @@ h1 {
 }
 
 
-.categoryTree .active a {
+.categoryTree .active>a {
   font-weight: bold;
 }
-.categoryTree .active a.glyphicon {
+.categoryTree .active>a.glyphicon {
   font-weight: normal;
 }
