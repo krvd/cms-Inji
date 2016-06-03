@@ -25,17 +25,19 @@ class Offer extends \Model
         //Менеджеры
         'warehouse' => ['type' => 'dataManager', 'relation' => 'warehouses'],
         'price' => ['type' => 'dataManager', 'relation' => 'prices'],
+        'option' => ['type' => 'dataManager', 'relation' => 'options'],
     ];
     public static $labels = [
         'name' => 'Название',
         'article' => 'Артикул',
         'warehouse' => 'Наличие на складах',
         'price' => 'Цены',
+        'option' => 'Параметры предложения'
     ];
     public static $dataManagers = [
         'manager' => [
             'cols' => [
-                'name', 'article', 'warehouse', 'price'
+                'name', 'article', 'warehouse', 'price', 'option'
             ]
         ]
     ];
@@ -44,7 +46,8 @@ class Offer extends \Model
             'map' => [
                 ['name', 'article'],
                 ['warehouse'],
-                ['price']
+                ['price'],
+                ['option'],
             ]
         ]
     ];
@@ -66,6 +69,14 @@ class Offer extends \Model
                 'type' => 'many',
                 'model' => 'Ecommerce\Item\Offer\Bonus',
                 'col' => 'item_offer_id',
+            ],
+            'options' => [
+                'type' => 'many',
+                'model' => 'Ecommerce\Item\Offer\Param',
+                'col' => 'item_offer_id',
+                //'resultKey' => 'code',
+                'resultKey' => 'item_offer_option_id',
+                'join' => [Offer\Option::table(), Offer\Option::index() . ' = ' . Offer\Param::colPrefix() . Offer\Option::index()]
             ],
             'item' => [
                 'model' => 'Ecommerce\Item',

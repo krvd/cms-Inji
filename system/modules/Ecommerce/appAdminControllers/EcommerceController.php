@@ -43,6 +43,7 @@ class EcommerceController extends adminController
             'Ecommerce\Cart\Stage',
             'Ecommerce\Item\Type',
             'Ecommerce\Item\Option',
+            'Ecommerce\Item\Offer\Option',
             'Ecommerce\Item\Offer\Price\Type',
             'Ecommerce\UserAdds\Field',
             'Ecommerce\Cart\Status',
