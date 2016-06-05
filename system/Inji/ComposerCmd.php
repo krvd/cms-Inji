@@ -68,6 +68,7 @@ class ComposerCmd
 
     public static function command($command, $needOutput = true, $path = null)
     {
+        ini_set('memory_limit', '2000M');
         include_once 'composer/vendor/autoload.php';
         if ($needOutput) {
             $output = new Symfony\Component\Console\Output\StreamOutput(fopen('php://output', 'w'));
