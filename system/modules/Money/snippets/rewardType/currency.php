@@ -25,8 +25,8 @@ return $levelTypes[$level->params['type']->value] . ': ' . $level->params['amoun
 },
     'rewarder' => function($reward, $sums, $user, $rootUser, $level, $rewardGet) {
 $wallets = \App::$cur->money->getUserWallets($user->id);
+$amount = 0;
 if (!empty($wallets[$level->params['currency_id']->value])) {
-    $amount = 0;
     switch ($level->params['type']->value) {
         case 'procent':
             $finalSum = 0;
@@ -88,7 +88,7 @@ if (!empty($wallets[$level->params['currency_id']->value])) {
     } else {
         $wallets[$level->params['currency_id']->value]->diff($amount, $text);
     }
-    \App::$cur->users->AddUserActivity($user->id, 4, $text . '<br />' . $amount.' '.$wallets[$level->params['currency_id']->value]->currency->acronym());
+    \App::$cur->users->AddUserActivity($user->id, 4, $text . '<br />' . $amount . ' ' . $wallets[$level->params['currency_id']->value]->currency->acronym());
 }
 return $amount;
 }
