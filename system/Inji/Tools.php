@@ -180,10 +180,16 @@ class Tools extends Model
      */
     public static function sendMail($from, $to, $subject, $text, $charset = 'utf-8', $ctype = 'text/html')
     {
-        $headers = "From: {$from}\r\n";
-        $headers .= "Content-type: {$ctype}; charset={$charset}\r\n";
-        $headers .= "Mime-Version: 1.0\r\n";
-        return mail($to, $subject, $text, $headers);
+        $msg = compact('from', 'to', 'subject', 'text', 'charset', 'ctype');
+        $msg = Inji::$inst->event('sendMail', $msg);
+        if (is_array($msg)) {
+            $headers = "From: {$msg['from']}\r\n";
+            $headers .= "Content-type: {$msg['ctype']}; charset={$msg['charset']}\r\n";
+            $headers .= "Mime-Version: 1.0\r\n";
+            return mail($msg['to'], $msg['subject'], $msg['text'], $headers);
+        } else {
+            return $msg;
+        }
     }
 
     /**
