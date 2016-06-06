@@ -1,5 +1,5 @@
 <?php
-if (empty($params['activeForm']) || $options['activeForm']->parent === null) {
+if (empty($options['activeForm']) || $options['activeForm']->parent === null) {
     if ($btnText !== false) {
         ?>
         <div class="form-group">
