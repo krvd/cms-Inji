@@ -16,7 +16,7 @@ class ChangeParams extends \Ui\DataManager\Action
     public static $name = 'Изменить параметр';
     public static $groupAction = true;
 
-    public static function groupAction($dataManager, $ids, $actionParams)
+    public static function groupAction($dataManager, $ids, $actionParams, $adInfo)
     {
         $count = 0;
         if ($ids) {
