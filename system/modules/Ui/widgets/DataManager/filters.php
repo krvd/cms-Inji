@@ -33,7 +33,15 @@ if (!$dataManager->checkAccess()) {
             } elseif (!empty($colOptions['value'])) {
                 $inputOptions['value'] = $colOptions['value'];
             }
-            $form->input('hidden', "datamanagerFilters[{$col}][value]", '', $inputOptions);
+            if (is_array($inputOptions['value'])) {
+                $values = $inputOptions['value'];
+                foreach ($values as $key => $value) {
+                    $inputOptions['value'] = $value;
+                    $form->input('hidden', "datamanagerFilters[{$col}][value][{$key}]", '', $inputOptions);
+                }
+            } else {
+                $form->input('hidden', "datamanagerFilters[{$col}][value]", '', $inputOptions);
+            }
             continue;
         }
         echo '<div class="col-md-6">';

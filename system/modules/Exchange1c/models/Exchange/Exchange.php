@@ -47,6 +47,14 @@ class Exchange extends \Model
             ],
         ]
     ];
+    public static $forms = [
+        'manager' => [
+            'map' => [
+                ['type', 'session'],
+                ['path']
+            ]
+        ]
+    ];
 
     public static function relations()
     {

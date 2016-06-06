@@ -25,12 +25,15 @@ class Delete extends \Ui\DataManager\Action
 
     public static function groupAction($dataManager, $ids, $actionParams)
     {
-        $modelName = $dataManager->modelName;
-        $models = $modelName::getList(['where' => [['id', $ids, 'IN']]]);
-        foreach ($models as $model) {
-            $model->delete();
+        $count = 0;
+        if ($ids) {
+            $modelName = $dataManager->modelName;
+            $models = $modelName::getList(['where' => [['id', $ids, 'IN']]]);
+            foreach ($models as $model) {
+                $model->delete();
+            }
+            $count = count($models);
         }
-        $count = count($models);
         return 'Удалено <b>' . $count . '</b> ' . \Tools::getNumEnding($count, ['запись', 'записи', 'записей']);
     }
 

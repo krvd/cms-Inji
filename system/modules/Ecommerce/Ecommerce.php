@@ -214,6 +214,27 @@ class Ecommerce extends Module
         if (empty($this->config['view_empty_image'])) {
             $selectOptions['where'][] = ['image_file_id', 0, '!='];
         }
+
+        $selectOptions['join'][] = [Ecommerce\Item\Offer::table(), Ecommerce\Item::index() . ' = ' . Ecommerce\Item\Offer::colPrefix() . Ecommerce\Item::index(), 'inner'];
+
+        $selectOptions['join'][] = [Ecommerce\Item\Offer\Price::table(),
+            Ecommerce\Item\Offer::index() . ' = ' . Ecommerce\Item\Offer\Price::colPrefix() . Ecommerce\Item\Offer::index() .
+            (empty($this->config['show_zero_price']) ? ' and ' . Ecommerce\Item\Offer\Price::colPrefix() . 'price>0' : ''),
+            empty($this->config['show_without_price']) ? 'inner' : 'left'];
+
+        $selectOptions['join'][] = [
+            Ecommerce\Item\Offer\Price\Type::table(), Ecommerce\Item\Offer\Price::colPrefix() . Ecommerce\Item\Offer\Price\Type::index() . ' = ' . Ecommerce\Item\Offer\Price\Type::index()
+        ];
+
+        $selectOptions['where'][] = [
+            [Ecommerce\Item\Offer\Price\Type::index(), NULL, 'is'],
+            [
+                [Ecommerce\Item\Offer\Price\Type::colPrefix() . 'roles', '', '=', 'OR'],
+                [Ecommerce\Item\Offer\Price\Type::colPrefix() . 'roles', '%|' . \Users\User::$cur->role_id . '|%', 'LIKE', 'OR'],
+            ],
+        ];
+
+
         if (!empty($this->config['view_filter'])) {
             if (!empty($this->config['view_filter']['options'])) {
                 foreach ($this->config['view_filter']['options'] as $optionId => $optionValue) {
@@ -238,10 +259,21 @@ class Ecommerce extends Module
                         break;
                     case 'options':
                         foreach ($filter as $optionId => $optionValue) {
+                            $optionId = (int) $optionId;
                             $selectOptions['join'][] = [Ecommerce\Item\Param::table(), Ecommerce\Item::index() . ' = ' . 'option' . $optionId . '.' . Ecommerce\Item\Param::colPrefix() . Ecommerce\Item::index() . ' AND ' .
                                 'option' . $optionId . '.' . Ecommerce\Item\Param::colPrefix() . Ecommerce\Item\Option::index() . ' = "' . (int) $optionId . '" AND ' .
-                                'option' . $optionId . '.' . Ecommerce\Item\Param::colPrefix() . 'value = "' . (int) $optionValue . '"',
+                                'option' . $optionId . '.' . Ecommerce\Item\Param::colPrefix() . 'value = ' . \App::$cur->db->connection->pdo->quote($optionValue) . '',
                                 'inner', 'option' . $optionId];
+                        }
+                        break;
+                    case 'offerOptions':
+                        //$selectOptions['join'][] = [Ecommerce\Item\Offer::table(), Ecommerce\Item::index() . ' = offer.' . Ecommerce\Item\Offer::colPrefix() . Ecommerce\Item::index(), 'left', 'offer'];
+                        foreach ($filter as $optionId => $optionValue) {
+                            $optionId = (int) $optionId;
+                            $selectOptions['join'][] = [Ecommerce\Item\Offer\Param::table(), Ecommerce\Item\Offer::index() . ' = ' . 'offerOption' . $optionId . '.' . Ecommerce\Item\Offer\Param::colPrefix() . Ecommerce\Item\Offer::index() . ' AND ' .
+                                'offerOption' . $optionId . '.' . Ecommerce\Item\Offer\Param::colPrefix() . Ecommerce\Item\Offer\Option::index() . ' = "' . (int) $optionId . '" AND ' .
+                                'offerOption' . $optionId . '.' . Ecommerce\Item\Offer\Param::colPrefix() . 'value = ' . \App::$cur->db->connection->pdo->quote($optionValue) . '',
+                                'inner', 'offerOption' . $optionId];
                         }
                         break;
                 }
@@ -280,11 +312,21 @@ class Ecommerce extends Module
             }
         }
         if (empty($this->config['view_empty_warehouse'])) {
+            $warehouseIds = [];
+            if (class_exists('Geography\City\Data')) {
+                $warehouses = \Geography\City\Data::get([['code', 'warehouses'], ['city_id', \Geography\City::$cur->id]]);
+                if ($warehouses && $warehouses->data) {
+                    foreach (explode(',', $warehouses->data) as $id) {
+                        $warehouseIds[$id] = $id;
+                    }
+                }
+            }
             $selectOptions['where'][] = [
                 '(
           (SELECT COALESCE(sum(`' . \Ecommerce\Item\Offer\Warehouse::colPrefix() . 'count`),0) 
             FROM ' . \App::$cur->db->table_prefix . \Ecommerce\Item\Offer\Warehouse::table() . ' iciw 
             WHERE iciw.' . \Ecommerce\Item\Offer\Warehouse::colPrefix() . \Ecommerce\Item\Offer::index() . ' = ' . \Ecommerce\Item\Offer::index() . '
+                ' . ($warehouseIds ? ' AND iciw.' . \Ecommerce\Item\Offer\Warehouse::colPrefix() . \Ecommerce\Warehouse::index() . ' IN(' . implode(',', $warehouseIds) . ')' : '') . '
             )
           -
           (SELECT COALESCE(sum(' . \Ecommerce\Warehouse\Block::colPrefix() . 'count) ,0)
@@ -301,17 +343,7 @@ class Ecommerce extends Module
         }
 
 
-        $selectOptions['join'][] = [Ecommerce\Item\Offer::table(), Ecommerce\Item::index() . ' = ' . Ecommerce\Item\Offer::colPrefix() . Ecommerce\Item::index(), 'inner'];
-        $selectOptions['join'][] = [Ecommerce\Item\Offer\Price::table(),
-            Ecommerce\Item\Offer::index() . ' = ' . Ecommerce\Item\Offer\Price::colPrefix() . Ecommerce\Item\Offer::index() . ' and ' . Ecommerce\Item\Offer\Price::colPrefix() . 'price>0', 'inner'];
-        $selectOptions['join'][] = [
-            Ecommerce\Item\Offer\Price\Type::table(), Ecommerce\Item\Offer\Price::colPrefix() . Ecommerce\Item\Offer\Price\Type::index() . ' = ' . Ecommerce\Item\Offer\Price\Type::index() .
-            ' and (' . Ecommerce\Item\Offer\Price\Type::colPrefix() . 'roles="" || ' . Ecommerce\Item\Offer\Price\Type::colPrefix() . 'roles LIKE "%|' . \Users\User::$cur->role_id . '|%")'
-        ];
-        $selectOptions['where'][] = [
-            [Ecommerce\Item\Offer\Price::colPrefix() . Ecommerce\Item\Offer\Price\Type::index(), 0],
-            [Ecommerce\Item\Offer\Price\Type::index(), 0, '>', 'OR']
-        ];
+
 
 
 
@@ -332,7 +364,7 @@ class Ecommerce extends Module
         $items = Ecommerce\Item::getList($selectOptions);
         $items = Ecommerce\Item\Param::getList([
                     'where' => ['item_id', array_keys($items), 'IN'],
-                    'join' => [[Ecommerce\Item\Option::table(), Ecommerce\Item\Option::index() . ' = ' . \Ecommerce\Item\Param::colPrefix() .Ecommerce\Item\Option::index(). ' and ' . \Ecommerce\Item\Option::colPrefix() . 'searchable = 1', 'inner']],
+                    'join' => [[Ecommerce\Item\Option::table(), Ecommerce\Item\Option::index() . ' = ' . \Ecommerce\Item\Param::colPrefix() . Ecommerce\Item\Option::index() . ' and ' . \Ecommerce\Item\Option::colPrefix() . 'searchable = 1', 'inner']],
                     'distinct' => \Ecommerce\Item\Option::index()
         ]);
         return $items;

@@ -199,12 +199,12 @@ class Query extends \Object
                         }
                     }
                     $value = '(' . $newValue . ')';
-                } elseif (!preg_match('!\(!', $value) && !preg_match('![^0-9,\.\(\) ]!', $value))
+                } elseif (!preg_match('!\(!', $value) && !preg_match('![^0-9,\.\(\) ]!', $value)) {
                     $value = "({$value})";
-                elseif (preg_match('!\(!', $value) && preg_match('![^0-9,\.\(\) ]!', $value))
+                } elseif (preg_match('!\(!', $value) && preg_match('![^0-9,\.\(\) ]!', $value)) {
                     $value = "\"{$value}\"";
-            }
-            elseif (!in_array($value, array('CURRENT_TIMESTAMP'))) {
+                }
+            } elseif (!in_array($value, array('CURRENT_TIMESTAMP'))) {
                 $this->params[] = $value;
                 $value = "?";
             }
@@ -239,18 +239,11 @@ class Query extends \Object
                     call_user_func_array(array($this, 'buildWhere'), $where);
                     break;
                 } else {
-                    if ($this->whereString != NULL && substr($this->whereString, -1, 1) != '(')
-                        if (!isset($item[3]))
-                            $concatenation = 'AND';
-                        else
-                            $concatenation = $item[3];
-                    elseif (substr($this->whereString, -1, 1) != '(')
-                        $this->whereString = 'WHERE ';
-
                     $this->buildWhere($item);
                 }
-                if (!isset($where[$i + 1]) && isset($where[$i - 1]))
+                if (!isset($where[$i + 1]) && isset($where[$i - 1])) {
                     $this->whereString .= ') ';
+                }
             }
         }
     }
@@ -346,8 +339,10 @@ class Query extends \Object
         if (is_string($query)) {
             $query = ['query' => $query, 'params' => $this->params];
         }
+
         $prepare = $this->curInstance->pdo->prepare($query['query']);
         $prepare->execute($query['params']);
+
         $this->curInstance->lastQuery = $query;
         $result = new Result();
         $result->pdoResult = $prepare;

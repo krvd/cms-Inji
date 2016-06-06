@@ -22,7 +22,7 @@ class Param extends \Model
     public static $cols = [
         //Основные параметры
         'item_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'item'],
-        'item_option_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'option'],
+        'item_option_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'option', 'onChange' => 'reloadForm'],
         'value' => ['type' => 'dynamicType', 'typeSource' => 'selfMethod', 'selfMethod' => 'realType'],
         //Системные
         'date_create' => ['type' => 'dateTime']
@@ -55,15 +55,19 @@ class Param extends \Model
 
     public function realType()
     {
-        $type = $this->option->type;
-        if ($type == 'select') {
-            return [
-                'type' => 'select',
-                'source' => 'relation',
-                'relation' => 'option:items',
-            ];
+        if ($this->option) {
+            $type = $this->option->type;
+
+            if ($type == 'select') {
+                return [
+                    'type' => 'select',
+                    'source' => 'relation',
+                    'relation' => 'option:items',
+                ];
+            }
+            return $type;
         }
-        return $type;
+        return 'text';
     }
 
     public static $dataManagers = [
@@ -84,6 +88,11 @@ class Param extends \Model
                 ['value']
             ]
     ]];
+
+    function name()
+    {
+        return $this->value;
+    }
 
     public function value($default = '')
     {

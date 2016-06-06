@@ -71,7 +71,8 @@ class Controller
             INJI_SYSTEM_ERROR('method not found', true);
         }
         if (!$this->checkAccess()) {
-            Tools::redirect($this->access->getDeniedRedirect(), 'У вас нет прав доступа');
+            $msg = !empty($this->module->app->access->config['access']['accessTree'][App::$cur->type]['msg']) ? $this->module->app->access->config['access']['accessTree'][App::$cur->type]['msg'] : 'У вас нет прав доступа';
+            Tools::redirect($this->access->getDeniedRedirect(), $msg);
         }
         $this->run = true;
         call_user_func_array([$this, $this->method . 'Action'], $this->params);

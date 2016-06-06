@@ -10,5 +10,7 @@ return [
     'defaultCurrency' => 1,
     'defaultSort' => ['name' => 'asc'],
     'orderPrefix' => '',
-    'catalogPresentPage' => false
+    'catalogPresentPage' => false,
+    'show_zero_price'=>false,
+    'show_without_price'=>false,
 ];

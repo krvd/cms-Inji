@@ -48,7 +48,7 @@ class ActiveForm extends \Object
                 $this->formName = $form;
                 $this->form = \App::$cur->ui->getModelForm($this->modelName, $form);
                 if (empty($this->form)) {
-                    throw new \Exception('empty form');
+                    throw new \Exception('empty form '.$form);
                 }
                 $this->inputs = $this->getInputs();
             }
@@ -137,7 +137,7 @@ class ActiveForm extends \Object
                         $error = true;
                     }
                 }
-                if (!$error) {
+                if (!$error && empty($_GET['notSave'])) {
                     foreach ($presets as $col => $preset) {
                         if (!empty($preset['value'])) {
                             $this->model->$col = $preset['value'];
@@ -202,6 +202,7 @@ class ActiveForm extends \Object
             $input->modelName = $this->modelName;
             $input->colName = $colName;
             $input->colParams = $options;
+            $input->options = !empty($options['options']) ? $options['options'] : [];
             $input->draw();
         }
         return true;
@@ -303,13 +304,13 @@ class ActiveForm extends \Object
         if (!empty($this->form['options']['access']['apps']) && !in_array(\App::$cur->name, $this->form['options']['access']['apps'])) {
             return false;
         }
-        if ($this->formName == 'manager' && !\Users\User::$cur->isAdmin()) {
-            return false;
+        if (!empty($this->form['options']['access']['groups']) && in_array(\Users\User::$cur->group_id, $this->form['options']['access']['groups'])) {
+            return true;
         }
         if ($this->model && !empty($this->form['options']['access']['self']) && \Users\User::$cur->id == $this->model->user_id) {
             return true;
         }
-        if (!empty($this->form['options']['access']['groups']) && !in_array(\Users\User::$cur->group_id, $this->form['options']['access']['groups'])) {
+        if ($this->formName == 'manager' && !\Users\User::$cur->isAdmin()) {
             return false;
         }
         return true;

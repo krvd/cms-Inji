@@ -22,7 +22,6 @@ class Relation extends \Migrations\Parser
                     ['model', $relation['model']],
                     ['migration_id', $this->object->object->migration_id]
         ]);
-        $newObject = (bool) $object;
         if (!$object) {
             $object = new \Migrations\Migration\Object([
                 'model' => $relation['model'],
@@ -38,12 +37,6 @@ class Relation extends \Migrations\Parser
                 foreach ($this->data as $code => &$item) {
                     if (!\Tools::isAssoc($this->data)) {
                         foreach ($this->data as &$item) {
-                            if ($newObject) {
-                                $object->code = $code;
-                                $object->name = $code;
-                                $object->save();
-                                $newObject = false;
-                            }
                             $objectParser = new \Migrations\Parser\Object();
                             $objectParser->object = $object;
                             $objectParser->parentObject = $this->object;
@@ -59,12 +52,6 @@ class Relation extends \Migrations\Parser
                             $ids = array_merge($ids, $objectParser->parse([$relation['col'] => $this->model->pk()]));
                         }
                     } else {
-                        if ($newObject) {
-                            $object->code = $code;
-                            $object->name = $code;
-                            $object->save();
-                            $newObject = false;
-                        }
                         $objectParser = new \Migrations\Parser\Object();
                         $objectParser->object = $object;
                         $objectParser->parentObject = $this->object;

@@ -56,7 +56,7 @@ class Walker
                         ['migration_id', $this->migration->id]
             ]);
             if ($object) { //parse as object
-                $this->startObjectParse($object->id, $data);
+                $this->startObjectParse($object, $data);
             } else { //create new map path for configure unknown path
                 $this->mapPath = new Migration\Map\Path();
                 $this->mapPath->parent_id = $this->mapPathParent ? $this->mapPathParent->id : 0;
@@ -71,7 +71,7 @@ class Walker
     private function startObjectParse($object_id, &$data)
     {
         $objectParser = new Parser\Object();
-        $objectParser->object = Migration\Object::get($object_id);
+        $objectParser->object = is_object($object_id) ? $object_id : \App::$cur->migrations->getMigrationObject($object_id);
         $objectParser->data = $data;
         $objectParser->walker = $this;
         $ids = $objectParser->parse();
@@ -90,9 +90,11 @@ class Walker
             $modelName = $objectParser->object->model;
             $objects = $modelName::getList(['where' => $where]);
             foreach ($objects as $object) {
-                $objectId = \Migrations\Id::get([['object_id', $object->id], ['type', $objectParser->object->model]]);
+                $objectId = \App::$cur->migrations->findParse($object->id, $objectParser->object->model);
                 if ($objectId) {
                     $objectId->delete();
+                    unset(\App::$cur->migrations->ids['objectIds'][$objectParser->object->model][$object->id]);
+                    unset(\App::$cur->migrations->ids['parseIds'][$objectParser->object->model][$objectId->parse_id]);
                 }
                 $object->delete();
             }

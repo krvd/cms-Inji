@@ -12,7 +12,7 @@ class Geography extends Module
 {
     function init()
     {
-        $alias = str_replace(App::$primary->config['site']['domain'], '', INJI_DOMAIN_NAME);
+        $alias = str_replace(App::$primary->config['site']['domain'], '', idn_to_utf8(INJI_DOMAIN_NAME));
         $city = null;
         if ($alias) {
             $alias = str_replace('.', '', $alias);

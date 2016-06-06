@@ -25,7 +25,8 @@ class StaticLoader extends Module
             $path = substr($path, 1);
         }
         $app = substr($path, 0, strpos($path, '/'));
-        if (file_exists(INJI_SYSTEM_DIR . '/program/' . $app)) {
+       
+        if ($app && file_exists(INJI_SYSTEM_DIR . '/program/' . $app)) {
             $path = substr($path, strpos($path, '/') + 1);
             if (\App::$cur->name != $app) {
                 $scriptApp = new App();

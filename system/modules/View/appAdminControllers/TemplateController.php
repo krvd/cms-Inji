@@ -19,4 +19,23 @@ class TemplateController extends \Controller
         $this->view->page(['content' => 'template/edit', 'data' => compact('template')]);
     }
 
+    function editFileAction($templateName)
+    {
+        $template = \View\Template::get($templateName, \App::$primary);
+        if (!empty($_GET['path']) && file_exists($template->path . '/' . Tools::parsePath($_GET['path']))) {
+            $code = file_get_contents("php://input");
+            if (!empty($code)) {
+                $result = new Server\Result();
+                $result->successMsg = 'Файл сохранен';
+                $content = file_put_contents($template->path . '/' . Tools::parsePath($_GET['path']), $code);
+                $result->send();
+            }
+            $content = file_get_contents($template->path . '/' . Tools::parsePath($_GET['path']));
+            $this->libs->loadLib('Ace');
+            $this->view->page(['content' => 'template/edit', 'data' => compact('template', 'content')]);
+        } else {
+            $this->view->page(['content' => 'chooseFile', 'data' => compact('template')]);
+        }
+    }
+
 }

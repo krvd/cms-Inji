@@ -17,6 +17,8 @@ class Option extends \Model
     public static $cols = [
         //Основные параметры
         'name' => ['type' => 'text'],
+        'filter_name' => ['type' => 'text'],
+        'image_file_id' => ['type' => 'image'],
         'code' => ['type' => 'text'],
         'type' => ['type' => 'text'],
         'postfix' => ['type' => 'text'],
@@ -27,10 +29,14 @@ class Option extends \Model
         'weight' => ['type' => 'number'],
         'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
         'advance' => ['type' => 'text'],
-        'date_create' => ['type' => 'dateTime']
+        'date_create' => ['type' => 'dateTime'],
+        //Менеджеры
+        'item' => ['type' => 'dataManager', 'relation' => 'items'],
     ];
     public static $labels = [
         'name' => 'Название',
+        'filter_name' => 'Название в фильтре',
+        'image_file_id' => 'Иконка',
         'code' => 'Код',
         'type' => 'Тип',
         'postfix' => 'Постфикс',
@@ -40,22 +46,25 @@ class Option extends \Model
         'weight' => 'Вес сортировки',
         'advance' => 'Дополнительные параметры',
         'user_id' => 'Создатель',
-        'date_create' => 'Дата создания'
+        'date_create' => 'Дата создания',
+        'item' => 'Значения для списка'
     ];
     public static $dataManagers = [
         'manager' => [
             'name' => 'Свойства товаров',
             'cols' => [
-                'name', 'code', 'type', 'view', 'searchable', 'user_id', 'date_create'
+                'name', 'code', 'type', 'item', 'view', 'searchable', 'user_id', 'date_create'
             ]
         ]
     ];
     public static $forms = [
         'manager' => [
             'map' => [
-                ['name', 'code', 'type'],
+                ['name', 'filter_name'],
+                ['code', 'type', 'image_file_id'],
                 ['default_val', 'postfix'],
                 ['view', 'searchable'],
+                ['item']
             ]
         ]
     ];
@@ -71,7 +80,11 @@ class Option extends \Model
                 'type' => 'many',
                 'model' => 'Ecommerce\Item\Option\Item',
                 'col' => 'item_option_id'
-            ]
+            ],
+            'image' => [
+                'model' => 'Files\File',
+                'col' => 'image_file_id'
+            ],
         ];
     }
 

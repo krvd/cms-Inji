@@ -50,7 +50,7 @@ class Object extends \Object
             foreach ($this->object->params as $param) {
                 if ($model && $param->type && $param->type != 'item_key') {
                     if ($param->type == 'object') {
-                        $object = \Migrations\Migration\Object::get($param->value);
+                        $object = \App::$cur->migrations->getMigrationObject($param->value);
                         $parser = new \Migrations\Parser\Object;
                         $parser->data = &$data[$param->code];
                         $parser->object = $object;
@@ -63,10 +63,6 @@ class Object extends \Object
                             $parserName = $param->value;
                         } else {
                             $parserName = '\Migrations\Parser\Object\\' . ucfirst($param->type);
-                        }
-                        if (!in_array($parserName, ['\Migrations\Parser\Object\ObjectLink','Exchange1c\Parser\Item\Images', '\Migrations\Parser\Object\Value', '\Migrations\Parser\Object\Relation', '\Migrations\Parser\Object\ParamsList'])) {
-                            var_dump($parserName);
-                            exit();
                         }
                         $parser = new $parserName;
                         $parser->data = &$data[$param->code];
@@ -90,7 +86,9 @@ class Object extends \Object
                 $param->save();
             }
             if ($model) {
-                $model->save();
+                if (!$model->pk() || !empty($model->_changedParams)) {
+                    $model->save();
+                }
                 return $model->pk();
             }
         }
@@ -112,7 +110,7 @@ class Object extends \Object
             }
         }
         if ($keyCol && isset($data[$keyCol])) {
-            $objectId = \Migrations\Id::get([['parse_id', (string) $data[$keyCol]], ['type', $this->object->model]]);
+            $objectId = \App::$cur->migrations->findObject((string) $data[$keyCol], $this->object->model);
             if ($objectId) {
                 $modelName = $this->object->model;
                 $model = $modelName::get($objectId->object_id);
@@ -124,6 +122,8 @@ class Object extends \Object
                 $objectId->parse_id = (string) $data[$keyCol];
                 $objectId->type = $this->object->model;
                 $objectId->save();
+                \App::$cur->migrations->ids['objectIds'][$this->object->model][$model->id] = $objectId;
+                \App::$cur->migrations->ids['parseIds'][$this->object->model][(string) $data[$keyCol]] = $objectId;
             }
         } elseif ($uniques) {
             $where = [];
@@ -133,8 +133,8 @@ class Object extends \Object
                 }
                 switch ($param->type) {
                     case 'objectLink':
-                        $object = \Migrations\Migration\Object::get($param->value);
-                        $objectId = \Migrations\Id::get([['parse_id', (string) $data[$code]], ['type', $object->model]]);
+                        $object = \App::$cur->migrations->getMigrationObject($param->value);
+                        $objectId = \App::$cur->migrations->findObject((string) $data[$code], $object->model);
                         if (!$objectId) {
                             return;
                         }
@@ -145,7 +145,7 @@ class Object extends \Object
                     case 'relation':
                         $modelName = $this->object->model;
                         $relation = $modelName::getRelation($param->value);
-                        $objectId = \Migrations\Id::get([['parse_id', (string) $data[$code]], ['type', $relation['model']]]);
+                        $objectId = \App::$cur->migrations->findObject((string) $data[$code], $relation['model']);
                         if (!$objectId) {
                             return;
                         }

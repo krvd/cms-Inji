@@ -40,25 +40,27 @@ class ChatsController extends Controller
             $member->date_last_active = date('Y-m-d H:i:s');
             $member->save();
         }
-        $members = $this->module->getMembers($chatId);
-        foreach ($members as $member) {
-            $result->content['members'][$member->user_id] = [
-                'fullUserName' => $member->user->name(),
-                'userFirstName' => $member->user->info->first_name,
-                'userPhoto' => $member->user->info->photo ? $member->user->info->photo->path : '/static/system/images/no-image.png'
-            ];
-        }
 
         $messages = \Chats\Chat\Message::getList(['where' => $where, 'limit' => 20, 'order' => ['date_create', 'DESC']]);
-        $messages = array_reverse($messages);
-        foreach ($messages as $message) {
-            $msg = [
-                'message' => $message->_params,
-                'fullUserName' => $message->user->name(),
-                'userFirstName' => $message->user->info->first_name,
-                'userPhoto' => $message->user->info->photo ? $message->user->info->photo->path : '/static/system/images/no-image.png'
-            ];
-            $result->content['messages'][] = $msg;
+        if ($messages) {
+            $messages = array_reverse($messages);
+            foreach ($messages as $message) {
+                $msg = [
+                    'message' => $message->_params,
+                    'fullUserName' => $message->user->name(),
+                    'userFirstName' => $message->user->info->first_name,
+                    'userPhoto' => $message->user->info->photo ? $message->user->info->photo->path : '/static/system/images/no-image.png'
+                ];
+                $result->content['messages'][] = $msg;
+            }
+            /* $members = $this->module->getMembers($chatId);
+              foreach ($members as $member) {
+              $result->content['members'][$member->user_id] = [
+              'fullUserName' => $member->user->name(),
+              'userFirstName' => $member->user->info->first_name,
+              'userPhoto' => $member->user->info->photo ? $member->user->info->photo->path : '/static/system/images/no-image.png'
+              ];
+              } */
         }
         $result->send();
     }

@@ -55,6 +55,9 @@ class Users extends Module
             setcookie($this->cookiePrefix . "_user_id", '', 0, "/");
         }
         if ($redirect) {
+            if (!empty($this->config['logoutUrl'][$this->app->type])) {
+                Tools::redirect($this->config['logoutUrl'][$this->app->type]);
+            }
             Tools::redirect('/', 'Вы вышли из своего профиля', 'success');
         }
     }
@@ -78,11 +81,17 @@ class Users extends Module
                 setcookie($this->cookiePrefix . "_user_session_hash", $session->hash, time() + 360000, "/");
                 setcookie($this->cookiePrefix . "_user_id", $session->user_id, time() + 360000, "/");
             }
-            if ($session->user->activation) {
+            if (!empty($this->config['needActivation']) && $session->user->activation) {
+                if (!headers_sent()) {
+                    setcookie($this->cookiePrefix . "_user_session_hash", '', 0, "/");
+                    setcookie($this->cookiePrefix . "_user_id", '', 0, "/");
+                }
+                Tools::redirect('/', 'Этот аккаунт ещё не активирован. <br />Если вы не получали письмо с ссылкой для активации, нажмите на - <a href = "/users/resendActivation/' . $session->user->id . '"><b>повторно выслать ссылку активации</b></a>');
+            } elseif ($session->user->activation) {
                 Msg::add('Этот аккаунт ещё не активирован, не все функции могут быть доступны. <br />Если вы не получали письмо с ссылкой для активации, нажмите на - <a href = "/users/resendActivation/' . $session->user->id . '"><b>повторно выслать ссылку активации</b></a>');
             }
-            if (!$session->user->mail) {
-                Msg::add('У вас не указан E-Mail, не все функции могут быть доступны. <a href = "/users/attachEmail/"><b>Указать E-Mail</b></a>');
+            if (!$session->user->mail && !empty($this->config['noMailNotify'])) {
+                Msg::add($this->config['noMailNotify']);
             }
             Users\User::$cur = $session->user;
             Users\User::$cur->date_last_active = 'CURRENT_TIMESTAMP';
@@ -92,7 +101,7 @@ class Users extends Module
                 setcookie($this->cookiePrefix . "_user_session_hash", '', 0, "/");
                 setcookie($this->cookiePrefix . "_user_id", '', 0, "/");
             }
-            Msg::add('Ваша сессия устарела или более недействительна, вам необходимо пройти <a href = "/users/login">авторазиацию</a> заново', 'info');
+            Msg::add('Ваша сессия устарела или более недействительна, вам необходимо пройти <a href = "/users/login">авторизацию</a> заново', 'info');
         }
     }
 
@@ -141,11 +150,13 @@ class Users extends Module
 
         $user = $this->get($login, $ltype);
         if ($user && $this->verifypass($pass, $user->pass) && !$user->blocked) {
-            if ($user->activation) {
+            if (!empty($this->config['needActivation']) && $user->activation) {
+                Tools::redirect('/', 'Этот аккаунт ещё не активирован. <br />Если вы не получали письмо с ссылкой для активации, нажмите на - <a href = "/users/resendActivation/' . $user->id . '"><b>повторно выслать ссылку активации</b></a>');
+            } elseif ($user->activation) {
                 Msg::add('Этот аккаунт ещё не активирован, не все функции могут быть доступны. <br />Если вы не получали письмо с ссылкой для активации, нажмите на - <a href = "/users/resendActivation/' . $user->id . '"><b>повторно выслать ссылку активации</b></a>');
             }
-            if (!$user->mail) {
-                Msg::add('У вас не указан E-Mail, не все функции могут быть доступны. <a href = "/users/attachEmail/"><b>Указать E-Mail</b></a>');
+            if (!$user->mail && !empty($this->config['noMailNotify'])) {
+                Msg::add($this->config['noMailNotify']);
             }
             $this->newSession($user);
 

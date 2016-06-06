@@ -52,13 +52,19 @@ $slides = $slider->slides(['order' => ['weight', 'ASC']]);
     ?>
   </div>
 
-  <!-- Controls -->
-  <a class="left carousel-control" href="#sliderWidget-<?= $slider->id; ?>" role="button" data-slide="prev">
-    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-    <span class="sr-only">Previous</span>
-  </a>
-  <a class="right carousel-control" href="#sliderWidget-<?= $slider->id; ?>" role="button" data-slide="next">
-    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-    <span class="sr-only">Next</span>
-  </a>
+  <?php
+  if (!isset($arrows) || $arrows) {
+      ?>
+      <!-- Controls -->
+      <a class="left carousel-control" href="#sliderWidget-<?= $slider->id; ?>" role="button" data-slide="prev">
+        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <a class="right carousel-control" href="#sliderWidget-<?= $slider->id; ?>" role="button" data-slide="next">
+        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
+      <?php
+  }
+  ?>
 </div>

@@ -281,7 +281,7 @@ class Cart extends \Model
                 $groups[$stage->group] = $stage;
             }
         }
-        $discounts = Cart\Discount::getList(['where'=>['cart_id',$this->id]]);
+        $discounts = Cart\Discount::getList(['where' => ['cart_id', $this->id]]);
         foreach ($discounts as $discount) {
             if (!isset($groups[$discount->group]) && $discount->auto) {
                 $discount->delete();
@@ -336,7 +336,7 @@ class Cart extends \Model
     {
         $sums = [];
         foreach ($this->cartItems as $cartItem) {
-            $sums[$cartItem->price->currency_id] = isset($sums[$cartItem->price->currency_id]) ? $sums[$cartItem->price->currency_id] + $cartItem->discount() : $cartItem->discount();
+            $sums[$cartItem->price->currency_id] = isset($sums[$cartItem->price->currency_id]) ? $sums[$cartItem->price->currency_id] + $cartItem->discount() * $cartItem->count : $cartItem->discount() * $cartItem->count;
         }
         return new \Money\Sums($sums);
     }

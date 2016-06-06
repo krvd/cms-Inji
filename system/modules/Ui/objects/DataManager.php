@@ -27,23 +27,28 @@ class DataManager extends \Object
     /**
      * Construct new data manager
      * 
-     * @param string $modelName
-     * @param string|array $dataManager
+     * @param string|array $modelNameOrOptions
+     * @param string $managerName
      * @throws Exception
      */
-    public function __construct($modelName, $dataManager = 'manager')
+    public function __construct($modelNameOrOptions, $managerName = 'manager')
     {
-        if (!class_exists($modelName)) {
-            throw new \Exception("model {$modelName} not exists");
-        }
+        $this->managerName = $managerName;
 
-        $this->modelName = $modelName;
-
-        if (is_string($dataManager)) {
-            $this->managerName = $dataManager;
-            $dataManager = !empty($modelName::$dataManagers[$dataManager]) ? $modelName::$dataManagers[$dataManager] : [];
+        if (!is_array($modelNameOrOptions)) {
+            if (!class_exists($modelNameOrOptions)) {
+                throw new \Exception("model {$modelNameOrOptions} not exists");
+            }
+            $this->modelName = $modelNameOrOptions;
+            $this->managerOptions = !empty($modelNameOrOptions::$dataManagers[$managerName]) ? $modelNameOrOptions::$dataManagers[$managerName] : [];
+            if (isset($modelNameOrOptions::$objectName)) {
+                $this->name = $modelNameOrOptions::$objectName;
+            } else {
+                $this->name = $modelNameOrOptions;
+            }
+        } else {
+            $this->managerOptions = $modelNameOrOptions;
         }
-        $this->managerOptions = $dataManager;
 
         if (!$this->managerOptions || !is_array($this->managerOptions)) {
             throw new \Exception('empty DataManager');
@@ -51,10 +56,6 @@ class DataManager extends \Object
 
         if (!empty($this->managerOptions['name'])) {
             $this->name = $this->managerOptions['name'];
-        } elseif ($modelName && isset($modelName::$objectName)) {
-            $this->name = $modelName::$objectName;
-        } else {
-            $this->name = $modelName;
         }
 
         $this->managerId = str_replace('\\', '_', 'dataManager_' . $this->modelName . '_' . $this->managerName . '_' . \Tools::randomString());
@@ -113,17 +114,23 @@ class DataManager extends \Object
         return $buttons;
     }
 
-    function getActions()
+    function getActions($onlyGroupActions = false)
     {
         $actions = [
-            'Open', 'Edit', 'Delete'
+            'Open' => ['className' => 'Open'], 'Edit' => ['className' => 'Edit'], 'Delete' => ['className' => 'Delete']
         ];
         if (isset($this->managerOptions['actions'])) {
-            $actions = $this->managerOptions['actions'];
+            $actions = array_merge($actions, $this->managerOptions['actions']);
         }
         $return = [];
         foreach ($actions as $key => $action) {
+            if ($action === false) {
+                continue;
+            }
             if (is_array($action)) {
+                if (!empty($action['access']['groups']) && !in_array(\Users\User::$cur->group_id, $action['access']['groups'])) {
+                    continue;
+                }
                 $return[$key] = $action;
             } else {
                 $key = $action;
@@ -131,7 +138,10 @@ class DataManager extends \Object
                     'className' => $action
                 ];
             }
-            $return[$key]['className'] = strpos($return[$key]['className'], '\\') === false && class_exists('Ui\DataManager\Action\\' . $return[$key]['className']) ? 'Ui\DataManager\Action\\' . $return[$key]['className'] : $action;
+            $return[$key]['className'] = strpos($return[$key]['className'], '\\') === false && class_exists('Ui\DataManager\Action\\' . $return[$key]['className']) ? 'Ui\DataManager\Action\\' . $return[$key]['className'] : $return[$key]['className'];
+            if (!class_exists($return[$key]['className']) || ($onlyGroupActions && !$return[$key]['className']::$groupAction)) {
+                unset($return[$key]);
+            }
         }
         return $return;
     }
@@ -143,12 +153,6 @@ class DataManager extends \Object
      */
     public function getCols()
     {
-        $modelName = $this->modelName;
-        if (!class_exists($modelName)) {
-            return [];
-        }
-        $modelName = $this->modelName;
-        $cols = [];
         $actions = $this->getActions();
         ob_start();
         ?>
@@ -175,9 +179,12 @@ class DataManager extends \Object
         <?php
         $dropdown = ob_get_contents();
         ob_end_clean();
-        $cols[] = ['label' => $dropdown];
 
+        $cols = [];
+        $cols[] = ['label' => $dropdown];
         $cols['id'] = ['label' => '№', 'sortable' => true];
+
+        $modelName = $this->modelName;
         foreach ($this->managerOptions['cols'] as $key => $col) {
             if (is_array($col)) {
                 $colName = $key;
@@ -247,7 +254,7 @@ class DataManager extends \Object
                         $queryParams['where'][] = [$colName, \Users\User::$cur->$rel->$param];
                     }
                 } elseif (isset($colOptions['value'])) {
-                    $queryParams['where'][] = [$colName, $colOptions['value']];
+                    $queryParams['where'][] = [$colName, $colOptions['value'], is_array($colOptions['value']) ? 'IN' : '='];
                 }
             }
         }
@@ -259,15 +266,17 @@ class DataManager extends \Object
                         if (empty($params['filters'][$col]['value'])) {
                             continue;
                         }
-                        foreach ($params['filters'][$col]['value'] as $key => $value) {
-                            if ($value === '') {
-                                unset($params['filters'][$col]['value'][$key]);
+                        if (is_array($params['filters'][$col]['value'])) {
+                            foreach ($params['filters'][$col]['value'] as $key => $value) {
+                                if ($value === '') {
+                                    unset($params['filters'][$col]['value'][$key]);
+                                }
                             }
                         }
                         if (!$params['filters'][$col]['value']) {
                             continue;
                         }
-                        $queryParams['where'][] = [$col, $params['filters'][$col]['value'], 'IN'];
+                        $queryParams['where'][] = [$col, $params['filters'][$col]['value'], is_array($params['filters'][$col]['value']) ? 'IN' : '='];
                         break;
                     case 'bool':
 
@@ -444,7 +453,7 @@ class DataManager extends \Object
                         return $content;
                     case 'moduleMethod':
                         return \App::$cur->{$modelName::$cols[$colName]['view']['module']}->{$modelName::$cols[$colName]['view']['method']}($item, $colName, $modelName::$cols[$colName]);
-                    case'many':
+                    case 'many':
                         $managerParams = ['relation' => $modelName::$cols[$colName]['relation']];
                         $count = $item->{$modelName::$cols[$colName]['relation']}(array_merge($params, ['count' => 1]));
                         return "<a class = 'btn btn-xs btn-primary' onclick = 'inji.Ui.dataManagers.popUp(\"" . str_replace('\\', '\\\\', $modelName) . ":" . $item->pk() . "\"," . json_encode(array_merge($params, $managerParams)) . ")'>{$count} " . \Tools::getNumEnding($count, ['Элемент', 'Элемента', 'Элементов']) . "</a>";
@@ -518,7 +527,7 @@ class DataManager extends \Object
                         $queryParams['where'][] = [$colName, \Users\User::$cur->$rel->$param];
                     }
                 } elseif (isset($colOptions['value'])) {
-                    $queryParams['where'][] = [$colName, $colOptions['value']];
+                    $queryParams['where'][] = [$colName, $colOptions['value'], is_array($colOptions['value']) ? 'IN' : '='];
                 }
             }
         }
@@ -531,15 +540,17 @@ class DataManager extends \Object
                         if (empty($params['filters'][$col]['value'])) {
                             continue;
                         }
-                        foreach ($params['filters'][$col]['value'] as $key => $value) {
-                            if ($value === '') {
-                                unset($params['filters'][$col]['value'][$key]);
+                        if (is_array($params['filters'][$col]['value'])) {
+                            foreach ($params['filters'][$col]['value'] as $key => $value) {
+                                if ($value === '') {
+                                    unset($params['filters'][$col]['value'][$key]);
+                                }
                             }
                         }
                         if (!$params['filters'][$col]['value']) {
                             continue;
                         }
-                        $queryParams['where'][] = [$col, $params['filters'][$col]['value'], 'IN'];
+                        $queryParams['where'][] = [$col, $params['filters'][$col]['value'], is_array($params['filters'][$col]['value']) ? 'IN' : '='];
                         break;
                     case 'bool':
 
@@ -619,9 +630,6 @@ class DataManager extends \Object
 
     public function preDraw($params = [], $model = null)
     {
-        if (!class_exists($this->modelName)) {
-            return false;
-        }
         $this->predraw = true;
 
         $cols = $this->getCols();
@@ -632,14 +640,12 @@ class DataManager extends \Object
             $tableCols[] = !empty($colOptions['label']) ? $colOptions['label'] : $colName;
         }
         $tableCols[] = '';
+        $this->table->class .=' datamanagertable';
         $this->table->setCols($tableCols);
     }
 
     public function draw($params = [], $model = null)
     {
-        if (!class_exists($this->modelName)) {
-            return false;
-        }
         if (!$this->predraw) {
             $this->preDraw($params, $model);
         }
@@ -662,9 +668,12 @@ class DataManager extends \Object
         }
         $tree = new Tree();
         $tree->ul($this->managerOptions['categorys']['model'], 0, function($category) {
-            return "<a href='#' onclick='inji.Ui.dataManagers.get(this).switchCategory(this);return false;' data-path ='" . $category->tree_path . ($category->pk() ? $category->pk() . "/" : '') . "'> " . $category->name . "</a> 
-                                    <a href = '#' onclick = 'inji.Ui.forms.popUp(\"" . str_replace('\\', '\\\\', get_class($category)) . ':' . $category->pk() . "\")' class ='glyphicon glyphicon-edit'></a>&nbsp;    
-                <a onclick='inji.Ui.dataManagers.get(this).delCategory({$category->pk()});return false;' class ='glyphicon glyphicon-remove'></a>";
+            $path = $category->tree_path . ($category->pk() ? $category->pk() . "/" : '');
+            $cleanClassName = str_replace('\\', '\\\\', get_class($category));
+            return "<a href='#' onclick='inji.Ui.dataManagers.get(this).switchCategory(this);return false;' data-index='{$category->index()}' data-path ='{$path}' data-id='{$category->pk()}'> {$category->name}</a> 
+                
+                    <a href = '#' class ='glyphicon glyphicon-edit'   onclick = 'inji.Ui.forms.popUp(\"{$cleanClassName}:{$category->pk()}\")'></a>&nbsp;
+                    <a href = '#' class ='glyphicon glyphicon-remove' onclick = 'inji.Ui.dataManagers.get(this).delCategory({$category->pk()});return false;'></a>";
         });
         ?>
         <?php
@@ -690,11 +699,12 @@ class DataManager extends \Object
         if (\App::$cur->Access && !\App::$cur->Access->checkAccess($this)) {
             return false;
         }
+
         if (!empty($this->managerOptions['options']['access']['apps']) && !in_array(\App::$cur->name, $this->managerOptions['options']['access']['apps'])) {
             return false;
         }
-        if (!empty($this->managerOptions['options']['access']['groups']) && !in_array(\Users\User::$cur->group_id, $this->managerOptions['options']['access']['groups'])) {
-            return false;
+        if (!empty($this->managerOptions['options']['access']['groups']) && in_array(\Users\User::$cur->group_id, $this->managerOptions['options']['access']['groups'])) {
+            return true;
         }
         if ($this->managerName == 'manager' && !\Users\User::$cur->isAdmin()) {
             return false;

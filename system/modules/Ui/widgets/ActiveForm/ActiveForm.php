@@ -9,12 +9,9 @@ foreach ($formInputs as $inputName => $inputParams) {
 ?>
 <div id ='<?= $id; ?>' class="uiActiveForm" data-modelname="<?= $activeForm->modelName; ?>" data-formname="<?= $activeForm->formName; ?>" data-inputs='<?= json_encode($formInputs); ?>'>
   <?php
-  if ($activeForm->parent === null) {
-      $form->action = $activeForm->action;
-      $form->begin($activeForm->header, ['onsubmit' => $ajax ? 'inji.Ui.forms.submitAjax(this);return false;' : '']);
-  } elseif ($activeForm->header) {
-      echo "<h3>{$activeForm->header}</h3>";
-  }
+  $form->action = $activeForm->action;
+  $form->begin($activeForm->header, ['onsubmit' => $ajax ? 'inji.Ui.forms.submitAjax(this);return false;' : ''], ['activeForm' => $activeForm]);
+
   if (empty($activeForm->form['noMapCell'])) {
       foreach ($activeForm->form['map'] as $row) {
           $colSize = 12 / count($row);
@@ -37,9 +34,7 @@ foreach ($formInputs as $inputName => $inputParams) {
           }
       }
   }
-  if ($activeForm->parent === null) {
-      $form->end($activeForm->model ? ($activeForm->model->pk() ? 'Сохранить' : 'Создать') : 'Отправить');
-  }
+  $form->end($activeForm->model ? ($activeForm->model->pk() ? 'Сохранить' : 'Создать') : 'Отправить', [], ['activeForm' => $activeForm]);
   ?>
 </div>
 <script>

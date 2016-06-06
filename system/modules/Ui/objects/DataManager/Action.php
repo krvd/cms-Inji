@@ -22,7 +22,7 @@ class Action extends \Object
         return '';
     }
 
-    public static function groupAction($dataManager, $ids, $actionParams)
+    public static function groupAction($dataManager, $ids, $actionParams, $adInfo)
     {
         return 'empty action';
     }

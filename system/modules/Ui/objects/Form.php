@@ -38,9 +38,9 @@ class Form extends \Object
         }
     }
 
-    public function begin($header = '', $options = [])
+    public function begin($header = '', $options = [], $params = [])
     {
-        $params = compact('header', 'options');
+        $params = compact('header', 'options', 'params');
         $params['form'] = $this;
         \App::$cur->view->widget('Ui\\' . $this->options['widgetsDir'] . '/begin', $params);
     }
@@ -86,9 +86,9 @@ class Form extends \Object
      * @param boolean|string $btnText
      * @param array $attributs
      */
-    public function end($btnText = 'Отправить', $attributs = [])
+    public function end($btnText = 'Отправить', $attributs = [], $options = [])
     {
-        $params = compact('btnText', 'attributs');
+        $params = compact('btnText', 'attributs', 'options');
         $params['form'] = $this;
         \App::$cur->view->widget('Ui\\' . $this->options['widgetsDir'] . '/end', $params);
     }

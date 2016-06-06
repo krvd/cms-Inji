@@ -164,6 +164,7 @@ class ecommerceController extends Controller
                 $cat = Ecommerce\Category::get($id);
                 $bread[] = array('text' => $cat->name, 'href' => '/ecommerce/itemList/' . $cat->id);
             }
+            $bread[] = array('text' => $category->name);
             $this->view->setTitle($category->name);
         }
 
@@ -237,6 +238,14 @@ class ecommerceController extends Controller
         if (isset($_GET['quickview'])) {
             $options['page'] = 'blank';
         }
+
+        $this->view->addMetaTag(['property' => 'og:title', 'content' => $item->name]);
+        $this->view->addMetaTag(['property' => 'og:description', 'content' => $item->description]);
+        if ($item->image) {
+            $this->view->addMetaTag(['property' => 'og:image', 'content' => 'http://' . INJI_DOMAIN_NAME . $item->image->path]);
+        }
+        $this->view->addMetaTag(['property' => 'og:url', 'content' => 'http://' . INJI_DOMAIN_NAME . '/view/' . $item->id]);
+
         $options['content'] = $item->view ? $item->view : 'view';
         $this->view->page($options);
     }

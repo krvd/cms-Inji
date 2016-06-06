@@ -25,6 +25,23 @@ class Item extends \Model
     public static $labels = [
         'value' => 'Значение'
     ];
+    public static $dataManagers = [
+        'manager' => [
+            'cols' => ['value', 'date_create']
+        ]
+    ];
+    public static $forms = [
+        'manager' => [
+            'map' => [
+                ['item_option_id', 'value']
+            ]
+        ]
+    ];
+
+    function name()
+    {
+        return $this->value;
+    }
 
     public static function relations()
     {

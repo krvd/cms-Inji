@@ -234,6 +234,39 @@ class Model
                     return \App::$cur->{$colInfo['colParams']['value']['module']}->{$colInfo['colParams']['value']['method']}($item, $colName, $colInfo['colParams']);
                 }
                 break;
+            case 'dynamicType':
+                switch ($colInfo['colParams']['typeSource']) {
+                    case'selfMethod':
+                        $type = $item->{$colInfo['colParams']['selfMethod']}();
+                        if (is_array($type)) {
+                            if (strpos($type['relation'], ':')) {
+                                $relationPath = explode(':', $type['relation']);
+                                $relationName = array_pop($relationPath);
+                                $curItem = $item;
+                                foreach ($relationPath as $path) {
+                                    $curItem = $curItem->$path;
+                                }
+                                $itemModel = get_class($curItem);
+                                $relation = $itemModel::getRelation($relationName);
+                                $sourceModel = $relation['model'];
+                            } else {
+                                $relation = static::getRelation($type['relation']);
+                                $sourceModel = $relation['model'];
+                            }
+                            $inputType = 'select';
+                            $value = $sourceModel::get($item->$colName);
+                            if ($value) {
+                                $value = $value->name();
+                            } else {
+                                $value = $item->$colName;
+                            }
+                        }
+                        else {
+                            $value = $item->$colName;
+                        }
+                        break;
+                }
+                break;
             default:
                 $value = $item->$colName;
                 break;
@@ -781,11 +814,9 @@ class Model
             if ($exc->getCode() == '42S02') {
                 static::createTable();
                 $result = $query->query($queryArr);
-            }
-            else {
+            } else {
                 throw $exc;
             }
-            
         }
 
         if (!empty($options['array'])) {
@@ -815,6 +846,9 @@ class Model
         }
         if (!empty($options['where'])) {
             static::fixPrefix($options['where'], 'first');
+        }
+        if (!empty($options['group'])) {
+            static::fixPrefix($options['group'], 'first');
         }
         if (!empty($options['order'])) {
             static::fixPrefix($options['order'], 'first');
@@ -1127,7 +1161,7 @@ class Model
         }
 
         if (!empty($where)) {
-            static::fixPrefix($where, 'key');
+            static::fixPrefix($where, 'first');
 
             App::$cur->db->where($where);
         }
