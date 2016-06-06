@@ -23,7 +23,7 @@ class Delete extends \Ui\DataManager\Action
                                       return false;\'><i class="glyphicon glyphicon-remove"></i></a>';
     }
 
-    public static function groupAction($dataManager, $ids, $actionParams)
+    public static function groupAction($dataManager, $ids, $actionParams, $adInfo)
     {
         $count = 0;
         if ($ids) {
