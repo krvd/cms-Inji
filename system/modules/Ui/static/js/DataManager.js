@@ -118,6 +118,40 @@ function DataManager(element) {
   });
   self.flowPanel();
 
+  if (window.location.hash && window.location.hash != '#') {
+    var windowsHash = JSON.parse(decodeURIComponent(window.location.hash.substr(1)));
+    if (windowsHash[this.modelName + ':' + this.managerName]) {
+      var hashData = windowsHash[this.modelName + ':' + this.managerName];
+      this.limit = hashData.params.limit;
+      this.page = hashData.params.page;
+      this.sortered = hashData.sortered;
+      this.all = hashData.all;
+      this.filters = hashData.filters;
+      if (hashData.filters && this.element.find('.dataManagerFilters [name^="datamanagerFilters"]').length > 0) {
+        this.element.find('.dataManagerFilters [name^="datamanagerFilters"]').each(function () {
+          var maths = $(this).attr('name').match(/\[([^\]]+)\]/g);
+          for (key in maths) {
+            maths[key] = maths[key].replace(/([\[\]])/g, '');
+          }
+          if (hashData.filters[maths[0]]) {
+            if (typeof maths[2] != 'undefined') {
+              $(this).val(hashData.filters[maths[0]][maths[1]][maths[2]]);
+            } else {
+              if ($(this).attr('type') == 'checkbox') {
+                $(this)[0].checked = hashData.filters[maths[0]][maths[1]];
+              } else {
+                $(this).val(hashData.filters[maths[0]][maths[1]]);
+              }
+            }
+          }
+        });
+      }
+
+
+      // var data = {params: params, modelName: this.modelName, managerName: this.managerName, filters: filters, sortered: this.sortered, mode: this.mode, all: this.all};
+    }
+  }
+
   this.load();
 }
 
@@ -194,7 +228,6 @@ DataManager.prototype.load = function (options) {
       }
     });
   }
-  console.log(filters);
   if (this.options.sortable) {
     sortableIndexes = [];
     var i = 0;
@@ -294,12 +327,30 @@ DataManager.prototype.load = function (options) {
   dataManager.element.find('.datamanagertable tbody').html('<tr><td colspan="' + dataManager.element.find('thead tr th').length + '"><div class = "text-center"><img src = "' + inji.options.appRoot + 'static/moduleAsset/Ui/images/ajax-loader.gif" /></div></td></tr>');
   var instance = this;
 
+
+  var windowHash = {};
+  if (window.location.hash && window.location.hash != '#') {
+    windowHash = JSON.parse(decodeURIComponent(window.location.hash.substr(1)));
+  }
+  windowHash[data.modelName + ':' + data.managerName] = data;
+  window.location.hash = JSON.stringify(windowHash);
   inji.Server.request({
     url: this.ajaxUrl,
     data: data,
     success: function (data) {
       dataManager.element.find('.datamanagertable tbody').html(data.rows);
       dataManager.element.find('.pagesContainer').html(data.pages);
+
+      if (dataManager.options.options.formOnPage) {
+        $('.' + dataManager.modelName.replace(/\\/g, '_') + '_' + dataManager.managerName + '_create_btn').each(function () {
+          var createBtn = $(this);
+          var btnHref = createBtn.attr('href');
+          btnHref = btnHref.substr(0, btnHref.indexOf('redirectUrl='));
+          btnHref += 'redirectUrl=' + window.location.pathname;
+          createBtn.attr('href', btnHref + '&dataManagerHash=' + window.location.hash.substr(1));
+        });
+      }
+
       //dataManager.flowPages();
       if (dataManager.options.sortMode) {
         if (dataManager.mode != 'sort') {

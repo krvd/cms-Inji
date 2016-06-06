@@ -48,7 +48,7 @@ class ActiveForm extends \Object
                 $this->formName = $form;
                 $this->form = \App::$cur->ui->getModelForm($this->modelName, $form);
                 if (empty($this->form)) {
-                    throw new \Exception('empty form '.$form);
+                    throw new \Exception('empty form ' . $form);
                 }
                 $this->inputs = $this->getInputs();
             }
@@ -167,7 +167,7 @@ class ActiveForm extends \Object
                     if ($ajax) {
                         \Msg::show();
                     } elseif (!empty($_GET['redirectUrl'])) {
-                        \Tools::redirect($_GET['redirectUrl']);
+                        \Tools::redirect($_GET['redirectUrl'] . (!empty($_GET['dataManagerHash']) ? '#' . $_GET['dataManagerHash'] : ''));
                     }
                     $successId = $this->model->pk();
                 }
