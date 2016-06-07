@@ -459,7 +459,7 @@ class Ecommerce extends Module
                 Inji::$inst->event('ecommerceCartClosed', $cart);
             }
         }
-        return $event['eventObject'];
+        return $cart;
     }
 
     public function cardTrigger($event)
