@@ -459,6 +459,7 @@ class Ecommerce extends Module
                 Inji::$inst->event('ecommerceCartClosed', $cart);
             }
         }
+        return $event['eventObject'];
     }
 
     public function cardTrigger($event)
@@ -476,6 +477,7 @@ class Ecommerce extends Module
             $cart->card->sum += $sum;
             $cart->card->save();
         }
+        return $cart;
     }
 
     public function bonusTrigger($event)
@@ -498,6 +500,7 @@ class Ecommerce extends Module
                 }
             }
         }
+        return $cart;
     }
 
 }
