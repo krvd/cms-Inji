@@ -341,7 +341,7 @@ DataManager.prototype.load = function (options) {
       dataManager.element.find('.datamanagertable tbody').html(data.rows);
       dataManager.element.find('.pagesContainer').html(data.pages);
 
-      if (dataManager.options.options.formOnPage) {
+      if (dataManager.options.options && dataManager.options.options.formOnPage) {
         $('.' + dataManager.modelName.replace(/\\/g, '_') + '_' + dataManager.managerName + '_create_btn').each(function () {
           var createBtn = $(this);
           var btnHref = createBtn.attr('href');
