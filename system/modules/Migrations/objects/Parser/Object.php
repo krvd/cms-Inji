@@ -140,6 +140,12 @@ class Object extends \Object
                         }
                         $modelName = $object->model;
                         $model = $modelName::get($objectId->object_id);
+                        if (!$model) {
+                            $objectId->delete();
+                            unset(\App::$cur->migrations->ids['objectIds'][$modelName][$objectId->object_id]);
+                            unset(\App::$cur->migrations->ids['parseIds'][$modelName][$objectId->parse_id]);
+                            return;
+                        }
                         $where[] = [$model->index(), $model->pk()];
                         break;
                     case 'relation':
