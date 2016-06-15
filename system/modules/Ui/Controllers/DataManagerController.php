@@ -90,9 +90,12 @@ class DataManagerController extends Controller
 
         $dataManager = new Ui\DataManager($request['modelName'], $request['managerName']);
         if ($request['download']) {
+            
+            ini_set('memory_limit', '2000M');
+            set_time_limit(0);
+            
             $request['params']['all'] = true;
             $request['params']['download'] = true;
-            set_time_limit(0);
             ob_end_clean();
             header('Content-Encoding: UTF-8');
             header("Content-Type: text/csv");
@@ -101,7 +104,7 @@ class DataManagerController extends Controller
 
 
             $cols = $dataManager->getCols();
-            $cols = array_slice($cols, (!empty($dataManager->managerOptions['groupActions']) ? 1 : 0));
+            $cols = array_slice($cols, 1);
             $endRow = true;
             foreach ($cols as $colName => $options) {
                 if (!$endRow) {
@@ -116,7 +119,7 @@ class DataManagerController extends Controller
         $rows = $dataManager->getRows($request['params'], $request['model']);
         foreach ($rows as $row) {
             if ($request['download']) {
-                $row = array_slice($row, (!empty($dataManager->managerOptions['groupActions']) ? 1 : 0), -1);
+                $row = array_slice($row, 1, -1);
                 foreach ($row as $col) {
                     if (!$endRow) {
                         echo ";";

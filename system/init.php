@@ -23,6 +23,7 @@ Inji::$inst = new Inji();
 Inji::$config = Config::system();
 Inji::$inst->listen('Config-change-system', 'systemConfig', function($event) {
     Inji::$config = $event['eventObject'];
+    return $event['eventObject'];
 });
 spl_autoload_register('Router::findClass');
 
@@ -71,10 +72,12 @@ if (!empty($params[0]) && file_exists(INJI_SYSTEM_DIR . '/program/' . $params[0]
 
     Inji::$inst->listen('Config-change-app-' . App::$primary->name, 'primaryAppConfig', function($event) {
         App::$primary->config = $event['eventObject'];
+        return $event['eventObject'];
     });
 }
 Inji::$inst->listen('Config-change-app-' . App::$cur->name, 'curAppConfig', function($event) {
     App::$cur->config = $event['eventObject'];
+    return $event['eventObject'];
 });
 $shareConfig = Config::share();
 if (empty($shareConfig['installed']) && App::$cur->name != 'setup' && (empty(App::$cur->params[0]) || App::$cur->params[0] != 'static')) {

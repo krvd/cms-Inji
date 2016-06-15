@@ -74,6 +74,7 @@ class Module
         $that = $this;
         Inji::$inst->listen('Config-change-module-' . $this->app->name . '-' . $this->moduleName, $this->app->name . '-' . $this->moduleName . 'config', function($event) use ($that) {
             $that->config = $event['eventObject'];
+            return $event['eventObject'];
         });
     }
 

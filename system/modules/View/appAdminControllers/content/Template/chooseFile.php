@@ -1,5 +1,5 @@
-<h1>Р¤Р°Р№Р»С‹ С‚РµРјС‹ РѕС„РѕСЂРјР»РµРЅРёСЏ <?= $template->config['template_name']; ?></h1>
-<a href ='/admin/view/template/editFile/<?= $template->name; ?>?path=<?= $template->config['file']; ?>'>РћСЃРЅРѕРІРЅРѕР№ С„Р°Р№Р» С€Р°Р±Р»РѕРЅР°</a>
+<h1>Файлы темы оформления <?= $template->config['template_name']; ?></h1>
+<a href ='/admin/view/template/editFile/<?= $template->name; ?>?path=<?= $template->config['file']; ?>'>Основной файл шаблона</a>
 <hr/>
 <?php
 foreach ($template->config['css'] as $file) {

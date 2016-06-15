@@ -145,6 +145,7 @@ class Money extends Module
                 $handlers[$trigger->handler]['handler']($event['eventObject'], $trigger);
             }
         }
+        return $event['eventObject'];
     }
 
     public function rewardConditionTrigger($event)
@@ -161,6 +162,7 @@ class Money extends Module
                 }
             }
         }
+        return $event['eventObject'];
     }
 
     public function reward($reward_id, $sums = [], $rootUser = null)
