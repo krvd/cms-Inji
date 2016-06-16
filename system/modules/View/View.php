@@ -536,7 +536,11 @@ class View extends \Module
     public function setTitle($title, $add = true)
     {
         if ($add && !empty($this->app->config['site']['name'])) {
-            $this->title = $title . ' - ' . $this->app->config['site']['name'];
+            if ($title) {
+                $this->title = $title . ' - ' . $this->app->config['site']['name'];
+            } else {
+                $this->title = $this->app->config['site']['name'];
+            }
         } else {
             $this->title = $title;
         }
