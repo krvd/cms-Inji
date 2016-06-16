@@ -13,6 +13,13 @@ namespace Ecommerce\Item;
 
 class Image extends \Model
 {
+    static $objectName = 'Фото товара';
+    static $labels = [
+        'file_id' => 'Изображение',
+        'item_id' => 'Товар',
+        'name' => 'Название',
+        'description' => 'Описание',
+    ];
     static $cols = [
         'file_id' => ['type' => 'image'],
         'item_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'item'],
@@ -37,6 +44,7 @@ class Image extends \Model
 
     static $dataManagers = [
         'manager' => [
+            'name' => 'Фото товара',
             'cols' => [
                 'file_id', 'name'
             ]
@@ -51,6 +59,7 @@ class Image extends \Model
             ]
         ]
     ];
+
     function beforeDelete()
     {
         $this->file->delete();

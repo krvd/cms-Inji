@@ -28,6 +28,7 @@ class Item extends \Model
         'widget' => 'Виджет для отображения в каталоге',
         'view' => 'Шаблон для отображения полной информации',
         'deleted' => 'Удален',
+        'imgs' => 'Фото'
     ];
     public static $cols = [
         //Основные параметры
@@ -52,12 +53,14 @@ class Item extends \Model
         //Менеджеры
         'options' => ['type' => 'dataManager', 'relation' => 'options'],
         'offers' => ['type' => 'dataManager', 'relation' => 'offers'],
+        'imgs' => ['type' => 'dataManager', 'relation' => 'images'],
     ];
     public static $dataManagers = [
         'manager' => [
             'name' => 'Товары',
             'cols' => [
                 'name',
+                'imgs',
                 'category_id',
                 'item_type_id',
                 'best',
@@ -79,6 +82,7 @@ class Item extends \Model
                 ['widget', 'view'],
                 ['best', 'image_file_id'],
                 ['description'],
+                ['imgs'],
                 ['options'],
                 ['offers'],
             ]
