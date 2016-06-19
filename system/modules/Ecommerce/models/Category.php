@@ -37,7 +37,7 @@ class Category extends \Model
     public static $labels = [
         'name' => 'Название',
         'alias' => 'Алиас',
-        'parent_id' => 'Родитель',
+        'parent_id' => 'Родительская категория',
         'image_file_id' => 'Изображение',
         'description' => 'Описание',
         'options_inherit' => 'Наследовать набор свойств',
