@@ -1,6 +1,6 @@
 <h2><?= $_GET['path']; ?></h2>
 <div id="editor" style="height:500px"><?= htmlspecialchars($content); ?></div>
-<button class="btn btn-primary" onclick="saveCode()">Сохранить</button>
+<button class="btn btn-primary" onclick="saveCode()">РЎРѕС…СЂР°РЅРёС‚СЊ</button>
 <script>
     var editor;
     function saveCode() {

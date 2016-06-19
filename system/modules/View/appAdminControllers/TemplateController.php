@@ -34,7 +34,7 @@ class TemplateController extends \Controller
             $this->libs->loadLib('Ace');
             $this->view->page(['content' => 'template/edit', 'data' => compact('template', 'content')]);
         } else {
-            $this->view->page(['content' => 'chooseFile', 'data' => compact('template')]);
+            $this->view->page(['content' => 'template/chooseFile', 'data' => compact('template')]);
         }
     }
 
