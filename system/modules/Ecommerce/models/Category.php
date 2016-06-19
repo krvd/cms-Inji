@@ -107,6 +107,21 @@ class Category extends \Model
         ];
     }
 
+    public function beforeSave()
+    {
+        if ($this->id && $this->id == $this->parent_id) {
+            $this->parent_id = 0;
+            \Msg::add('Категория не может быть сама себе родителем');
+        }
+    }
+
+    public function beforeDelete()
+    {
+        foreach ($this->catalogs as $category) {
+            $category->delete();
+        }
+    }
+
     public function resolveTemplate()
     {
         if ($this->template !== 'inherit') {
