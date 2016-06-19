@@ -108,7 +108,7 @@ class DataManager extends \Object
         }
         $buttons[] = [
             'text' => 'Добавить элемент',
-            'onclick' => 'inji.Ui.forms.popUp("' . str_replace('\\', '\\\\', $modelName) . '",' . json_encode($formParams) . ')',
+            'onclick' => 'inji.Ui.dataManagers.get(this).newItem("' . str_replace('\\', '\\\\', $modelName) . '",' . json_encode($formParams) . ');',
         ];
 
         return $buttons;
