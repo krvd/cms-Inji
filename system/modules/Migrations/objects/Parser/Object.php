@@ -95,7 +95,7 @@ class Object extends \Object
         return 0;
     }
 
-    private function setModel($data)
+    public function setModel($data)
     {
         $model = null;
         $keyCol = null;
