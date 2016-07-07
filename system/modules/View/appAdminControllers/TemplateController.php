@@ -16,7 +16,7 @@ class TemplateController extends \Controller
     {
         $template = \View\Template::get($templateName, \App::$primary);
         $this->view->setTitle($templateName);
-        $this->view->page(['content' => 'template/edit', 'data' => compact('template')]);
+        $this->view->page(['content' => 'Template/edit', 'data' => compact('template')]);
     }
 
     function editFileAction($templateName)
@@ -32,9 +32,9 @@ class TemplateController extends \Controller
             }
             $content = file_get_contents($template->path . '/' . Tools::parsePath($_GET['path']));
             $this->libs->loadLib('Ace');
-            $this->view->page(['content' => 'template/edit', 'data' => compact('template', 'content')]);
+            $this->view->page(['content' => 'Template/edit', 'data' => compact('template', 'content')]);
         } else {
-            $this->view->page(['content' => 'template/chooseFile', 'data' => compact('template')]);
+            $this->view->page(['content' => 'Template/chooseFile', 'data' => compact('template')]);
         }
     }
 
