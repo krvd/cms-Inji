@@ -223,4 +223,9 @@ class Item extends \Model
         }
     }
 
+    public function getHref()
+    {
+        return "/ecommerce/view/{$this->pk()}";
+    }
+
 }

@@ -19,6 +19,7 @@ class Slide extends \Model
         'link' => ['type' => 'text'],
         'description' => ['type' => 'html'],
         'image_file_id' => ['type' => 'image'],
+        'preview_image_file_id' => ['type' => 'image'],
         'slider_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'slider'],
         'user_id' => ['type' => 'select', 'source' => 'relation', 'relation' => 'user'],
         'weight' => ['type' => 'number'],
@@ -33,6 +34,7 @@ class Slide extends \Model
         'user_id' => 'Создатель',
         'weight' => 'Вес',
         'image_file_id' => 'Изображение',
+        'preview_image_file_id' => 'Превью Изображения',
     ];
     public static $dataManagers = [
         'manager' => [
@@ -47,7 +49,7 @@ class Slide extends \Model
         'manager' => [
             'map' => [
                 ['name', 'link'],
-                ['image_file_id'],
+                ['preview_image_file_id', 'image_file_id'],
                 ['description'],
             ],
         ],
@@ -59,6 +61,10 @@ class Slide extends \Model
             'slider' => [
                 'model' => 'Sliders\Slider',
                 'col' => 'slider_id'
+            ],
+            'pieview' => [
+                'model' => 'Files\File',
+                'col' => 'preview_image_file_id'
             ],
             'image' => [
                 'model' => 'Files\File',

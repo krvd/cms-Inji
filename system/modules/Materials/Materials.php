@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Materials module
  *
@@ -80,6 +81,42 @@ class Materials extends Module
             }
         }
         return $return;
+    }
+
+    function sitemap()
+    {
+        $map = [];
+        $zeroMaterials = \Materials\Material::getList(['where' => ['category_id', 0]]);
+        foreach ($zeroMaterials as $mat) {
+            $map[] = [
+                'name' => $mat->name,
+                'url' => [
+                    'loc' => (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . INJI_DOMAIN_NAME . ($mat->getHref())
+                ],
+            ];
+        }
+        
+        $categorys = \Materials\Category::getList(['where' => ['parent_id', 0]]);
+        $scan = function($category, $scan) {
+            $map = [];
+            
+            foreach ($category->items as $mat) {
+                $map[] = [
+                    'name' => $mat->name,
+                    'url' => [
+                        'loc' => (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . INJI_DOMAIN_NAME . ($mat->getHref())
+                    ],
+                ];
+            }
+            foreach ($category->childs as $child) {
+                $map = array_merge($map, $scan($child, $scan));
+            }
+            return $map;
+        };
+        foreach ($categorys as $category) {
+            $map = array_merge($map, $scan($category, $scan));
+        }
+        return $map;
     }
 
 }
