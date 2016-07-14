@@ -37,7 +37,7 @@ class Category extends \Model
     public static $labels = [
         'name' => 'Название',
         'alias' => 'Алиас',
-        'parent_id' => 'Родитель',
+        'parent_id' => 'Родительская категория',
         'image_file_id' => 'Изображение',
         'description' => 'Описание',
         'options_inherit' => 'Наследовать набор свойств',
@@ -105,6 +105,21 @@ class Category extends \Model
                 'col' => 'parent_id',
             ]
         ];
+    }
+
+    public function beforeSave()
+    {
+        if ($this->id && $this->id == $this->parent_id) {
+            $this->parent_id = 0;
+            \Msg::add('Категория не может быть сама себе родителем');
+        }
+    }
+
+    public function beforeDelete()
+    {
+        foreach ($this->catalogs as $category) {
+            $category->delete();
+        }
     }
 
     public function resolveTemplate()

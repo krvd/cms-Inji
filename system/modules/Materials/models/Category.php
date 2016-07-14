@@ -19,7 +19,7 @@ class Category extends \Model
         'name' => 'Название',
         'description' => 'Описание',
         'image_file_id' => 'Изображение',
-        'parent_id' => 'Родитель',
+        'parent_id' => 'Родительская категория',
         'alias' => 'Алиас',
         'viewer' => 'Тип категории по умолчанию',
         'template' => 'Шаблон категории по умолчанию',

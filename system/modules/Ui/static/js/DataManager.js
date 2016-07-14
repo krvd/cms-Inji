@@ -155,6 +155,15 @@ function DataManager(element) {
   this.load();
 }
 
+DataManager.prototype.newItem = function (model, options) {
+  if (this.categoryId) {
+    if (!options.preset) {
+      options.preset = {};
+    }
+    options.preset['category_id'] = this.categoryId;
+  }
+  inji.Ui.forms.popUp(model, options);
+}
 DataManager.prototype.newCategory = function () {
   var options = {preset: {}};
   options.preset['parent_id'] = this.categoryId;

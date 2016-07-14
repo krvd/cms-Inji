@@ -15,6 +15,7 @@ class Relation extends \Migrations\Parser
 {
     public function parse()
     {
+
         $options = $this->param->options ? json_decode($this->param->options, true) : [];
         $modelName = $this->object->object->model;
         $relation = $modelName::getRelation($this->param->value);
@@ -33,6 +34,7 @@ class Relation extends \Migrations\Parser
         }
         if (!empty($relation['type']) && $relation['type'] == 'many') {
             $ids = [];
+
             if ($this->data) {
                 foreach ($this->data as $code => &$item) {
                     if (!\Tools::isAssoc($this->data)) {
@@ -44,7 +46,7 @@ class Relation extends \Migrations\Parser
                             $objectParser->walker = $this->object->walker;
                             $objectParser->parentParam = $this;
                             $objectParser->data = &$item;
-                            
+
 
                             if (!$this->model->pk()) {
                                 $this->model->save();
@@ -66,7 +68,7 @@ class Relation extends \Migrations\Parser
                     }
                 }
             }
-            if (!empty($options['clearMissing'])) {
+            if (!empty($options['clearMissing']) && $this->model->pk()) {
                 $where = [];
                 $where[] = [$relation['col'], $this->model->pk()];
                 if ($ids) {
@@ -74,9 +76,14 @@ class Relation extends \Migrations\Parser
                 }
                 $modelName = $relation['model'];
                 $objects = $modelName::getList(['where' => $where]);
-
-                foreach ($objects as $object) {
-                    $object->delete();
+                foreach ($objects as $delObject) {
+                    $objectId = \App::$cur->migrations->findParse($delObject->id, get_class($delObject));
+                    if ($objectId) {
+                        unset(\App::$cur->migrations->ids['objectIds'][get_class($delObject)][$delObject->id]);
+                        unset(\App::$cur->migrations->ids['parseIds'][get_class($delObject)][$objectId->parse_id]);
+                        $objectId->delete();
+                    }
+                    $delObject->delete();
                 }
             }
         } else {
@@ -86,9 +93,22 @@ class Relation extends \Migrations\Parser
             $objectParser->parentModel = $this->model;
             $objectParser->parentParam = $this;
             $objectParser->data = &$this->data;
-            $id = $objectParser->parse();
-            if ($id) {
-                $this->model->{$relation['col']} = $id[0];
+            $ids = [];
+            if (!\Tools::isAssoc($this->data)) {
+                foreach ($this->data as &$data) {
+                    $model = $objectParser->setModel($this->data);
+                    if ($model && $model->id) {
+                        $ids[] = $model->id;
+                    }
+                }
+            } else {
+                $model = $objectParser->setModel($this->data);
+                if ($model && $model->id) {
+                    $ids[] = $model->id;
+                }
+            }
+            if ($ids) {
+                $this->model->{$relation['col']} = $ids[0];
             }
         }
     }

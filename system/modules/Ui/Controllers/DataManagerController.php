@@ -90,10 +90,10 @@ class DataManagerController extends Controller
 
         $dataManager = new Ui\DataManager($request['modelName'], $request['managerName']);
         if ($request['download']) {
-            
+
             ini_set('memory_limit', '2000M');
             set_time_limit(0);
-            
+
             $request['params']['all'] = true;
             $request['params']['download'] = true;
             ob_end_clean();
@@ -115,6 +115,11 @@ class DataManagerController extends Controller
             }
             echo "\n";
             $endRow = true;
+        }
+        if (!$request['params']['all']) {
+            $pages = $dataManager->getPages($request['params'], $request['model']);
+            $request['params']['page'] = $pages->params['page'];
+            $request['params']['limit'] = $pages->params['limit'];
         }
         $rows = $dataManager->getRows($request['params'], $request['model']);
         foreach ($rows as $row) {
@@ -142,8 +147,7 @@ class DataManagerController extends Controller
 
         $result->content['pages'] = '';
 
-        if (!$request['params']['all']) {
-            $pages = $dataManager->getPages($request['params'], $request['model']);
+        if (isset($pages) && $pages) {
             if ($pages) {
                 $pages->draw();
                 echo '<div style="background:#fff;">записей: <b>' . $pages->options['count'] . '</b>. страница <b>' . $pages->params['page'] . '</b> из <b>' . $pages->params['pages'] . '</b></div>';

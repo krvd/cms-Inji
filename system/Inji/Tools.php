@@ -187,9 +187,8 @@ class Tools extends Model
             $headers .= "Content-type: {$msg['ctype']}; charset={$msg['charset']}\r\n";
             $headers .= "Mime-Version: 1.0\r\n";
             return mail($msg['to'], $msg['subject'], $msg['text'], $headers);
-        } else {
-            return $msg;
         }
+        return $msg;
     }
 
     /**

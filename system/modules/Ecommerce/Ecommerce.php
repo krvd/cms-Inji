@@ -270,9 +270,18 @@ class Ecommerce extends Module
                         //$selectOptions['join'][] = [Ecommerce\Item\Offer::table(), Ecommerce\Item::index() . ' = offer.' . Ecommerce\Item\Offer::colPrefix() . Ecommerce\Item::index(), 'left', 'offer'];
                         foreach ($filter as $optionId => $optionValue) {
                             $optionId = (int) $optionId;
+                            if (is_array($optionValue)) {
+                                $optionValueArr = [];
+                                foreach ($optionValue as $val) {
+                                    $optionValueArr[] = \App::$cur->db->connection->pdo->quote($val);
+                                }
+                                $qstr = 'IN (' . implode(',', $optionValueArr) . ')';
+                            } else {
+                                $qstr = '= ' . \App::$cur->db->connection->pdo->quote($optionValue);
+                            }
                             $selectOptions['join'][] = [Ecommerce\Item\Offer\Param::table(), Ecommerce\Item\Offer::index() . ' = ' . 'offerOption' . $optionId . '.' . Ecommerce\Item\Offer\Param::colPrefix() . Ecommerce\Item\Offer::index() . ' AND ' .
                                 'offerOption' . $optionId . '.' . Ecommerce\Item\Offer\Param::colPrefix() . Ecommerce\Item\Offer\Option::index() . ' = "' . (int) $optionId . '" AND ' .
-                                'offerOption' . $optionId . '.' . Ecommerce\Item\Offer\Param::colPrefix() . 'value = ' . \App::$cur->db->connection->pdo->quote($optionValue) . '',
+                                'offerOption' . $optionId . '.' . Ecommerce\Item\Offer\Param::colPrefix() . 'value ' . $qstr,
                                 'inner', 'offerOption' . $optionId];
                         }
                         break;
@@ -501,6 +510,42 @@ class Ecommerce extends Module
             }
         }
         return $cart;
+    }
+
+    function sitemap()
+    {
+        $map = [];
+        $zeroItems = \Ecommerce\Item::getList(['where' => ['category_id', 0]]);
+        foreach ($zeroItems as $item) {
+            $map[] = [
+                'name' => $item->name,
+                'url' => [
+                    'loc' => (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . INJI_DOMAIN_NAME . ($item->getHref())
+                ],
+            ];
+        }
+
+        $categorys = \Ecommerce\Category::getList(['where' => ['parent_id', 0]]);
+        $scan = function($category, $scan) {
+            $map = [];
+
+            foreach ($category->items as $item) {
+                $map[] = [
+                    'name' => $item->name,
+                    'url' => [
+                        'loc' => (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . INJI_DOMAIN_NAME . ($item->getHref())
+                    ],
+                ];
+            }
+            foreach ($category->catalogs as $child) {
+                $map = array_merge($map, $scan($child, $scan));
+            }
+            return $map;
+        };
+        foreach ($categorys as $category) {
+            $map = array_merge($map, $scan($category, $scan));
+        }
+        return $map;
     }
 
 }

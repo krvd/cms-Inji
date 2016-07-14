@@ -343,4 +343,9 @@ class Module
         return $extensions;
     }
 
+    function sitemap()
+    {
+        return [];
+    }
+
 }

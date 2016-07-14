@@ -103,7 +103,7 @@ class StaticLoader extends Module
                 $type = Files\Type::get($fileinfo['extension'], 'ext');
                 $allow_resize = $type->allow_resize;
             }
-            if (empty($type) && in_array(strtolower($fileinfo['extension']), array('png', 'jpg', 'jpeg', 'gif'))) {
+            if (!$type && in_array(strtolower($fileinfo['extension']), array('png', 'jpg', 'jpeg', 'gif'))) {
                 $allow_resize = true;
             }
             if ($allow_resize) {
